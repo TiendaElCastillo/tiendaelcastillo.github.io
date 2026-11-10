@@ -1,1 +1,0 @@
-alter table public.orders add column if not exists privacy_consent_at timestamptz; alter table public.orders add column if not exists privacy_policy_version text;

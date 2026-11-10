@@ -1,9 +1,0 @@
-create index if not exists orders_payment_confirmed_by_idx on public.orders (payment_confirmed_by);
-create index if not exists orders_player_id_validation_token_idx on public.orders (player_id_validation_token);
-create index if not exists player_id_validations_product_id_idx on public.player_id_validations (product_id);
-create index if not exists player_id_validations_user_id_idx on public.player_id_validations (user_id);
-create index if not exists pricing_rate_history_changed_by_idx on public.pricing_rate_history (changed_by);
-create index if not exists pricing_settings_updated_by_idx on public.pricing_settings (updated_by);
-create index if not exists wallet_deposits_user_id_idx on public.wallet_deposits (user_id);
-create index if not exists wallet_transactions_order_id_idx on public.wallet_transactions (order_id);
-create index if not exists wallet_transactions_user_id_idx on public.wallet_transactions (user_id);
