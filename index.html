@@ -2823,7 +2823,7 @@ async function continueToPayment(){
     else await validatePlayerId();
    }catch(e){}
    if(!isPlayerValidationCurrent(p.id,player)){
-    if(message)message.textContent="No se pudo verificar la cuenta. Comprueba el ID, el Zone ID y la conexión; no hagas ninguna transferencia.";
+    if(message)message.textContent=target.zoneKey?"No se pudo verificar la cuenta. Comprueba el ID, el Zone ID y la conexión; no hagas ninguna transferencia.":"No se pudo verificar la cuenta. Comprueba el ID y la conexión; no hagas ninguna transferencia.";
     if(button){button.disabled=false;button.textContent="Continuar al pago →";}
     return;
    }
@@ -3076,7 +3076,7 @@ async function validatePlayerId(){
   const expiresIn=Math.max(30,Math.min(600,Number(result.expires_in_seconds)||600));
   validatedPlayerCheckout={productId:String(p.id),playerId:canonicalPlayerId,region:String(result.region||p.provider_region||""),playerName:result.player_name||null,token:result.validation_token,validatedAt:new Date().toISOString(),expiresAt:Date.now()+expiresIn*1000};
   nameField.value=result.player_name||"";
-  setPlayerValidationDisplay("is-valid","✓",result.player_name?"Cuenta válida. El ID y el Zone ID corresponden a esta cuenta.":"Cuenta verificada correctamente.","ID verificado");
+  setPlayerValidationDisplay("is-valid","✓",result.player_name?(target.zoneKey?"Cuenta válida. El ID y el Zone ID corresponden a esta cuenta.":"Cuenta válida. El ID corresponde a esta cuenta."):"Cuenta verificada correctamente.","ID verificado");
  }catch(e){
   if(!isCurrent())return;
   setPlayerValidationDisplay("is-error","!","No se pudo comprobar ahora. "+(e?.message||"Revisa tu conexión e inténtalo de nuevo."),"No se pudo comprobar");
