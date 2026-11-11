@@ -2,7 +2,7 @@ const APP_ROOT = self.registration.scope;
 const scopePath = new URL(APP_ROOT).pathname.replace(/\/+$/, "") || "/";
 const scopeName = scopePath === "/" ? "root" : scopePath.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
 const CACHE_PREFIX = "el-castillo-" + scopeName + "-";
-const CACHE_NAME = CACHE_PREFIX + "shell-v116";
+const CACHE_NAME = CACHE_PREFIX + "shell-v117";
 const LEGACY_PROJECT_CACHE = "el-castillo-shell-v115";
 const isLegacyProjectScope = scopePath.endsWith("/tienda-el-castillo");
 const APP_SHELL = [
@@ -24,6 +24,7 @@ const APP_SHELL = [
   "./assets/games/free-fire.webp",
   "./assets/games/free-fire-tienda.webp",
   "./assets/games/mobile-legends-bang-bang.webp",
+  "./assets/games/blood-strike-cover.webp",
   "./assets/games/mlbb-diamonds.svg",
   "./assets/games/mlbb-weekly.svg",
   "./assets/games/mlbb-monthly.svg",
@@ -129,7 +130,8 @@ self.addEventListener("fetch", event => {
     url.hostname === "seagm-media.seagmcdn.com" ||
     url.hostname === "cdn.prod.website-files.com" ||
     url.hostname === "assets.nuuvem.com" ||
-    url.hostname === "cdn1.codashop.com";
+    url.hostname === "cdn1.codashop.com" ||
+    url.hostname === "r.res.easebar.com";
 
   // Auth, database reads, orders, payment proofs and provider calls are network-only.
   // Product artwork may be cached after its first successful load for later visits/offline use.
