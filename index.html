@@ -2656,10 +2656,13 @@ function isGiftCard(p){const value=fold(String(p.game||"")+" "+String(p.name||""
 function providerImageIsSafe(value){try{const url=new URL(String(value));return url.protocol==="https:"||url.protocol==="http:"}catch{return false}}
 function bloodStrikeArtworkUrl(product){
  const name=fold(String(product?.name||""));
- if(/one[ -]?punch/.test(name))return "https://r.res.easebar.com/pic/20260630/e349f09b-8b64-48b1-a7cb-a1b01818b8dd.png";
- if(/tokyo[ -]?revengers/.test(name))return "https://r.res.easebar.com/pic/20260514/7ac7a720-a0d8-4227-b8c8-86fec94b8378.jpg";
- if(/seven[ -]?deadly[ -]?sins|\b7ds\b/.test(name))return "https://r.res.easebar.com/pic/20260403/ab968bb4-1b5e-4fd6-9c28-3693a87ec869.png";
- if(/attack[ -]?on[ -]?titan/.test(name))return "https://r.res.easebar.com/pic/20260727/d688b445-45ae-4fa3-ae5a-3ec587019e22.jpeg";
+ // Campañas verificadas en el sitio oficial de Blood Strike / NetEase.
+ if(/one[ -]?punch/.test(name))return "https://r.res.easebar.com/pic/20260630/4ac9fc27-6eff-4139-8a21-a9ebdc19c4b8.png";
+ if(/tokyo[ -]?revengers/.test(name))return "https://r.res.easebar.com/pic/20260514/74858c1d-48c6-4a88-83c0-425669f0866a.jpg";
+ if(/seven[ -]?deadly[ -]?sins|\b7ds\b/.test(name))return "https://r.res.easebar.com/pic/20260403/930f5dbe-23ee-4f7d-a038-f87e0ac98f6d.png";
+ if(/attack[ -]?on[ -]?titan/.test(name))return "https://r.res.easebar.com/pic/20260727/8ffc7d3e-8437-417b-9252-64f9086ec54e.jpeg";
+ if(/\benzo\b|\bmaestro\b/.test(name))return "https://r.res.easebar.com/pic/20260604/edd23aed-c240-45cd-80a6-760af76f9035.png";
+ // Si no hay arte oficial inequívoco del artículo, usamos la portada aprobada del juego.
  return "./assets/games/blood-strike-cover.webp";
 }
 function bloodStrikeCategory(product){
