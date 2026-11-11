@@ -1680,6 +1680,41 @@ body{min-width:0}
   .bs-plan-buy{font-size:10px}
  }
 
+
+ /* Blood Strike: tarjetas de arte completo y catálogo consistente en pantallas pequeñas. */
+ .bs-category-intro{margin:-3px 0 12px;color:#71809a;font-size:11px;line-height:1.5;max-width:760px}
+ .bs-package-list{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+ .bs-plan-card{border-color:#dfe7f2;border-radius:19px;box-shadow:0 8px 22px rgba(20,42,75,.075)}
+ .bs-plan-art{position:relative!important;height:auto!important;aspect-ratio:1.55!important;min-height:108px!important;max-height:156px!important;overflow:hidden!important;background:#17243a!important;isolation:isolate}
+ .bs-plan-art .bs-plan-icon-image,.bs-plan-art img{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center 36%!important;border:0!important;border-radius:0!important}
+ .bs-plan-art:after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(5,13,28,.02) 20%,rgba(5,13,28,.73) 100%);pointer-events:none}
+ .bs-plan-art>span{z-index:2;left:9px;bottom:8px;padding:6px 9px;border:1px solid rgba(255,255,255,.28);border-radius:30px;background:rgba(9,18,34,.78);font-size:9px;letter-spacing:.07em}
+ .bs-plan-copy{gap:8px;padding:12px 13px 13px}
+ .bs-plan-copy>strong{display:-webkit-box;min-height:3.6em;font-size:13px;line-height:1.32;font-weight:900;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+ .bs-plan-copy>small{min-height:2.7em;font-size:10px;line-height:1.42}
+ .bs-plan-price{padding-top:6px}
+ .bs-plan-price b{font-size:clamp(15px,3.9vw,20px);font-variant-numeric:tabular-nums}
+ .bs-plan-buy{min-height:43px;margin-top:7px;border-radius:12px;font-size:11px;font-weight:900}
+ @media(max-width:760px){
+  .bs-package-list{gap:10px}
+  .bs-plan-art{aspect-ratio:1.42!important;min-height:96px!important;max-height:132px!important}
+  .bs-plan-copy{padding:10px}
+  .bs-plan-copy>strong{font-size:12px;min-height:3.8em}
+  .bs-plan-copy>small{font-size:9px}
+  .bs-plan-price b{font-size:16px}
+  .bs-plan-buy{min-height:41px;font-size:10px}
+  .bs-category-intro{font-size:10px}
+ }
+ @media(max-width:360px){
+  .bs-category-tabs{gap:4px}
+  .bs-category-tab{padding:6px 2px;font-size:8px}
+  .bs-package-list{gap:7px}
+  .bs-plan-art{min-height:84px!important}
+  .bs-plan-copy{padding:8px}
+  .bs-plan-copy>strong{font-size:11px}
+  .bs-plan-price b{font-size:14px}
+ }
+
 </style></head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -2585,11 +2620,17 @@ function renderGameDetail(){
     ["specials","✨ Especiales",groups.specials.length]
    ];
    const list=groups[activeCategory];
-   const labels={bc:"Recargas de BC",deals:"Ofertas especiales",passes:"Pases de Blood Strike",specials:"Vouchers y objetos especiales"};
+   const labels={bc:"Recargas de BC",deals:"Ofertas DEAL",passes:"Pases de Blood Strike",specials:"Vouchers y objetos especiales"};
+    const notes={
+     bc:"Elige la cantidad de BC que quieres recibir. La recarga se procesa para tu cuenta GLOBAL.",
+     deals:"Las etiquetas DEAL identifican ofertas del catálogo de Central One. No indican por sí solas una cantidad de BC.",
+     passes:"Pases disponibles en el catálogo GLOBAL de Central One. Comprueba el nombre exacto del pase antes de pagar.",
+     specials:"Vouchers, cofres, bolsas y preventas son artículos distintos de los BC. Revisa el nombre completo: el contenido depende del producto y del evento."
+    };
    const tabsHtml=tabs.map(([id,label,count])=>'<button type="button" class="bs-category-tab '+(activeCategory===id?"active":"")+'" role="tab" aria-selected="'+(activeCategory===id)+'" aria-controls="bloodStrike-'+id+'" onclick="selectBloodStrikeCategory(&quot;'+id+'&quot;)"><span>'+label+'</span><b>'+count+'</b></button>').join("");
    $("gameDetailPlans").innerHTML='<div class="bs-catalog-head"><div><h2>Catálogo de Blood Strike</h2><p>'+rows.length+' productos sincronizados desde Central One · región GLOBAL</p></div><span class="bs-total">'+plans.length+' opciones</span></div>'+
     '<div class="bs-catalog-assurance"><span>🌐 Región GLOBAL</span><span>✓ ID comprobado antes del pago</span><span>🔒 Nunca pedimos tu contraseña</span></div><div class="bs-category-tabs" role="tablist" aria-label="Categorías de Blood Strike">'+tabsHtml+'</div>'+
-    '<section id="bloodStrike-'+activeCategory+'" class="bs-category-panel" role="tabpanel"><div class="bs-category-title">'+labels[activeCategory]+'</div><div class="bs-package-list">'+list.map(p=>gamePlanCard(p,item,gamePaymentMethod)).join("")+'</div></section>';
+    '<section id="bloodStrike-'+activeCategory+'" class="bs-category-panel" role="tabpanel"><div class="bs-category-title">'+labels[activeCategory]+'</div><p class="bs-category-intro">'+notes[activeCategory]+'</p><div class="bs-package-list">'+list.map(p=>gamePlanCard(p,item,gamePaymentMethod)).join("")+'</div></section>';
   }
  }else{
   $("gameDetailPlans").innerHTML='<div class="ff-browser-head"><h2>Elige tu paquete</h2><span class="ff-total">'+plans.length+' opciones</span></div><div class="ff-package-list">'+(plans.length?plans.map(p=>gamePlanCard(p,item,gamePaymentMethod)).join(""):'<div class="game-empty-state">No hay paquetes disponibles.</div>')+'</div>';
@@ -2635,7 +2676,15 @@ function bloodStrikeDisplayName(product){
 }
 function bloodStrikeCategoryLabel(product){
  const category=bloodStrikeCategory(product);
- return category==="bc"?"PAQUETE BC":category==="deals"?"DEAL":category==="passes"?"PASE":"ESPECIAL";
+ const name=fold(String(product?.name||""));
+ if(category==="bc")return "PAQUETE BC";
+ if(category==="deals")return "DEAL";
+ if(category==="passes")return "PASE";
+ if(/pre[ -]?order|preventa/.test(name))return "PREVENTA";
+ if(/voucher|stash/.test(name))return "VOUCHER";
+ if(/lucky[ -]?chest|\bchest\b|cofre/.test(name))return "COFRE";
+ if(/lucky[ -]?bag|\bbag\b|bolsa/.test(name))return "BOLSA";
+ return "ESPECIAL";
 }
 function isBloodStrikeCatalogProduct(product){
  return fold(product?.game||"")==="blood strike"&&product.active===true&&product.storefront_visible===true&&
