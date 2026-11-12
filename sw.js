@@ -2,9 +2,7 @@ const APP_ROOT = self.registration.scope;
 const scopePath = new URL(APP_ROOT).pathname.replace(/\/+$/, "") || "/";
 const scopeName = scopePath === "/" ? "root" : scopePath.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
 const CACHE_PREFIX = "el-castillo-" + scopeName + "-";
-const CACHE_NAME = CACHE_PREFIX + "shell-v118";
-const LEGACY_PROJECT_CACHE = "el-castillo-shell-v115";
-const isLegacyProjectScope = scopePath.endsWith("/tienda-el-castillo");
+const CACHE_NAME = CACHE_PREFIX + "shell-v119";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -74,10 +72,7 @@ self.addEventListener("install", event => {
     } else {
       // Keep the previous offline page when an update is installed without Internet.
       const previousCaches = (await caches.keys()).filter(key =>
-        key !== CACHE_NAME && (
-          key.startsWith(CACHE_PREFIX) ||
-          (isLegacyProjectScope && key === LEGACY_PROJECT_CACHE)
-        )
+        key !== CACHE_NAME && key.startsWith(CACHE_PREFIX)
       );
       for (const previousName of previousCaches) {
         const previousCache = await caches.open(previousName);
@@ -105,10 +100,7 @@ self.addEventListener("activate", event => {
     caches.keys()
       .then(keys => Promise.all(
         keys.filter(key =>
-          key !== CACHE_NAME && (
-            key.startsWith(CACHE_PREFIX) ||
-            (isLegacyProjectScope && key === LEGACY_PROJECT_CACHE)
-          )
+          key !== CACHE_NAME && key.startsWith(CACHE_PREFIX)
         ).map(key => caches.delete(key))
       ))
       .then(() => self.clients.claim())
