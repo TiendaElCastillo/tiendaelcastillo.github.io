@@ -3752,6 +3752,7 @@ async function placeOrder(){
   return;
  }
  if(!["Transferencia CUP","Saldo móvil","USDT"].includes(method)){$("ordermsg").textContent="Este método de pago todavía no está disponible.";return;}
+ if(method==="USDT"&&!isWalletUsdtConfigured()){$("ordermsg").textContent="No se creó el pedido: no se pudo comprobar la red y dirección USDT actuales de la tienda. No envíes fondos hasta que se restablezca la configuración.";return;}
  if(!paymentMethods.some(item=>item.name===method&&item.active&&item.instructions)){$("ordermsg").textContent="Este método de pago todavía no está configurado. Elige otro método o espera la confirmación de la tienda.";return;}
  const file=$("paymentProof")?.files?.[0],invalid=validateProofFile(file);
  if(invalid){$("ordermsg").textContent=invalid;return;}
