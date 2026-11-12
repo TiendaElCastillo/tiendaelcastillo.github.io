@@ -2180,8 +2180,6 @@ async function openPublicStore(){
   const message="No se pudo cargar el catálogo: "+clean(error?.message||error);
   const box=$("gamesProducts");if(box)box.innerHTML='<p class="empty-note">'+message+'</p>';
  }
- try{renderProductCatalogs();}
- catch(error){console.error("No se pudo mostrar el catálogo público:",error);}
  showView("home");
 }
 async function register(){
@@ -2581,7 +2579,7 @@ function freeFirePlanIcon(p,item){
  const group=freeFirePackageGroup(p);
  if(fold(item?.name||"")==="blood strike"){
   const src=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
-  return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg&quot;">';
+  return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;./assets/games/blood-strike-cover.webp?v=1&quot;">';
  }
  if(fold(item?.name||"")==="mobile legends: bang bang"){
   const category=mobileLegendsCatalogCategory(p);
