@@ -2551,7 +2551,7 @@ function freeFirePlanIcon(p,item){
  const group=freeFirePackageGroup(p);
  if(fold(item?.name||"")==="blood strike"){
   const src=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
-  return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;./assets/games/blood-strike-cover.webp&quot;">';
+  return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg&quot;">';
  }
  if(fold(item?.name||"")==="mobile legends: bang bang"){
   const category=mobileLegendsCatalogCategory(p);
@@ -2720,7 +2720,7 @@ function bloodStrikeArtworkUrl(product){
  if(/attack[ -]?on[ -]?titan/.test(name))return "https://r.res.easebar.com/pic/20260727/8ffc7d3e-8437-417b-9252-64f9086ec54e.jpeg";
  if(/\benzo\b|\bmaestro\b/.test(name))return "https://r.res.easebar.com/pic/20260604/edd23aed-c240-45cd-80a6-760af76f9035.png";
  // Si no hay arte oficial inequívoco del artículo, usamos la portada aprobada del juego.
- return "./assets/games/blood-strike-cover.webp";
+ return "https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg";
 }
 function bloodStrikeCategory(product){
  const name=fold(String(product?.name||""));
@@ -2762,7 +2762,7 @@ function productArtwork(p){
  if(isBloodStrike){
   const image=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
   const title=bloodStrikeDisplayName(p);
-  const fallbackImage="./assets/games/blood-strike-cover.webp";
+  const fallbackImage="https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg";
   return '<div class="product-art product-art-blood-strike"><img src="'+clean(image)+'" alt="Blood Strike · '+clean(title)+'" loading="lazy" decoding="async" width="560" height="180" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;'+fallbackImage+'&quot;"><span class="product-art-caption">'+clean(title)+'</span></div>';
  }
  if(!isFreeFire&&providerImageIsSafe(p.provider_image_url))return '<div class="product-art product-art-provider"><img src="'+clean(p.provider_image_url)+'" alt="'+clean(p.name||"Producto digital")+'" loading="lazy" decoding="async" width="560" height="180" onerror="'+fallback+'"></div>';
