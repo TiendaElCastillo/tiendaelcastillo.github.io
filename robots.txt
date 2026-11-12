@@ -1,3 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /recargas-juegos-cuba.html
+Disallow: /recargar-free-fire-cuba.html
+Disallow: /recargar-mobile-legends-cuba.html
 Sitemap: https://tiendaelcastillo.github.io/sitemap.xml
