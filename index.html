@@ -2559,7 +2559,7 @@ function packageQuantity(p,item){const meta=gameCurrency(item);const amount=Numb
 function isWalletUsdtConfigured(){
  const address=String(walletSettings?.usdt_address||"").trim();
  const network=String(walletSettings?.usdt_network||"").trim().toLowerCase();
- return /^0x[a-f0-9]{40}$/i.test(address)&&/(bep20|bsc|bnb smart chain)/i.test(network);
+ return /^0x[a-f0-9]{40}$/i.test(address)&&["bnb smart chain (bep20)","bep20"].includes(network);
 }
 function isPaymentMethodReady(name){
  if(name==="Saldo de Tienda El Castillo")return Boolean(currentUser);
