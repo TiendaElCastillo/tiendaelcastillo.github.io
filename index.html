@@ -1774,15 +1774,15 @@ body{min-width:0}
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
-<header id="siteHeader" class="site-header"><div class="header-inner"><a class="brand" href="./" aria-label="Tienda El Castillo, inicio"><img class="brand-logo" src="./assets/castle-logo.webp" alt="Logo de Tienda El Castillo" width="42" height="42"><span class="brand-name"><strong>Tienda El Castillo</strong><span>Recargas digitales</span></span></a><div class="header-actions"><button class="header-btn notification-header-btn hidden" id="notificationsButton" type="button" onclick="openNotificationCenter()" aria-label="Mensajes y notificaciones"><span aria-hidden="true">✉</span><span class="notification-label">Mensajes</span><i id="notificationBadge" class="notification-badge hidden" aria-hidden="true"></i></button><button class="header-btn" type="button" onclick="currentUser?showView('profile'):openAccount()">Mi cuenta</button><button class="header-btn primary hidden" id="adminNav" type="button" onclick="showView('admin')">Admin</button></div></div></header>
+<header id="siteHeader" class="site-header hidden"><div class="header-inner"><a class="brand" href="./" aria-label="Tienda El Castillo, inicio"><img class="brand-logo" src="./assets/castle-logo.webp" alt="Logo de Tienda El Castillo" width="42" height="42"><span class="brand-name"><strong>Tienda El Castillo</strong><span>Recargas digitales</span></span></a><div class="header-actions"><button class="header-btn notification-header-btn hidden" id="notificationsButton" type="button" onclick="openNotificationCenter()" aria-label="Mensajes y notificaciones"><span aria-hidden="true">✉</span><span class="notification-label">Mensajes</span><i id="notificationBadge" class="notification-badge hidden" aria-hidden="true"></i></button><button class="header-btn" type="button" onclick="currentUser?showView('profile'):openAccount()">Mi cuenta</button><button class="header-btn primary hidden" id="adminNav" type="button" onclick="showView('admin')">Admin</button></div></div></header>
 <main id="appMain">
 <section id="setup" class="hidden"><input id="url"><input id="key"><button onclick="connect()">Conectar</button></section>
-<section id="auth" class="auth-layout auth-showcase-layout hidden">
+<section id="auth" class="auth-layout auth-showcase-layout">
  <div class="auth-showcase">
   <div class="auth-showcase-copy">
    <span class="eyebrow">♛ TIENDA EL CASTILLO · RECARGAS DIGITALES</span>
    <h1>Recargas de juegos desde Cuba</h1>
-   <p>Explora los tres juegos, compara paquetes y precios. Solo necesitarás iniciar sesión al elegir un paquete para verificar tu ID y completar la compra.</p>
+   <p>Conoce los juegos que ofrecemos. Inicia sesión o crea tu cuenta para entrar en la tienda y acceder a todos los paquetes y servicios.</p>
   </div>
   <div class="auth-showcase-games" aria-label="Juegos con servicios disponibles">
    <article class="auth-game-card">
@@ -1798,12 +1798,6 @@ body{min-width:0}
     <div class="auth-game-info"><div><strong>Blood Strike</strong><span>BC, ofertas y pases · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
   </div>
-  <div class="auth-showcase-benefits"><span>✓ Precios competitivos</span><span>✓ CUP, saldo móvil y USDT</span><span>✓ Seguimiento de pedidos</span></div>
-  <nav class="castle-seo-guides" aria-label="Guías públicas de Tienda El Castillo">
-   <a href="./recargas-juegos-cuba.html">Recargas de juegos en Cuba</a>
-   <a href="./recargar-free-fire-cuba.html">Guía Free Fire</a>
-   <a href="./recargar-mobile-legends-cuba.html">Guía Mobile Legends</a>
-  </nav>
  </div>
  <div class="auth-panel auth-login-panel">
   <div class="auth-login-heading"><span class="auth-login-kicker">TU CUENTA, TU TIENDA</span><h2 id="authTitle">Accede a tu cuenta</h2><p class="subtle" id="authSubtitle">Inicia sesión para acceder a todos los servicios, consultar tus pedidos y gestionar tu cuenta.</p></div>
@@ -1827,11 +1821,9 @@ body{min-width:0}
    <button id="resendConfirmationBtn" class="secondary-btn block-btn" type="button" onclick="resendSignupConfirmation()">Reenviar correo de confirmación</button><p id="resendConfirmationMsg" class="msg" role="status" aria-live="polite"></p>
   </div>
   <p class="subtle auth-security-note">No necesitas compartir la contraseña de tu juego. Para una recarga solo te pediremos los datos necesarios del pedido, como tu ID de jugador.</p>
-  <p class="auth-legal">Antes de continuar, revisa nuestra <a href="#privacidad" onclick="openPublicInfo('privacy');return false">Política de privacidad</a> y los <a href="#condiciones" onclick="openPublicInfo('terms');return false">Términos de compra</a>.</p>
-  <p class="auth-help">¿Necesitas ayuda? <a href="#ayuda" onclick="openPublicInfo('faq');return false">Preguntas frecuentes</a> · <a href="https://wa.me/5351884050" target="_blank" rel="noopener noreferrer">WhatsApp +53 51884050 (solo incidencias que no puedas resolver desde la tienda)</a></p>
  </div>
 </section>
-<section id="store">
+<section id="store" class="hidden">
  <div class="promo-strip castle-promo-strip"><span><span class="promo-crown" aria-hidden="true">♛</span> <strong>RECARGAS PARA CUBA</strong> · Free Fire, MLBB y Blood Strike GLOBAL</span><span class="promo-live"><i></i> 3 juegos disponibles</span></div>
  <div class="top-search"><div class="search-wrap"><input class="search-input" id="productSearch" type="search" aria-label="Buscar juegos y paquetes" aria-controls="searchProducts" autocomplete="off" placeholder="Busca Free Fire, MLBB, Blood Strike, BC, pases..." onfocus="showView('search')" oninput="renderSearchProducts()"><button class="search-clear" id="clearProductSearch" type="button" aria-label="Borrar búsqueda" title="Borrar búsqueda" hidden onclick="clearProductSearch()">×</button></div></div>
  <section id="homeView" class="store-view">
@@ -1844,7 +1836,7 @@ body{min-width:0}
   <div class="section-head"><div><h2>Elige tu juego</h2><p>Solo mostramos juegos con recargas disponibles.</p></div></div>
   <div id="homeGames" class="catalog-grid"><p class="empty-note">Conectando con el catálogo de Free Fire, Mobile Legends y Blood Strike…</p></div>
  </div>
- <div class="home-access-note"><strong>Formas de pago disponibles</strong><span>Transferencia CUP por Transfermóvil, saldo móvil y USDT en BNB Smart Chain (BEP20). También puedes pagar con el saldo de tu wallet. Nunca compartas la contraseña del juego.</span></div>
+ <div class="home-access-note"><strong>Bienvenido a tu tienda.</strong><span>Elige un juego para explorar los paquetes y servicios disponibles. Nunca compartas la contraseña de tu cuenta de juego.</span></div>
 </section>
  <section id="gamesView" class="store-view hidden">
   <div class="panel" id="gamesCatalogPanel"><div class="section-head"><div><h2>Elige tu juego</h2><p>Toca un juego para ver sus planes y precios</p></div></div><div id="gamesTiles" class="catalog-grid"></div></div>
@@ -2026,7 +2018,7 @@ body{min-width:0}
 <footer class="site-footer"><div class="footer-brand"><img src="./assets/castle-logo.webp" alt="" width="42" height="42"><div><strong>Tienda El Castillo</strong><span>Recargas digitales con atención personalizada</span></div></div><div class="footer-columns"><div><strong>Tu compra</strong><a href="#catalogo" onclick="showView('games');return false">Catálogo de juegos</a><span>Transferencia CUP, saldo móvil y USDT</span><a href="#pedidos" onclick="currentUser?showView('orders'):openAccount();return false">Seguimiento de pedidos</a></div><div><strong>Ayuda e información</strong><a href="#ayuda" onclick="showView('faq');return false">Preguntas frecuentes</a><a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a><a href="#condiciones" onclick="showView('terms');return false">Términos de compra</a><a href="./recargar-free-fire-cuba.html">Guía de recarga</a><a class="footer-whatsapp" href="https://wa.me/5351884050" target="_blank" rel="noopener noreferrer">Soporte WhatsApp · solo cuando sea necesario: +53 51884050</a></div></div><p class="footer-legal">Tienda El Castillo es un servicio independiente. No está afiliada ni respaldada por Garena. Las marcas y juegos pertenecen a sus respectivos propietarios.</p></footer>
 </section>
 </main>
-<nav id="bottomNav" class="bottom-nav" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
+<nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
 <script>
 window.onCastleCaptchaSuccess=function(token){window.castleCaptchaToken=token;const m=document.getElementById("authmsg");if(m&&m.textContent.includes("CAPTCHA"))m.textContent="";};
 window.onCastleCaptchaExpired=function(){window.castleCaptchaToken=null;};
@@ -2153,35 +2145,13 @@ async function start(url,key){
   window.castleAuthSubscription=authListener?.data?.subscription||null;
   const {data}=await db.auth.getSession();
   if(data.session) await openStore(data.session.user);
-  else { await openPublicStore(); }
+  else { openAccount(); }
  }catch(e){$("siteHeader").classList.add("hidden");$("store").classList.add("hidden");$("bottomNav").classList.add("hidden");$("authmsg").textContent="No pudimos conectar con la tienda. Comprueba tu conexión e inténtalo de nuevo.";$("auth").classList.remove("hidden");setAuthMode("login");}
 
  finally{setTimeout(()=>{$("brandLoader")?.classList.add("done")},900)}
 }
 
-async function openPublicStore(){
- currentUser=null;
- currentProfile=null;
- $("adminNav")?.classList.add("hidden");
- $("admin")?.classList.add("hidden");
- $("notificationsButton")?.classList.add("hidden");
- $("siteHeader").classList.remove("hidden");
- $("auth").classList.add("hidden");
- $("store").classList.remove("hidden");
- $("bottomNav").classList.remove("hidden");
- showView("home");
- try{await loadPaymentMethods({render:false});}
- catch(error){
-  const message="No se pudieron consultar los métodos de pago: "+clean(error?.message||error);
-  const choices=$("gamePaymentChoices");if(choices)choices.innerHTML='<p class="empty-note">'+message+'</p>';
- }
- try{await loadProducts();}
- catch(error){
-  const message="No se pudo cargar el catálogo: "+clean(error?.message||error);
-  const box=$("gamesProducts");if(box)box.innerHTML='<p class="empty-note">'+message+'</p>';
- }
- showView("home");
-}
+
 async function register(){
  const email=$("email").value.trim().toLowerCase();
  const password=$("password").value;
@@ -2484,11 +2454,9 @@ function mobileLegendsCatalogCategory(product){
  if(fold(product?.game||"")!=="mobile legends: bang bang")return null;
  if(String(product?.provider_region||"").trim().toUpperCase()!=="GLOBAL")return null;
  if(String(product?.provider_status||"").trim().toLowerCase()!=="active"||product?.provider_in_stock!==true)return null;
- if(currentUser){
-  if(product?.provider_validation_supported!==true||product?.provider_requires_target!==true||!product?.provider_product_id)return null;
-  const fields=Array.isArray(product?.provider_target_fields)?product.provider_target_fields.map(value=>String(value).toLowerCase()):[];
-  if(!fields.includes("game_user_id")||!fields.includes("game_zone_id"))return null;
- }
+ if(product?.provider_validation_supported!==true||product?.provider_requires_target!==true||!product?.provider_product_id)return null;
+ const fields=Array.isArray(product?.provider_target_fields)?product.provider_target_fields.map(value=>String(value).toLowerCase()):[];
+ if(!fields.includes("game_user_id")||!fields.includes("game_zone_id"))return null;
  const name=fold(product?.name||"").trim();
  if(Object.prototype.hasOwnProperty.call(mobileLegendsExtraCategories,name))return mobileLegendsExtraCategories[name];
  const diamond=name.match(/^mobile legends · (\d+) diamantes$/);
@@ -2562,11 +2530,11 @@ function isWalletUsdtConfigured(){
  return /^0x[a-f0-9]{40}$/i.test(address)&&["bnb smart chain (bep20)","bep20"].includes(network);
 }
 function isPaymentMethodReady(name){
- if(name==="Saldo de Tienda El Castillo")return Boolean(currentUser);
+ if(!currentUser)return false;
+ if(name==="Saldo de Tienda El Castillo")return true;
  if(typeof paymentMethods==="undefined")return false;
- const item=paymentMethods.find(row=>row.name===name&&row.active===true&&(!currentUser?row.publicConfigured===true:String(row.instructions||"").trim().length>0));
+ const item=paymentMethods.find(row=>row.name===name&&row.active===true&&String(row.instructions||"").trim().length>0);
  if(!item)return false;
- if(!currentUser)return true;
  if(name==="USDT"&&!isWalletUsdtConfigured())return false;
  const raw=String(item.instructions||"").replace(/\s+/g," ");
  if(name==="Transferencia CUP"){
@@ -2783,15 +2751,12 @@ function bloodStrikeCategoryLabel(product){
  return "ESPECIAL";
 }
 function isBloodStrikeCatalogProduct(product){
- const publiclyAvailable=fold(product?.game||"")==="blood strike"&&product.active===true&&product.storefront_visible===true&&
+ return Boolean(currentUser)&&fold(product?.game||"")==="blood strike"&&product.active===true&&product.storefront_visible===true&&
   String(product.provider_region||"").trim().toUpperCase()==="GLOBAL"&&
-  String(product.provider_status||"").trim().toLowerCase()==="active"&&product.provider_in_stock===true;
- if(!publiclyAvailable)return false;
- if(!currentUser)return true;
- return product.provider_requires_target===true&&product.provider_validation_supported===true&&
+  String(product.provider_status||"").trim().toLowerCase()==="active"&&product.provider_in_stock===true&&
+  product.provider_requires_target===true&&product.provider_validation_supported===true&&
   Boolean(product.provider_product_id)&&providerPlayerTargetConfig(product).ok;
 }
-
 function productArtwork(p){
  const fallback="this.onerror=null;this.remove()";
  const isFreeFire=fold(p.game||"").includes("free fire");
@@ -3068,13 +3033,9 @@ function chooseCheckoutPaymentMethod(name){
 }
 function showView(name){
  if(name==="giftcards")name="games";
- if(!currentUser&&!["home","games","search","faq","privacy","terms"].includes(name)){
-  if(name==="checkout"){
-   const selectedProduct=$("product")?.value||"";
-   if(selectedProduct){pendingCheckoutAfterLogin=true;pendingCheckoutProductId=selectedProduct;pendingCheckoutPaymentMethod=$("payment")?.value||"";}
-  }
+ if(!currentUser){
   openAccount();
-  $("authmsg").textContent=name==="checkout"?"Inicia sesión para verificar tu cuenta de juego y completar el pedido.":"Inicia sesión para acceder a tu cuenta y consultar tus pedidos.";
+  $("authmsg").textContent="Inicia sesión o crea una cuenta para acceder a la tienda completa.";
   return;
  }
  if(name==="admin"&&currentProfile?.role!=="admin"){$("adminNav")?.classList.add("hidden");$("admin")?.classList.add("hidden");showView("profile");return}
@@ -3084,7 +3045,7 @@ function showView(name){
  document.querySelectorAll("#bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
  $("bottomNav").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
 }
-function openPublicInfo(name){$("auth").classList.add("hidden");$("siteHeader").classList.remove("hidden");$("store").classList.remove("hidden");showView(name||"faq");}
+function openPublicInfo(name){if(!currentUser){openAccount();$("authmsg").textContent="Inicia sesión para consultar la información de la tienda.";return;}$("auth").classList.add("hidden");$("siteHeader").classList.remove("hidden");$("store").classList.remove("hidden");showView(name||"faq");}
 function setAuthMode(mode){
  const registering=mode!=="login";
  window.passwordRecoveryActive=false;
@@ -3409,6 +3370,7 @@ function updateCheckoutSummary(){
  updatePaymentFields();
 }
 async function loadPaymentMethods(options={}){
+ if(!currentUser||!db){paymentMethods=[];paymentLoadError=null;return [];}
  let result;
  try{
   result= currentUser
@@ -3569,6 +3531,7 @@ async function togglePaymentMethod(id,active){
  if(!result.error)await loadPaymentMethods();
 }
 async function loadProducts(){
+ if(!currentUser||!db){products=[];return;}
  try{
   const productColumns=currentUser
     ?"id,game,name,description,amount,price_transfer,price_mobile,price_usdt,active,storefront_visible,provider_product_id,provider_region,provider_validation_supported,provider_image_url,provider_target_fields,provider_target_schema,provider_requires_target,provider_status,provider_in_stock"
