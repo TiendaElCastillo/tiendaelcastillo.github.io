@@ -1771,7 +1771,7 @@ body{min-width:0}
 }
 </style>
 <link rel="preload" as="image" href="./assets/games/free-fire-tienda.webp?v=2" type="image/webp"><link rel="preload" as="image" href="./assets/games/mobile-legends-bang-bang.webp?v=2" type="image/webp"><link rel="preload" as="image" href="./assets/games/blood-strike-cover.webp?v=1" type="image/webp">
-</head>
+<style id="castle-image-fallback-fixes">.auth-game-card:nth-child(3) .auth-game-art{background:#172c50 url("./assets/games/blood-strike.svg?v=1") center/cover no-repeat}.auth-game-card:nth-child(3) .auth-game-art img{display:block;width:100%;height:100%;object-fit:cover}.product-art-blood-strike{display:block!important;position:relative!important;height:100px!important;padding:0!important;background:#15243b!important}.product-art-blood-strike img{display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;padding:5px 12px 34px!important;box-sizing:border-box!important}.product-art-blood-strike .product-art-caption{position:absolute!important;left:0!important;right:0!important;bottom:0!important;display:flex!important;align-items:center!important;justify-content:center!important;min-height:30px!important;padding:5px 8px!important;background:rgba(8,20,39,.9)!important;color:#fff!important;font-size:10px!important;line-height:1.2!important;text-align:center!important;border-top:1px solid rgba(255,255,255,.18)!important}</style>\n</head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
 <header id="siteHeader" class="site-header hidden"><div class="header-inner"><a class="brand" href="./" aria-label="Tienda El Castillo, inicio"><img class="brand-logo" src="./assets/castle-logo.webp" alt="Logo de Tienda El Castillo" width="42" height="42"><span class="brand-name"><strong>Tienda El Castillo</strong><span>Recargas digitales</span></span></a><div class="header-actions"><button class="header-btn notification-header-btn hidden" id="notificationsButton" type="button" onclick="openNotificationCenter()" aria-label="Mensajes y notificaciones"><span aria-hidden="true">✉</span><span class="notification-label">Mensajes</span><i id="notificationBadge" class="notification-badge hidden" aria-hidden="true"></i></button><button class="header-btn" type="button" onclick="currentUser?showView('profile'):openAccount()">Mi cuenta</button><button class="header-btn primary hidden" id="adminNav" type="button" onclick="showView('admin')">Admin</button></div></div></header>
@@ -1794,7 +1794,7 @@ body{min-width:0}
     <div class="auth-game-info"><div><strong>Mobile Legends: Bang Bang</strong><span>Diamantes, pases y membresías · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
    <article class="auth-game-card">
-    <div class="auth-game-art"><img src="./assets/games/blood-strike-cover.webp?v=1" data-fallback="./assets/games/blood-strike-cover.webp?v=1" alt="Arte de Blood Strike" width="640" height="360" loading="eager" fetchpriority="low" decoding="async" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.remove();this.parentElement.classList.add('image-unavailable')}"></div>
+    <div class="auth-game-art"><img src="./assets/games/blood-strike.svg?v=1" alt="Arte de Blood Strike" width="640" height="360" loading="eager" fetchpriority="low" decoding="async"></div>
     <div class="auth-game-info"><div><strong>Blood Strike</strong><span>BC, ofertas y pases · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
   </div>
@@ -2555,12 +2555,12 @@ function freeFirePlanIcon(p,item){
  const group=freeFirePackageGroup(p);
  if(fold(item?.name||"")==="blood strike"){
   const src=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
-  return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;./assets/games/blood-strike-cover.webp?v=1&quot;">';
+  return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;./assets/games/blood-strike.svg?v=1&quot;">';
  }
  if(fold(item?.name||"")==="mobile legends: bang bang"){
   const category=mobileLegendsCatalogCategory(p);
   const alt=category==="diamonds"?"Diamantes Mobile Legends "+Number(p.amount):mobileLegendsDisplayName(p)+" de Mobile Legends";
-  return '<img class="plan-icon-image mlbb-plan-icon-image" src="'+clean(mobileLegendsImageUrl(p))+'" alt="'+clean(alt)+'" loading="lazy" decoding="async" width="112" height="112" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;./assets/games/mobile-legends-bang-bang.webp&quot;">';
+  return '<img class="plan-icon-image mlbb-plan-icon-image" src="'+clean(mobileLegendsImageUrl(p))+'" alt="'+clean(alt)+'" loading="lazy" decoding="async" width="112" height="112" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;./assets/games/mlbb-diamonds.svg&quot;">';
  }
  if(fold(item?.name||"")!=="free fire")return '<span class="plan-icon-emoji" aria-hidden="true">'+gameCurrency(item).icon+'</span>';
  const label=fold(String(p.name||"")+" "+String(p.description||""));
@@ -2765,10 +2765,10 @@ function productArtwork(p){
  if(isBloodStrike){
   const image=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
   const title=bloodStrikeDisplayName(p);
-  const fallbackImage="./assets/games/blood-strike-cover.webp?v=1";
+  const fallbackImage="./assets/games/blood-strike.svg?v=1";
   return '<div class="product-art product-art-blood-strike"><img src="'+clean(image)+'" alt="Blood Strike · '+clean(title)+'" loading="lazy" decoding="async" width="560" height="180" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;'+fallbackImage+'&quot;"><span class="product-art-caption">'+clean(title)+'</span></div>';
  }
- if(!isFreeFire&&providerImageIsSafe(p.provider_image_url))return '<div class="product-art product-art-provider"><img src="'+clean(p.provider_image_url)+'" alt="'+clean(p.name||"Producto digital")+'" loading="lazy" decoding="async" width="560" height="180" onerror="'+fallback+'"></div>';
+ if(!isFreeFire&&providerImageIsSafe(p.provider_image_url)){const localFallback=isMobileLegends?"./assets/games/mlbb-diamonds.svg":"./assets/product-diamonds.svg";return '<div class="product-art product-art-provider"><img src="'+clean(p.provider_image_url)+'" alt="'+clean(p.name||"Producto digital")+'" loading="lazy" decoding="async" width="560" height="180" onerror="this.onerror=null;this.src=&quot;'+localFallback+'&quot;"></div>';}
  if(isMobileLegends){
   const category=mobileLegendsCatalogCategory(p);
   const display=mobileLegendsDisplayName(p);
