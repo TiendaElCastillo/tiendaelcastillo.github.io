@@ -1770,7 +1770,7 @@ body{min-width:0}
  #homeGames .tile-meta{font-size:9px}
 }
 </style>
-<link rel="preload" as="image" href="./assets/games/free-fire-tienda.webp?v=2" type="image/webp"><link rel="preload" as="image" href="./assets/games/mobile-legends-bang-bang.webp?v=2" type="image/webp"><link rel="preload" as="image" href="https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg" type="image/webp">
+<link rel="preload" as="image" href="./assets/games/free-fire-tienda.webp?v=2" type="image/webp"><link rel="preload" as="image" href="./assets/games/mobile-legends-bang-bang.webp?v=2" type="image/webp"><link rel="preload" as="image" href="./assets/games/blood-strike-cover.webp?v=1" type="image/webp">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -2082,7 +2082,7 @@ function loadCastleTurnstile(){
 }
 const STORE_SUPABASE_URL="https://kfllglkfncebpknnugnx.supabase.co";
 const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtmbGxnbGtmbmNlYnBrbm51Z254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3Mjg5MTMsImV4cCI6MjEwOTMwNDkxM30.9lyiZC57tJuSRN6ReLkZZVsedJzl0kVxlhxUX90cE6g";
-let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, checkoutPaymentMethodPrevious="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"BNB Smart Chain (BEP20)",usdt_address:"0x30d000d6B30f241986186BfFeCa8A449E5790C1D"}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
+let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"BNB Smart Chain (BEP20)",usdt_address:"0x30d000d6B30f241986186BfFeCa8A449E5790C1D"}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
 
 const $=id=>document.getElementById(id);
 const clean=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -2153,12 +2153,37 @@ async function start(url,key){
   window.castleAuthSubscription=authListener?.data?.subscription||null;
   const {data}=await db.auth.getSession();
   if(data.session) await openStore(data.session.user);
-  else { currentUser=null; currentProfile=null; $("siteHeader").classList.add("hidden"); $("store").classList.add("hidden"); $("bottomNav").classList.add("hidden"); $("auth").classList.remove("hidden"); setAuthMode("login"); }
+  else { await openPublicStore(); }
  }catch(e){$("siteHeader").classList.add("hidden");$("store").classList.add("hidden");$("bottomNav").classList.add("hidden");$("authmsg").textContent="No pudimos conectar con la tienda. Comprueba tu conexión e inténtalo de nuevo.";$("auth").classList.remove("hidden");setAuthMode("login");}
 
  finally{setTimeout(()=>{$("brandLoader")?.classList.add("done")},900)}
 }
 
+async function openPublicStore(){
+ currentUser=null;
+ currentProfile=null;
+ $("adminNav")?.classList.add("hidden");
+ $("admin")?.classList.add("hidden");
+ $("notificationsButton")?.classList.add("hidden");
+ $("siteHeader").classList.remove("hidden");
+ $("auth").classList.add("hidden");
+ $("store").classList.remove("hidden");
+ $("bottomNav").classList.remove("hidden");
+ showView("home");
+ try{await loadPaymentMethods({render:false});}
+ catch(error){
+  const message="No se pudieron consultar los métodos de pago: "+clean(error?.message||error);
+  const choices=$("gamePaymentChoices");if(choices)choices.innerHTML='<p class="empty-note">'+message+'</p>';
+ }
+ try{await loadProducts();}
+ catch(error){
+  const message="No se pudo cargar el catálogo: "+clean(error?.message||error);
+  const box=$("gamesProducts");if(box)box.innerHTML='<p class="empty-note">'+message+'</p>';
+ }
+ try{renderProductCatalogs();}
+ catch(error){console.error("No se pudo mostrar el catálogo público:",error);}
+ showView("home");
+}
 async function register(){
  const email=$("email").value.trim().toLowerCase();
  const password=$("password").value;
@@ -2405,12 +2430,16 @@ async function openStore(user){
   try{await loadPricingSettings();}catch(pricingError){const msg=$("pricingSettingsMsg");if(msg)msg.textContent="No se pudieron cargar las reglas: "+clean(pricingError.message||pricingError);}
   try{await loadLatestCentralOneCatalog();}catch(catalogError){const msg=$("centralOneCatalogMsg");if(msg)msg.textContent="No se pudo cargar el último catálogo: "+clean(catalogError.message||catalogError);}
  }else stopAdminPaymentPolling();
- if(pendingCheckoutAfterLogin){pendingCheckoutAfterLogin=false;showView("checkout");}else showView("home");
+ if(pendingCheckoutAfterLogin&&pendingCheckoutProductId){
+  const productId=pendingCheckoutProductId,preferredMethod=pendingCheckoutPaymentMethod;
+  pendingCheckoutAfterLogin=false;pendingCheckoutProductId="";pendingCheckoutPaymentMethod="";
+  if(!openCheckout(productId,preferredMethod))showView("home");
+ }else{pendingCheckoutAfterLogin=false;pendingCheckoutProductId="";pendingCheckoutPaymentMethod="";showView("home");}
 }
 
 const gameCatalog=[
  {name:"Free Fire",icon:"🔥",art:"fire",tag:"Battle Royale",image:"./assets/games/free-fire-tienda.webp?v=2",fallbackImage:"./assets/games/free-fire.webp?v=2",match:["free fire"]},
- {name:"Blood Strike",icon:"🎯",art:"strike",tag:"Shooter",image:"https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg",fallbackImage:"https://www.blood-strike.com/pc/gw/20230718104343/img/page5-img1_67d1663.jpg",match:["blood strike"]},
+ {name:"Blood Strike",icon:"🎯",art:"strike",tag:"Shooter",image:"./assets/games/blood-strike-cover.webp?v=1",fallbackImage:"https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg",match:["blood strike"]},
  {name:"Mobile Legends: Bang Bang",icon:"⚔️",art:"mobile",tag:"MOBA",image:"./assets/games/mobile-legends-bang-bang.webp?v=2",match:["mobile legends"]},
  {name:"Arena Breakout",icon:"🛡️",art:"arena",tag:"Shooter",match:["arena breakout"]},
  {name:"Honor of Kings",icon:"👑",art:"honor",tag:"MOBA",match:["honor of kings"]},
@@ -2530,8 +2559,9 @@ function packageQuantity(p,item){const meta=gameCurrency(item);const amount=Numb
 function isPaymentMethodReady(name){
  if(name==="Saldo de Tienda El Castillo")return Boolean(currentUser);
  if(typeof paymentMethods==="undefined")return false;
- const item=paymentMethods.find(row=>row.name===name&&row.active===true&&String(row.instructions||"").trim().length>0);
+ const item=paymentMethods.find(row=>row.name===name&&row.active===true&&(!currentUser?row.publicConfigured===true:String(row.instructions||"").trim().length>0));
  if(!item)return false;
+ if(!currentUser)return true;
  const raw=String(item.instructions||"").replace(/\s+/g," ");
  if(name==="Transferencia CUP"){
   const card=raw.match(/tarjeta\s*:?\s*([0-9][0-9\s-]{8,})/i)?.[1]||"";
@@ -2720,7 +2750,7 @@ function bloodStrikeArtworkUrl(product){
  if(/attack[ -]?on[ -]?titan/.test(name))return "https://r.res.easebar.com/pic/20260727/8ffc7d3e-8437-417b-9252-64f9086ec54e.jpeg";
  if(/\benzo\b|\bmaestro\b/.test(name))return "https://r.res.easebar.com/pic/20260604/edd23aed-c240-45cd-80a6-760af76f9035.png";
  // Si no hay arte oficial inequívoco del artículo, usamos la portada aprobada del juego.
- return "https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg";
+ return "./assets/games/blood-strike-cover.webp?v=1";
 }
 function bloodStrikeCategory(product){
  const name=fold(String(product?.name||""));
@@ -2747,10 +2777,12 @@ function bloodStrikeCategoryLabel(product){
  return "ESPECIAL";
 }
 function isBloodStrikeCatalogProduct(product){
- return fold(product?.game||"")==="blood strike"&&product.active===true&&product.storefront_visible===true&&
+ const publiclyAvailable=fold(product?.game||"")==="blood strike"&&product.active===true&&product.storefront_visible===true&&
   String(product.provider_region||"").trim().toUpperCase()==="GLOBAL"&&
-  String(product.provider_status||"").trim().toLowerCase()==="active"&&product.provider_in_stock===true&&
-  product.provider_requires_target===true&&product.provider_validation_supported===true&&
+  String(product.provider_status||"").trim().toLowerCase()==="active"&&product.provider_in_stock===true;
+ if(!publiclyAvailable)return false;
+ if(!currentUser)return true;
+ return product.provider_requires_target===true&&product.provider_validation_supported===true&&
   Boolean(product.provider_product_id)&&providerPlayerTargetConfig(product).ok;
 }
 
@@ -2762,7 +2794,7 @@ function productArtwork(p){
  if(isBloodStrike){
   const image=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
   const title=bloodStrikeDisplayName(p);
-  const fallbackImage="https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg";
+  const fallbackImage="./assets/games/blood-strike-cover.webp?v=1";
   return '<div class="product-art product-art-blood-strike"><img src="'+clean(image)+'" alt="Blood Strike · '+clean(title)+'" loading="lazy" decoding="async" width="560" height="180" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;'+fallbackImage+'&quot;"><span class="product-art-caption">'+clean(title)+'</span></div>';
  }
  if(!isFreeFire&&providerImageIsSafe(p.provider_image_url))return '<div class="product-art product-art-provider"><img src="'+clean(p.provider_image_url)+'" alt="'+clean(p.name||"Producto digital")+'" loading="lazy" decoding="async" width="560" height="180" onerror="'+fallback+'"></div>';
@@ -2801,7 +2833,7 @@ function productArtwork(p){
 function productCard(p){
  const options=[["CUP",p.price_transfer,"CUP","Transferencia CUP"],["Saldo",p.price_mobile,"saldo","Saldo móvil"],["USDT",p.price_usdt,"USDT","USDT"]].filter(item=>Number(item[1])>0&&isPaymentMethodReady(item[3]));
  const prices=options.length?options.map(item=>'<div class="price-option"><small>'+item[0]+'</small><strong>'+money(item[1])+' '+item[2]+'</strong></div>').join(""):'<div class="price-option"><small>Precio</small><strong>Por confirmar</strong></div>';
- const regionTag=p.provider_product_id?'<span class="provider-region-tag">'+(fold(p.game||"").includes("mobile legends")||fold(p.game||"").includes("blood strike")?"Región ":"Servidor ")+clean(p.provider_region||"")+'</span>':"";return '<article class="catalog-product catalog-product-clickable" data-product-id="'+clean(p.id)+'"><div class="product-head"><span class="product-game">'+clean(p.game)+'</span><span class="product-badge"><span aria-hidden="true">✓</span> Disponible</span></div>'+regionTag+productArtwork(p)+'<h3>'+clean(p.name)+'</h3><p>'+clean(p.description||"Recarga digital por ID. Disponibilidad sujeta a confirmación.")+'</p><div class="product-prices">'+prices+'</div><button class="primary-btn block-btn" type="button" onclick="openCheckout(\''+clean(p.id)+'\')">Elegir paquete <span aria-hidden="true">→</span></button></article>';
+ const regionTag=p.provider_region?'<span class="provider-region-tag">'+(fold(p.game||"").includes("mobile legends")||fold(p.game||"").includes("blood strike")?"Región ":"Servidor ")+clean(p.provider_region||"")+'</span>':"";return '<article class="catalog-product catalog-product-clickable" data-product-id="'+clean(p.id)+'"><div class="product-head"><span class="product-game">'+clean(p.game)+'</span><span class="product-badge"><span aria-hidden="true">✓</span> Disponible</span></div>'+regionTag+productArtwork(p)+'<h3>'+clean(p.name)+'</h3><p>'+clean(p.description||"Recarga digital por ID. Disponibilidad sujeta a confirmación.")+'</p><div class="product-prices">'+prices+'</div><button class="primary-btn block-btn" type="button" onclick="openCheckout(\''+clean(p.id)+'\')">Elegir paquete <span aria-hidden="true">→</span></button></article>';
 }
 function availableFor(item){if(fold(item.name)==="blood strike")return products.filter(isBloodStrikeCatalogProduct);const words=item.match||[fold(item.name)];return products.filter(p=>{if(!isGlobalMobileLegendsProduct(p)||!isStorefrontVisibleProduct(p))return false;if(item.kind==="gift"&&!isGiftCard(p))return false;if(item.kind!=="gift"&&(isGiftCard(p)||isFreeFireLevelUpPackage(p)))return false;const label=fold(String(p.game||"")+" "+String(p.name||""));return words.some(w=>label.includes(fold(w)))})}
 function gameTile(item,homePreview=false){
@@ -3030,7 +3062,15 @@ function chooseCheckoutPaymentMethod(name){
 }
 function showView(name){
  if(name==="giftcards")name="games";
- if(!currentUser&&!["faq","privacy","terms"].includes(name)){openAccount();$("authmsg").textContent="Inicia sesión o crea una cuenta gratis para ver los paquetes, consultar los precios y realizar tus compras.";return}
+ if(!currentUser&&!["home","games","search","faq","privacy","terms"].includes(name)){
+  if(name==="checkout"){
+   const selectedProduct=$("product")?.value||"";
+   if(selectedProduct){pendingCheckoutAfterLogin=true;pendingCheckoutProductId=selectedProduct;pendingCheckoutPaymentMethod=$("payment")?.value||"";}
+  }
+  openAccount();
+  $("authmsg").textContent=name==="checkout"?"Inicia sesión para verificar tu cuenta de juego y completar el pedido.":"Inicia sesión para acceder a tu cuenta y consultar tus pedidos.";
+  return;
+ }
  if(name==="admin"&&currentProfile?.role!=="admin"){$("adminNav")?.classList.add("hidden");$("admin")?.classList.add("hidden");showView("profile");return}
  const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",profile:"profileView",admin:"admin",faq:"faqView",privacy:"privacyView",terms:"termsView"};
  Object.values(views).forEach(id=>$(id)?.classList.add("hidden"));
@@ -3282,6 +3322,14 @@ function openCheckout(productId,preferredMethod){
   const status=$("gamePlansSubtitle");if(status)status.textContent=message;
   return false;
  }
+ if(!currentUser){
+  pendingCheckoutAfterLogin=true;
+  pendingCheckoutProductId=String(p.id);
+  pendingCheckoutPaymentMethod=preferredMethod||"";
+  openAccount();
+  $("authmsg").textContent="Inicia sesión para verificar tu cuenta de juego y completar la compra. Conservaremos el paquete que elegiste.";
+  return true;
+ }
  const productField=$("product");
  if(!productField){console.error("openCheckout: checkout form not found");return false;}
  resetPlayerValidation();
@@ -3357,7 +3405,9 @@ function updateCheckoutSummary(){
 async function loadPaymentMethods(options={}){
  let result;
  try{
-  result=await db.from("payment_methods").select("id,name,instructions,active").order("name");
+  result= currentUser
+   ? await db.from("payment_methods").select("id,name,instructions,active").order("name")
+   : await db.from("payment_methods").select("name,active").order("name");
  }catch(error){
   paymentMethods=[];
   const message="No se pudieron consultar los métodos de pago: "+(error?.message||String(error));paymentLoadError=message;
@@ -3378,7 +3428,7 @@ async function loadPaymentMethods(options={}){
   window.updateCheckoutSubmitState?.();
   throw new Error(message);
  }
- paymentMethods=(result.data||[]).filter(item=>item.active===true&&String(item.instructions||"").trim().length>0 || currentProfile?.role==="admin");paymentLoadError=null;
+ paymentMethods=(result.data||[]).filter(item=>item.active===true&&(!currentUser||String(item.instructions||"").trim().length>0) || currentProfile?.role==="admin").map(item=>currentUser?item:{...item,instructions:"",publicConfigured:true});paymentLoadError=null;
  if(currentProfile?.role==="admin")renderPaymentMethodAdmin();
  if(options.render!==false){
   try{updateCheckoutSummary();renderProductCatalogs();}
@@ -3509,7 +3559,10 @@ async function togglePaymentMethod(id,active){
 }
 async function loadProducts(){
  try{
-  const {data,error}=await db.from("products").select("id,game,name,description,amount,price_transfer,price_mobile,price_usdt,active,storefront_visible,provider_product_id,provider_region,provider_validation_supported,provider_image_url,provider_target_fields,provider_target_schema,provider_requires_target,provider_status,provider_in_stock").eq("active",true).eq("storefront_visible",true).order("name");
+  const productColumns=currentUser
+    ?"id,game,name,description,amount,price_transfer,price_mobile,price_usdt,active,storefront_visible,provider_product_id,provider_region,provider_validation_supported,provider_image_url,provider_target_fields,provider_target_schema,provider_requires_target,provider_status,provider_in_stock"
+    :"id,game,name,description,amount,price_transfer,price_mobile,price_usdt,active,storefront_visible,provider_region,provider_image_url,provider_status,provider_in_stock";
+   const {data,error}=await db.from("products").select(productColumns).eq("active",true).eq("storefront_visible",true).order("name");
   if(error){
    products=[];
    const message="No se pudo cargar el catálogo: "+error.message;
@@ -3520,7 +3573,7 @@ async function loadProducts(){
   }
   products=(data||[]).filter(p=>isGlobalMobileLegendsProduct(p)&&isStorefrontVisibleProduct(p));
   $("product").innerHTML=products.map(p=>'<option value="'+clean(p.id)+'">'+clean(p.game)+' - '+clean(p.name)+'</option>').join("");
-  try{renderProductCatalogs();updateCheckoutSummary();}
+  try{renderProductCatalogs();if(currentUser)updateCheckoutSummary();}
   catch(renderError){
    console.error("Error al representar productos:",renderError);
    $("gamesProducts").innerHTML='<p class="empty-note">Los productos llegaron desde Supabase, pero ocurrió un error al mostrarlos: '+clean(renderError.message||renderError)+'</p>';
