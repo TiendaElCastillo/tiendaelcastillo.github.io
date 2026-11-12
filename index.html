@@ -1774,15 +1774,15 @@ body{min-width:0}
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
-<header id="siteHeader" class="site-header hidden"><div class="header-inner"><a class="brand" href="./" aria-label="Tienda El Castillo, inicio"><img class="brand-logo" src="./assets/castle-logo.webp" alt="Logo de Tienda El Castillo" width="42" height="42"><span class="brand-name"><strong>Tienda El Castillo</strong><span>Recargas digitales</span></span></a><div class="header-actions"><button class="header-btn notification-header-btn hidden" id="notificationsButton" type="button" onclick="openNotificationCenter()" aria-label="Mensajes y notificaciones"><span aria-hidden="true">✉</span><span class="notification-label">Mensajes</span><i id="notificationBadge" class="notification-badge hidden" aria-hidden="true"></i></button><button class="header-btn" type="button" onclick="currentUser?showView('profile'):openAccount()">Mi cuenta</button><button class="header-btn primary hidden" id="adminNav" type="button" onclick="showView('admin')">Admin</button></div></div></header>
+<header id="siteHeader" class="site-header"><div class="header-inner"><a class="brand" href="./" aria-label="Tienda El Castillo, inicio"><img class="brand-logo" src="./assets/castle-logo.webp" alt="Logo de Tienda El Castillo" width="42" height="42"><span class="brand-name"><strong>Tienda El Castillo</strong><span>Recargas digitales</span></span></a><div class="header-actions"><button class="header-btn notification-header-btn hidden" id="notificationsButton" type="button" onclick="openNotificationCenter()" aria-label="Mensajes y notificaciones"><span aria-hidden="true">✉</span><span class="notification-label">Mensajes</span><i id="notificationBadge" class="notification-badge hidden" aria-hidden="true"></i></button><button class="header-btn" type="button" onclick="currentUser?showView('profile'):openAccount()">Mi cuenta</button><button class="header-btn primary hidden" id="adminNav" type="button" onclick="showView('admin')">Admin</button></div></div></header>
 <main id="appMain">
 <section id="setup" class="hidden"><input id="url"><input id="key"><button onclick="connect()">Conectar</button></section>
-<section id="auth" class="auth-layout auth-showcase-layout">
+<section id="auth" class="auth-layout auth-showcase-layout hidden">
  <div class="auth-showcase">
   <div class="auth-showcase-copy">
    <span class="eyebrow">♛ TIENDA EL CASTILLO · RECARGAS DIGITALES</span>
    <h1>Recargas de juegos desde Cuba</h1>
-   <p>En Tienda El Castillo puedes consultar recargas de Free Fire, Mobile Legends: Bang Bang y Blood Strike GLOBAL. Accede a tu cuenta para ver los paquetes, conocer los precios y realizar tu recarga desde el teléfono.</p>
+   <p>Explora los tres juegos, compara paquetes y precios. Solo necesitarás iniciar sesión al elegir un paquete para verificar tu ID y completar la compra.</p>
   </div>
   <div class="auth-showcase-games" aria-label="Juegos con servicios disponibles">
    <article class="auth-game-card">
@@ -1794,7 +1794,7 @@ body{min-width:0}
     <div class="auth-game-info"><div><strong>Mobile Legends: Bang Bang</strong><span>Diamantes, pases y membresías · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
    <article class="auth-game-card">
-    <div class="auth-game-art"><img src="https://www.blood-strike.com/pc/gw/20231031104024/img/page5-img5_5c09c26.jpg" data-fallback="https://www.blood-strike.com/pc/gw/20230718104343/img/page5-img1_67d1663.jpg" alt="Arte de Blood Strike" width="640" height="360" loading="eager" fetchpriority="low" decoding="async" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.remove();this.parentElement.classList.add('image-unavailable')}"></div>
+    <div class="auth-game-art"><img src="./assets/games/blood-strike-cover.webp?v=1" data-fallback="./assets/games/blood-strike-cover.webp?v=1" alt="Arte de Blood Strike" width="640" height="360" loading="eager" fetchpriority="low" decoding="async" onerror="if(this.dataset.fallback&&this.src!==this.dataset.fallback){this.src=this.dataset.fallback}else{this.remove();this.parentElement.classList.add('image-unavailable')}"></div>
     <div class="auth-game-info"><div><strong>Blood Strike</strong><span>BC, ofertas y pases · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
   </div>
@@ -1831,7 +1831,7 @@ body{min-width:0}
   <p class="auth-help">¿Necesitas ayuda? <a href="#ayuda" onclick="openPublicInfo('faq');return false">Preguntas frecuentes</a> · <a href="https://wa.me/5351884050" target="_blank" rel="noopener noreferrer">WhatsApp +53 51884050 (solo incidencias que no puedas resolver desde la tienda)</a></p>
  </div>
 </section>
-<section id="store" class="hidden">
+<section id="store">
  <div class="promo-strip castle-promo-strip"><span><span class="promo-crown" aria-hidden="true">♛</span> <strong>RECARGAS PARA CUBA</strong> · Free Fire, MLBB y Blood Strike GLOBAL</span><span class="promo-live"><i></i> 3 juegos disponibles</span></div>
  <div class="top-search"><div class="search-wrap"><input class="search-input" id="productSearch" type="search" aria-label="Buscar juegos y paquetes" aria-controls="searchProducts" autocomplete="off" placeholder="Busca Free Fire, MLBB, Blood Strike, BC, pases..." onfocus="showView('search')" oninput="renderSearchProducts()"><button class="search-clear" id="clearProductSearch" type="button" aria-label="Borrar búsqueda" title="Borrar búsqueda" hidden onclick="clearProductSearch()">×</button></div></div>
  <section id="homeView" class="store-view">
@@ -1842,7 +1842,7 @@ body{min-width:0}
  </div>
  <div class="section castle-games-section">
   <div class="section-head"><div><h2>Elige tu juego</h2><p>Solo mostramos juegos con recargas disponibles.</p></div></div>
-  <div id="homeGames" class="catalog-grid"></div>
+  <div id="homeGames" class="catalog-grid"><p class="empty-note">Conectando con el catálogo de Free Fire, Mobile Legends y Blood Strike…</p></div>
  </div>
  <div class="home-access-note"><strong>Tu tienda, desde el teléfono.</strong><span>Para ver paquetes y precios, entra en el juego que quieres recargar. No necesitas compartir la contraseña de tu cuenta de juego.</span></div>
 </section>
@@ -2026,7 +2026,7 @@ body{min-width:0}
 <footer class="site-footer"><div class="footer-brand"><img src="./assets/castle-logo.webp" alt="" width="42" height="42"><div><strong>Tienda El Castillo</strong><span>Recargas digitales con atención personalizada</span></div></div><div class="footer-columns"><div><strong>Tu compra</strong><a href="#catalogo" onclick="showView('games');return false">Catálogo Free Fire</a><span>Transferencia CUP y saldo móvil</span><a href="#pedidos" onclick="currentUser?showView('orders'):openAccount();return false">Seguimiento de pedidos</a></div><div><strong>Ayuda e información</strong><a href="#ayuda" onclick="showView('faq');return false">Preguntas frecuentes</a><a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a><a href="#condiciones" onclick="showView('terms');return false">Términos de compra</a><a href="./recargar-free-fire-cuba.html">Guía de recarga</a><a class="footer-whatsapp" href="https://wa.me/5351884050" target="_blank" rel="noopener noreferrer">Soporte WhatsApp · solo cuando sea necesario: +53 51884050</a></div></div><p class="footer-legal">Tienda El Castillo es un servicio independiente. No está afiliada ni respaldada por Garena. Las marcas y juegos pertenecen a sus respectivos propietarios.</p></footer>
 </section>
 </main>
-<nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
+<nav id="bottomNav" class="bottom-nav" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
 <script>
 window.onCastleCaptchaSuccess=function(token){window.castleCaptchaToken=token;const m=document.getElementById("authmsg");if(m&&m.textContent.includes("CAPTCHA"))m.textContent="";};
 window.onCastleCaptchaExpired=function(){window.castleCaptchaToken=null;};
@@ -2119,7 +2119,7 @@ async function bootstrapCastleStore(){
  $("authmsg").textContent="Conectando con la tienda. En redes lentas puede tardar un poco; no cierres esta página.";
  const ready=await loadCastleSupabaseSdk();
  if(!ready){
-  $("authmsg").textContent="No se pudo descargar el módulo de conexión. Comprueba la señal y pulsa «Reintentar conexión».";
+  $("auth").classList.remove("hidden"); $("authmsg").textContent="No se pudo descargar el módulo de conexión. Comprueba la señal y pulsa «Reintentar conexión».";
   if(button){button.disabled=false;button.textContent="Reintentar conexión";button.onclick=bootstrapCastleStore;}
   $("brandLoader")?.classList.add("done");
   return;
@@ -2484,9 +2484,11 @@ function mobileLegendsCatalogCategory(product){
  if(fold(product?.game||"")!=="mobile legends: bang bang")return null;
  if(String(product?.provider_region||"").trim().toUpperCase()!=="GLOBAL")return null;
  if(String(product?.provider_status||"").trim().toLowerCase()!=="active"||product?.provider_in_stock!==true)return null;
- if(product?.provider_validation_supported!==true||product?.provider_requires_target!==true||!product?.provider_product_id)return null;
- const fields=Array.isArray(product?.provider_target_fields)?product.provider_target_fields.map(value=>String(value).toLowerCase()):[];
- if(!fields.includes("game_user_id")||!fields.includes("game_zone_id"))return null;
+ if(currentUser){
+  if(product?.provider_validation_supported!==true||product?.provider_requires_target!==true||!product?.provider_product_id)return null;
+  const fields=Array.isArray(product?.provider_target_fields)?product.provider_target_fields.map(value=>String(value).toLowerCase()):[];
+  if(!fields.includes("game_user_id")||!fields.includes("game_zone_id"))return null;
+ }
  const name=fold(product?.name||"").trim();
  if(Object.prototype.hasOwnProperty.call(mobileLegendsExtraCategories,name))return mobileLegendsExtraCategories[name];
  const diamond=name.match(/^mobile legends · (\d+) diamantes$/);
