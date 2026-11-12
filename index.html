@@ -1795,7 +1795,7 @@ body{min-width:0}
     <div class="auth-game-info"><div><strong>Mobile Legends: Bang Bang</strong><span>Diamantes, pases y membresías · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
    <article class="auth-game-card">
-    <div class="auth-game-art"><img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3199170/eeab00314314192f57bbdf91b91f8b871f890ce5/capsule_616x353.jpg?t=1793072025" alt="Arte oficial de Blood Strike" width="640" height="360" loading="lazy" fetchpriority="low" decoding="async" referrerpolicy="no-referrer" data-fallback="https://www.blood-strike.com/pc/gw/20240716155822/data/com_share.jpg" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=''}else{this.onerror=null;this.remove();this.parentElement.classList.add('image-unavailable')}"></div>
+    <div class="auth-game-art"><img src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3199170/eeab00314314192f57bbdf91b91f8b871f890ce5/capsule_616x353.jpg?t=1793072025" alt="Arte oficial de Blood Strike" width="640" height="360" loading="lazy" fetchpriority="low" decoding="async" referrerpolicy="no-referrer" data-fallback="https://www.blood-strike.com/pc/gw/20240716155822/data/com_share.jpg" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=&quot;&quot;}else{this.onerror=null;this.remove();this.parentElement.classList.add('image-unavailable')}"></div>
     <div class="auth-game-info"><div><strong>Blood Strike</strong><span>BC, ofertas y pases · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
   </div>
@@ -2557,7 +2557,7 @@ function freeFirePlanIcon(p,item){
  if(fold(item?.name||"")==="blood strike"){
   const src=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
   const fallbackImage=src.includes("shared.fastly.steamstatic.com")?"https://www.blood-strike.com/pc/gw/20240716155822/data/com_share.jpg":"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3199170/eeab00314314192f57bbdf91b91f8b871f890ce5/capsule_616x353.jpg?t=1793072025";
-  return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" data-fallback="'+fallbackImage+'" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=''}else{this.onerror=null;this.remove()}">';
+  return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" data-fallback="'+fallbackImage+'" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=&quot;&quot;}else{this.onerror=null;this.remove()}">';
  }
  if(fold(item?.name||"")==="mobile legends: bang bang"){
   const category=mobileLegendsCatalogCategory(p);
@@ -2768,7 +2768,7 @@ function productArtwork(p){
   const image=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
   const title=bloodStrikeDisplayName(p);
   const fallbackImage=image.includes("shared.fastly.steamstatic.com")?"https://www.blood-strike.com/pc/gw/20240716155822/data/com_share.jpg":"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3199170/eeab00314314192f57bbdf91b91f8b871f890ce5/capsule_616x353.jpg?t=1793072025";
-  return '<div class="product-art product-art-blood-strike"><img src="'+clean(image)+'" alt="Blood Strike · '+clean(title)+'" loading="lazy" decoding="async" width="560" height="180" referrerpolicy="no-referrer" data-fallback="'+fallbackImage+'" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=''}else{this.onerror=null;this.remove()}"><span class="product-art-caption">'+clean(title)+'</span></div>';
+  return '<div class="product-art product-art-blood-strike"><img src="'+clean(image)+'" alt="Blood Strike · '+clean(title)+'" loading="lazy" decoding="async" width="560" height="180" referrerpolicy="no-referrer" data-fallback="'+fallbackImage+'" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=&quot;&quot;}else{this.onerror=null;this.remove()}"><span class="product-art-caption">'+clean(title)+'</span></div>';
  }
  if(!isFreeFire&&providerImageIsSafe(p.provider_image_url)){const localFallback=isMobileLegends?"./assets/games/mlbb-diamonds.svg":"./assets/product-diamonds.svg";return '<div class="product-art product-art-provider"><img src="'+clean(p.provider_image_url)+'" alt="'+clean(p.name||"Producto digital")+'" loading="lazy" decoding="async" width="560" height="180" onerror="this.onerror=null;this.src=&quot;'+localFallback+'&quot;"></div>';}
  if(isMobileLegends){
