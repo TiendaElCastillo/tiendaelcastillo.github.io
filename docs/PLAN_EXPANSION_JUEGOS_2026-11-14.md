@@ -125,3 +125,11 @@ La copia completa del catálogo encontrada es del 9 de noviembre, así que se ne
 - No se ejecutaron pedidos ni pruebas que gastaran saldo de Central One.
 - No se cambió la billetera ni sus tasas.
 - Este documento registra una auditoría y un plan; no significa que los juegos nuevos ya estén integrados o publicados.
+
+## Actualización de auditoría — 14 de noviembre de 2026, 22:15 UTC
+
+Se desplegó el importador genérico con una regla más estricta: solo recargas GLOBAL/LATAM que usen un único ID de jugador sin credenciales y estén presentes en la cobertura de validación de Central One. Se preservan los paquetes publicados de Free Fire, Blood Strike y Mobile Legends.
+
+La primera sincronización posterior al despliegue confirmó 56 productos nuevos: 29 de PUBG Mobile GLOBAL y 27 de Arena Breakout GLOBAL. Los 56 quedaron activos, visibles, con stock y cobertura de validación. Todos tienen precios positivos para Transferencia CUP, Saldo móvil y USDT; el checkout también usa el precio USDT para la billetera interna. La revisión y autorización administrativa de pedidos se conserva.
+
+No se han realizado compras reales de prueba de los dos juegos nuevos ni se ha verificado visualmente GitHub Pages en un navegador. Los juegos restantes del catálogo histórico no se activarán hasta que Central One incluya sus productos en la cobertura de validación y cumplan el esquema sin credenciales. El detalle de la auditoría y las verificaciones está en `docs/AUDITORIA_GLOBAL_LATAM_ID_2026-11-14.md`.
