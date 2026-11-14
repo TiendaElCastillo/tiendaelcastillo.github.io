@@ -7,6 +7,8 @@
 
 La billetera prepaga es parte central del modelo comercial de Tienda El Castillo. No debe desactivarse ni eliminarse. Permite que el cliente adelante CUP, reciba saldo interno en USD y pague recargas de juegos sin volver a transferir por cada pedido.
 
+La tasa oficial tiene una sola fuente de verdad: `pricing_settings.usdt_cup_rate`. Un disparador de base de datos sincroniza esa tasa con `wallet_settings.cup_per_usd`; el campo de tasa visible en el apartado de billetera del panel administrativo actualiza la tasa central, no una copia independiente.
+
 La billetera de la tienda es un libro contable interno; no es una cuenta bancaria ni una wallet on-chain. El saldo mostrado representa una obligación de Tienda El Castillo frente al cliente.
 
 ## Flujo de depósito en CUP
