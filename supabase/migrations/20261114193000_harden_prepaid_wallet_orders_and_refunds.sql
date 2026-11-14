@@ -131,6 +131,7 @@ declare
   v_order public.orders%rowtype;
   v_purchase public.wallet_transactions%rowtype;
   v_refund public.wallet_transactions%rowtype;
+  v_provider_order_absent boolean := false;
 begin
   if auth.uid() is null or not private.is_admin() then
     raise exception 'Solo un administrador puede gestionar esta devolución.';
@@ -174,14 +175,29 @@ begin
     );
   end if;
 
-  if v_order.status <> 'processing'
-     or v_order.central_one_order_id is not null
-     or v_order.central_one_reference_code is not null
-     or v_order.central_one_request_id is not null
-     or v_order.central_one_status <> 'retryable'
-     or coalesce(v_order.central_one_response->>'preflight', '') <> 'blocked'
-     or coalesce(v_order.central_one_response->>'no_provider_order_created', 'false') <> 'true' then
-    raise exception 'Este pedido no demuestra que Central One haya bloqueado la operación antes de crear una orden. No se realizó ninguna devolución.';
+  v_provider_order_absent :=
+    v_order.central_one_order_id is null
+    and v_order.central_one_reference_code is null
+    and (
+      (
+        v_order.central_one_status = 'not_submitted'
+        and v_order.central_one_request_id is null
+        and v_order.central_one_submitted_at is null
+      )
+      or (
+        v_order.central_one_status = 'retryable'
+        and v_order.central_one_request_id is null
+        and coalesce(v_order.central_one_response->>'preflight', '') = 'blocked'
+        and coalesce(v_order.central_one_response->>'no_provider_order_created', 'false') = 'true'
+      )
+      or (
+        v_order.central_one_status = 'rejected'
+        and coalesce(v_order.central_one_response->>'no_provider_order_created', 'false') = 'true'
+      )
+    );
+
+  if v_order.status <> 'processing' or not v_provider_order_absent then
+    raise exception 'Este pedido no demuestra que Central One haya dejado la operación sin orden de proveedor. No se realizó ninguna devolución.';
   end if;
 
   if v_order.payment_source = 'wallet' then
@@ -304,3 +320,7 @@ $function$;
 -- Wallet approvals, purchases, provider-confirmed refunds and this new
 -- preflight refund all write to the existing USD ledger. No customer write
 -- permission is added to wallet_transactions.
+
+ 
+revoke all on function public.admin_cancel_preflight_blocked_order(uuid) from public, anon;
+grant execute on function public.admin_cancel_preflight_blocked_order(uuid) to authenticated;
