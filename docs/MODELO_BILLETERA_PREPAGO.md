@@ -1,7 +1,7 @@
 # Modelo operativo de la billetera prepaga — Tienda El Castillo
 
 **Fecha:** 14 de noviembre de 2026  
-**Estado:** reglas aprobadas por el propietario; base de datos y Edge Function actualizadas, publicación web pendiente de completar.
+**Estado:** reglas aprobadas por el propietario; migración aplicada en Supabase, Edge Function `central-one-order` v21 activa y cambios de interfaz publicados en la rama `main`. La publicación visual de GitHub Pages no se pudo verificar desde este entorno.
 
 ## Propósito
 
