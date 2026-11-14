@@ -65,6 +65,26 @@ Otros juegos aparecen con stock en la copia histórica, pero no están en la cob
 
 Después de corregir el RPC y la política RLS, el Security Advisor ya no muestra los avisos nuevos relacionados con la tabla privada o el wrapper de sincronización. Permanece un aviso anterior de Supabase Auth: la protección frente a contraseñas filtradas está desactivada. No se cambió ese ajuste durante esta tarea.
 
-## Próximo control
+## Resultado de la primera sincronización posterior al despliegue
 
-Consultar `central_one_catalog_sync_status` después de la ejecución programada siguiente y comprobar en `public.products` los productos de PUBG Mobile y Arena Breakout. No declarar estos juegos listos para cobrar hasta verificar que aparecen activos, visibles, con región GLOBAL, proveedor activo, stock, cobertura y esquema ID compatibles.
+La ejecución automática de `central-one-catalog-refresh` del **14 de noviembre de 2026 a las 22:15:08 UTC** terminó correctamente:
+
+- Catálogo consultado: 8.071 productos del proveedor.
+- Cobertura de validación: 506 entradas.
+- Productos nuevos filtrados y guardados: 56.
+- PUBG Mobile GLOBAL: 29 productos activos, visibles, con stock y cobertura.
+- Arena Breakout GLOBAL: 27 productos activos, visibles, con stock y cobertura.
+- Los 56 productos usan el objetivo `game_user_id`.
+- La tabla de control registra 56 productos gestionados por el importador nuevo.
+
+La consulta posterior a Supabase confirmó los 56 productos en `public.products`, todos con `active=true`, `storefront_visible=true`, estado de proveedor activo, stock y `provider_validation_supported=true`. No se creó ningún pedido de prueba ni se registraron movimientos de billetera para esta integración.
+
+## Límites de prueba y publicación
+
+- La sincronización de catálogo y publicación de productos sí quedó comprobada.
+- El esquema ID y la cobertura de validación se comprobaron contra el catálogo y la cobertura que devolvió Central One.
+- No se hizo una recarga real de PUBG Mobile o Arena Breakout, ni se consumió saldo del proveedor.
+- No se ha probado visualmente la web en un navegador después del commit; la disponibilidad visual en GitHub Pages no se declara verificada.
+- Antes de considerar cerrada la integración de cada juego, queda probar una validación de ID con cuenta válida y otra inválida, y completar una compra controlada autorizada por el administrador cuando el propietario lo decida.
+
+La sincronización periódica seguirá comprobando catálogo, cobertura, coste, región y stock. Si el proveedor retira un SKU o deja de cubrir su ID, el importador lo desactiva y lo oculta.
