@@ -4022,12 +4022,16 @@ async function saveWalletSettings(){
  const button=document.querySelector("#admin button[onclick='saveWalletSettings()']");
  if(button){button.disabled=true;button.textContent="Guardando…";}
  try{
-  const result=await db.from("wallet_settings").update({cup_per_usd:rate,updated_at:new Date().toISOString(),updated_by:currentUser.id}).eq("id",1).select("id,cup_per_usd").maybeSingle();
+  // Use pricing_settings as the single source of truth. Its database trigger
+  // synchronizes wallet_settings.cup_per_usd with the same USDT/CUP rate.
+  const result=await db.from("pricing_settings")
+   .update({usdt_cup_rate:rate,updated_at:new Date().toISOString(),updated_by:currentUser.id})
+   .eq("id",1).select("id,usdt_cup_rate").maybeSingle();
   if(result.error)throw new Error(result.error.message);
-  if(!result.data)throw new Error("La tasa no se actualizó. Comprueba tu permiso de administrador y vuelve a cargar.");
-  await loadWalletSettings();
-  $("walletSettingsMsg").textContent="Tasa guardada. Se aplicará solo a los depósitos nuevos; las solicitudes anteriores conservan su conversión.";
- }catch(e){$("walletSettingsMsg").textContent="No se pudo guardar la tasa: "+(e.message||"error de conexión.");}
+  if(!result.data)throw new Error("La tasa central no se actualizó. Comprueba tu permiso de administrador y vuelve a cargar.");
+  await Promise.all([loadPricingSettings(),loadWalletSettings()]);
+  $("walletSettingsMsg").textContent="Tasa oficial guardada y sincronizada con la wallet. Los depósitos anteriores conservan la conversión que tenían al crearse.";
+ }catch(e){$("walletSettingsMsg").textContent="No se pudo guardar la tasa unificada: "+(e.message||"error de conexión.");}
  finally{if(button){button.disabled=false;button.textContent="Guardar tasa";}}
 }
 async function loadWalletData(){
