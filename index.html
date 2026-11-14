@@ -5180,7 +5180,7 @@ async function loadAllOrders(options={}){
    '</div>'+
    providerInfo+priceCheckHtml+safeCancelAction+walletRefundAction+
    (allowed.length?'<div class="order-actions"><select id="'+selectId+'" aria-label="Acción para pedido '+clean(o.order_code)+'">'+options+'</select><button type="button" data-update-order data-order-id="'+clean(o.id)+'" data-select-id="'+selectId+'">'+actionLabel+'</button></div>':"")+
-   providerAction+safeCancelAction+noticeComposer+
+   providerAction+noticeComposer+
    (o.payment_confirmed_at?'<p class="track-note">Pago confirmado: '+new Date(o.payment_confirmed_at).toLocaleString("es-CU")+'</p>':"")+
   '</article>';
  }))).join("");
