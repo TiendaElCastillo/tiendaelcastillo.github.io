@@ -5131,6 +5131,8 @@ async function loadAllOrders(options={}){
     providerInfo+='<p class="track-note"><strong>Billetera devuelta:</strong> se acreditaron '+money(o.central_one_response.wallet_refund.credited_amount)+' '+clean(o.central_one_response.wallet_refund.currency||"USD")+' al cliente. La devolución del proveedor fue confirmada.</p>';
    }else if(o.central_one_response?.external_payment_refund_review?.required===true){
     providerInfo+='<p class="track-note"><strong>Devolución externa pendiente:</strong> Central One confirmó el reembolso al proveedor. Debes devolver manualmente el pago CUP/USDT/saldo móvil del cliente y registrar el comprobante de esa devolución.</p>';
+   }else if(o.payment_source==="wallet"&&["failed","cancelled"].includes(providerStatus)&&o.central_one_response?.wallet_refund?.refunded!==true){
+    providerInfo+='<p class="track-note"><strong>Devolución de billetera en revisión:</strong> el pedido falló o fue cancelado, pero la base de datos todavía no confirma que Central One haya devuelto los fondos. No se ha acreditado saldo al cliente para evitar una devolución duplicada. Comprueba el estado y vuelve a consultar al proveedor.</p>';
    }
   }else if(providerErrorCode==="central_one_insufficient_balance"){
    providerInfo='<p class="track-note"><strong>SALDO INSUFICIENTE EN CENTRAL ONE.</strong> '+clean(o.central_one_error_message||"El proveedor rechazó el pedido por falta de saldo.")+
