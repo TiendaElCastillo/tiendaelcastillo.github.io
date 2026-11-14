@@ -228,7 +228,7 @@ Deno.serve(async (req: Request) => {
         coverageIds.has(String(item.product_id)) &&
         String(item?.product_type || "").toLowerCase() === "game_topup" &&
         ["GLOBAL", "LATAM"].includes(region) &&
-        !/(free[\\s_-]*fire|blood[\\s_-]*strike|mobile[\\s_-]*legends?|\\bmlbb\\b)/i.test(family) &&
+        !/(free[\s_-]*fire|blood[\s_-]*strike|mobile[\s_-]*legends?|\bmlbb\b)/i.test(family) &&
         item?.requires_target === true &&
         ["player_id", "game_user_id"].includes(field) &&
         schemaOk;
