@@ -1989,7 +1989,8 @@ body{min-width:0}
   <article class="faq-item"><h3>¿Cómo contacto con Tienda El Castillo?</h3><p>Escríbenos por WhatsApp al <a href="https://wa.me/5351884050" target="_blank" rel="noopener noreferrer">+53 51884050</a> únicamente para incidencias importantes que no puedas resolver desde tu cuenta, como un pago cobrado que no se refleja o un pedido bloqueado. Para consultar el progreso normal del pedido, revisa «Mis pedidos» y «Mensajes». La atención depende de la disponibilidad del administrador; no hay un horario fijo ni respuesta inmediata garantizada. Ten a mano el folio de tu pedido y nunca compartas la contraseña del juego.</p></article>
   <article class="faq-item"><h3>¿Dónde veo mis pedidos?</h3><p>Inicia sesión y abre «Pedidos» en la navegación inferior. Allí verás el folio, el estado y el avance de cada solicitud.</p></article>
   <article class="faq-item"><h3>¿Qué hago si hice el mismo pago dos veces?</h3><p>No crees un segundo pedido para justificar el pago duplicado. Guarda el folio y los dos comprobantes o referencias de transacción y contacta con soporte. La tienda debe comprobar ambas operaciones antes de registrar una devolución o compensación.</p></article>
-  <article class="faq-item"><h3>¿Cómo funciona la wallet?</h3><p>La wallet es saldo interno para comprar dentro de Tienda El Castillo; no es una cuenta bancaria ni un servicio de retiro de efectivo. Los depósitos se revisan manualmente y el saldo solo está disponible después de que la administración confirme el pago. Un depósito pendiente no puede utilizarse para comprar.</p></article>
+  <article class="faq-item"><h3>¿Cómo funciona la wallet?</h3><p>La wallet es saldo interno para comprar dentro de Tienda El Castillo; no es una cuenta bancaria ni un servicio de retiro de efectivo. Los depósitos se revisan manualmente y el saldo solo está disponible después de que la administración confirme el pago. Un depósito pendiente no puede utilizarse para comprar. El importe se acredita en USD usando la tasa que se muestra al crear la solicitud; por ejemplo, a 1.160 CUP/USD, 1.160 CUP equivalen a 1,00 USD.</p></article>
+  <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con la wallet falla?</h3><p>Si Central One no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el débito original a tu wallet. Si Central One sí creó la orden, el saldo se devuelve cuando el proveedor confirma el reembolso. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de la wallet.</p></article>
   <article class="faq-item"><h3>¿Qué información debo enviar al reclamar?</h3><p>Indica el folio del pedido, el método de pago, la referencia de la operación cuando exista y una captura legible del comprobante. No envíes contraseñas del juego, códigos de acceso, claves bancarias ni frases de recuperación de billeteras.</p></article>
  </div></section>
  <section id="privacyView" class="store-view hidden"><div class="panel policy-panel">
@@ -3962,7 +3963,11 @@ async function loadMyOrders(){
     providerInfo='<p class="track-note">No pudimos completar la recarga. El equipo de Tienda El Castillo está revisando tu pedido y la solución correspondiente. No realices otro pago ni crees otro pedido.</p>';
    }
   }else if(customerProviderError==="admin_cancelled_before_provider"){
-   providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si ya pagaste, conserva el comprobante y contacta con Tienda El Castillo para resolver la devolución.</p>';
+   if(o.payment_source==="wallet"&&customerWalletRefund?.refunded===true){
+    providerInfo='<p class="track-note"><strong>Saldo devuelto a tu billetera:</strong> se acreditaron '+moneyUSD(customerWalletRefund.credited_amount||o.price)+' USD. Puedes comprobar el movimiento en tu historial de la wallet.</p>';
+   }else{
+    providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
+   }
   }else if(customerProviderError){
    providerInfo='<p class="track-note"><strong>Tu pago está registrado.</strong> Existe una demora técnica antes de iniciar la recarga. Tu pedido sigue guardado y el equipo de Tienda El Castillo lo revisará. No vuelvas a pagar ni crees otro pedido.</p>';
   }else if(customerProviderStatus==="unknown"){
