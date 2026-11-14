@@ -4593,7 +4593,7 @@ async function refundWalletPreflightOrder(orderId,orderCode){
  if(currentProfile?.role!=="admin"||!currentUser||!orderId)return;
  const accepted=window.confirm(
   "DEVOLVER SALDO A LA BILLETERA\n\nPedido "+(orderCode||orderId)+
-  "\n\nCentral One bloqueó la operación antes de crear una orden del proveedor. Esta acción cancelará el pedido y devolverá exactamente el débito original a la billetera del cliente.\n\nLa devolución se registra una sola vez y solo está permitida si no existe una orden ni una referencia de Central One.\n\n¿Confirmas la devolución?"
+  "\n\nEste pedido no tiene una orden del proveedor: no se llegó a enviar o Central One confirmó que no la creó. Esta acción cancelará el pedido y devolverá exactamente el débito original a la billetera del cliente.\n\nLos pedidos con resultado incierto o con una orden real de Central One no permiten esta devolución. El movimiento se registra una sola vez.\n\n¿Confirmas la devolución?"
  );
  if(!accepted)return;
  const button=document.querySelector('[data-refund-wallet-preflight][data-order-id="'+CSS.escape(orderId)+'"]');
@@ -5154,8 +5154,11 @@ async function loadAllOrders(options={}){
   }
   const canCancelPreflight=o.status==="processing"&&o.payment_source==="direct"&&!o.payment_confirmed_at&&!o.paid_at&&!o.central_one_order_id&&!o.central_one_reference_code&&!o.central_one_request_id&&providerStatus==="retryable"&&o.central_one_response?.preflight==="blocked";
   const safeCancelAction=canCancelPreflight?'<div class="order-actions order-safe-cancel"><button type="button" data-cancel-preflight-order data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Anular pedido bloqueado</button><small>Fallo anterior al envío; no se descontó saldo. Sin devolución automática.</small></div>':"";
-  const canRefundWalletPreflight=o.status==="processing"&&o.payment_source==="wallet"&&Boolean(o.paid_at)&&!o.central_one_order_id&&!o.central_one_reference_code&&!o.central_one_request_id&&providerStatus==="retryable"&&o.central_one_response?.preflight==="blocked"&&o.central_one_response?.no_provider_order_created===true;
-  const walletRefundAction=canRefundWalletPreflight?'<div class="order-actions order-safe-cancel"><button type="button" data-refund-wallet-preflight data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Devolver saldo a la billetera</button><small>Central One no creó ninguna orden. Se cancelará este pedido y se devolverán '+money(o.price)+' USD una sola vez.</small></div>':"";
+  const walletPreflightWasBlocked=providerStatus==="retryable"&&o.central_one_response?.preflight==="blocked"&&o.central_one_response?.no_provider_order_created===true&&!o.central_one_request_id;
+  const walletRejectedBeforeProvider=providerStatus==="rejected"&&o.central_one_response?.no_provider_order_created===true;
+  const walletNeverSubmitted=providerStatus==="not_submitted"&&!o.central_one_submitted_at&&!o.central_one_request_id;
+  const canRefundWalletNoProvider=o.status==="processing"&&o.payment_source==="wallet"&&Boolean(o.paid_at)&&!o.central_one_order_id&&!o.central_one_reference_code&&(walletNeverSubmitted||walletPreflightWasBlocked||walletRejectedBeforeProvider);
+  const walletRefundAction=canRefundWalletNoProvider?'<div class="order-actions order-safe-cancel"><button type="button" data-refund-wallet-preflight data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Devolver saldo a la billetera</button><small>No existe una orden del proveedor. Se cancelará este pedido y se devolverán '+moneyUSD(o.price)+' USD una sola vez.</small></div>':"";
   const providerAction=canAuthorize
    ?'<div class="order-actions"><button type="button" data-provider-submit data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">'+(providerStatus==="not_submitted"?"Autorizar recarga (usa saldo real)":"Reintentar con la misma clave segura")+'</button></div>'
    :canRefresh
