@@ -5144,7 +5144,10 @@ async function loadAllOrders(options={}){
   }else if(["provider_balance_unreadable","provider_balance_currency_unsupported","provider_balance_unavailable"].includes(providerErrorCode)){
    providerInfo='<p class="track-note"><strong>Comprobación de saldo bloqueada:</strong> '+clean(o.central_one_error_message||providerErrorCode)+'. No se envió la orden. Revisa la respuesta de balance antes de reintentar.</p>';
   }else if(providerErrorCode==="admin_cancelled_before_provider"){
-   providerInfo='<p class="track-note"><strong>Cancelado antes del proveedor:</strong> no se creó una orden de Central One. No hubo devolución automática al cliente.</p>';
+   const walletRefundedBeforeProvider=o.central_one_response?.wallet_refund?.refunded===true;
+   providerInfo=walletRefundedBeforeProvider
+    ?'<p class="track-note"><strong>Cancelado antes del proveedor:</strong> Central One no creó la orden. Se devolvieron '+moneyUSD(o.central_one_response.wallet_refund.credited_amount)+' USD a la billetera del cliente.</p>'
+    :'<p class="track-note"><strong>Cancelado antes del proveedor:</strong> no se creó una orden de Central One. No hubo devolución automática al cliente.</p>';
   }else if(o.central_one_error_message){
    providerInfo='<p class="track-note"><strong>Central One:</strong> '+centralOneStatusText(providerStatus)+' · '+clean(o.central_one_error_message)+'</p>';
   }else if(o.status==="processing"&&!o.player_id_validated){
