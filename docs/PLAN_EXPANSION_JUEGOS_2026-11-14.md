@@ -145,3 +145,14 @@ No se han realizado compras reales de prueba de los dos juegos nuevos ni se ha v
 - Todas las opciones siguen usando el checkout común, los métodos de pago ya habilitados, la validación del ID y la autorización manual del administrador. No se crean pedidos al sincronizar ni se cambia ningún paquete de Free Fire, Blood Strike o Mobile Legends.
 - La edición es de interfaz y recursos visuales; no cambia el esquema, la sincronización ni las reglas de pago del proveedor.
 - Pendiente de verificación visual final desde GitHub Pages en un teléfono. Esta modificación no equivale a una prueba de compra ni de entrega real.
+
+
+## Iconos de monedas y membresías — 15 de noviembre de 2026
+
+- Se conservaron las imágenes principales locales de PUBG Mobile (assets/games/pubg-mobile.webp) y Arena Breakout (assets/games/arena-breakout.webp), ya referenciadas en las tarjetas, el escaparate previo al inicio de sesión y las cabeceras de detalle.
+- Se ajustó freeFirePlanIcon() para que las tarjetas de ofertas de estos juegos usen iconos específicos según el producto, sin modificar nombres, cantidades, precios ni métodos de pago.
+- PUBG Mobile: UC usa el recurso de moneda del catálogo oficial Midasbuy/Tencent (https://cdn.midasbuy.com/images/level4.5662a174.png); WOW Coins usa una moneda neutral y Prime/Prime Plus una corona; Elite Pass usa un boleto. No se encontró un archivo independiente y verificable del editor para los iconos de WOW/Prime/Royale Pass en esta revisión, así que no se presentan esos símbolos como ilustraciones oficiales.
+- Arena Breakout: Bonds usa el icono del catálogo oficial Midasbuy (https://cdn.midasbuy.com/images/midas_oversea/b7eb1c35123e372b55b01afdce9f0096.png). Advanced y Premium Battle Pass usan sus respectivas tarjetas de activación del catálogo oficial Midasbuy (https://cdn.midasbuy.com/public/08f39990746f8c5eed1e09725617c5cd.png y https://cdn.midasbuy.com/public/154d156110d9f020d19fd0b68c9742c1.png).
+- Los iconos externos se cargan desde la CDN de Midasbuy con carga diferida y respaldo emoji si no llegan a cargar; por tanto, estos iconos aún dependen de conexión con el dominio externo. Las imágenes grandes de los juegos sí permanecen en el repositorio.
+- No se tocaron productos de Free Fire, Blood Strike o Mobile Legends, ni se modificó la base de datos, sincronización, checkout, validación por ID o autorización manual.
+- Pendiente: revisión visual desde un teléfono después de que GitHub Pages publique la versión y, si se desea que todos los iconos estén alojados localmente para conexión lenta, incorporar archivos oficiales independientes para PUBG WOW Coins, Prime/Prime Plus y Elite Pass.
