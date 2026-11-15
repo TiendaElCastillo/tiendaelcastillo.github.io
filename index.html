@@ -2614,15 +2614,15 @@ function freeFirePlanIcon(p,item){
  const gameName=fold(item?.name||"");
  const productLabel=fold(String(p?.name||"")+" "+String(p?.description||""));
  if(gameName==="pubg mobile"){
-  if(/\\buc\\b/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/images/level4.5662a174.png","Icono oficial de UC de PUBG Mobile","🪙");
+  if(/(^|[^a-z])uc([^a-z]|$)/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/images/level4.5662a174.png","Icono oficial de UC de PUBG Mobile","🪙");
   if(/wow coins/.test(productLabel))return '<span class="plan-icon-emoji game-icon-fallback" aria-label="WOW Coins">🪙</span>';
   if(/prime/.test(productLabel))return '<span class="plan-icon-emoji game-icon-fallback" aria-label="Membresía PUBG Prime">👑</span>';
   if(/elite pass/.test(productLabel))return '<span class="plan-icon-emoji game-icon-fallback" aria-label="Elite Pass PUBG Mobile">🎟️</span>';
  }
  if(gameName==="arena breakout"){
-  if(/\\bbonds?\\b/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/images/midas_oversea/b7eb1c35123e372b55b01afdce9f0096.png","Icono oficial de Bonds de Arena Breakout","🪙");
+  if(/\bbonds?\b/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/images/midas_oversea/b7eb1c35123e372b55b01afdce9f0096.png","Icono oficial de Bonds de Arena Breakout","🪙");
   if(/monthly advanced battle pass activation pass/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/public/08f39990746f8c5eed1e09725617c5cd.png","Tarjeta oficial Advanced Battle Pass de Arena Breakout","🎟️");
-  if(/premium battle pass activation pass/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/public/154d156110d9f020d19fd0b68c9742c1.png","Tarjeta oficial Premium Battle Pass de Arena Breakout","🎟️");
+  if(/premium battle pass/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/public/154d156110d9f020d19fd0b68c9742c1.png","Tarjeta oficial Premium Battle Pass de Arena Breakout","🎟️");
   if(/tagtical bundle/.test(productLabel))return '<span class="plan-icon-emoji game-icon-fallback" aria-label="Bundle de Arena Breakout">📦</span>';
   return '<span class="plan-icon-emoji game-icon-fallback" aria-label="Objeto de Arena Breakout">🛡️</span>';
  }
