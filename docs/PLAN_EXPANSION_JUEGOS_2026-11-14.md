@@ -133,3 +133,15 @@ Se desplegó el importador genérico con una regla más estricta: solo recargas 
 La primera sincronización posterior al despliegue confirmó 56 productos nuevos: 29 de PUBG Mobile GLOBAL y 27 de Arena Breakout GLOBAL. Los 56 quedaron activos, visibles, con stock y cobertura de validación. Todos tienen precios positivos para Transferencia CUP, Saldo móvil y USDT; el checkout también usa el precio USDT para la billetera interna. La revisión y autorización administrativa de pedidos se conserva.
 
 No se han realizado compras reales de prueba de los dos juegos nuevos ni se ha verificado visualmente GitHub Pages en un navegador. Los juegos restantes del catálogo histórico no se activarán hasta que Central One incluya sus productos en la cobertura de validación y cumplan el esquema sin credenciales. El detalle de la auditoría y las verificaciones está en `docs/AUDITORIA_GLOBAL_LATAM_ID_2026-11-14.md`.
+
+
+## Acabado visual y organización de ofertas — 15 de noviembre de 2026
+
+- Se incorporaron las dos imágenes oficiales aportadas por el propietario: PUBG Mobile y Arena Breakout. Se guardaron como WebP optimizado dentro de `assets/games/` para evitar solicitudes a servidores externos y reducir el peso de descarga.
+- Las tarjetas del catálogo, las cabeceras de detalle y el anuncio previo al inicio de sesión utilizan esos archivos locales.
+- Se eliminaron para ambos juegos los fondos ilustrados genéricos como respaldo visual; si una imagen no cargara, la tarjeta conservará un fondo neutro acorde al juego.
+- PUBG Mobile se ordenó en cuatro categorías: UC, WOW Coins, pases/Prime y ofertas especiales.
+- Arena Breakout se ordenó en cuatro categorías: Bonds, pases, bundles TAGTICAL y casos/objetos.
+- Todas las opciones siguen usando el checkout común, los métodos de pago ya habilitados, la validación del ID y la autorización manual del administrador. No se crean pedidos al sincronizar ni se cambia ningún paquete de Free Fire, Blood Strike o Mobile Legends.
+- La edición es de interfaz y recursos visuales; no cambia el esquema, la sincronización ni las reglas de pago del proveedor.
+- Pendiente de verificación visual final desde GitHub Pages en un teléfono. Esta modificación no equivale a una prueba de compra ni de entrega real.
