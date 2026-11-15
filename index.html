@@ -2780,7 +2780,7 @@ function renderGameDetail(){
    bonds:{tab:"🪙 Bonds",title:"Recargas de Bonds",description:"Elige la cantidad de Bonds para tu cuenta GLOBAL"},
    passes:{tab:"🎟️ Pases",title:"Pases de batalla",description:"Pases y activaciones de temporada disponibles"},
    bundles:{tab:"📦 Bundles",title:"Bundles TAGTICAL",description:"Paquetes especiales del catálogo del proveedor"},
-   cases:{tab:"🛡️ Objetos",title:"Casos y objetos",description:"Cases, equipo y artículos especiales con entrega por ID"}
+   cases:{tab:"🛡️ Objetos y extras",title:"Objetos y extras",description:"Cases, equipo, artículos especiales y objetos cosméticos con entrega por ID"}
   });
  }else{
   $("gameDetailPlans").innerHTML='<div class="ff-browser-head"><h2>Elige tu paquete</h2><span class="ff-total">'+plans.length+' opciones</span></div><div class="ff-package-list">'+(plans.length?plans.map(p=>gamePlanCard(p,item,gamePaymentMethod)).join(""):'<div class="game-empty-state">No hay paquetes disponibles.</div>')+'</div>';
