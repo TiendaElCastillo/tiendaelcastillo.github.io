@@ -2615,9 +2615,9 @@ function freeFirePlanIcon(p,item){
  const productLabel=fold(String(p?.name||"")+" "+String(p?.description||""));
  if(gameName==="pubg mobile"){
   if(/(^|[^a-z])uc([^a-z]|$)/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/images/level4.5662a174.png","Icono oficial de UC de PUBG Mobile","🪙");
-  if(/wow coins/.test(productLabel))return additionalGamePlanIcon("https://synnmlbb.com/storage/product/denom-icons/denom_NChzJhvgun_1789961846.webp","Icono de WOW Coins de PUBG Mobile","🪙");
-  if(/prime/.test(productLabel))return additionalGamePlanIcon("https://synnmlbb.com/storage/product/denom-icons/denom_ayvKUmlHJ2_1781704505.png","Icono de membresía PUBG Prime","👑");
-  if(/elite pass/.test(productLabel))return additionalGamePlanIcon("https://synnmlbb.com/storage/product/denom-icons/denom_t6q1jWzPIq_1781704341.png","Insignia de Elite Pass de PUBG Mobile","🎟️");
+  if(/wow coins/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-wow-coins.webp","Icono de WOW Coins de PUBG Mobile","🪙");
+  if(/prime/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-prime.webp","Icono de membresía PUBG Prime","👑");
+  if(/elite pass/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-elite-pass.webp","Insignia de Elite Pass de PUBG Mobile","🎟️");
  }
  if(gameName==="arena breakout"){
   if(/\bbonds?\b/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/images/midas_oversea/b7eb1c35123e372b55b01afdce9f0096.png","Icono oficial de Bonds de Arena Breakout","🪙");

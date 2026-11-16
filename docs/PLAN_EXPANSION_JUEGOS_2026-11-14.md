@@ -168,3 +168,13 @@ No se han realizado compras reales de prueba de los dos juegos nuevos ni se ha v
 - El icono de UC sigue usando el recurso visual de Midasbuy ya configurado. La imagen enviada por el propietario es un emblema UC fotografiado/renderizado en perspectiva y no reemplaza el icono más limpio ya asociado al producto.
 - Las imágenes nuevas quedan enlazadas de forma remota; no se pudieron descargar/copiar al repositorio como archivos locales desde este entorno por un fallo de resolución/conexión del host externo. Por tanto, el catálogo depende de que el servidor de origen permita cargar esas URLs y todavía hace falta comprobar la carga desde un teléfono en Cuba.
 - No se modificaron productos, precios, paquetes, inventario, región, validación, pagos ni flujo de autorización. No se realizó ningún pedido de prueba.
+
+## Iconos locales de PUBG Mobile — actualización con recursos del propietario
+
+- El propietario proporcionó directamente tres imágenes para las ofertas de PUBG Mobile: WOW Coins, Prime y Elite Pass.
+- Se optimizaron a WebP con transparencia, 128 × 128 px. Tamaños finales: WOW Coins 5.262 bytes, Prime 4.210 bytes y Elite Pass 4.948 bytes (total 14.420 bytes).
+- Archivos añadidos al repositorio: `assets/games/pubg-wow-coins.webp`, `assets/games/pubg-prime.webp`, `assets/games/pubg-elite-pass.webp`.
+- El catálogo utiliza estos archivos locales en lugar de las miniaturas remotas de Synn Store. Esto elimina esas tres dependencias externas y reduce el peso para conexiones lentas.
+- Las imágenes se usan como iconos de familia para las ofertas correspondientes; el logotipo de UC y los iconos de Arena Breakout permanecen como estaban.
+- No se tocaron precios, denominaciones, productos, inventario, pagos, validación, pedidos ni autorización de recargas. No se realizó ningún pedido de prueba.
+- Pendiente: comprobar visualmente la publicación en el teléfono del propietario y continuar la revisión de iconos de otros juegos.
