@@ -302,3 +302,28 @@ Sin descarga pendiente para la presentación actual: portada, seis packs de diam
 - No usar imágenes de Arena Breakout: Infinite para Arena Breakout Mobile ni Gold de Blood Strike para BC hasta validar equivalencia.
 - Descargar en WebP optimizado, conservar transparencia y alojar localmente en `assets/games/`.
 - No modificar productos, cantidades, regiones, precios, pagos, validación, pedidos ni autorización durante esta tarea visual.
+
+
+## Clasificación e integración de imágenes enviadas por el propietario — 16 de noviembre de 2026
+
+Se revisaron los tres documentos adjuntos del propietario:
+- `fotos de el mlb.doc`: 9 imágenes.
+- `foto de mlb y de arena brecout al parecer.docx`: 9 imágenes.
+- `imágenes de pug y blod strike.docx`: 8 imágenes.
+- Total recuperado: 26 imágenes incrustadas.
+
+Se consolidaron 25 imágenes útiles en un spritesheet WebP local de 320 × 560 px, 4 columnas × 7 filas, en `assets/games/store-offers-sprite.webp`. El recurso pesa aproximadamente 37 KB. El código muestra cada recorte mediante fondo CSS con posiciones indexadas; no descarga una imagen remota por tarjeta.
+
+Mapa de recortes:
+- Mobile Legends: diamantes 55, 172, 275, 565, 706, 2195 y 3688 (índices 0–6); Weekly Elite Pack (7); Weekly Pass (8).
+- Arena Breakout Mobile: Bonds (10); MAXACE Carbon Scales, Molten Fire, Finality y Venom (11–14); TAGTICAL Bundle I, TAGTICAL Complete Bundle y All Pack (15–17).
+- Blood Strike: Strike Pass Elite y Strike Pass Premium (18–19).
+- PUBG Mobile: First Purchase Pack, Upgradable Firearm Materials Pack, Mythic Emblem Pack, Weekly Deal Pack 1, Weekly Deal Pack 2 y Weekly Mythic Emblem Value Pack (20–25).
+- Índice 9: retrato de personaje no asignado; no se muestra en la tienda porque no se pudo asociar con seguridad a una oferta concreta.
+
+Pendientes de imágenes en los documentos recibidos:
+- Mobile Legends: Monthly Elite Pack y Twilight Pass siguen con sus fuentes remotas actuales; no venían como archivos descargados en estos documentos.
+- Arena Breakout Mobile: no se recibió arte individual inequívoco para Advanced/Premium/Quarterly Battle Pass, Beginner Select, Bulletproof/Composition Case, MAXACE Ash/Original ni TAGTICAL Bundle II–VI. Se mantienen los fallbacks actuales para esos productos.
+- Blood Strike: no se recibió icono de moneda BC/Gold; se mantiene el icono de respaldo actual. No se reasigna Gold a BC sin equivalencia comprobada.
+
+No se modificaron tablas, precios, disponibilidad, denominaciones, pagos, pedidos, validaciones, inventario ni autorización manual de recargas. Las imágenes recibidas se tratan como material aportado por el propietario; no se certifica su procedencia oficial solo por estar en los documentos.

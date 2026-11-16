@@ -2599,9 +2599,17 @@ function gamePaymentButton(method,rows){const enabled=isPaymentMethodReady(metho
 function additionalGamePlanIcon(src,alt,fallback){
  return '<img class="plan-icon-image game-currency-icon" src="'+clean(src)+'" alt="'+clean(alt)+'" loading="lazy" decoding="async" width="112" height="112" referrerpolicy="no-referrer" onerror="this.onerror=null;this.hidden=true;this.nextElementSibling.hidden=false"><span class="plan-icon-emoji game-icon-fallback" aria-hidden="true" hidden>'+fallback+'</span>';
 }
+function gameOfferSpriteIcon(index,alt){
+ const col=index%4,row=Math.floor(index/4);
+ const x=(col/3)*100,y=(row/6)*100;
+ return '<span class="plan-icon-official game-offer-sprite" role="img" aria-label="'+clean(alt)+'" style="background-image:url(./assets/games/store-offers-sprite.webp);background-size:400% 700%;background-position:'+x+'% '+y+'%;background-repeat:no-repeat"></span>';
+}
 function freeFirePlanIcon(p,item){
  const group=freeFirePackageGroup(p);
  if(fold(item?.name||"")==="blood strike"){
+  const bsLabel=fold(String(p?.name||"")+" "+String(p?.description||""));
+  if(/strike pass elite/.test(bsLabel))return gameOfferSpriteIcon(18,"Strike Pass Elite de Blood Strike");
+  if(/strike pass premium/.test(bsLabel))return gameOfferSpriteIcon(19,"Strike Pass Premium de Blood Strike");
   const src=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
   const fallbackImage=src.includes("shared.fastly.steamstatic.com")?"https://www.blood-strike.com/pc/gw/20240716155822/data/com_share.jpg":"https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3199170/eeab00314314192f57bbdf91b91f8b871f890ce5/capsule_616x353.jpg?t=1793072025";
   return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" data-fallback="'+fallbackImage+'" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=&quot;&quot;}else{this.onerror=null;this.remove()}">';
@@ -2609,18 +2617,36 @@ function freeFirePlanIcon(p,item){
  if(fold(item?.name||"")==="mobile legends: bang bang"){
   const category=mobileLegendsCatalogCategory(p);
   const alt=category==="diamonds"?"Diamantes Mobile Legends "+Number(p.amount):mobileLegendsDisplayName(p)+" de Mobile Legends";
+  const mlName=fold(p?.name||"");
+  const localDiamondIndexes={55:0,172:1,275:2,565:3,706:4,2195:5,3688:6};
+  if(category==="diamonds"&&Number.isInteger(localDiamondIndexes[Number(p.amount)]))return gameOfferSpriteIcon(localDiamondIndexes[Number(p.amount)],alt);
+  if(mlName.includes("paquete elite semanal"))return gameOfferSpriteIcon(7,"Weekly Elite Pack de Mobile Legends");
+  if(mlName.includes("pase semanal"))return gameOfferSpriteIcon(8,"Weekly Pass de Mobile Legends");
   return '<img class="plan-icon-image mlbb-plan-icon-image" src="'+clean(mobileLegendsImageUrl(p))+'" alt="'+clean(alt)+'" loading="lazy" decoding="async" width="112" height="112" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;./assets/games/mlbb-diamonds.svg&quot;">';
  }
  const gameName=fold(item?.name||"");
  const productLabel=fold(String(p?.name||"")+" "+String(p?.description||""));
  if(gameName==="pubg mobile"){
+  if(/first purchase pack/.test(productLabel))return gameOfferSpriteIcon(20,"First Purchase Pack de PUBG Mobile");
+  if(/upgradable firearm materials pack/.test(productLabel))return gameOfferSpriteIcon(21,"Upgradable Firearm Materials Pack de PUBG Mobile");
+  if(/weekly mythic emblem value pack/.test(productLabel))return gameOfferSpriteIcon(25,"Weekly Mythic Emblem Value Pack de PUBG Mobile");
+  if(/weekly deal pack 1/.test(productLabel))return gameOfferSpriteIcon(23,"Weekly Deal Pack 1 de PUBG Mobile");
+  if(/weekly deal pack 2/.test(productLabel))return gameOfferSpriteIcon(24,"Weekly Deal Pack 2 de PUBG Mobile");
+  if(/mythic emblem pack/.test(productLabel))return gameOfferSpriteIcon(22,"Mythic Emblem Pack de PUBG Mobile");
   if(/(^|[^a-z])uc([^a-z]|$)/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-uc.webp","Insignia UC de PUBG Mobile enviada por el propietario","🪙");
   if(/wow coins/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-wow-coins.webp","Icono de WOW Coins de PUBG Mobile","🪙");
   if(/prime/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-prime.webp","Icono de membresía PUBG Prime","👑");
   if(/elite pass/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-elite-pass.webp","Insignia de Elite Pass de PUBG Mobile","🎟️");
  }
  if(gameName==="arena breakout"){
-  if(/\bbonds?\b/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/images/midas_oversea/b7eb1c35123e372b55b01afdce9f0096.png","Icono oficial de Bonds de Arena Breakout","🪙");
+  if(/\bbonds?\b/.test(productLabel))return gameOfferSpriteIcon(10,"Bonds de Arena Breakout");
+  if(/maxace carbon scales/.test(productLabel))return gameOfferSpriteIcon(11,"MAXACE Carbon Scales de Arena Breakout");
+  if(/maxace molten fire/.test(productLabel))return gameOfferSpriteIcon(12,"MAXACE Molten Fire de Arena Breakout");
+  if(/maxace finality/.test(productLabel))return gameOfferSpriteIcon(13,"MAXACE Finality de Arena Breakout");
+  if(/maxace venom/.test(productLabel))return gameOfferSpriteIcon(14,"MAXACE Venom de Arena Breakout");
+  if(/tagtical bundle i\b/.test(productLabel))return gameOfferSpriteIcon(15,"TAGTICAL Bundle I de Arena Breakout");
+  if(/tagtical complete bundle/.test(productLabel))return gameOfferSpriteIcon(16,"TAGTICAL Complete Bundle de Arena Breakout");
+  if(/all pack/.test(productLabel))return gameOfferSpriteIcon(17,"All Pack de Arena Breakout");
   if(/monthly advanced battle pass activation pass/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/public/08f39990746f8c5eed1e09725617c5cd.png","Tarjeta oficial Advanced Battle Pass de Arena Breakout","🎟️");
   if(/premium battle pass/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/public/154d156110d9f020d19fd0b68c9742c1.png","Tarjeta oficial Premium Battle Pass de Arena Breakout","🎟️");
   if(/tagtical bundle/.test(productLabel))return '<span class="plan-icon-emoji game-icon-fallback" aria-label="Bundle de Arena Breakout">📦</span>';
