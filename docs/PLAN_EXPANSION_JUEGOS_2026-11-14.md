@@ -213,3 +213,92 @@ Formato preferido: PNG o WebP con transparencia cuando exista; conservar el dise
 - Se incorporó la insignia UC que el propietario había encontrado y enviado antes, recortada al área del emblema y optimizada en WebP de 96 × 96 px (1.096 bytes).
 - Archivo: `assets/games/pubg-uc.webp`. Se usa como icono UC en el catálogo. No se modifica el arte base del juego.
 - Ya no depende de la imagen remota de Midasbuy para UC. Las cuatro familias de iconos PUBG (UC, WOW Coins, Prime y Elite Pass) están guardadas localmente.
+
+## Auditoría completa de recursos visuales del catálogo activo — 15 de noviembre de 2026
+
+### Base del inventario revisada
+
+Consulta de solo lectura en `public.products`: 116 productos activos y visibles en cinco juegos. Ninguno de estos productos tiene `provider_image_url` poblado, por lo que las imágenes de producto dependen de la lógica del frontend, URLs remotas, archivos locales o iconos de reserva.
+
+| Juego | Productos activos y visibles |
+|---|---:|
+| Free Fire | 10 |
+| Blood Strike | 39 |
+| Mobile Legends: Bang Bang | 11 |
+| PUBG Mobile | 29 |
+| Arena Breakout | 27 |
+| **Total** | **116** |
+
+### Recursos ya guardados localmente
+
+- Portadas de los cinco juegos: `assets/games/free-fire.webp`, `assets/games/blood-strike-cover.webp`, `assets/games/mobile-legends-bang-bang.webp`, `assets/games/pubg-mobile.webp`, `assets/games/arena-breakout.webp`.
+- Free Fire: arte de diamantes, Booyah Pass y tarjetas semanales/mensuales en `assets/ff-*.webp`; seis SVG de cantidades de diamantes.
+- PUBG Mobile: UC, WOW Coins, Prime y Elite Pass en `assets/games/pubg-uc.webp`, `pubg-wow-coins.webp`, `pubg-prime.webp`, `pubg-elite-pass.webp`.
+- En consecuencia, no pedir de nuevo portadas de Free Fire, Blood Strike, Mobile Legends, PUBG Mobile ni Arena Breakout, ni los cuatro iconos de PUBG ya aportados por el propietario.
+
+### Mobile Legends — 11 productos: imágenes actualmente remotas
+
+El código usa siete miniaturas de diamantes y cuatro imágenes de membresías/pases. Los siguientes enlaces son las URLs de imagen a las que apunta la implementación actual. Son archivos CDN de Codashop; la tienda oficial de recargas muestra diamantes y Twilight Pass, y Codashop documenta también Weekly Elite Bundle, Monthly Epic Bundle y Weekly/Monthly subscriptions.
+
+Diamantes:
+- 55: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760335237238_d1b7bb02-2b65-4e49-b340-8012f978adc9.png`
+- 172: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760335253623_140f8c3e-7363-486e-ac68-5b25480c970c.png`
+- 275: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760335253061_8aa498bd-d8c6-4ca3-b9b5-c7eac993892d.png`
+- 565: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760334880901_8ac54d18-429f-4e24-81e5-35d7184f43e5.png`
+- 706: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760335252218_b62735e6-5f62-41cc-9668-dcde1071bde5.png`
+- 2195: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760334881128_be1975db-bc64-4c7e-a979-4862b4fdaeb1.png`
+- 3688: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760335251935_a4f204ac-54b1-4733-b3ae-34c996810039.png`
+
+Pases y membresías:
+- Weekly Elite Pack: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_f66aebb8ede7c159b2dfc46c2cd00201_product/1769596214229_6ebd718e-a33f-476f-ab41-68dbc5f4f5bc.png`
+- Weekly Pass: `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760334654543_147fadd0-31a9-4ac2-b3f9-56a873ad3b83.png`
+- Monthly Elite Pack (URL actual del código, pendiente de revalidación): `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_f66aebb8ede7c159b2dfc46c2cd00201_product/1769669159381_fc8c3ae1-605f-4f19-ad5d-817ed9e0c3df.png`
+- Twilight Pass (imagen visible enlazada desde la página actual de Codashop): `https://cdn1.codashop.com/images/106_5e7a01a7-89b9-4b13-a512-a3e72f63f0d1_product/1760334861806_b6849054-08c2-44af-8750-2f7ea6ce9814.png`
+- La referencia antigua de Twilight Pass en el código (`1760334848892_d97e4ddf-7686-491e-9352-bcea3e163679.png`) no pudo abrirse en la comprobación web; no volver a recomendar esa URL sin verificarla.
+- Página de producto: `https://www.codashop.com/en-us/mobile-legends`; artículo de Codashop que describe Weekly Elite, Monthly Epic y Twilight Pass: `https://news.codashop.com/us/mobile-legends-top-up-benefit-free-diamonds/`.
+- No se deben alterar las cantidades ni los nombres de las 11 ofertas por el hecho de usar imágenes de una página de recarga regional distinta.
+
+### Arena Breakout Mobile — 27 productos
+
+Productos publicados: ocho paquetes Bonds; Beginner Select; Bulletproof Case (30d); Composition Case (30d); seis MAXACE (Ash, Carbon Scales, Finality, Molten Fire, Original, Venom); tres familias de pases (Monthly Advanced, Monthly Premium y Quarterly Premium); y siete TAGTICAL (I–VI y Complete).
+
+**Corrección de fuente:** las imágenes de Battle Pass que el código utilizaba desde `midasbuy.com/.../abi` pertenecen a **Arena Breakout: Infinite** (la edición de PC), no a Arena Breakout Mobile. No volver a descargarlas ni tratarlas como arte correcto para el juego móvil. La web oficial móvil es `https://arenabreakout.com/`; la app de Google Play confirma el sitio oficial. El producto móvil y la edición Infinite son distintos.
+
+Página de productos móviles que se identifica como partner oficial (declaración del propio sitio, no confirmada independientemente por Tencent): `https://www.topuplive.com/en/arena-breakout/`. Allí se muestran Bonds, cuatro MAXACE y TAGTICAL Bundle I/Complete. Algunos recursos directos visibles en esa página:
+- Bonds (60+6): `https://cdn.topuplive.com/cdn-cgi/image/format%3Dwebp/uploads/images/goods/v4/m/M-902.webp`
+- MAXACE Carbon Scales: `https://cdn.topuplive.com/cdn-cgi/image/format%3Dwebp/uploads/images/goods/20260921/1789982191_b4YXSb1o0w.webp`
+- MAXACE Molten Fire: `https://cdn.topuplive.com/cdn-cgi/image/format%3Dwebp/uploads/images/goods/20260929/1790661488_McRfp2QK0j.webp`
+- MAXACE Finality: `https://cdn.topuplive.com/cdn-cgi/image/format%3Dwebp/uploads/images/goods/20260929/1790661574_3JXvXZA78M.webp`
+- MAXACE Venom: `https://cdn.topuplive.com/cdn-cgi/image/format%3Dwebp/uploads/images/goods/20260929/1790661681_iUVcguCx8x.webp`
+- TAGTICAL Bundle I: `https://cdn.topuplive.com/cdn-cgi/image/format%3Dwebp/uploads/images/goods/20260921/1789982367_6bsXH443nN.webp`
+- TAGTICAL Complete: `https://cdn.topuplive.com/cdn-cgi/image/format%3Dwebp/uploads/images/goods/20260921/1789982477_gBWDFPO8Tp.webp`
+- All Pack: `https://cdn.topuplive.com/cdn-cgi/image/format%3Dwebp/uploads/images/goods/20260702/1782962440_8V24JB7zGH.webp`
+- Estos enlaces de producto proceden del sitio partner, no del dominio del desarrollador. Los recursos específicos de Ash, Original, Beginner Select, los dos cases y los tres pases deben conseguirse desde la vista del juego móvil o una ficha de proveedor cuya edición esté confirmada; no sustituirlos por arte de Arena Breakout: Infinite.
+
+### Blood Strike — 39 productos
+
+La portada del juego está guardada localmente. El código actualmente mapea campañas a cinco imágenes remotas del CDN de NetEase:
+- One-Punch Man: `https://r.res.easebar.com/pic/20260630/4ac9fc27-6eff-4139-8a21-a9ebdc19c4b8.png`
+- Tokyo Revengers: `https://r.res.easebar.com/pic/20260514/74858c1d-48c6-4a88-83c0-425669f0866a.jpg`
+- Seven Deadly Sins: `https://r.res.easebar.com/pic/20260403/930f5dbe-23ee-4f7d-a038-f87e0ac98f6d.png`
+- Attack on Titan: `https://r.res.easebar.com/pic/20260727/8ffc7d3e-8437-417b-9252-64f9086ec54e.jpeg`
+- Enzo / Maestro: `https://r.res.easebar.com/pic/20260604/edd23aed-c240-45cd-80a6-760af76f9035.png`
+- La tienda oficial de NetEase GamesClub está en `https://pay.neteasegames.com/BloodStrike/topup?c=m2.55jp.x&from=home`; en la página aparecen Golds, Strike Pass Elite y Strike Pass Premium, además de productos de campaña.
+- **No confundir monedas:** los nombres de los productos de nuestra base de datos dicen BC (105, 320, 540, 1100, 2260 y otros), mientras que la tienda oficial consultada etiqueta sus paquetes como Golds. No reutilizar automáticamente el icono Gold como icono BC hasta confirmar que corresponden al mismo saldo/unidad del proveedor.
+- Pendiente para guardar localmente: icono de la moneda que corresponda realmente a BC, Strike Pass Elite, Strike Pass Premium y Level Up Pass. Para ofertas promocionales adicionales (Lucky Bag, vouchers, chests y pre-orders) usar las ilustraciones específicas del juego si están en la página oficial; no generar arte nuevo.
+
+### PUBG Mobile — 29 productos
+
+Las cuatro familias principales ya tienen iconos locales. Quedan seis productos de catálogo sin icono específico propio: First Purchase Pack, Mythic Emblem Pack, Upgradable Firearm Materials Pack, Weekly Deal Pack 1, Weekly Deal Pack 2 y Weekly Mythic Emblem Value Pack. Se puede obtener una imagen por familia de producto desde la tienda del juego o el catálogo oficial de PUBG/Midasbuy; la página pública de UC es `https://www.midasbuy.com/midasbuy/us/buy?appid=1450015065`. No usar imágenes de otras ediciones/regiones ni cambiar paquetes.
+
+### Free Fire — 10 productos
+
+Sin descarga pendiente para la presentación actual: portada, seis packs de diamantes, Booyah Pass y tarjetas semanales/mensuales ya están alojados localmente.
+
+### Regla de incorporación
+
+- Priorizar recursos del editor/desarrollador o de una tienda autorizada que corresponda exactamente a la edición móvil/global del juego.
+- Un icono común puede reutilizarse entre denominaciones de la misma moneda; el número de la oferta ya aparece en el nombre/título. No descargar duplicados innecesarios.
+- No usar imágenes de Arena Breakout: Infinite para Arena Breakout Mobile ni Gold de Blood Strike para BC hasta validar equivalencia.
+- Descargar en WebP optimizado, conservar transparencia y alojar localmente en `assets/games/`.
+- No modificar productos, cantidades, regiones, precios, pagos, validación, pedidos ni autorización durante esta tarea visual.
