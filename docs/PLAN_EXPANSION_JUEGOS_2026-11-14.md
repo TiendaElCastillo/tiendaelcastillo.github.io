@@ -156,3 +156,15 @@ No se han realizado compras reales de prueba de los dos juegos nuevos ni se ha v
 - Los iconos externos se cargan desde la CDN de Midasbuy con carga diferida y respaldo emoji si no llegan a cargar; por tanto, estos iconos aún dependen de conexión con el dominio externo. Las imágenes grandes de los juegos sí permanecen en el repositorio.
 - No se tocaron productos de Free Fire, Blood Strike o Mobile Legends, ni se modificó la base de datos, sincronización, checkout, validación por ID o autorización manual.
 - Pendiente: revisión visual desde un teléfono después de que GitHub Pages publique la versión y, si se desea que todos los iconos estén alojados localmente para conexión lenta, incorporar archivos oficiales independientes para PUBG WOW Coins, Prime/Prime Plus y Elite Pass.
+
+## Ajuste de iconos de PUBG Mobile — 15 de noviembre de 2026
+
+- Se conectaron imágenes de catálogo para las tres familias que todavía mostraban emoji: WOW Coins, Prime y Elite Pass.
+- Fuentes consultadas para estas miniaturas: catálogo público de Synn Store. Son imágenes de una tienda externa que comercializa esos productos; no se ha podido certificar que sean archivos originales publicados por PUBG/Krafton. No se describen como recursos oficiales.
+- WOW Coins: `https://synnmlbb.com/storage/product/denom-icons/denom_NChzJhvgun_1789961846.webp`
+- Prime / Prime Plus: `https://synnmlbb.com/storage/product/denom-icons/denom_ayvKUmlHJ2_1781704505.png`
+- Elite Pass: `https://synnmlbb.com/storage/product/denom-icons/denom_t6q1jWzPIq_1781704341.png`
+- Se usa el mismo icono por familia, no se duplica por denominación. Se mantiene el emoji como alternativa automática cuando la imagen remota no carga.
+- El icono de UC sigue usando el recurso visual de Midasbuy ya configurado. La imagen enviada por el propietario es un emblema UC fotografiado/renderizado en perspectiva y no reemplaza el icono más limpio ya asociado al producto.
+- Las imágenes nuevas quedan enlazadas de forma remota; no se pudieron descargar/copiar al repositorio como archivos locales desde este entorno por un fallo de resolución/conexión del host externo. Por tanto, el catálogo depende de que el servidor de origen permita cargar esas URLs y todavía hace falta comprobar la carga desde un teléfono en Cuba.
+- No se modificaron productos, precios, paquetes, inventario, región, validación, pagos ni flujo de autorización. No se realizó ningún pedido de prueba.
