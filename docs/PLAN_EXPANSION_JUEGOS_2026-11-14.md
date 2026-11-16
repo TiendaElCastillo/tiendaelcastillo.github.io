@@ -178,3 +178,31 @@ No se han realizado compras reales de prueba de los dos juegos nuevos ni se ha v
 - Las imágenes se usan como iconos de familia para las ofertas correspondientes; el logotipo de UC y los iconos de Arena Breakout permanecen como estaban.
 - No se tocaron precios, denominaciones, productos, inventario, pagos, validación, pedidos ni autorización de recargas. No se realizó ningún pedido de prueba.
 - Pendiente: comprobar visualmente la publicación en el teléfono del propietario y continuar la revisión de iconos de otros juegos.
+
+## Auditoría de iconos de monedas y membresías del catálogo — 15 de noviembre de 2026
+
+Objetivo de esta revisión: identificar únicamente recursos de producto que aún dependen de hosts externos o de emojis. No se modifican ofertas, precios ni sincronización.
+
+| Juego | Estado actual | Recursos que conviene guardar localmente |
+|---|---|---|
+| Free Fire | Los iconos de diamantes y tarjetas/pases principales ya usan archivos locales. | Ninguno por ahora. |
+| PUBG Mobile | WOW Coins, Prime y Elite Pass guardados en `assets/games/` como WebP de 64 px; icono de UC sigue en CDN de Midasbuy. | Opcional: una imagen limpia de UC si se prefiere alojarla también localmente. |
+| Mobile Legends | Las imágenes de diamantes y de ofertas/permisos se cargan desde Codashop CDN. | Un icono transparente de diamante; Weekly Diamond Pass; Weekly Elite Pack; Monthly Elite Pack; Twilight Pass. Se puede usar una sola imagen de diamante para todas las cantidades y conservar la cantidad escrita en la tarjeta. |
+| Arena Breakout | Bonds y Advanced/Premium Battle Pass usan recursos CDN de Midasbuy. Algunos bundles/objetos continúan con emoji genérico. | Icono Bonds, tarjeta Advanced Battle Pass, tarjeta Premium Battle Pass. Para bundles adicionales, pedir imagen solo si queremos sustituir los emojis en esos productos. |
+| Blood Strike | Se reutiliza la portada/arte de oferta del juego o imágenes del proveedor; no hay aún un icono local independiente de la moneda ni un icono local genérico del Strike Pass. | Icono de Gold/moneda de Blood Strike (el proveedor etiqueta algunos paquetes BC en nuestro catálogo); emblema o tarjeta de Strike Pass. |
+
+### Páginas de origen para los siguientes recursos
+
+- Mobile Legends: página oficial de recargas Codashop: `https://www.codashop.com/en-us/mobile-legends`. Para las miniaturas de diamantes, Weekly Diamond Pass y Twilight Pass, entrar en la página de producto y guardar las imágenes individuales. Los paquetes Weekly Elite y Monthly Elite aparecen documentados en el contenido oficial de Codashop: `https://news.codashop.com/us/mobile-legends-top-up-benefit-free-diamonds/`.
+- Arena Breakout: tienda oficial Tencent/Midasbuy: `https://www.midasbuy.com/midasbuy/us/shop/abi?lang=en`. Allí aparecen las tarjetas Advanced Battle Pass Activation Card y Premium Battle Pass Activation Card, además de paquetes Bonds.
+- Blood Strike: recarga oficial NetEase: `https://pay.neteasegames.com/BloodStrike/topup?c=m2.55jp.x&from=home`. La tienda oficial muestra denominaciones de Gold; para el arte del Strike Pass, revisar las noticias oficiales: `https://www.blood-strike.com/official/index.html`.
+
+### Qué imágenes pedir al propietario en la próxima entrega
+
+1. Mobile Legends: diamante azul (1), Weekly Diamond Pass (1), Weekly Elite Pack (1), Monthly Elite Pack (1) y Twilight Pass (1).
+2. Arena Breakout: Bonds (1), Advanced Battle Pass (1) y Premium Battle Pass (1).
+3. Blood Strike: moneda Gold/BC (1) y tarjeta/emblema Strike Pass (1).
+
+Formato preferido: PNG o WebP con transparencia cuando exista; conservar el diseño original, sin redibujar ni generar arte. Una captura de la página de la tienda también sirve si no permite descargar la imagen.
+- Sitios oficiales o tiendas autorizadas pueden mostrar recursos diferentes según país, idioma y campaña. Verificar que el icono corresponda al producto antes de incorporarlo.
+- No hay cambios de productos, precios, cantidades, stock, región, validación, pagos, pedidos ni autorización por esta auditoría.
