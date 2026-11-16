@@ -165,13 +165,13 @@ No se han realizado compras reales de prueba de los dos juegos nuevos ni se ha v
 - Prime / Prime Plus: `https://synnmlbb.com/storage/product/denom-icons/denom_ayvKUmlHJ2_1781704505.png`
 - Elite Pass: `https://synnmlbb.com/storage/product/denom-icons/denom_t6q1jWzPIq_1781704341.png`
 - Se usa el mismo icono por familia, no se duplica por denominación. Se mantiene el emoji como alternativa automática cuando la imagen remota no carga.
-- El icono de UC sigue usando el recurso visual de Midasbuy ya configurado. La imagen enviada por el propietario es un emblema UC fotografiado/renderizado en perspectiva y no reemplaza el icono más limpio ya asociado al producto.
+- El icono de UC se sustituyó posteriormente por la insignia enviada por el propietario y guardada localmente como `assets/games/pubg-uc.webp`.
 - Las imágenes nuevas quedan enlazadas de forma remota; no se pudieron descargar/copiar al repositorio como archivos locales desde este entorno por un fallo de resolución/conexión del host externo. Por tanto, el catálogo depende de que el servidor de origen permita cargar esas URLs y todavía hace falta comprobar la carga desde un teléfono en Cuba.
 - No se modificaron productos, precios, paquetes, inventario, región, validación, pagos ni flujo de autorización. No se realizó ningún pedido de prueba.
 
 ## Iconos locales de PUBG Mobile — actualización con recursos del propietario
 
-- El propietario proporcionó directamente tres imágenes para las ofertas de PUBG Mobile: WOW Coins, Prime y Elite Pass.
+- El propietario proporcionó directamente tres imágenes para las ofertas de PUBG Mobile: WOW Coins, Prime y Elite Pass; además, ya había aportado previamente la insignia UC.
 - Se optimizaron a WebP con transparencia, 64 × 64 px para reducir al mínimo el peso en móviles. Tamaños finales: WOW Coins 2.292 bytes, Prime 1.948 bytes y Elite Pass 2.114 bytes (total 6.354 bytes, aproximadamente 6,2 KB).
 - Archivos añadidos al repositorio: `assets/games/pubg-wow-coins.webp`, `assets/games/pubg-prime.webp`, `assets/games/pubg-elite-pass.webp`.
 - El catálogo utiliza estos archivos locales en lugar de las miniaturas remotas de Synn Store. Esto elimina esas tres dependencias externas y reduce el peso para conexiones lentas.
@@ -186,7 +186,7 @@ Objetivo de esta revisión: identificar únicamente recursos de producto que aú
 | Juego | Estado actual | Recursos que conviene guardar localmente |
 |---|---|---|
 | Free Fire | Los iconos de diamantes y tarjetas/pases principales ya usan archivos locales. | Ninguno por ahora. |
-| PUBG Mobile | WOW Coins, Prime y Elite Pass guardados en `assets/games/` como WebP de 64 px; icono de UC sigue en CDN de Midasbuy. | Opcional: una imagen limpia de UC si se prefiere alojarla también localmente. |
+| PUBG Mobile | UC, WOW Coins, Prime y Elite Pass guardados en `assets/games/` como WebP locales optimizados. | Ninguno por ahora. |
 | Mobile Legends | Las imágenes de diamantes y de ofertas/permisos se cargan desde Codashop CDN. | Un icono transparente de diamante; Weekly Diamond Pass; Weekly Elite Pack; Monthly Elite Pack; Twilight Pass. Se puede usar una sola imagen de diamante para todas las cantidades y conservar la cantidad escrita en la tarjeta. |
 | Arena Breakout | Bonds y Advanced/Premium Battle Pass usan recursos CDN de Midasbuy. Algunos bundles/objetos continúan con emoji genérico. | Icono Bonds, tarjeta Advanced Battle Pass, tarjeta Premium Battle Pass. Para bundles adicionales, pedir imagen solo si queremos sustituir los emojis en esos productos. |
 | Blood Strike | Se reutiliza la portada/arte de oferta del juego o imágenes del proveedor; no hay aún un icono local independiente de la moneda ni un icono local genérico del Strike Pass. | Icono de Gold/moneda de Blood Strike (el proveedor etiqueta algunos paquetes BC en nuestro catálogo); emblema o tarjeta de Strike Pass. |
