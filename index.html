@@ -2614,7 +2614,7 @@ function freeFirePlanIcon(p,item){
  const gameName=fold(item?.name||"");
  const productLabel=fold(String(p?.name||"")+" "+String(p?.description||""));
  if(gameName==="pubg mobile"){
-  if(/(^|[^a-z])uc([^a-z]|$)/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/images/level4.5662a174.png","Icono oficial de UC de PUBG Mobile","🪙");
+  if(/(^|[^a-z])uc([^a-z]|$)/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-uc.webp","Insignia UC de PUBG Mobile enviada por el propietario","🪙");
   if(/wow coins/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-wow-coins.webp","Icono de WOW Coins de PUBG Mobile","🪙");
   if(/prime/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-prime.webp","Icono de membresía PUBG Prime","👑");
   if(/elite pass/.test(productLabel))return additionalGamePlanIcon("./assets/games/pubg-elite-pass.webp","Insignia de Elite Pass de PUBG Mobile","🎟️");

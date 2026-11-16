@@ -206,3 +206,10 @@ Objetivo de esta revisión: identificar únicamente recursos de producto que aú
 Formato preferido: PNG o WebP con transparencia cuando exista; conservar el diseño original, sin redibujar ni generar arte. Una captura de la página de la tienda también sirve si no permite descargar la imagen.
 - Sitios oficiales o tiendas autorizadas pueden mostrar recursos diferentes según país, idioma y campaña. Verificar que el icono corresponda al producto antes de incorporarlo.
 - No hay cambios de productos, precios, cantidades, stock, región, validación, pagos, pedidos ni autorización por esta auditoría.
+
+
+### Icono local de UC — recurso enviado por el propietario
+
+- Se incorporó la insignia UC que el propietario había encontrado y enviado antes, recortada al área del emblema y optimizada en WebP de 96 × 96 px (1.096 bytes).
+- Archivo: `assets/games/pubg-uc.webp`. Se usa como icono UC en el catálogo. No se modifica el arte base del juego.
+- Ya no depende de la imagen remota de Midasbuy para UC. Las cuatro familias de iconos PUBG (UC, WOW Coins, Prime y Elite Pass) están guardadas localmente.
