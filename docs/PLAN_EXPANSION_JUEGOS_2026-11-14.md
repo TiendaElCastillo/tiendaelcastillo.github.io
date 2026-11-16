@@ -172,7 +172,7 @@ No se han realizado compras reales de prueba de los dos juegos nuevos ni se ha v
 ## Iconos locales de PUBG Mobile — actualización con recursos del propietario
 
 - El propietario proporcionó directamente tres imágenes para las ofertas de PUBG Mobile: WOW Coins, Prime y Elite Pass.
-- Se optimizaron a WebP con transparencia, 128 × 128 px. Tamaños finales: WOW Coins 5.262 bytes, Prime 4.210 bytes y Elite Pass 4.948 bytes (total 14.420 bytes).
+- Se optimizaron a WebP con transparencia, 64 × 64 px para reducir al mínimo el peso en móviles. Tamaños finales: WOW Coins 2.292 bytes, Prime 1.948 bytes y Elite Pass 2.114 bytes (total 6.354 bytes, aproximadamente 6,2 KB).
 - Archivos añadidos al repositorio: `assets/games/pubg-wow-coins.webp`, `assets/games/pubg-prime.webp`, `assets/games/pubg-elite-pass.webp`.
 - El catálogo utiliza estos archivos locales en lugar de las miniaturas remotas de Synn Store. Esto elimina esas tres dependencias externas y reduce el peso para conexiones lentas.
 - Las imágenes se usan como iconos de familia para las ofertas correspondientes; el logotipo de UC y los iconos de Arena Breakout permanecen como estaban.
