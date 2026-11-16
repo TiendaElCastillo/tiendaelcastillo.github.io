@@ -1603,7 +1603,7 @@ body{min-width:0}
 .bs-plan-card{min-width:0;overflow:hidden;display:flex;flex-direction:column;border:1px solid #e2e8f1;border-radius:15px;background:#fff;box-shadow:0 5px 15px rgba(20,42,75,.055)}
 .bs-plan-art{position:relative;height:100px;overflow:hidden;background:#17243a}
 .bs-plan-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 38%}
-.bs-plan-art>span{position:absolute;left:7px;bottom:7px;padding:5px 7px;border:1px solid rgba(255,255,255,.24);border-radius:20px;background:rgba(12,22,39,.72);color:#fff;font-size:8px;font-weight:900;letter-spacing:.06em}
+.bs-plan-art>span:last-child{position:absolute;left:7px;bottom:7px;padding:5px 7px;border:1px solid rgba(255,255,255,.24);border-radius:20px;background:rgba(12,22,39,.72);color:#fff;font-size:8px;font-weight:900;letter-spacing:.06em}
 .bs-plan-copy{display:flex;flex:1;flex-direction:column;gap:5px;padding:10px}
 .bs-plan-copy>strong{min-height:31px;color:#1b2d48;font-size:12px;line-height:1.3;overflow-wrap:anywhere}
 .bs-plan-copy>small{color:#7a899d;font-size:9px;line-height:1.3}
@@ -1829,7 +1829,7 @@ body{min-width:0}
     <div class="auth-game-info"><div><strong>Mobile Legends: Bang Bang</strong><span>Diamantes, pases y membresías · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
    <article class="auth-game-card">
-    <div class="auth-game-art"><img src="./assets/games/blood-strike-cover.webp?v=1" alt="Arte de Blood Strike" width="640" height="360" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove();this.parentElement.classList.add('image-unavailable')"></div>
+    <div class="auth-game-art"><img src="./assets/games/blood-strike-cover.webp?v=1" alt="Arte de Blood Strike" width="640" height="360" loading="lazy" fetchpriority="low" decoding="async" data-fallback="https://www.blood-strike.com/m/gw/20230920165203/data/share.jpg" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=&quot;&quot;}else{this.remove();this.parentElement.classList.add('image-unavailable')}"></div>
     <div class="auth-game-info"><div><strong>Blood Strike</strong><span>BC, ofertas y pases · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
    <article class="auth-game-card">
@@ -1837,7 +1837,7 @@ body{min-width:0}
     <div class="auth-game-info"><div><strong>PUBG Mobile</strong><span>UC, WOW Coins y pases · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
    <article class="auth-game-card">
-    <div class="auth-game-art"><img src="./assets/games/arena-breakout.webp?v=2" alt="Arte oficial de Arena Breakout" width="480" height="320" loading="lazy" decoding="async" onerror="this.remove();this.parentElement.classList.add('image-unavailable')"></div>
+    <div class="auth-game-art"><img src="./assets/games/arena-breakout.webp?v=1" alt="Arte oficial de Arena Breakout" width="480" height="320" loading="lazy" decoding="async" onerror="this.remove();this.parentElement.classList.add('image-unavailable')"></div>
     <div class="auth-game-info"><div><strong>Arena Breakout</strong><span>Bonds, pases y objetos · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
   </div>
@@ -2451,9 +2451,9 @@ async function openStore(user){
 
 const gameCatalog=[
  {name:"Free Fire",icon:"🔥",art:"fire",tag:"Battle Royale",image:"./assets/games/free-fire-tienda.webp?v=2",fallbackImage:"./assets/games/free-fire.webp?v=2",match:["free fire"]},
- {name:"Blood Strike",icon:"🎯",art:"strike",tag:"Shooter",image:"./assets/games/blood-strike-cover.webp?v=1",match:["blood strike"]},
+ {name:"Blood Strike",icon:"🎯",art:"strike",tag:"Shooter",image:"./assets/games/blood-strike-cover.webp?v=1",fallbackImage:"https://www.blood-strike.com/m/gw/20230920165203/data/share.jpg",match:["blood strike"]},
  {name:"Mobile Legends: Bang Bang",icon:"⚔️",art:"mobile",tag:"MOBA",image:"./assets/games/mobile-legends-bang-bang.webp?v=2",match:["mobile legends"]},
- {name:"Arena Breakout",icon:"🛡️",art:"arena",tag:"Shooter",image:"./assets/games/arena-breakout.webp?v=2",match:["arena breakout"]},
+ {name:"Arena Breakout",icon:"🛡️",art:"arena",tag:"Shooter",image:"./assets/games/arena-breakout.webp?v=1",match:["arena breakout"]},
  {name:"PUBG Mobile",icon:"🎯",art:"pubg",tag:"Battle Royale",image:"./assets/games/pubg-mobile.webp?v=1",match:["pubg mobile","pubg"]},
  {name:"Honor of Kings",icon:"👑",art:"honor",tag:"MOBA",match:["honor of kings"]},
  {name:"Genshin Impact",icon:"✨",art:"genshin",tag:"RPG",match:["genshin impact"]},
@@ -2602,19 +2602,22 @@ function additionalGamePlanIcon(src,alt,fallback){
 function gameOfferSpriteIcon(index,alt){
  const col=index%4,row=Math.floor(index/4);
  const x=(col/3)*100,y=(row/6)*100;
- return '<span class="plan-icon-official game-offer-sprite" role="img" aria-label="'+clean(alt)+'" style="background-image:url(./assets/games/store-offers-sprite.webp);background-size:400% 700%;background-position:'+x+'% '+y+'%;background-repeat:no-repeat"></span>';
+ return '<div class="plan-icon-official game-offer-sprite" role="img" aria-label="'+clean(alt)+'" style="background-image:url(./assets/games/store-offers-sprite.webp);background-size:400% 700%;background-position:'+x+'% '+y+'%;background-repeat:no-repeat"></div>';
 }
 function freeFirePlanIcon(p,item){
  const group=freeFirePackageGroup(p);
- if(fold(item?.name||"")==="blood strike"){
+ const gameName=fold(item?.name||p?.game||"");
+ if(gameName==="blood strike"){
   const bsLabel=fold(String(p?.name||"")+" "+String(p?.description||""));
   if(/strike pass elite/.test(bsLabel))return gameOfferSpriteIcon(18,"Strike Pass Elite de Blood Strike");
   if(/strike pass premium/.test(bsLabel))return gameOfferSpriteIcon(19,"Strike Pass Premium de Blood Strike");
+  const localCover="./assets/games/blood-strike-cover.webp?v=1";
+  const officialCover="https://www.blood-strike.com/m/gw/20230920165203/data/share.jpg";
   const src=providerImageIsSafe(p.provider_image_url)?p.provider_image_url:bloodStrikeArtworkUrl(p);
-  const fallbackImage="./assets/games/blood-strike-cover.webp?v=1";
+  const fallbackImage=src.startsWith("./")?officialCover:localCover;
   return '<img class="plan-icon-image bs-plan-icon-image" src="'+clean(src)+'" alt="Arte de Blood Strike · '+clean(bloodStrikeDisplayName(p))+'" loading="lazy" decoding="async" width="112" height="112" style="display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;object-position:center 38%;border-radius:0" referrerpolicy="no-referrer" data-fallback="'+fallbackImage+'" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback=&quot;&quot;}else{this.onerror=null;this.remove()}">';
  }
- if(fold(item?.name||"")==="mobile legends: bang bang"){
+ if(gameName==="mobile legends: bang bang"){
   const category=mobileLegendsCatalogCategory(p);
   const alt=category==="diamonds"?"Diamantes Mobile Legends "+Number(p.amount):mobileLegendsDisplayName(p)+" de Mobile Legends";
   const mlName=fold(p?.name||"");
@@ -2624,7 +2627,6 @@ function freeFirePlanIcon(p,item){
   if(mlName.includes("pase semanal"))return gameOfferSpriteIcon(8,"Weekly Pass de Mobile Legends");
   return '<img class="plan-icon-image mlbb-plan-icon-image" src="'+clean(mobileLegendsImageUrl(p))+'" alt="'+clean(alt)+'" loading="lazy" decoding="async" width="112" height="112" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src=&quot;./assets/games/mlbb-diamonds.svg&quot;">';
  }
- const gameName=fold(item?.name||"");
  const productLabel=fold(String(p?.name||"")+" "+String(p?.description||""));
  if(gameName==="pubg mobile"){
   if(/first purchase pack/.test(productLabel))return gameOfferSpriteIcon(20,"First Purchase Pack de PUBG Mobile");
@@ -2647,10 +2649,13 @@ function freeFirePlanIcon(p,item){
   if(/tagtical bundle i\b/.test(productLabel))return gameOfferSpriteIcon(15,"TAGTICAL Bundle I de Arena Breakout");
   if(/tagtical complete bundle/.test(productLabel))return gameOfferSpriteIcon(16,"TAGTICAL Complete Bundle de Arena Breakout");
   if(/all pack/.test(productLabel))return gameOfferSpriteIcon(17,"All Pack de Arena Breakout");
-  if(/monthly advanced battle pass activation pass/.test(productLabel))return additionalGamePlanIcon("./assets/games/arena-breakout.webp?v=2","Arena Breakout · pase avanzado","🎟️");
-  if(/premium battle pass/.test(productLabel))return additionalGamePlanIcon("./assets/games/arena-breakout.webp?v=2","Arena Breakout · pase premium","🎟️");
-  if(/tagtical bundle/.test(productLabel))return additionalGamePlanIcon("./assets/games/arena-breakout.webp?v=2","Arena Breakout · paquete TAGTICAL","📦");
-  return additionalGamePlanIcon("./assets/games/arena-breakout.webp?v=2","Arena Breakout · "+String(p?.name||"objeto del juego"),"🛡️");
+  if(/monthly advanced battle pass activation pass/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/public/08f39990746f8c5eed1e09725617c5cd.png","Tarjeta oficial Advanced Battle Pass de Arena Breakout","🎟️");
+  if(/premium battle pass/.test(productLabel))return additionalGamePlanIcon("https://cdn.midasbuy.com/public/154d156110d9f020d19fd0b68c9742c1.png","Tarjeta oficial Premium Battle Pass de Arena Breakout","🎟️");
+  if(/maxace ash|maxace original/.test(productLabel))return gameOfferSpriteIcon(16,"Grupo de armas MAXACE de Arena Breakout");
+  if(/tagtical bundle [ii-v]+/.test(productLabel))return gameOfferSpriteIcon(16,"Grupo de armas del paquete TAGTICAL de Arena Breakout");
+  if(/bulletproof case|composition case|beginner select/.test(productLabel))return gameOfferSpriteIcon(17,"Cajas y artículos de Arena Breakout");
+  if(/tagtical bundle/.test(productLabel))return '<span class="plan-icon-emoji game-icon-fallback" aria-label="Bundle de Arena Breakout">📦</span>';
+  return '<span class="plan-icon-emoji game-icon-fallback" aria-label="Objeto de Arena Breakout">🛡️</span>';
  }
  if(gameName!=="free fire")return '<span class="plan-icon-emoji" aria-hidden="true">'+gameCurrency(item).icon+'</span>';
  const label=fold(String(p.name||"")+" "+String(p.description||""));
