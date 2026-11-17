@@ -412,3 +412,12 @@ select:focus-visible,textarea:focus-visible{
 .wallet-hero{background:radial-gradient(circle at 82% 28%,rgba(112,169,255,.28),transparent 31%),linear-gradient(125deg,#10284f 0%,#174b91 56%,#2b70dc 100%)}
 .wallet-hero:before{content:"";position:absolute;width:165px;height:165px;right:13px;bottom:-100px;border:1px solid rgba(255,255,255,.17);border-radius:50%;box-shadow:0 0 0 18px rgba(255,255,255,.035),0 0 0 39px rgba(255,255,255,.025)}
 @media(max-width:680px){.wallet-coin-art{width:82px;height:82px;border-radius:23px}}
+
+/* Rechazo responsable: el motivo queda claro para administración y cliente. */
+.order-reject-reason-field{margin:10px 0 8px;padding:12px;border:1px solid #dbe5f2;border-radius:13px;background:#f8faff}
+.order-reject-reason-field label{display:block;color:#263e60;font-size:11px;font-weight:850;margin-bottom:6px}
+.order-reject-reason-field textarea{width:100%;min-height:70px;padding:10px 11px;border:1px solid #d7e1ef;border-radius:10px;background:#fff;color:#223956;font:inherit;font-size:12px;resize:vertical}
+.order-reject-reason-field small{display:block;margin-top:5px;color:#728198;font-size:10px;line-height:1.45}
+.order-rejection-reason{margin-top:11px;padding:12px 13px;border:1px solid #f0d9d9;border-radius:13px;background:#fff8f8;color:#62434a}
+.order-rejection-reason strong{font-size:11px;color:#8c3442}
+.order-rejection-reason p{margin:5px 0 0;font-size:11px;line-height:1.55;white-space:pre-wrap}
