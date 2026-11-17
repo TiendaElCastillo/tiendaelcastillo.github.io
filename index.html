@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=4">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=5">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -1996,7 +1996,18 @@ body{min-width:0}
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
    <div><span class="wallet-kicker">♛ BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance">0,00 USD</div><small>Este es tu saldo para pagar paquetes. Los reembolsos de pedidos fallidos que correspondan también se acreditarán aquí.</small></div>
-   <div class="wallet-coin" aria-hidden="true">💳</div>
+   <div class="wallet-coin wallet-coin-art" aria-hidden="true">
+    <svg viewBox="0 0 180 150" role="img" focusable="false">
+     <defs><linearGradient id="walletShell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dceaff"/></linearGradient><linearGradient id="walletCard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#75b4ff"/><stop offset="1" stop-color="#2868df"/></linearGradient></defs>
+     <path d="M30 45 118 20q9-3 13 6l18 65-94 26q-9 2-12-7L24 57q-3-9 6-12Z" fill="url(#walletCard)" opacity=".95"/>
+     <path d="M34 54 127 29q8-2 10 6l16 66q2 8-7 11l-88 24q-9 2-11-7L28 64q-2-8 6-10Z" fill="url(#walletShell)" stroke="#fff" stroke-width="3"/>
+     <path d="m38 65 98-26 9 34-98 26Z" fill="#edf5ff"/>
+     <path d="m44 83 93-25 11 40-93 25q-7 2-9-6Z" fill="#245fca"/>
+     <rect x="83" y="83" width="44" height="22" rx="7" fill="#fff" opacity=".96"/>
+     <circle cx="96" cy="94" r="4" fill="#347df0"/><path d="m104 94 14-4" stroke="#347df0" stroke-width="3" stroke-linecap="round"/>
+     <path d="m52 44 49-13" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+    </svg>
+   </div>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
    <h3 id="walletInformationTitle">Tu saldo de tienda</h3>
@@ -2024,22 +2035,21 @@ body{min-width:0}
      <div id="walletDepositInstructions" class="wallet-instructions">Cargando las instrucciones de pago…</div>
      <div class="field hidden" id="walletDepositSenderPhoneWrap"><label for="walletDepositSenderPhone">Teléfono desde el que haces la transferencia</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="walletDepositSenderPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="20" placeholder="xxxxxxxx" aria-label="Ocho dígitos del móvil cubano desde el que pagaste"></div><small class="wallet-field-hint">Escribe solo los 8 dígitos de tu línea de origen; el +53 ya aparece separado.</small></div>
      <div class="field" id="walletDepositReferenceWrap"><label for="walletDepositReference">Número de transacción bancaria</label><input id="walletDepositReference" inputmode="text" maxlength="100" placeholder="Copia el Nro. de Transacción"></div>
-     
-     <div class="checkout-stage-actions"><button class="secondary-btn" type="button" onclick="goWalletDepositStep(1)">← Volver</button><button class="primary-btn" type="button" onclick="goWalletDepositStep(3)">Continuar a los comprobantes →</button></div>
-    </div>
-    <div id="walletDepositStep3" class="wallet-deposit-stage hidden">
-     <div class="checkout-stage-title"><strong>3. Adjunta el comprobante</strong><small>Sube una captura clara de la transferencia para que podamos revisarla.</small></div>
-     <div class="field proof-field wallet-proof-field">
-      <label for="walletDepositProof">Capturas del comprobante (obligatorio)</label>
+     <div class="field proof-field wallet-proof-field" id="walletDepositProofWrap">
+      <label for="walletDepositProof">Captura del mensaje de confirmación (obligatorio)</label>
       <input class="proof-input" id="walletDepositProof" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="walletDepositProofHelp walletDepositProofSelection" onchange="previewWalletDepositProof()">
       <label class="proof-dropzone" for="walletDepositProof">
        <span class="proof-icon" aria-hidden="true">↑</span>
-       <span class="proof-copy"><strong id="walletDepositProofTitle">Toca aquí para seleccionar tus capturas</strong><small id="walletDepositProofHelp">Selecciona la captura de tu transferencia CUP. Adjunta de 1 a 2 imágenes JPG, PNG o WEBP, de hasta 5 MB cada una.</small></span>
+       <span class="proof-copy"><strong id="walletDepositProofTitle">Adjunta la captura de confirmación</strong><small id="walletDepositProofHelp">Debe ser la captura del mensaje que te envía el banco confirmando que la transferencia llegó a la cuenta o tarjeta receptora. La imagen debe mostrar el mensaje completo, el importe, la fecha, el destinatario y el estado de la operación. Adjunta de 1 a 2 imágenes JPG, PNG o WEBP, de hasta 5 MB cada una.</small></span>
       </label>
-      <small id="walletDepositProofSelection" class="wallet-proof-selection" role="status" aria-live="polite">Todavía no has adjuntado capturas. Pulsa el recuadro azul para elegirlas.</small>
+      <small id="walletDepositProofSelection" class="wallet-proof-selection" role="status" aria-live="polite">Todavía no has adjuntado la captura del mensaje de confirmación.</small>
      </div>
+     <div class="checkout-stage-actions"><button class="secondary-btn" type="button" onclick="goWalletDepositStep(1)">← Volver</button><button class="primary-btn" type="button" onclick="goWalletDepositStep(3)">Revisar solicitud →</button></div>
+    </div>
+    <div id="walletDepositStep3" class="wallet-deposit-stage hidden">
+     <div class="checkout-stage-title"><strong>3. Revisa y envía tu solicitud</strong><small>Comprueba que los datos coincidan con el mensaje de confirmación del banco.</small></div>
      <div id="walletDepositFinalSummary" class="wallet-preview"><small>Resumen de tu solicitud</small><strong>Revisa los datos antes de enviarla.</strong></div>
-     <div class="wallet-warning">El saldo se añadirá cuando confirmemos que la transferencia llegó correctamente. Si hay algún problema, te indicaremos el motivo.</div>
+     <div class="wallet-warning">La captura debe mostrar la confirmación de que el dinero llegó a la cuenta receptora. El saldo se añadirá únicamente después de que comprobemos el pago.</div>
      <div class="checkout-stage-actions"><button class="secondary-btn" type="button" onclick="goWalletDepositStep(2)">← Volver</button><button id="walletDepositSubmit" class="primary-btn" type="button" onclick="requestWalletDeposit()">Enviar solicitud para revisión</button></div>
     </div>
     <p id="walletDepositMsg" class="msg" role="status" aria-live="polite"></p>
@@ -4530,12 +4540,20 @@ function goWalletDepositStep(step){
    if(msg)msg.textContent="Escribe el Nro. de Transacción del banco.";
    return;
   }
+  const files=Array.from($("walletDepositProof")?.files||[]);
+  if(files.length<1||files.length>2){
+   if(msg)msg.textContent="Adjunta la captura del mensaje completo de confirmación del banco (1 o 2 imágenes).";
+   return;
+  }
+  for(const file of files){const invalid=validateProofFile(file);if(invalid){if(msg)msg.textContent=invalid;return;}}
  }
  if(target===3){
   const files=Array.from($("walletDepositProof")?.files||[]);
   const credited=Math.floor((amount/Number(walletSettings.cup_per_usd||1160))*100)/100;
   const proofLabel=files.length?files.length+" imagen(es) seleccionada(s)":"pendiente de adjuntar";
-  $("walletDepositFinalSummary").innerHTML="<small>Resumen de tu solicitud</small><strong>"+money(amount)+" CUP · "+moneyUSD(credited)+" USD estimados</strong><small>Comprobantes: "+proofLabel+".</small>";
+  const phone=cubaMobileNational($("walletDepositSenderPhone")?.value||"");
+  const reference=String($("walletDepositReference")?.value||"").trim();
+  $("walletDepositFinalSummary").innerHTML="<small>Resumen de tu solicitud</small><strong>"+money(amount)+" CUP · "+moneyUSD(credited)+" USD estimados</strong><small>Teléfono de origen: +53 "+clean(phone)+"</small><small>N.º de transacción: "+clean(reference)+"</small><small>Captura del mensaje de confirmación: "+proofLabel+".</small>";
   previewWalletDepositProof();
  }
  [1,2,3].forEach(n=>{
