@@ -220,3 +220,97 @@ select:focus-visible,textarea:focus-visible{
 @media(prefers-reduced-motion:reduce){
   .game-tile,.gift-tile,.catalog-product{transition:none!important}
 }
+
+
+/* Retoque fino de presentación: sin añadir componentes ni alterar flujos. */
+#homeView .home-intro,
+#auth .auth-showcase{
+  border-radius:24px;
+  overflow:hidden;
+}
+#homeGames .game-tile,
+#homeView .gift-tile{
+  border:1px solid #e2e9f3;
+  background:#fff;
+}
+#homeGames .game-art img,
+#auth .auth-game-art img{
+  backface-visibility:hidden;
+}
+#homeGames .tile-info{
+  gap:4px;
+  padding:12px 13px 13px;
+}
+#homeGames .tile-title{
+  color:#1a2d48;
+  letter-spacing:-.018em;
+}
+#homeGames .tile-status{
+  border:1px solid #dce8f8;
+  border-radius:999px;
+  padding:5px 9px;
+}
+#homeView .section{
+  margin-top:27px;
+  margin-bottom:27px;
+}
+#homeView .section-head{
+  margin-bottom:14px;
+}
+#homeView .section-head h2{
+  font-size:clamp(18px,2.5vw,22px);
+}
+#store .panel,
+#store .checkout-summary{
+  border-radius:18px;
+}
+#store .catalog-product{
+  border-radius:17px;
+  background:linear-gradient(160deg,#fff 0%,#fbfdff 100%);
+}
+#store .catalog-product h3{
+  color:#1b3153;
+  line-height:1.35;
+}
+#store .price-option{
+  border-radius:10px;
+}
+#store .primary-btn,
+#store .secondary-btn,
+#auth button{
+  -webkit-tap-highlight-color:transparent;
+}
+#store .primary-btn:active,
+#store .secondary-btn:active,
+#homeView .game-tile:active,
+#homeView .gift-tile:active{
+  transform:translateY(1px) scale(.99);
+}
+#store input,
+#store select,
+#store textarea,
+#auth input{
+  border-radius:12px;
+}
+#store .order-card{
+  border-radius:17px;
+}
+.site-footer{
+  border-radius:18px 18px 0 0;
+  line-height:1.65;
+}
+@media(max-width:520px){
+  #homeView .section{margin-top:22px;margin-bottom:22px}
+  #homeGames .tile-info{padding:10px 11px 12px}
+  #homeGames .tile-title{font-size:12px}
+  #homeGames .tile-meta{min-height:2.5em}
+  #store .panel{padding:15px}
+}
+@media(hover:none){
+  #homeGames .game-tile:hover,
+  #homeView .gift-tile:hover,
+  #store .catalog-product:hover{
+    transform:none;
+    box-shadow:0 6px 18px rgba(22,48,86,.05);
+  }
+}
