@@ -1603,6 +1603,9 @@ body{min-width:0}
 .bs-plan-card{min-width:0;overflow:hidden;display:flex;flex-direction:column;border:1px solid #e2e8f1;border-radius:15px;background:#fff;box-shadow:0 5px 15px rgba(20,42,75,.055)}
 .bs-plan-art{position:relative;height:100px;overflow:hidden;background:#17243a}
 .bs-plan-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 38%}
+.product-art-nex-level{display:grid;place-items:center;padding:6px;box-sizing:border-box;background:linear-gradient(145deg,#fff,#f3f6fb)}
+.product-art-nex-level img{display:block;width:100%;height:100%;object-fit:contain}
+.bs-plan-art .nex-level-plan-icon{object-fit:contain;padding:8px;box-sizing:border-box;background:linear-gradient(145deg,#fff,#f3f6fb);border-radius:11px}
 .bs-plan-art>span:last-child{position:absolute;left:7px;bottom:7px;padding:5px 7px;border:1px solid rgba(255,255,255,.24);border-radius:20px;background:rgba(12,22,39,.72);color:#fff;font-size:8px;font-weight:900;letter-spacing:.06em}
 .bs-plan-copy{display:flex;flex:1;flex-direction:column;gap:5px;padding:10px}
 .bs-plan-copy>strong{min-height:31px;color:#1b2d48;font-size:12px;line-height:1.3;overflow-wrap:anywhere}
@@ -2604,9 +2607,81 @@ function gameOfferSpriteIcon(index,alt){
  const x=(col/3)*100,y=(row/6)*100;
  return '<div class="plan-icon-official game-offer-sprite" role="img" aria-label="'+clean(alt)+'" style="background-image:url(./assets/games/store-offers-sprite.webp);background-size:400% 700%;background-position:'+x+'% '+y+'%;background-repeat:no-repeat"></div>';
 }
+function nexLevelOfferAsset(product,gameNameOverride){
+ const gameName=fold(gameNameOverride||product?.game||"");
+ const label=fold(String(product?.name||"")+" "+String(product?.description||""));
+ const amount=Number(product?.amount||0);
+ let file="";
+ if(gameName==="free fire"){
+  const diamonds={110:"gema-1.avif",341:"gema-2.avif",572:"gema-3.avif",1166:"gema-4.avif",2398:"gema-5.avif",6160:"gema-6.avif"};
+  file=diamonds[amount]||"";
+  if(!file&&/booyah/.test(label))file="pase-2.avif";
+  if(!file&&/mensual|monthly/.test(label))file="vip-mensual.avif";
+  if(!file&&/semanal|weekly/.test(label))file="vip-semanal.avif";
+ }
+ if(gameName==="mobile legends: bang bang"){
+  if(amount>0)file=amount<=275?"n-gemas-1.avif":amount<=706?"n-gemas-2.avif":"n-gemas-3.avif";
+  if(!file&&/twilight/.test(label))file="pase-1-mobile-legends.avif";
+  if(!file&&/paquete elite mensual/.test(label))file="vip-mensual.avif";
+  if(!file&&/paquete elite semanal/.test(label))file="vip-semanal.avif";
+  if(!file&&/pase semanal|weekly pass/.test(label))file="pase-2-mobile-legends.avif";
+ }
+ if(gameName==="blood strike"){
+  if(amount>0&&/\bbc\b/.test(label)){
+   file=amount<=320?"moneda-1.avif":amount<=1100?"moneda-2.avif":amount<=2260?"moneda-3.avif":"moneda-4.avif";
+  }
+  const deal=label.match(/(\d+(?:\.\d+)?)\s*deal/);
+  if(!file&&deal){
+   const value=Number(deal[1]);
+   file=value<=1.99?"moneda-1.avif":value<=3.99?"moneda-2.avif":value<=6.99?"moneda-3.avif":"moneda-4.avif";
+  }
+  if(!file&&/strike pass elite/.test(label))file="pase-1.avif";
+  if(!file&&/strike pass premium/.test(label))file="pase-3.avif";
+  if(!file&&/level up pass/.test(label))file="pase-1.avif";
+  if(!file&&/season pass/.test(label))file="pase-3.avif";
+  if(!file&&/lucky bag|bag week/.test(label))file="bolsa.avif";
+  if(!file&&/chest|cofre/.test(label))file=/ultra skin|attack on titan|seven deadly sins/.test(label)?"cofre-1.avif":"cofre-2.avif";
+  if(!file&&/voucher|stash|pre.order|preorder/.test(label))file="bolsa.avif";
+  if(!file)file="bolsa.avif";
+ }
+ if(gameName==="arena breakout"){
+  if(amount>0&&/\bbonds?\b/.test(label)){
+   file=amount<=335?"oro-1.avif":amount<=3400?"oro-2.avif":"oro-3.avif";
+  }
+  if(!file&&/monthly advanced battle pass/.test(label))file="pase-1-arena-breakout.avif";
+  if(!file&&/monthly premium battle pass/.test(label))file="pase-2-arena-breakout.avif";
+  if(!file&&/quarterly premium battle pass/.test(label))file="pase-3-arena-breakout.avif";
+  if(!file&&/tagtical complete bundle/.test(label))file="caja-8.avif";
+  if(!file&&/tagtical bundle vi\b/.test(label))file="caja-6.avif";
+  if(!file&&/tagtical bundle v\b/.test(label))file="caja-5.avif";
+  if(!file&&/tagtical bundle iv\b/.test(label))file="caja-4.avif";
+  if(!file&&/tagtical bundle iii\b/.test(label))file="caja-3.avif";
+  if(!file&&/tagtical bundle ii\b/.test(label))file="caja-2.avif";
+  if(!file&&/tagtical bundle i\b/.test(label))file="caja-1.avif";
+  if(!file&&/bulletproof case/.test(label))file="caja-7.avif";
+  if(!file&&/composition case/.test(label))file="caja-3.avif";
+  if(!file&&/beginner select/.test(label))file="caja-5.avif";
+  if(!file&&/maxace carbon scales/.test(label))file="caja-1.avif";
+  if(!file&&/maxace molten fire/.test(label))file="caja-2.avif";
+  if(!file&&/maxace ash/.test(label))file="caja-3.avif";
+  if(!file&&/maxace finality/.test(label))file="caja-4.avif";
+  if(!file&&/maxace original/.test(label))file="caja-5.avif";
+  if(!file&&/maxace venom/.test(label))file="caja-6.avif";
+  if(!file)file="caja-8.avif";
+ }
+ if(!file)return null;
+ return {file,alt:(String(product?.game||gameName)+" · "+String(product?.name||"Oferta")).trim()};
+}
+function nexLevelOfferImage(asset,productCard=false){
+ const src="./assets/games/nex-level/"+asset.file,alt=clean(asset.alt);
+ if(productCard)return '<div class="product-art product-art-nex-level"><img src="'+src+'" alt="'+alt+'" loading="lazy" decoding="async" width="560" height="180"></div>';
+ return '<img class="plan-icon-image game-currency-icon nex-level-plan-icon" src="'+src+'" alt="'+alt+'" loading="lazy" decoding="async" width="112" height="112">';
+}
 function freeFirePlanIcon(p,item){
  const group=freeFirePackageGroup(p);
  const gameName=fold(item?.name||p?.game||"");
+ const nexAsset=nexLevelOfferAsset(p,gameName);
+ if(nexAsset)return nexLevelOfferImage(nexAsset);
  if(gameName==="blood strike"){
   const bsLabel=fold(String(p?.name||"")+" "+String(p?.description||""));
   if(/strike pass elite/.test(bsLabel))return gameOfferSpriteIcon(18,"Strike Pass Elite de Blood Strike");
@@ -2905,6 +2980,8 @@ function isBloodStrikeCatalogProduct(product){
 }
 function productArtwork(p){
  const fallback="this.onerror=null;this.remove()";
+ const nexAsset=nexLevelOfferAsset(p,p?.game);
+ if(nexAsset)return nexLevelOfferImage(nexAsset,true);
  const isFreeFire=fold(p.game||"").includes("free fire");
  const isMobileLegends=fold(p.game||"").includes("mobile legends");
  const isBloodStrike=fold(p.game||"").includes("blood strike");

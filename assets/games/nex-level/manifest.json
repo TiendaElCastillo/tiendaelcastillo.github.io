@@ -1,0 +1,115 @@
+{
+  "source": "iconos buenos.zip",
+  "source_format": "AVIF",
+  "image_bytes_preserved": true,
+  "note": "Recursos visuales originales proporcionados por el propietario. Los nombres repetidos del ZIP se distinguen con sufijos por juego.",
+  "games": {
+    "Free Fire": {
+      "primary_currency": "gema-1.avif a gema-6.avif",
+      "passes": [
+        "pase-2.avif"
+      ],
+      "memberships": [
+        "vip-semanal.avif",
+        "vip-mensual.avif"
+      ]
+    },
+    "Mobile Legends: Bang Bang": {
+      "primary_currency": [
+        "n-gemas-1.avif",
+        "n-gemas-2.avif",
+        "n-gemas-3.avif"
+      ],
+      "passes": [
+        "pase-1-mobile-legends.avif",
+        "pase-2-mobile-legends.avif"
+      ],
+      "memberships": [
+        "vip-semanal.avif",
+        "vip-mensual.avif"
+      ]
+    },
+    "Blood Strike": {
+      "primary_currency": [
+        "moneda-1.avif",
+        "moneda-2.avif",
+        "moneda-3.avif",
+        "moneda-4.avif"
+      ],
+      "passes": [
+        "pase-1.avif",
+        "pase-3.avif"
+      ],
+      "specials": [
+        "bolsa.avif",
+        "cofre-1.avif",
+        "cofre-2.avif"
+      ]
+    },
+    "Arena Breakout": {
+      "primary_currency": [
+        "oro-1.avif",
+        "oro-2.avif",
+        "oro-3.avif"
+      ],
+      "passes": [
+        "pase-1-arena-breakout.avif",
+        "pase-2-arena-breakout.avif",
+        "pase-3-arena-breakout.avif"
+      ],
+      "bundles_and_cases": [
+        "caja-1.avif",
+        "caja-2.avif",
+        "caja-3.avif",
+        "caja-4.avif",
+        "caja-5.avif",
+        "caja-6.avif",
+        "caja-7.avif",
+        "caja-8.avif"
+      ]
+    }
+  },
+  "files": [
+    "bolsa.avif",
+    "caja-1.avif",
+    "caja-2.avif",
+    "caja-3.avif",
+    "caja-4.avif",
+    "caja-5.avif",
+    "caja-6.avif",
+    "caja-7.avif",
+    "caja-8.avif",
+    "cofre-1-azul.avif",
+    "cofre-1.avif",
+    "cofre-2.avif",
+    "gema-1.avif",
+    "gema-2.avif",
+    "gema-3.avif",
+    "gema-4.avif",
+    "gema-5.avif",
+    "gema-6.avif",
+    "moneda-1.avif",
+    "moneda-2.avif",
+    "moneda-3.avif",
+    "moneda-4.avif",
+    "n-cofre-1.avif",
+    "n-cofre-2.avif",
+    "n-cofre-3.avif",
+    "n-gemas-1.avif",
+    "n-gemas-2.avif",
+    "n-gemas-3.avif",
+    "oro-1.avif",
+    "oro-2.avif",
+    "oro-3.avif",
+    "pase-1-arena-breakout.avif",
+    "pase-1-mobile-legends.avif",
+    "pase-1.avif",
+    "pase-2-arena-breakout.avif",
+    "pase-2-mobile-legends.avif",
+    "pase-2.avif",
+    "pase-3-arena-breakout.avif",
+    "pase-3.avif",
+    "vip-mensual.avif",
+    "vip-semanal.avif"
+  ]
+}
