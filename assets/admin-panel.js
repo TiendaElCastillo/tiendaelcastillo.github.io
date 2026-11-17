@@ -7,14 +7,14 @@ function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className
 function initAdminLayout(){
  const admin=document.getElementById("admin");if(!admin||admin.dataset.organized==="1")return;
  const panels=Array.from(admin.children).filter(n=>n.classList&&n.classList.contains("panel"));
- if(panels.length!==6)return;
+ if(panels.length!==7)return;
  admin.dataset.organized="1";
  const heading=el("div","admin-heading");
  heading.append(el("div","admin-kicker","PANEL DE CONTROL"));
  heading.append(el("h1","","Administración"));
  heading.append(el("p","subtle","Cada herramienta en su apartado. Entra solo en lo que necesitas."));
  const nav=el("nav","admin-tabs");nav.setAttribute("aria-label","Apartados de administración");
- const tabs=[["overview","Resumen"],["orders","Pedidos"],["products","Productos"],["payments","Pagos"],["pricing","Precios y capital"],["central","Central One"]];
+ const tabs=[["overview","Resumen"],["orders","Pedidos"],["wallet","Wallet"],["products","Productos"],["payments","Pagos"],["pricing","Precios y capital"],["central","Central One"]];
  tabs.forEach(([key,label])=>{const b=el("button","admin-tab"+(key==="overview"?" active":""),label);b.type="button";b.dataset.adminTab=key;b.addEventListener("click",()=>showAdminSection(key));nav.append(b);});
  const overview=el("div","panel admin-overview");overview.dataset.adminSection="overview";
  overview.append(el("h2","","Resumen del negocio"));
@@ -29,23 +29,94 @@ function initAdminLayout(){
  });
  overview.append(metrics);
  const shortcuts=el("div","admin-shortcuts");
- const cards=[["orders","Pedidos","Revisa pagos y autoriza recargas"],["products","Productos","Crea, edita y activa paquetes"],["payments","Pagos","Configura cobros y revisa depósitos"],["pricing","Precios y capital","Actualiza tasas y calcula precios"],["central","Central One","Consulta catálogo y saldo mayorista"]];
+ const cards=[["orders","Pedidos","Revisa pagos y autoriza recargas"],["wallet","Wallet","Revisa depósitos y acredita saldo de clientes"],["products","Productos","Crea, edita y activa paquetes"],["payments","Pagos","Configura métodos e instrucciones de cobro"],["pricing","Precios y capital","Actualiza tasas y calcula precios"],["central","Central One","Consulta catálogo y saldo mayorista"]];
  cards.forEach(([key,title,desc])=>{const b=el("button","admin-shortcut");b.type="button";b.append(el("strong","",title),el("span","",desc));b.addEventListener("click",()=>showAdminSection(key));shortcuts.append(b);});
  overview.append(shortcuts,el("p","track-note","Flujo seguro: primero verifica que el dinero llegó. Después autoriza la recarga. Antes del envío, el sistema vuelve a comprobar el coste real de Central One y bloquea cualquier operación que produzca pérdidas. Confirmar el pago no envía diamantes; la entrega solo termina cuando Central One confirma el resultado."));
- const sectionForPanel=["central","central","pricing","products","payments","orders"];
+ const sectionForPanel=["central","central","pricing","products","payments","wallet","orders"];
  panels.forEach((panel,i)=>{panel.dataset.adminSection=sectionForPanel[i];panel.classList.add("admin-section-panel");});
  admin.insertBefore(overview,panels[0]);
  admin.insertBefore(nav,overview);
  admin.insertBefore(heading,nav);
- setupOrderFilters(panels[5]);
+ setupWalletDepositFilters(panels[5]);
+ setupOrderFilters(panels[6]);
  showAdminSection("overview");
 }
 function showAdminSection(key){
- const valid=["overview","orders","products","payments","pricing","central"];
+ const valid=["overview","orders","wallet","products","payments","pricing","central"];
  const selected=valid.includes(key)?key:"overview";
  document.querySelectorAll("#admin [data-admin-section]").forEach(n=>n.classList.toggle("hidden",n.dataset.adminSection!==selected));
  document.querySelectorAll("#admin [data-admin-tab]").forEach(n=>n.classList.toggle("active",n.dataset.adminTab===selected));
 }
+
+let activeWalletDepositFilter="all";
+let walletDepositSearchQuery="";
+const walletDepositGroups=["all","pending","review","approved","rejected"];
+function classifyWalletDeposit(card){
+ const badge=card.querySelector(".wallet-status");
+ const label=String(badge?.textContent||"").toLocaleLowerCase("es");
+ if(card.querySelector(".wallet-status.approved")||label.includes("aprobado"))return "approved";
+ if(card.querySelector(".wallet-status.rejected")||label.includes("rechazado"))return "rejected";
+ if(label.includes("revisión")||label.includes("revision"))return "review";
+ return "pending";
+}
+function applyWalletDepositFilter(group){
+ activeWalletDepositFilter=walletDepositGroups.includes(group)?group:"all";
+ const container=document.getElementById("walletDepositsAdmin");if(!container)return;
+ const cards=Array.from(container.querySelectorAll(":scope > .wallet-admin-card"));
+ const counts={all:cards.length,pending:0,review:0,approved:0,rejected:0};
+ let visible=0;
+ cards.forEach(card=>{
+  const kind=classifyWalletDeposit(card);counts[kind]++;
+  const matchesSearch=!walletDepositSearchQuery||card.textContent.toLocaleLowerCase("es").includes(walletDepositSearchQuery);
+  const show=(activeWalletDepositFilter==="all"||kind===activeWalletDepositFilter)&&matchesSearch;
+  card.classList.toggle("hidden",!show);if(show)visible++;
+ });
+ document.querySelectorAll("[data-wallet-deposit-filter]").forEach(button=>{
+  button.classList.toggle("active",button.dataset.walletDepositFilter===activeWalletDepositFilter);
+  const count=button.querySelector(".wallet-deposit-filter-count");
+  if(count)count.textContent=String(counts[button.dataset.walletDepositFilter]||0);
+ });
+ const metrics={pending:"walletCountPending",review:"walletCountReview",approved:"walletCountApproved",rejected:"walletCountRejected"};
+ Object.entries(metrics).forEach(([key,id])=>{const node=document.getElementById(id);if(node)node.textContent=String(counts[key]||0);});
+ const empty=document.getElementById("walletDepositFilterEmpty");
+ if(empty){
+  empty.classList.toggle("show",cards.length>0&&visible===0);
+  empty.textContent=walletDepositSearchQuery?"No se encontraron depósitos con esa búsqueda.":"No hay solicitudes en este estado.";
+ }
+}
+function setupWalletDepositFilters(panel){
+ const container=panel.querySelector("#walletDepositsAdmin");if(!container||container.dataset.filtersReady==="1")return;
+ container.dataset.filtersReady="1";
+ const filters=el("div","wallet-deposit-filters");
+ filters.setAttribute("aria-label","Filtrar solicitudes de wallet");
+ [["all","Todas"],["pending","Pendientes"],["review","En revisión"],["approved","Aprobadas"],["rejected","Rechazadas"]].forEach(([key,label])=>{
+  const button=el("button","wallet-deposit-filter"+(key==="all"?" active":""));
+  button.type="button";button.dataset.walletDepositFilter=key;
+  button.append(document.createTextNode(label+" "));
+  button.append(el("span","wallet-deposit-filter-count","0"));
+  button.addEventListener("click",()=>applyWalletDepositFilter(key));
+  filters.append(button);
+ });
+ const search=el("input","wallet-deposit-search");
+ search.type="search";search.placeholder="Buscar cliente, importe, referencia o TxID…";
+ search.setAttribute("aria-label","Buscar depósitos de wallet");search.autocomplete="off";
+ search.addEventListener("input",()=>{walletDepositSearchQuery=search.value.trim().toLocaleLowerCase("es");applyWalletDepositFilter(activeWalletDepositFilter);});
+ const empty=el("div","wallet-deposit-filter-empty","No hay solicitudes en este estado.");empty.id="walletDepositFilterEmpty";
+ container.parentNode.insertBefore(search,container);
+ container.parentNode.insertBefore(filters,container);
+ container.parentNode.insertBefore(empty,container.nextSibling);
+}
+function installWalletDepositRefreshFilter(){
+ if(typeof window.loadWalletDepositsAdmin!=="function"||window.loadWalletDepositsAdmin.__castleWalletFilterWrapped)return;
+ const original=window.loadWalletDepositsAdmin;
+ const wrapped=async function(){
+  const result=await original.apply(this,arguments);
+  applyWalletDepositFilter(activeWalletDepositFilter);
+  return result;
+ };
+ wrapped.__castleWalletFilterWrapped=true;window.loadWalletDepositsAdmin=wrapped;
+}
+
 function classifyOrder(card){
  const status=String(card.dataset.orderStatus||"").toLowerCase();
  const provider=String(card.dataset.providerStatus||"").toLowerCase();
@@ -154,7 +225,7 @@ function installCheckoutFlow(){
  }
 }
 
-function start(){initAdminLayout();installCheckoutFlow();installOrderRefreshFilter();installViewHook();if(document.getElementById("allorders"))applyOrderFilter(activeOrderFilter);}
+function start(){initAdminLayout();installCheckoutFlow();installOrderRefreshFilter();installWalletDepositRefreshFilter();installViewHook();if(document.getElementById("allorders"))applyOrderFilter(activeOrderFilter);applyWalletDepositFilter("all");}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
 window.updateCheckoutSubmitState=refreshCheckoutButton;
 window.showAdminSection=showAdminSection;
