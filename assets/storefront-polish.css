@@ -421,3 +421,13 @@ select:focus-visible,textarea:focus-visible{
 .order-rejection-reason{margin-top:11px;padding:12px 13px;border:1px solid #f0d9d9;border-radius:13px;background:#fff8f8;color:#62434a}
 .order-rejection-reason strong{font-size:11px;color:#8c3442}
 .order-rejection-reason p{margin:5px 0 0;font-size:11px;line-height:1.55;white-space:pre-wrap}
+
+/* El cliente elige el método de pago en cada paquete antes de abrir checkout. */
+.product-payment-options{display:grid;gap:9px}
+.product-payment-prompt{display:block;color:#52637d;font-size:11px;font-weight:850}
+.product-payment-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.product-pay-choice{display:grid;gap:4px;min-width:0;padding:10px 11px;border:1px solid #dbe5f2;border-radius:13px;background:#f8fbff;color:#29405f;text-align:left;cursor:pointer}
+.product-pay-choice-method{font-size:10px;font-weight:850;color:#42608a}
+.product-pay-choice strong{font-size:15px;font-weight:900;color:#1f3e70;overflow-wrap:anywhere}
+.product-pay-choice small{font-size:9px;color:#71829a}
+@media(max-width:380px){.product-payment-choice-grid{grid-template-columns:1fr}}
