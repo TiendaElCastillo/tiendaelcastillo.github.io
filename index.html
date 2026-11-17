@@ -3929,16 +3929,16 @@ function validateProofFile(file){
 async function uploadProofForOrder(orderId,method,file,reference,senderPhone,reportedAmount){
  const invalid=validateProofFile(file);if(invalid)throw new Error(invalid);
  const tx=String(reference||"").trim().toUpperCase().replace(/\s+/g,"");
- if((method==="Transferencia CUP"||method==="Saldo móvil")&&(!tx||tx.length<3||tx.length>100))throw new Error(method==="Saldo móvil"?"Escribe el número o folio de la operación del SMS.":"Escribe el número de transferencia.");
+ if(method==="Transferencia CUP"&&(!tx||tx.length<3||tx.length>100))throw new Error("Escribe el número de transacción bancaria.");
+ if(method==="Saldo móvil"&&tx)throw new Error("Saldo móvil no utiliza número de transferencia. Adjunta el SMS, el importe y el teléfono remitente.");
  if(method==="USDT"&&!/^[A-F0-9]{64}$/i.test(tx))throw new Error("Escribe el hash/TxID válido de 64 caracteres hexadecimales.");
- const nationalPhone=cubaMobileNational(senderPhone);
- const phone=nationalPhone?"+53"+nationalPhone:"";
- if((method==="Transferencia CUP"||method==="Saldo móvil")&&!nationalPhone)throw new Error("Escribe los 8 dígitos válidos de tu móvil cubano (empieza por 5).");
+ const nationalPhone=cubaMobileNational(senderPhone),phone=nationalPhone?"+53"+nationalPhone:"";
+ if((method==="Transferencia CUP"||method==="Saldo móvil")&&!nationalPhone)throw new Error("Escribe los 8 dígitos válidos del móvil cubano que aparece como remitente (empieza por 5).");
  const {data:order,error:orderError}=await db.from("orders").select("id,price,payment_method,status,payment_source").eq("id",orderId).eq("user_id",currentUser.id).maybeSingle();
  if(orderError||!order)throw new Error("No se pudo comprobar el pedido de tu cuenta.");
- if(order.payment_source!=="direct"||!["pending","payment_review"].includes(order.status))throw new Error("Este pedido ya no admite comprobantes.");
- if((method==="Saldo móvil"||method==="USDT")&&(!Number.isFinite(Number(reportedAmount))||Number(reportedAmount)<=0||Math.abs(Number(reportedAmount)-Number(order.price))>(method==="USDT"?0.000001:0.01)))throw new Error("El importe enviado debe coincidir exactamente con el precio del paquete: "+money(order.price)+" "+(method==="USDT"?"USDT":"unidades de saldo")+".");
- if(method==="Transferencia CUP"&&reportedAmount!==null&&reportedAmount!==undefined&&reportedAmount!=="")throw new Error("No escribas importe manual para la transferencia bancaria.");
+ if(order.payment_source!=="direct"||order.status!=="pending")throw new Error("Este pedido ya no admite comprobantes.");
+ if((method==="Saldo móvil"||method==="USDT")&&(!Number.isFinite(Number(reportedAmount))||Number(reportedAmount)<=0||Math.abs(Number(reportedAmount)-Number(order.price))>(method==="USDT"?0.000001:0.01)))throw new Error("El importe debe coincidir exactamente con el precio del paquete: "+money(order.price)+" "+(method==="USDT"?"USDT":"CUP")+".");
+ if(method==="Transferencia CUP"&&reportedAmount!==null&&reportedAmount!==undefined&&reportedAmount!=="")throw new Error("No escribas un importe manual para la transferencia bancaria.");
  const uploadFile=await optimizeProofForUpload(file);
  const ext=uploadFile.type==="image/jpeg"?"jpg":uploadFile.type==="image/png"?"png":"webp";
  const token=(typeof crypto!=="undefined"&&crypto.randomUUID)?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==="x"?r:(r&3|8)).toString(16)});
@@ -3948,15 +3948,13 @@ async function uploadProofForOrder(orderId,method,file,reference,senderPhone,rep
  const result=await db.rpc("submit_payment_proof",{
   p_order_id:orderId,
   p_proof_path:path,
-  p_reference:(method==="Transferencia CUP"||method==="Saldo móvil"||method==="USDT")?tx:null,
+  p_reference:(method==="Transferencia CUP"||method==="USDT")?tx:null,
   p_sender_phone:method==="USDT"?null:phone,
   p_reported_amount:(method==="Saldo móvil"||method==="USDT")?Number(reportedAmount):null
  });
  if(result.error)throw new Error("La imagen se subió, pero no se pudo asociar al pedido: "+result.error.message);
  return result.data;
 }
-
-
 function getWalletRequestIdentity(productId,playerId){
  const identity=String(currentUser?.id||"")+"|"+String(productId)+"|"+String(playerId);
  const storageKey="castle_wallet_request_v1:"+identity;
@@ -4168,11 +4166,13 @@ function renderOrderProofRetryForm(order){
  const method=String(order.payment_method||""),id=clean(order.id);
  const item=paymentMethods.find(m=>m.name===method&&m.active===true&&String(m.instructions||"").trim());
  const guidance=item?'<div class="notice" style="white-space:pre-line">'+clean(item.instructions)+'</div>':'<p class="track-note">Las instrucciones actuales no están disponibles. No vuelvas a transferir; adjunta aquí el comprobante del pago que ya realizaste.</p>';
- const unit=method==="USDT"?" USDT":method==="Saldo móvil"?" unidades de saldo móvil":" CUP";
- const phone=(method==="Transferencia CUP"||method==="Saldo móvil")?'<div class="field"><label for="retry-sender-'+id+'">Teléfono desde el que hiciste el pago</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="retry-sender-'+id+'" data-order-retry-sender type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="xxxxxxxx" maxlength="20"></div></div>':"";
- const reference=method==="Transferencia CUP"?'<div class="field"><label for="retry-reference-'+id+'">N.º de transacción bancaria</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="100" placeholder="Nro. de Transacción"></div>':method==="Saldo móvil"?'<div class="field"><label for="retry-reference-'+id+'">N.º de operación / folio del SMS</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="100" placeholder="Folio único del SMS"></div>':method==="USDT"?'<div class="field"><label for="retry-reference-'+id+'">Hash / TxID USDT (64 caracteres)</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="64" autocapitalize="off" placeholder="Pega el hash completo"></div>':"";
- const amount=(method==="Saldo móvil"||method==="USDT")?'<div class="field"><label for="retry-amount-'+id+'">Cantidad exacta enviada ('+(method==="USDT"?"USDT":"saldo móvil")+')</label><input id="retry-amount-'+id+'" data-order-retry-amount type="number" inputmode="decimal" min="0.01" step="'+(method==="USDT"?"0.000001":"0.01")+'" placeholder="Importe exacto"></div>':"";
- return '<details class="order-proof-retry"><summary>Completar comprobante de este pedido</summary><p class="track-note">Importe de este pedido: <strong>'+money(order.price)+unit+'</strong>. Adjunta la prueba de este mismo pago. No repitas la transferencia ni crees otro pedido.</p>'+guidance+phone+reference+amount+'<div class="field proof-field"><label for="retry-proof-'+id+'">Captura del comprobante (obligatoria)</label><input id="retry-proof-'+id+'" data-order-retry-proof type="file" accept="image/jpeg,image/png,image/webp"></div><button type="button" class="primary-btn" data-retry-order-proof data-order-id="'+id+'" data-payment-method="'+clean(method)+'">Enviar comprobante al mismo pedido</button><p class="msg" role="status" aria-live="polite"></p></details>';
+ const unit=method==="USDT"?" USDT":" CUP";
+ const phone=(method==="Transferencia CUP"||method==="Saldo móvil")?'<div class="field"><label for="retry-sender-'+id+'">'+(method==="Saldo móvil"?"Número remitente que aparece en el SMS":"Teléfono desde el que hiciste la transferencia")+'</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="retry-sender-'+id+'" data-order-retry-sender type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="xxxxxxxx" maxlength="20"></div>'+(method==="Saldo móvil"?'<small>Debe coincidir con el número que aparece después de «del numero» en el SMS.</small>':'')+'</div>':"";
+ const reference=method==="Transferencia CUP"?'<div class="field"><label for="retry-reference-'+id+'">N.º de transacción bancaria</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="100" placeholder="Nro. de Transacción"></div>':method==="USDT"?'<div class="field"><label for="retry-reference-'+id+'">Hash / TxID USDT (64 caracteres)</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="64" autocapitalize="off" placeholder="Pega el hash completo"></div>':"";
+ const amount=(method==="Saldo móvil"||method==="USDT")?'<div class="field"><label for="retry-amount-'+id+'">'+(method==="USDT"?"Cantidad exacta de USDT enviada":"Importe exacto que aparece en el SMS (CUP)")+'</label><input id="retry-amount-'+id+'" data-order-retry-amount type="number" inputmode="decimal" min="0.01" step="'+(method==="USDT"?"0.000001":"0.01")+'" placeholder="Importe exacto"></div>':"";
+ const proofLabel=method==="Saldo móvil"?"Captura del SMS de confirmación (obligatoria)":method==="USDT"?"Captura del envío USDT (obligatoria)":"Captura completa de Transfermóvil (obligatoria)";
+ const proofHelp=method==="Saldo móvil"?"Debe leerse «Usted ha recibido [importe] CUP del numero [remitente]». No se pide número de transferencia.":"Adjunta la captura completa del mismo pago, sin recortar los datos de la operación.";
+ return '<details class="order-proof-retry"><summary>Completar comprobante de este pedido</summary><p class="track-note">Importe de este pedido: <strong>'+money(order.price)+unit+'</strong>. Adjunta la prueba de este mismo pago. No repitas la transferencia ni crees otro pedido.</p>'+guidance+phone+reference+amount+'<div class="field proof-field"><label for="retry-proof-'+id+'">'+proofLabel+'</label><input id="retry-proof-'+id+'" data-order-retry-proof type="file" accept="image/jpeg,image/png,image/webp"><small>'+proofHelp+'</small></div><button type="button" class="primary-btn" data-retry-order-proof data-order-id="'+id+'" data-payment-method="'+clean(method)+'">Enviar comprobante al mismo pedido</button><p class="msg" role="status" aria-live="polite"></p></details>';
 }
 async function retryMissingOrderProof(orderId,button){
  if(!currentUser||!db||!orderId||!button)return;
