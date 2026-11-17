@@ -4233,11 +4233,13 @@ async function loadMyOrders(){
     providerInfo='<p class="track-note">No pudimos completar la recarga. El equipo de Tienda El Castillo está revisando tu pedido y la solución correspondiente. No realices otro pago ni crees otro pedido.</p>';
    }
   }else if(customerProviderError==="admin_cancelled_before_provider"){
-   if(o.payment_source==="wallet"&&customerWalletRefund?.refunded===true){
-    providerInfo='<p class="track-note"><strong>Saldo devuelto a tu billetera:</strong> se acreditaron '+moneyUSD(customerWalletRefund.credited_amount||o.price)+' USD. Puedes comprobar el movimiento en tu historial de la wallet.</p>';
+   if(customerWalletRefund?.refunded===true){
+    providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
    }else{
     providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
    }
+  }else if(customerProviderError==="provider_product_unavailable"){
+   providerInfo='<p class="track-note"><strong>Paquete agotado temporalmente.</strong> No se llegó a crear la recarga. La administración está revisando tu pago para acreditar, si corresponde, el equivalente en USD a tu cartera de Tienda El Castillo. No vuelvas a pagar ni crees otro pedido.</p>';
   }else if(customerProviderError){
    providerInfo='<p class="track-note"><strong>Tu pago está registrado.</strong> Existe una demora técnica antes de iniciar la recarga. Tu pedido sigue guardado y el equipo de Tienda El Castillo lo revisará. No vuelvas a pagar ni crees otro pedido.</p>';
   }else if(customerProviderStatus==="unknown"){
@@ -4870,26 +4872,26 @@ async function cancelPreflightBlockedOrder(orderId,orderCode){
 }
 async function refundWalletPreflightOrder(orderId,orderCode){
  if(currentProfile?.role!=="admin"||!currentUser||!orderId)return;
+ const button=document.querySelector('[data-refund-wallet-preflight][data-order-id="'+CSS.escape(orderId)+'"]');
  const accepted=window.confirm(
-  "DEVOLVER SALDO A LA BILLETERA\n\nPedido "+(orderCode||orderId)+
-  "\n\nEste pedido no tiene una orden del proveedor: no se llegó a enviar o Central One confirmó que no la creó. Esta acción cancelará el pedido y devolverá exactamente el débito original a la billetera del cliente.\n\nLos pedidos con resultado incierto o con una orden real de Central One no permiten esta devolución. El movimiento se registra una sola vez.\n\n¿Confirmas la devolución?"
+  "REVISAR Y ACREDITAR EN CARTERA\n\nPedido "+(orderCode||orderId)+
+  "\n\nAntes de aprobar, abre y verifica el comprobante de pago cuando sea un pago directo. La base de datos también comprobará que el débito de cartera o el pago confirmado corresponde al pedido y que Central One no creó ninguna orden.\n\nSi todo es correcto, se cancelará el pedido y se acreditará una sola vez el equivalente en USD a la cartera de Tienda El Castillo. No se permite para pedidos con resultado incierto ni para órdenes ya creadas en el proveedor.\n\n¿Confirmas la revisión y el abono?"
  );
  if(!accepted)return;
- const button=document.querySelector('[data-refund-wallet-preflight][data-order-id="'+CSS.escape(orderId)+'"]');
- if(button){button.disabled=true;button.textContent="Devolviendo saldo…";}
- $("orderadminmsg").textContent="Comprobando que Central One no creó una orden y registrando la devolución de forma segura…";
+ if(button){button.disabled=true;button.textContent="Revisando y acreditando…";}
+ $("orderadminmsg").textContent="Verificando el pago, la falta de stock y que no exista una orden del proveedor…";
  try{
   const {data,error}=await db.rpc("admin_cancel_preflight_blocked_order",{p_order_id:orderId});
   if(error)throw error;
-  if(data?.automatic_refund!==true||data?.refunded!==true)throw new Error("Supabase no confirmó la devolución de la billetera.");
-  $("orderadminmsg").textContent="Pedido "+(data?.order_code||orderCode||"")+" cancelado. Se devolvieron "+moneyUSD(data.credited_amount)+" USD a la billetera del cliente.";
+  if(data?.automatic_refund!==true||data?.refunded!==true)throw new Error("Supabase no confirmó el abono a la cartera.");
+  $("orderadminmsg").textContent="Pedido "+(data?.order_code||orderCode||"")+" cancelado. Se acreditaron "+moneyUSD(data.credited_amount)+" USD a la cartera del cliente.";
   await Promise.all([loadAllOrders(),loadMyOrders()]);
  }catch(error){
-  $("orderadminmsg").textContent="No se pudo devolver el saldo: "+(error?.message||"error desconocido");
+  $("orderadminmsg").textContent="No se pudo completar la devolución: "+(error?.message||"error desconocido");
   await loadAllOrders();
  }finally{
   const current=document.querySelector('[data-refund-wallet-preflight][data-order-id="'+CSS.escape(orderId)+'"]');
-  if(current){current.disabled=false;current.textContent="Devolver saldo a la billetera";}
+  if(current){current.disabled=false;current.textContent="Revisar y devolver a cartera";}
  }
 }
 async function authorizeCentralOneOrder(orderId,orderCode){
@@ -5329,6 +5331,12 @@ async function loadAllOrders(options={}){
  if(!options.silent)container.textContent="Cargando pedidos...";
  const {data,error}=await db.from("orders").select("*").order("created_at",{ascending:false});
  if(error){if(!options.silent)container.textContent="Error: "+error.message;return;}
+ const stockProductIds=[...new Set((data||[]).map(order=>String(order.product_id||"")).filter(Boolean))];
+ const stockProductById=new Map();
+ if(stockProductIds.length){
+  const stockProducts=await db.from("products").select("id,active,provider_status,provider_in_stock,provider_validation_supported,provider_synced_at").in("id",stockProductIds);
+  if(!stockProducts.error)(stockProducts.data||[]).forEach(product=>stockProductById.set(String(product.id),product));
+ }
  notifyNewPaymentReviews(data||[]);
  const accountUserIds=[...new Set((data||[]).map(order=>String(order.user_id||"")).filter(Boolean))];
  const accountRoleByUser=new Map();
@@ -5349,6 +5357,11 @@ async function loadAllOrders(options={}){
  const cards=(await Promise.all((data||[]).map(async(o,i)=>{
   const selectId="order-status-"+i;
   const accountRole=accountRoleByUser.get(String(o.user_id))||"";
+  const stockProduct=stockProductById.get(String(o.product_id||""))||null;
+  const stockProductSyncAge=stockProduct?.provider_synced_at?Date.now()-new Date(stockProduct.provider_synced_at).getTime():Infinity;
+  const stockProductUnavailable=Boolean(stockProduct)&&stockProduct.active===false&&stockProductSyncAge>=0&&stockProductSyncAge<=86400000&&(
+   stockProduct.provider_in_stock===false||String(stockProduct.provider_status||"").toLowerCase()!=="active"||stockProduct.provider_validation_supported===false
+  );
   const isCustomerAccount=accountRole==="customer";
   const isAdminAccount=accountRole==="admin";
   const accountSecurity=isCustomerAccount?(securityByUser.get(String(o.user_id))||null):null;
@@ -5378,7 +5391,7 @@ async function loadAllOrders(options={}){
   const staleSubmitting=providerStatus==="submitting"&&providerDate>0&&(Date.now()-providerDate)>90000;
   const canAuthorize=o.status==="processing"&&Boolean(o.payment_confirmed_at||o.payment_source==="wallet"&&o.paid_at)&&
    o.player_id_validated===true&&Boolean(o.provider_product_id)&&!o.central_one_order_id&&
-   (["not_submitted","unknown","retryable","rejected"].includes(providerStatus)||staleSubmitting);
+   !stockProductUnavailable&&(["not_submitted","unknown","retryable","rejected"].includes(providerStatus)||staleSubmitting);
   const canRefresh=Boolean(o.central_one_order_id);
   const priceCheck=o.central_one_response?.price_check||null;
   let priceCheckHtml="";
@@ -5440,9 +5453,15 @@ async function loadAllOrders(options={}){
   const safeCancelAction=canCancelPreflight?'<div class="order-actions order-safe-cancel"><button type="button" data-cancel-preflight-order data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Anular pedido bloqueado</button><small>Fallo anterior al envío; no se descontó saldo. Sin devolución automática.</small></div>':"";
   const walletPreflightWasBlocked=providerStatus==="retryable"&&o.central_one_response?.preflight==="blocked"&&o.central_one_response?.no_provider_order_created===true&&!o.central_one_request_id;
   const walletRejectedBeforeProvider=providerStatus==="rejected"&&o.central_one_response?.no_provider_order_created===true;
-  const walletNeverSubmitted=providerStatus==="not_submitted"&&!o.central_one_submitted_at&&!o.central_one_request_id;
+  const walletNeverSubmitted=providerStatus==="not_submitted"&&!o.central_one_submitted_at&&!o.central_one_request_id&&!o.central_one_idempotency_key;
   const canRefundWalletNoProvider=o.status==="processing"&&o.payment_source==="wallet"&&Boolean(o.paid_at)&&!o.central_one_order_id&&!o.central_one_reference_code&&(walletNeverSubmitted||walletPreflightWasBlocked||walletRejectedBeforeProvider);
-  const walletRefundAction=canRefundWalletNoProvider?'<div class="order-actions order-safe-cancel"><button type="button" data-refund-wallet-preflight data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Devolver saldo a la billetera</button><small>No existe una orden del proveedor. Se cancelará este pedido y se devolverán '+moneyUSD(o.price)+' USD una sola vez.</small></div>':"";
+  const directPaymentVerified=o.payment_source==="direct"&&Boolean(o.proof_path&&o.paid_at&&o.payment_confirmed_at&&o.payment_confirmed_by);
+  const directStockPreflightBlocked=providerStatus==="retryable"&&providerErrorCode==="provider_product_unavailable"&&o.central_one_response?.preflight==="blocked"&&o.central_one_response?.no_provider_order_created===true&&!o.central_one_request_id;
+  const directStockDisabledBySync=providerStatus==="not_submitted"&&stockProductUnavailable&&!o.central_one_submitted_at&&!o.central_one_idempotency_key&&!o.central_one_request_id;
+  const canRefundDirectToWallet=o.status==="processing"&&directPaymentVerified&&!o.central_one_order_id&&!o.central_one_reference_code&&!o.central_one_request_id&&(directStockPreflightBlocked||directStockDisabledBySync);
+  const refundWalletAmount=o.payment_source==="wallet"?Number(o.price||0):Number(o.wallet_refund_amount||0);
+  const showWalletRefundAction=canRefundWalletNoProvider||canRefundDirectToWallet;
+  const walletRefundAction=showWalletRefundAction?'<div class="order-actions order-safe-cancel"><button type="button" data-refund-wallet-preflight data-payment-source="'+clean(o.payment_source)+'" data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Revisar y devolver a cartera</button><small>'+(canRefundDirectToWallet?'Pago directo confirmado. Abre y verifica el comprobante antes de aprobar el abono de '+moneyUSD(refundWalletAmount)+' USD a la cartera.':'No existe una orden del proveedor. Se devolverá '+moneyUSD(refundWalletAmount)+' USD a la cartera una sola vez.')+'</small></div>':"";
   const providerAction=canAuthorize
    ?'<div class="order-actions"><button type="button" data-provider-submit data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">'+(providerStatus==="not_submitted"?"Autorizar recarga (usa saldo real)":"Reintentar con la misma clave segura")+'</button></div>'
    :canRefresh
