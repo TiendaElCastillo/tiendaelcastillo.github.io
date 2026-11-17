@@ -1,0 +1,222 @@
+/* Acabado visual de la tienda: coherencia, lectura y tarjetas móviles.
+   Esta hoja solo modifica presentación; no cambia catálogo, pagos ni pedidos. */
+:root{
+  --castle-violet:#2868df;
+  --castle-blue:#2868df;
+  --castle-deep:#10243e;
+  --castle-soft:#edf4ff;
+  --castle-border:#e1e8f2;
+}
+html{color-scheme:light;background:#f3f6fb}
+body{
+  background:radial-gradient(ellipse at 50% -20%,rgba(75,145,224,.09),transparent 48%),#f3f6fb;
+  color:#182943;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.site-header{
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid #e1e8f2;
+  box-shadow:0 4px 18px rgba(21,48,88,.055);
+}
+.header-btn{border-color:#dfe7f1;color:#243954}
+.header-btn.primary,.site-header .header-btn.primary,
+#store .primary-btn,.primary-btn,.plan-buy,.bs-plan-buy,.mlbb-plan-buy,
+.auth-submit-btn{
+  background:linear-gradient(135deg,#347cf1,#1d5dcc)!important;
+  border:1px solid #2868df!important;
+  color:#fff!important;
+  box-shadow:0 5px 14px rgba(39,103,220,.16)!important;
+}
+.header-btn.primary:hover,.primary-btn:hover,.plan-buy:hover,
+.bs-plan-buy:hover,.mlbb-plan-buy:hover{
+  filter:brightness(1.04);
+  box-shadow:0 8px 19px rgba(39,103,220,.2)!important;
+}
+button:focus-visible,a:focus-visible,input:focus-visible,
+select:focus-visible,textarea:focus-visible{
+  outline:3px solid rgba(40,104,223,.28)!important;
+  outline-offset:3px;
+}
+#auth .auth-showcase{
+  background:
+    radial-gradient(circle at 88% 9%,rgba(93,167,255,.22),transparent 36%),
+    linear-gradient(140deg,#10243e 0%,#17477f 58%,#2868c9 100%)!important;
+  border:1px solid rgba(112,167,232,.3);
+  box-shadow:0 14px 32px rgba(17,48,91,.14);
+}
+#auth .auth-showcase .eyebrow{
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(190,220,255,.34);
+  color:#dcecff;
+}
+#auth .auth-game-card{
+  min-width:0;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(220,237,255,.2);
+  border-radius:16px;
+  box-shadow:0 5px 14px rgba(5,20,45,.12);
+}
+#auth .auth-game-art{
+  height:auto;
+  aspect-ratio:16/9;
+  min-height:0;
+  overflow:hidden;
+}
+#auth .auth-game-art img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 38%;
+}
+#auth .auth-game-info{min-width:0;flex:1}
+#auth .auth-game-info strong{color:#fff}
+#auth .auth-game-info div>span{color:#d5e5f8}
+#auth .auth-available{
+  background:#eaf7f0;
+  color:#26734f;
+  border:1px solid rgba(255,255,255,.22);
+}
+#auth .auth-login-panel{
+  background:#fff;
+  border:1px solid #e1e8f2;
+  box-shadow:0 8px 24px rgba(22,48,86,.065);
+}
+#auth .auth-tabs button.active{
+  color:#205fc5;
+  background:#edf4ff;
+}
+#homeView .home-intro{
+  background:linear-gradient(118deg,#10243e 0%,#17477f 55%,#286dd4 100%);
+  box-shadow:0 12px 28px rgba(20,55,103,.12);
+}
+#homeView .castle-home-hero .hero-buttons .castle-share-link{
+  background:linear-gradient(135deg,#347cf1,#1d5dcc)!important;
+  border:1px solid rgba(220,237,255,.8)!important;
+  color:#fff!important;
+  box-shadow:0 5px 14px rgba(7,25,65,.18)!important;
+  text-shadow:none;
+}
+#homeView .castle-home-hero .hero-buttons .castle-share-link:hover{
+  background:linear-gradient(135deg,#4388f5,#2469d7)!important;
+}
+.section-head h2,.panel h2,.panel h3{color:#1a2d48}
+.section-head p,.subtle{color:#718098}
+.panel,.auth-panel,.order-card,.catalog-product,.game-tile,.gift-tile{
+  border-color:#e1e8f2;
+  box-shadow:0 6px 18px rgba(22,48,86,.05);
+}
+.game-tile,.gift-tile,.catalog-product{transition:box-shadow .16s ease,border-color .16s ease,transform .16s ease}
+.game-tile:hover,.gift-tile:hover,.catalog-product:hover{
+  border-color:#b6cdec;
+  box-shadow:0 10px 24px rgba(22,48,86,.09);
+}
+#homeGames .game-tile{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  min-width:0;
+}
+#homeGames .game-art{
+  width:100%;
+  height:auto!important;
+  aspect-ratio:1.48!important;
+  min-height:92px;
+  overflow:hidden;
+}
+#homeGames .tile-info{
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  align-items:flex-start;
+  min-width:0;
+}
+#homeGames .tile-title{font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+#homeGames .tile-meta{font-size:10px;line-height:1.4;min-height:2.7em}
+#homeGames .tile-status{
+  margin-top:auto;
+  background:#edf4ff;
+  color:#2864c8;
+}
+.game-method.active,.additional-game-tab.active,.bs-category-tab.active,
+.mlbb-category-tab.active,.free-fire-category-tab.active,
+.checkout-method-choice.active{
+  border-color:#8eb6ef!important;
+  background:#edf4ff!important;
+  color:#205fc5!important;
+  box-shadow:inset 0 0 0 1px rgba(55,116,207,.1)!important;
+}
+.game-method.active b,.additional-game-tab.active b,
+.bs-category-tab.active b,.mlbb-category-tab.active b,
+.free-fire-category-tab.active b{color:#205fc5!important}
+.plan-price strong,.product-prices strong,.catalog-product .price,
+.bs-plan-price b,.mlbb-plan-price{color:#2466d8}
+.provider-region-tag,.game-region-badge{
+  background:#edf4ff;
+  border-color:#dce8f7;
+  color:#2863bf;
+}
+.site-footer{
+  background:#fff;
+  border-top:1px solid #e1e8f2;
+}
+.bottom-nav{
+  background:rgba(255,255,255,.97);
+  border-top:1px solid #e1e8f2;
+  box-shadow:0 -4px 14px rgba(22,48,86,.055);
+}
+.nav-item.active{background:#edf4ff;color:#2868df}
+@media(max-width:760px){
+  #auth .auth-showcase-games{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;
+    grid-auto-columns:auto!important;
+    gap:9px!important;
+    overflow:visible!important;
+    scroll-snap-type:none!important;
+  }
+  #auth .auth-game-card:nth-child(3){grid-column:auto!important}
+  #auth .auth-game-card:nth-child(3) .auth-game-art{
+    aspect-ratio:16/9!important;
+    max-height:none!important;
+  }
+  #auth .auth-game-info{padding:9px!important}
+  #auth .auth-game-info strong{font-size:12px!important}
+  #auth .auth-game-info div>span{font-size:10px!important}
+  #homeGames{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+  #homeGames .game-tile:nth-child(3){
+    grid-column:auto!important;
+    display:flex!important;
+    grid-template-columns:none!important;
+    align-items:stretch!important;
+  }
+  #homeGames .game-tile:nth-child(3) .game-art{
+    width:100%!important;
+    height:auto!important;
+    min-height:92px!important;
+    aspect-ratio:1.48!important;
+  }
+  #homeGames .game-tile:nth-child(3) .tile-info{
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:flex-start!important;
+  }
+}
+@media(max-width:390px){
+  #auth .auth-showcase-games{gap:7px!important}
+  #auth .auth-game-info{padding:8px!important}
+  #auth .auth-game-info strong{font-size:11px!important}
+  #auth .auth-game-info div>span{font-size:9px!important}
+  #homeGames{gap:8px!important}
+  #homeGames .tile-info{padding:9px!important}
+  #homeGames .tile-title{font-size:11px!important}
+  #homeGames .tile-meta{font-size:9px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .game-tile,.gift-tile,.catalog-product{transition:none!important}
+}
