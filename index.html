@@ -2640,7 +2640,14 @@ function nexLevelOfferAsset(product,gameNameOverride){
   if(!file&&/level up pass/.test(label))file="pase-1.avif";
   if(!file&&/season pass/.test(label))file="pase-3.avif";
   if(!file&&/lucky bag|bag week/.test(label))file="bolsa.avif";
-  if(!file&&/chest|cofre/.test(label))file=/ultra skin|attack on titan|seven deadly sins/.test(label)?"cofre-1.avif":"cofre-2.avif";
+  if(!file&&/attack on titan.*chest/.test(label))file="n-cofre-1.avif";
+  if(!file&&/enzo.*chest/.test(label))file="n-cofre-2.avif";
+  if(!file&&/lucha strike.*chest/.test(label))file="n-cofre-3.avif";
+  if(!file&&/one.punch man.*chest/.test(label))file="cofre-1-azul.avif";
+  if(!file&&/seven deadly sins.*chest/.test(label))file="cofre-1.avif";
+  if(!file&&/tokyo revengers.*chest/.test(label))file="cofre-2.avif";
+  if(!file&&/ultra skin.*chest/.test(label))file="cofre-1-azul.avif";
+  if(!file&&/chest|cofre/.test(label))file="cofre-2.avif";
   if(!file&&/voucher|stash|pre.order|preorder/.test(label))file="bolsa.avif";
   if(!file)file="bolsa.avif";
  }

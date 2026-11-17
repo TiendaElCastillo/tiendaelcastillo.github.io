@@ -42,8 +42,12 @@
       ],
       "specials": [
         "bolsa.avif",
+        "cofre-1-azul.avif",
         "cofre-1.avif",
-        "cofre-2.avif"
+        "cofre-2.avif",
+        "n-cofre-1.avif",
+        "n-cofre-2.avif",
+        "n-cofre-3.avif"
       ]
     },
     "Arena Breakout": {
