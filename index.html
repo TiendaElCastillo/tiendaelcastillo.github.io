@@ -2199,7 +2199,7 @@ function loadCastleTurnstile(){
 }
 const STORE_SUPABASE_URL="https://kfllglkfncebpknnugnx.supabase.co";
 const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtmbGxnbGtmbmNlYnBrbm51Z254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3Mjg5MTMsImV4cCI6MjEwOTMwNDkxM30.9lyiZC57tJuSRN6ReLkZZVsedJzl0kVxlhxUX90cE6g";
-let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"",usdt_address:""}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
+let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"",usdt_address:""}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
 
 const $=id=>document.getElementById(id);
 const clean=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -3633,48 +3633,31 @@ async function validatePlayerId(){
 function openCheckout(productId,preferredMethod){
  const p=products.find(item=>String(item.id)===String(productId));
  if(!p){
-  const message="No pudimos abrir este paquete porque el catálogo todavía no está listo. Actualiza la página e inténtalo de nuevo.";
-  const status=$("gamePlansSubtitle");if(status)status.textContent=message;
-  console.error("openCheckout: product not found",productId);
+  const status=$("gamePlansSubtitle");if(status)status.textContent="No pudimos abrir este paquete. Actualiza el catálogo e inténtalo de nuevo.";
   return false;
  }
- if(!isStorefrontVisibleProduct(p)){
-  const message="Este paquete no está publicado actualmente en el catálogo de Tienda El Castillo.";
-  const status=$("gamePlansSubtitle");if(status)status.textContent=message;
-  return false;
- }
- if(!isGlobalMobileLegendsProduct(p)){
-  const message="Mobile Legends solo está disponible en la región GLOBAL. No se puede abrir un paquete de otra región.";
-  const status=$("gamePlansSubtitle");if(status)status.textContent=message;
-  return false;
- }
+ if(!isStorefrontVisibleProduct(p)){const status=$("gamePlansSubtitle");if(status)status.textContent="Este paquete no está publicado actualmente.";return false;}
+ if(!isGlobalMobileLegendsProduct(p)){const status=$("gamePlansSubtitle");if(status)status.textContent="Mobile Legends solo está disponible en región GLOBAL.";return false;}
+ const method=String(preferredMethod||"").trim();
+ const allowed=["Transferencia CUP","Saldo móvil","USDT","Saldo de Tienda El Castillo"];
+ if(!allowed.includes(method)||Number(priceForMethod(p,method))<=0){const status=$("gamePlansSubtitle")||$("ordermsg");if(status)status.textContent="Primero selecciona una forma de pago disponible para este paquete.";return false;}
+ if(currentUser&&!isPaymentMethodReady(method)){const status=$("gamePlansSubtitle")||$("ordermsg");if(status)status.textContent="La forma de pago elegida ya no está disponible. Vuelve al catálogo.";return false;}
  if(!currentUser){
-  pendingCheckoutAfterLogin=true;
-  pendingCheckoutProductId=String(p.id);
-  pendingCheckoutPaymentMethod=preferredMethod||"";
-  openAccount();
-  $("authmsg").textContent="Inicia sesión para verificar tu cuenta de juego y completar la compra. Conservaremos el paquete que elegiste.";
-  return true;
+  pendingCheckoutAfterLogin=true;pendingCheckoutProductId=String(p.id);pendingCheckoutPaymentMethod=method;
+  openAccount();$("authmsg").textContent="Inicia sesión para continuar. Conservaremos el paquete y la forma de pago elegidos.";return true;
  }
- const productField=$("product");
- if(!productField){console.error("openCheckout: checkout form not found");return false;}
- resetPlayerValidation();
- updateCheckoutStage("player");
+ const productField=$("product"),paymentField=$("payment");
+ if(!productField||!paymentField)return false;
+ checkoutLockedPaymentMethod=method;paymentField.value=method;paymentField.disabled=true;
+ resetPlayerValidation();updateCheckoutStage("player");
  if($("checkoutPlayerMsg"))$("checkoutPlayerMsg").textContent="";
  productField.innerHTML='<option value="'+clean(p.id)+'">'+clean(p.game)+' - '+clean(p.name)+'</option>';
- productField.value=String(p.id);
- productField.disabled=true;
+ productField.value=String(p.id);productField.disabled=true;
  if($("playerZone"))$("playerZone").value="";
- $("player").value="";$("playername").value="";
- $("reference").value="";$("senderPhone").value="";$("reportedAmount").value="";
- $("paymentProof").value="";previewPaymentProof();
- if(preferredMethod&&Number(priceForMethod(p,preferredMethod))>0)$("payment").value=preferredMethod;
- $("selectedProductText").textContent=p.game+" · "+p.name;
- $("ordermsg").textContent="";
- updateCheckoutSummary();
- syncPlayerRegionUI();
- showView("checkout");
- window.updateCheckoutSubmitState?.();
+ $("player").value="";$("playername").value="";$("reference").value="";$("senderPhone").value="";
+ $("reportedAmount").value="";$("paymentProof").value="";previewPaymentProof();
+ $("selectedProductText").textContent=p.game+" · "+p.name;$("ordermsg").textContent="";
+ updateCheckoutSummary();syncPlayerRegionUI();showView("checkout");window.updateCheckoutSubmitState?.();
  return true;
 }
 function openGamePlanCheckout(button){
