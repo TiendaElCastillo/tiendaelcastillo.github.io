@@ -476,8 +476,12 @@ main{max-width:1160px!important}
 .product-art-ff-membership .product-art-caption small{color:#d7eaff!important}
 .ff-compartment{background:#fff!important;border:1px solid #e1e9f3!important;box-shadow:0 6px 17px rgba(22,48,86,.05)!important}
 .ff-compartment-diamonds{border-top-color:#3478dc!important}
+.ff-compartment-evo{border-top-color:#8a67d8!important}
 .ff-compartment-passes{border-top-color:#55a9e8!important}
 .ff-compartment-levels{border-top-color:#9aa8b9!important}
+.product-art-evo{display:flex!important;align-items:center;justify-content:center;gap:13px;padding:16px!important;min-height:128px;background:linear-gradient(120deg,#181a36,#33295f 68%,#59469a)!important;color:#fff!important}
+.product-art-evo-icon{display:grid;place-items:center;flex:0 0 58px;width:58px;height:58px;border-radius:17px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.11);font-size:32px}
+.product-art-evo-label{display:block;max-width:145px;color:#fff;font-size:12px;font-weight:900;letter-spacing:.055em;line-height:1.3;text-transform:uppercase}
 .ff-compartment-icon,.ff-compartment-count{background:#edf4ff!important;color:#2865c8!important;border-color:#dce8f7!important}
 .ff-compartment-copy h3{color:#203654!important}
 .ff-compartment-copy p{color:#78879c!important}
@@ -2475,7 +2479,7 @@ const gamePaymentCatalog=[
 function gameFor(name){return gameCatalog.find(item=>fold(item.name)===fold(name))||gameCatalog.find(item=>(item.match||[]).some(word=>fold(name).includes(fold(word))||fold(word).includes(fold(name))))}
 function isLevelUpPackage(p){return /paquete\s+de\s+(?:mejora|subida)\s+de\s+nivel|level\s*up/i.test(fold(String(p.name||"")));}
 function isFreeFireLevelUpPackage(p){return fold(p?.game||"")==="free fire"&&isLevelUpPackage(p);}
-function freeFirePackageGroup(p){const label=fold(String(p.name||"")+" "+String(p.description||""));if(/paquete\s+de\s+(?:mejora|subida)\s+de\s+nivel|level\s*up/.test(label))return "levels";if(/booyah/.test(label))return "booyah";if(/twilight|\bpass\b|\bpase\b|semanal|mensual|weekly|monthly|elite\s+pack/.test(label))return "passes";return "diamonds";}
+function freeFirePackageGroup(p){const label=fold(String(p.name||"")+" "+String(p.description||""));if(/paquete\s+de\s+(?:mejora|subida)\s+de\s+nivel|level\s*up/.test(label))return "levels";if(/fragmentos.*evo|evo.*fragmentos/.test(label))return "evo";if(/booyah/.test(label))return "booyah";if(/twilight|\bpass\b|\bpase\b|semanal|mensual|weekly|monthly|elite\s+pack/.test(label))return "passes";return "diamonds";}
 function packageSortValue(p){
  const amount=Number(p.amount||0);if(Number.isFinite(amount)&&amount>0)return amount;
  const label=fold(String(p.name||"")+" "+String(p.description||""));
@@ -2760,7 +2764,7 @@ function freeFirePlanIcon(p,item){
   else if(/semanal|weekly/.test(label)){src="ff-weekly-blue-purple.webp";position="100%";alt="Tarjeta semanal"}
  }
  if(src)return '<span class="plan-icon-official" role="img" aria-label="'+alt+'" style="background-image:url(./assets/'+src+');background-size:'+size+';background-position:'+position+'"></span>';
- const icon=group==="levels"?"🏆":gameCurrency(item).icon;
+ const icon=group==="levels"?"🏆":group==="evo"?(/cajas?\s+de\s+fragmentos/.test(label)?"📦":"⚔️"):gameCurrency(item).icon;
  return '<span class="plan-icon-emoji" aria-hidden="true">'+icon+'</span>';
 }
 function gamePlanCard(p,item,method){
@@ -2832,6 +2836,7 @@ function renderGameDetail(){
  const plans=sortPackages(rows.filter(p=>isPaymentMethodReady(gamePaymentMethod)&&Number(priceForMethod(p,gamePaymentMethod))>0));
  if(fold(item.name)==="free fire"){
   const diamonds=plans.filter(p=>freeFirePackageGroup(p)==="diamonds");
+  const evo=plans.filter(p=>freeFirePackageGroup(p)==="evo");
   const passes=plans.filter(p=>["passes","booyah"].includes(freeFirePackageGroup(p)));
   const levels=plans.filter(p=>freeFirePackageGroup(p)==="levels");
   const cards=list=>list.map(p=>gamePlanCard(p,item,gamePaymentMethod)).join("");
@@ -2848,10 +2853,14 @@ function renderGameDetail(){
    subgroup("Pase Booyah Premium",booyahPremium)+
    subgroup("Otros pases Booyah",booyahOther);
   const passContent=subgroup("Pases semanales y mensuales",passes.filter(p=>freeFirePackageGroup(p)==="passes"))+booyahContent;
-  const extraContent=(passes.length?compartment("passes","Pases y tarjetas","Pases semanales, mensuales y Booyah","🎟️",passes,passContent):"")+
+  const evoBoxes=evo.filter(p=>/cajas?\s+de\s+fragmentos/.test(fold(p.name||"")));
+  const evoWeapons=evo.filter(p=>/fragmentos\s+de\s+arma/.test(fold(p.name||"")));
+  const evoContent=subgroup("Cajas de fragmentos Evo",evoBoxes)+subgroup("Fragmentos de arma Evo",evoWeapons);
+  const extraContent=(evo.length?compartment("evo","Fragmentos Evo","Cajas y fragmentos para tus armas Evo","⚔️",evo,evoContent):"")+
+   (passes.length?compartment("passes","Pases y tarjetas","Pases semanales, mensuales y Booyah","🎟️",passes,passContent):"")+
    (levels.length?compartment("levels","Mejoras de nivel","Paquetes para subir de nivel","🏆",levels,'<div class="ff-package-list">'+cards(levels)+'</div>'):"");
   const activeCategory=activeFreeFireCategory==="extra"?"extra":"diamonds";
-  const totalExtra=passes.length+levels.length;
+  const totalExtra=evo.length+passes.length+levels.length;
   $("gameDetailPlans").innerHTML=
    '<div class="ff-browser-head"><h2>Elige tu paquete</h2><span class="ff-total">'+plans.length+' opciones</span></div>'+
    '<div class="free-fire-category-tabs" role="tablist" aria-label="Categorías de Free Fire">'+
@@ -3036,6 +3045,12 @@ function productArtwork(p){
  const group=freeFirePackageGroup(p);
  const label=fold(String(p.name||"")+" "+String(p.description||""));
  const amount=Number(p.amount||0);
+ if(isFreeFire&&group==="evo"){
+  const isBox=/cajas?\s+de\s+fragmentos/.test(label);
+  const title=isBox?"CAJAS DE FRAGMENTOS EVO":"FRAGMENTOS DE ARMA EVO";
+  const icon=isBox?"📦":"⚔️";
+  return '<div class="product-art product-art-evo" role="img" aria-label="'+title+'"><span class="product-art-evo-icon" aria-hidden="true">'+icon+'</span><span class="product-art-evo-label">'+title+'</span></div>';
+ }
  if(isFreeFire&&group==="passes"){
   if(/mensual|monthly/.test(label))return '<div class="product-art product-art-ff-membership ff-member-monthly" role="img" aria-label="Membresía mensual de Free Fire"><span class="product-art-caption"><strong>Membresía mensual</strong><small>1.800 diamantes · 30 días</small></span></div>';
   if(/semanal|weekly/.test(label)&&/basica|basico|basic/.test(label))return '<div class="product-art product-art-ff-membership ff-member-basic" role="img" aria-label="Membresía semanal básica de Free Fire"><span class="product-art-caption"><strong>Membresía semanal básica</strong><small>80 diamantes · 7 días</small></span></div>';
