@@ -2616,7 +2616,11 @@ function nexLevelOfferAsset(product,gameNameOverride){
  if(gameName==="free fire"){
   const diamonds={110:"gema-1.avif",341:"gema-2.avif",572:"gema-3.avif",1166:"gema-4.avif",2398:"gema-5.avif",6160:"gema-6.avif"};
   file=diamonds[amount]||"";
-  if(!file&&/booyah/.test(label))file="free-fire-booyah-premium.webp";
+  if(!file&&/booyah/.test(label)){
+   if(/norte|sur/.test(label))file="pase-2.avif";
+   else if(/premium/.test(label))file="free-fire-booyah-premium.webp";
+   else file="pase-2.avif";
+  }
   if(!file&&/mensual|monthly/.test(label))file="vip-mensual.avif";
   if(!file&&/semanal|weekly/.test(label))file="vip-semanal.avif";
  }
@@ -2761,6 +2765,14 @@ function freeFirePlanIcon(p,item){
 }
 function gamePlanCard(p,item,method){
  const price=Number(priceForMethod(p,method)),id=clean(p.id),pay=clean(method);
+ const productGame=fold(p?.game||""),productLabel=fold(p?.name||"");
+ const isBooyahNorth=productGame==="free fire"&&/booyah/.test(productLabel)&&/norte/.test(productLabel);
+ const isBooyahSouth=productGame==="free fire"&&/booyah/.test(productLabel)&&/sur/.test(productLabel);
+ const isBooyahPremium=productGame==="free fire"&&/booyah/.test(productLabel)&&/premium/.test(productLabel);
+ const cardNotice=isBooyahNorth?"Pase Booyah · LATAM Norte · ID obligatorio y verificado antes del pago"
+  :isBooyahSouth?"Pase Booyah · LATAM Sur · ID obligatorio y verificado antes del pago"
+  :isBooyahPremium?"Pase Booyah Premium · LATAM · ID obligatorio y verificado antes del pago"
+  :"Región "+String(p?.provider_region||"").toUpperCase()+" · recarga por ID";
  if(fold(item?.name||"")==="blood strike"){
   const display=bloodStrikeDisplayName(p),kind=bloodStrikeCategoryLabel(p),unit=gamePaymentCatalog.find(x=>x.name===method)?.unit||"";
   return '<article class="bs-plan-card" data-product-id="'+id+'" data-payment-method="'+pay+'">'+
@@ -2780,7 +2792,7 @@ function gamePlanCard(p,item,method){
    '<button class="primary-btn mlbb-plan-buy" type="button" onclick="return openGamePlanCheckout(this)" data-buy-product="'+id+'" data-payment-method="'+pay+'">Comprar</button></article>';
  }
  return '<article class="game-plan-card game-plan-clickable" data-product-id="'+id+'" data-payment-method="'+pay+'">'+
- '<div class="plan-currency">'+freeFirePlanIcon(p,item)+'</div><div class="plan-info"><strong>'+clean(Number(p.amount||0)>0?packageQuantity(p,item):String(p.name||"").replace(/^(?:PUBG Mobile|Arena Breakout)\s*[·|:-]\s*/i,""))+'</strong><small>Región GLOBAL · recarga por ID</small></div>'+
+ '<div class="plan-currency">'+freeFirePlanIcon(p,item)+'</div><div class="plan-info"><strong>'+clean(Number(p.amount||0)>0?packageQuantity(p,item):String(p.name||"").replace(/^(?:PUBG Mobile|Arena Breakout)\s*[·|:-]\s*/i,""))+'</strong><small>'+clean(cardNotice)+'</small></div>'+
  '<div class="plan-price"><strong>'+money(price)+'</strong><small>'+clean(gamePaymentCatalog.find(x=>x.name===method)?.unit||"")+'</small></div>'+
  '<button class="primary-btn plan-buy" type="button" onclick="return openGamePlanCheckout(this)" data-buy-product="'+id+'" data-payment-method="'+pay+'">Comprar <span aria-hidden="true">→</span></button></article>';
 }
@@ -2826,7 +2838,16 @@ function renderGameDetail(){
   const empty=label=>'<div class="ff-empty"><span>✦</span><strong>'+label+'</strong><small>Prueba otro método de pago si no aparecen paquetes.</small></div>';
   const subgroup=(title,list)=>list.length?'<section class="ff-subgroup"><h4>'+title+'</h4><div class="ff-package-list">'+cards(sortPackages(list))+'</div></section>':"";
   const compartment=(id,title,description,icon,list,content)=>'<section class="ff-compartment ff-compartment-'+id+'"><header class="ff-compartment-head"><span class="ff-compartment-icon" aria-hidden="true">'+icon+'</span><div class="ff-compartment-copy"><span class="ff-compartment-kicker">FREE FIRE</span><h3>'+title+'</h3><p>'+description+'</p></div><span class="ff-compartment-count">'+list.length+'</span></header><div class="ff-compartment-body">'+content+'</div></section>';
-  const passContent=subgroup("Pases semanales y mensuales",passes.filter(p=>freeFirePackageGroup(p)==="passes"))+subgroup("Pase Booyah",passes.filter(p=>freeFirePackageGroup(p)==="booyah"));
+  const booyah=passes.filter(p=>freeFirePackageGroup(p)==="booyah");
+  const booyahNorth=booyah.filter(p=>/norte/.test(fold(p.name||"")));
+  const booyahSouth=booyah.filter(p=>/sur/.test(fold(p.name||"")));
+  const booyahPremium=booyah.filter(p=>/premium/.test(fold(p.name||""))&&!/norte|sur/.test(fold(p.name||"")));
+  const booyahOther=booyah.filter(p=>!booyahNorth.includes(p)&&!booyahSouth.includes(p)&&!booyahPremium.includes(p));
+  const booyahContent=subgroup("Pase Booyah · LATAM Norte",booyahNorth)+
+   subgroup("Pase Booyah · LATAM Sur",booyahSouth)+
+   subgroup("Pase Booyah Premium",booyahPremium)+
+   subgroup("Otros pases Booyah",booyahOther);
+  const passContent=subgroup("Pases semanales y mensuales",passes.filter(p=>freeFirePackageGroup(p)==="passes"))+booyahContent;
   const extraContent=(passes.length?compartment("passes","Pases y tarjetas","Pases semanales, mensuales y Booyah","🎟️",passes,passContent):"")+
    (levels.length?compartment("levels","Mejoras de nivel","Paquetes para subir de nivel","🏆",levels,'<div class="ff-package-list">'+cards(levels)+'</div>'):"");
   const activeCategory=activeFreeFireCategory==="extra"?"extra":"diamonds";
