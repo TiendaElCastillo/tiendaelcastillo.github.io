@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=2">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=3">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -1961,15 +1961,52 @@ body{min-width:0}
 <section id="notificationsView" class="store-view hidden"><div class="panel"><div class="notification-panel-head"><div><h2>Mensajes y notificaciones</h2><p class="subtle">Aquí recibirás avisos privados y actualizaciones del estado de tus pedidos.</p></div><button id="markAllNotificationsRead" class="secondary-btn hidden" type="button" onclick="markAllNotificationsRead()">Marcar todo como leído</button></div><div id="notificationList" aria-live="polite">Cargando mensajes...</div></div></section>
  
 <section id="profileView" class="store-view hidden">
+ <div class="panel account-overview-panel">
+  <div class="profile-card">
+   <div class="profile-avatar" id="profileAvatar">EC</div>
+   <div class="profile-welcome-copy"><span class="profile-eyebrow">CENTRO DE CUENTA</span><h2 id="welcome">Hola</h2><p id="profileEmail" class="profile-email"></p></div>
+   <span class="profile-account-type" id="profileAccountType">Cliente</span>
+  </div>
+  <div class="profile-facts">
+   <div><span>Miembro desde</span><strong id="profileMemberSince">Cargando…</strong></div>
+   <div><span>Tipo de cuenta</span><strong id="profileRole">Cliente</strong></div>
+  </div>
+  <div class="profile-stat-grid" aria-label="Resumen de actividad">
+   <article class="profile-stat"><span>Pedidos totales</span><strong id="profileOrdersTotal">—</strong></article>
+   <article class="profile-stat"><span>En proceso</span><strong id="profileOrdersActive">—</strong></article>
+   <article class="profile-stat"><span>Completados</span><strong id="profileOrdersCompleted">—</strong></article>
+  </div>
+ </div>
  <div class="panel">
-  <div class="profile-card"><div class="profile-avatar">EC</div><div><h2 id="welcome">Mi cuenta</h2><p id="profileEmail" class="profile-email"></p></div></div>
-  <div class="section"><h3>Tu cuenta</h3><p class="subtle">Administra tu perfil, tus compras y el saldo de tu billetera.</p></div>
+  <div class="section-head"><div><h2>Accesos rápidos</h2><p>Las herramientas que más utilizas en tu cuenta.</p></div></div>
+  <div class="profile-action-grid">
+   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon">▣</span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Saldo: 0,00 USD</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('orders')"><span class="profile-action-icon">▤</span><strong>Mis pedidos</strong><small>Consulta entregas y estados</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('notifications')"><span class="profile-action-icon">✉</span><strong>Mensajes y avisos</strong><small id="profileUnreadNotifications">Revisa las novedades de tu cuenta</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('faq')"><span class="profile-action-icon">?</span><strong>Ayuda y preguntas</strong><small>Cómo comprar y resolver dudas</small></button>
+  </div>
+ </div>
+ <div class="panel profile-security-panel">
+  <h3>Información de tu cuenta</h3>
+  <p class="subtle">Utiliza siempre tu propio correo y no compartas tu contraseña, códigos de acceso ni datos privados del juego. La tienda nunca necesita la contraseña de tu cuenta de juego.</p>
   <button class="logout-btn block-btn" type="button" onclick="logout()"><span aria-hidden="true">↪</span> Cerrar sesión</button>
  </div>
+</section>
+<section id="walletView" class="store-view hidden">
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
    <div><span class="wallet-kicker">♛ BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance">0,00 USD</div><small>Este es tu saldo disponible para comprar paquetes dentro de la tienda. Los depósitos pendientes todavía no forman parte del saldo.</small></div>
    <div class="wallet-coin" aria-hidden="true">💳</div>
+  </section>
+  <section class="wallet-information wallet-panel" aria-labelledby="walletInformationTitle">
+   <div class="wallet-information-heading"><div><span class="wallet-information-kicker">INFORMACIÓN IMPORTANTE</span><h3 id="walletInformationTitle">Cómo funciona tu wallet</h3><p>Lee estas indicaciones antes de realizar un depósito.</p></div></div>
+   <div class="wallet-guide-grid">
+    <article class="wallet-guide-card"><span class="wallet-guide-icon">USD</span><div><strong>Tu saldo interno</strong><p>La wallet mantiene saldo en USD para pagar paquetes dentro de Tienda El Castillo. Solo puedes utilizar el saldo disponible; las solicitudes pendientes no cuentan como dinero acreditado.</p></div></article>
+    <article class="wallet-guide-card"><span class="wallet-guide-icon">CUP</span><div><strong>Transferencia CUP</strong><p>La tasa vigente es <b id="walletInfoCupRate">Consultando…</b>. El mínimo se actualiza con esa tasa: <b id="walletInfoCupMinimum">—</b>. El crédito se redondea hacia abajo a dos decimales.</p></div></article>
+    <article class="wallet-guide-card wallet-guide-usdt"><span class="wallet-guide-icon">₮</span><div><strong>Depósito USDT</strong><p>Se acredita 1 USDT por cada 1 USD confirmado. Mínimo: 1 USDT. Red obligatoria: <b id="walletInfoUsdtNetwork">Consultando…</b>. La comisión de red no se suma al saldo.</p><div class="wallet-info-address"><code id="walletInfoUsdtAddress">Cargando dirección…</code><button id="walletInfoCopyAddress" class="secondary-btn" type="button" disabled>Copiar dirección</button></div></div></article>
+    <article class="wallet-guide-card"><span class="wallet-guide-icon">✓</span><div><strong>Revisión y acreditación</strong><p>Enviar una solicitud no añade dinero automáticamente. El equipo comprueba la recepción real y después la aprueba o la rechaza indicando el motivo. No vuelvas a enviar dinero por una solicitud que ya esté pendiente.</p></div></article>
+   </div>
+   <div class="wallet-information-note"><strong>Protege tu dinero:</strong> verifica el importe, la red y el destino antes de enviar. No compartas contraseñas bancarias, frases de recuperación ni claves privadas. Para USDT, utiliza únicamente la red indicada en esta pantalla.</div>
   </section>
   <div class="wallet-content-grid">
    <section class="wallet-panel wallet-deposit-wizard">
@@ -2025,13 +2062,36 @@ body{min-width:0}
   </section>
  </div>
 </section>
- <section id="admin" class="store-view hidden">
+<section id="admin" class="store-view hidden">
  <div class="panel"><h2>Conexión con Central One</h2><p class="subtle">Prueba segura de lectura. No crea pedidos ni utiliza saldo.</p><button id="centralOneTestBtn" class="secondary-btn block-btn" type="button" onclick="testCentralOneConnection()">Probar conexión (ping)</button><p id="centralOneTestMsg" class="msg" role="status">La clave se lee desde los secretos de Supabase; nunca se muestra aquí.</p></div>
  <div class="panel"><h2>Catálogo mayorista de Central One</h2><p class="subtle">Consulta los productos y costes reales habilitados para tu cuenta. Esta acción solo lee datos; no crea pedidos ni descuenta saldo.</p><div class="field-row"><button id="centralOneCatalogBtn" class="secondary-btn block-btn" type="button" onclick="loadCentralOneCatalog()">Cargar catálogo</button><button id="centralOneBalanceBtn" class="secondary-btn block-btn" type="button" onclick="loadCentralOneBalance()">Consultar saldo</button></div><p id="centralOneCatalogMsg" class="msg" role="status">Todavía no se ha consultado el catálogo.</p><p id="centralOneAutoSyncMsg" class="msg" role="status">Sincronización automática cada 15 minutos: preparando primera consulta.</p><div id="centralOnePriceProposals" class="order-card"><h3>Precios sugeridos de Free Fire</h3><p class="track-note">Se calculan con el coste más reciente de Central One y tus reglas guardadas. El catálogo publicado se recalcula automáticamente cada 15 minutos con la tasa USDT/CUP y la relación de saldo móvil configuradas. Las propuestas manuales de esta tabla no se aplican por sí solas.</p><div id="centralOnePriceTable" style="overflow:auto"><p class="empty-note">Esperando el primer catálogo sincronizado.</p></div><p class="track-note">Cobertura de Free Fire: la tienda muestra actualmente 10 ofertas LATAM. La última sincronización registra 26 productos LATAM con soporte de validación; solo se publican los que cumplen las reglas de actividad, stock y validación. Los productos de Indonesia se mantienen fuera de la tienda mientras no aparezcan en la cobertura de validación. No hay región USA/EEUU habilitada. Las imágenes originales de monedas, pases y ofertas enviadas ya están integradas en los catálogos correspondientes.</p></div><div class="field"><label>Catálogo y precios más recientes recibidos del proveedor (datos originales del proveedor)</label><pre id="centralOneCatalogRaw" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;background:#f5f8fd;border:1px solid #e2eaf5;border-radius:12px;padding:12px;font-size:11px;color:#263957">Aún no hay datos guardados.</pre></div><p id="centralOneBalanceMsg" class="msg" role="status"></p></div>
  <div class="panel"><h2>Reglas de precios y cambio diario</h2><p class="subtle">Estas son las reglas activas del catálogo: cada 15 minutos Central One se consulta de nuevo y el sistema recalcula y publica automáticamente los precios de los paquetes compatibles, con esta tasa, coste de saldo móvil y margen. Si cambia el coste mayorista o estas reglas, el precio público se ajusta en la siguiente sincronización.</p><div class="field-row"><div class="field"><label for="pricingUsdtRate">Tu coste de 1 USDT (CUP)</label><input id="pricingUsdtRate" type="number" min="1" step="0.01" value="1160"></div><div class="field"><label for="pricingMarkup">Ganancia sobre coste (%)</label><input id="pricingMarkup" type="number" min="0" step="0.1" value="35"></div></div><div class="field-row"><div class="field"><label for="pricingMobileUnits">Unidades de saldo móvil</label><input id="pricingMobileUnits" type="number" min="1" step="1" value="360"></div><div class="field"><label for="pricingMobileCost">Precio de venta de 360 unidades de saldo móvil (CUP)</label><input id="pricingMobileCost" type="number" min="1" step="0.01" value="1200"></div></div><div class="field"><label for="pricingRounding">Redondear precio CUP hacia arriba a múltiplos de</label><input id="pricingRounding" type="number" min="1" step="1" value="10"></div><button id="savePricingBtn" class="primary-btn block-btn" type="button" onclick="savePricingSettings()">Guardar tasas y reglas</button><p id="pricingSettingsMsg" class="msg" role="status"></p><div id="pricingHistory"></div><div class="section"><h3>Calculadora de precio sugerido</h3><p class="subtle">Introduce el coste exacto del paquete que veas en Central One. La sugerencia no se publica automáticamente.</p><div class="field"><label for="pricingCostUsdt">Coste del paquete en USDT</label><input id="pricingCostUsdt" type="number" min="0" step="0.0001" placeholder="Ej. 1.25"></div><button class="secondary-btn block-btn" type="button" onclick="previewRetailPrice()">Calcular propuesta</button><div id="pricingPreview" class="notice" style="margin-top:12px">Aquí aparecerá el precio sugerido en CUP, saldo móvil y USDT.</div></div></div>
  <div class="panel"><h2>Administrar productos</h2><div class="field"><label>Juego o plataforma</label><input id="game" placeholder="Ej. Free Fire"></div><div class="field"><label>Nombre del paquete</label><input id="pname" placeholder="Ej. 110 diamantes"></div><div class="field"><label>Descripción</label><input id="description" placeholder="Opcional"></div><div class="field-row"><div class="field"><label>Cantidad</label><input id="amount" type="number" placeholder="110"></div></div><div class="field-row"><div class="field"><label>Transferencia CUP</label><input id="transfer" type="number" placeholder="0"></div><div class="field"><label>Saldo móvil</label><input id="mobile" type="number" placeholder="0"></div></div><div class="field"><label>Precio USDT</label><input id="usdt" type="number" step="0.01" placeholder="0"></div><button id="adminProductSubmit" class="primary-btn block-btn" type="button" onclick="addProduct()">Guardar producto</button><button id="cancelProductEdit" class="secondary-btn block-btn hidden" type="button" onclick="cancelProductEdit()">Cancelar edición</button><p id="adminmsg" class="msg" role="status"></p><div id="adminProducts"></div></div>
- <div class="panel"><h2>Instrucciones de pago</h2><p class="subtle">Configura los datos que verá el cliente según el método elegido. Deja desactivado un método que todavía no puedas recibir.</p><div class="field"><label for="payMethodName">Método</label><select id="payMethodName"><option>Transferencia CUP</option><option>Saldo móvil</option><option>USDT</option></select></div><div class="field"><label for="payInstructions">Instrucciones para el cliente</label><textarea id="payInstructions" rows="4" placeholder="Ej. Datos para transferir, número de teléfono o dirección de billetera. Nunca incluyas claves privadas."></textarea></div><button class="primary-btn block-btn" type="button" onclick="savePaymentMethod()">Guardar instrucciones</button><p id="paymentAdminMsg" class="msg" role="status"></p><div id="paymentAdminList"></div><div class="wallet-panel" style="margin-top:16px"><h3>Configuración de la wallet</h3><p>La tasa se utiliza solo para convertir depósitos por Transferencia CUP a USD. Cada cambio aplica a las nuevas solicitudes; los depósitos anteriores conservan la tasa con la que se crearon.</p><div class="wallet-rate-row"><div class="field"><label for="walletCupRate">CUP por cada 1 USD de saldo</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1160"></div><button class="primary-btn" type="button" onclick="saveWalletSettings()">Guardar tasa</button></div><p id="walletSettingsMsg" class="msg" role="status"></p><p class="wallet-field-hint">El sistema redondea siempre hacia abajo a dos decimales. El mínimo de cada depósito es 1 USD.</p></div><div class="wallet-panel" style="margin-top:16px"><div class="order-toolbar"><h3>Depósitos por revisar</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin()">Actualizar</button></div><p class="subtle">Comprueba la recepción real en la tarjeta o en la red BNB Smart Chain antes de aprobar. Una captura no demuestra por sí sola que el dinero llegó.</p><div id="walletAdminMsg" class="msg" role="status"></div><div id="walletDepositsAdmin">Cargando depósitos…</div></div></div>
- <div class="panel"><div class="order-toolbar"><h2>Pedidos de clientes</h2><div class="field-row"><button class="secondary-btn" type="button" onclick="loadAllOrders()">Actualizar</button><button class="secondary-btn" type="button" onclick="enablePaymentNotifications()">Activar avisos</button></div></div><p id="paymentNotifyStatus" class="track-note">Activa los avisos de este teléfono y mantén la tienda abierta para recibir alertas automáticas.</p><p class="track-note">Flujo de recarga: primero revisa y confirma el pago del cliente. Después aparecerá el botón <strong>«Autorizar recarga y reservar saldo»</strong>; ese segundo botón envía el pedido a Central One y es el único que usa saldo del proveedor. La solicitud queda protegida contra duplicados y podrás consultar aquí el estado real de la entrega. No marques la recarga como completada hasta que Central One informe «completed».</p><p id="orderadminmsg" class="msg" role="status"></p><div id="allorders">Cargando...</div></div>
+ <div class="panel"><h2>Instrucciones de pago</h2><p class="subtle">Configura los datos que verá el cliente según el método elegido. Deja desactivado un método que todavía no puedas recibir.</p><div class="field"><label for="payMethodName">Método</label><select id="payMethodName"><option>Transferencia CUP</option><option>Saldo móvil</option><option>USDT</option></select></div><div class="field"><label for="payInstructions">Instrucciones para el cliente</label><textarea id="payInstructions" rows="4" placeholder="Ej. Datos para transferir, número de teléfono o dirección de billetera. Nunca incluyas claves privadas."></textarea></div><button class="primary-btn block-btn" type="button" onclick="savePaymentMethod()">Guardar instrucciones</button><p id="paymentAdminMsg" class="msg" role="status"></p><div id="paymentAdminList"></div></div>
+<div class="panel wallet-admin-panel">
+ <div class="wallet-admin-heading"><span class="admin-kicker">SALDO DE CLIENTES</span><h2>Gestión de wallet</h2><p class="subtle">Revisa depósitos, comprueba la recepción real y acredita el saldo cuando corresponda.</p></div>
+ <div class="wallet-admin-kpi-grid" aria-label="Resumen de depósitos">
+  <article><span>Pendiente de comprobante</span><strong id="walletCountPending">0</strong></article>
+  <article><span>En revisión</span><strong id="walletCountReview">0</strong></article>
+  <article><span>Aprobados</span><strong id="walletCountApproved">0</strong></article>
+  <article><span>Rechazados</span><strong id="walletCountRejected">0</strong></article>
+ </div>
+ <section class="wallet-panel wallet-admin-settings">
+  <h3>Configuración de la wallet</h3>
+  <p>Esta tasa convierte los depósitos por Transferencia CUP a USD. Los cambios se aplican solo a las nuevas solicitudes; cada depósito anterior conserva la tasa con la que fue creado.</p>
+  <div class="wallet-rate-row"><div class="field"><label for="walletCupRate">CUP por cada 1 USD de saldo</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1160"></div><button class="primary-btn" type="button" onclick="saveWalletSettings()">Guardar tasa</button></div>
+  <p id="walletSettingsMsg" class="msg" role="status"></p>
+  <p class="wallet-field-hint">El sistema redondea hacia abajo a dos decimales. El mínimo de cada depósito es 1 USD equivalente.</p>
+ </section>
+ <section class="wallet-panel wallet-admin-deposits">
+  <div class="order-toolbar"><h3>Solicitudes de recarga de wallet</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin()">Actualizar solicitudes</button></div>
+  <p class="subtle">Comprueba la recepción real en la tarjeta bancaria o en la red BNB Smart Chain antes de aprobar. Una captura por sí sola no demuestra que el dinero llegó. Al aprobar, el sistema acredita el importe una sola vez.</p>
+  <p id="walletAdminMsg" class="msg" role="status"></p>
+  <div id="walletDepositsAdmin">Cargando depósitos…</div>
+ </section>
+</div>
+
+<div class="panel"><div class="order-toolbar"><h2>Pedidos de clientes</h2><div class="field-row"><button class="secondary-btn" type="button" onclick="loadAllOrders()">Actualizar</button><button class="secondary-btn" type="button" onclick="enablePaymentNotifications()">Activar avisos</button></div></div><p id="paymentNotifyStatus" class="track-note">Activa los avisos de este teléfono y mantén la tienda abierta para recibir alertas automáticas.</p><p class="track-note">Flujo de recarga: primero revisa y confirma el pago del cliente. Después aparecerá el botón <strong>«Autorizar recarga y reservar saldo»</strong>; ese segundo botón envía el pedido a Central One y es el único que usa saldo del proveedor. La solicitud queda protegida contra duplicados y podrás consultar aquí el estado real de la entrega. No marques la recarga como completada hasta que Central One informe «completed».</p><p id="orderadminmsg" class="msg" role="status"></p><div id="allorders">Cargando...</div></div>
 </section>
  
  <section id="faqView" class="store-view hidden"><div class="panel policy-panel">
@@ -2078,7 +2138,7 @@ body{min-width:0}
 <footer class="site-footer"><div class="footer-brand"><img src="./assets/castle-logo.webp" alt="" width="42" height="42"><div><strong>Tienda El Castillo</strong><span>Recargas digitales con atención personalizada</span></div></div><div class="footer-columns"><div><strong>Tu compra</strong><a href="#catalogo" onclick="showView('games');return false">Catálogo de juegos</a><span>Transferencia CUP, saldo móvil y USDT</span><a href="#pedidos" onclick="currentUser?showView('orders'):openAccount();return false">Seguimiento de pedidos</a></div><div><strong>Ayuda e información</strong><a href="#ayuda" onclick="showView('faq');return false">Preguntas frecuentes</a><a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a><a href="#condiciones" onclick="showView('terms');return false">Términos de compra</a><a href="./recargar-free-fire-cuba.html">Guía de recarga</a><a class="footer-whatsapp" href="https://wa.me/5351884050" target="_blank" rel="noopener noreferrer">Soporte WhatsApp · solo cuando sea necesario: +53 51884050</a></div></div><p class="footer-legal">Tienda El Castillo es un servicio independiente. No está afiliada ni respaldada por Garena. Las marcas y juegos pertenecen a sus respectivos propietarios.</p></footer>
 </section>
 </main>
-<nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
+<nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="wallet" onclick="showView('wallet')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 14h2"/></svg></span>Wallet</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
 <script>
 window.onCastleCaptchaSuccess=function(token){window.castleCaptchaToken=token;const m=document.getElementById("authmsg");if(m&&m.textContent.includes("CAPTCHA"))m.textContent="";};
 window.onCastleCaptchaExpired=function(){window.castleCaptchaToken=null;};
@@ -2426,8 +2486,17 @@ async function openStore(user){
   currentProfile=created.data;
  }
 
- $("welcome").textContent="Hola, "+(currentProfile.full_name||user.email);
+ const profileName=String(currentProfile.full_name||"").trim();
+ const profileInitialSource=profileName||String(user.email||"EC").split("@")[0];
+ const profileInitials=profileInitialSource.trim().split(/\s+/).slice(0,2).map(part=>part.charAt(0)).join("").toUpperCase();
+ $("welcome").textContent="Hola, "+(profileName||"bienvenido/a");
  $("profileEmail").textContent=user.email||"";
+ if($("profileAvatar"))$("profileAvatar").textContent=profileInitials||"EC";
+ const memberSince=currentProfile.created_at||user.created_at||"";
+ if($("profileMemberSince"))$("profileMemberSince").textContent=memberSince?new Date(memberSince).toLocaleDateString("es-CU",{day:"numeric",month:"long",year:"numeric"}):"No disponible";
+ const profileRoleLabel=currentProfile.role==="admin"?"Administrador":"Cliente";
+ if($("profileRole"))$("profileRole").textContent=profileRoleLabel;
+ if($("profileAccountType"))$("profileAccountType").textContent=profileRoleLabel;
  if(currentProfile.role==="admin") $("adminNav").classList.remove("hidden");
  $("notificationsButton")?.classList.remove("hidden");
  try{await loadNotifications();}catch(notificationError){console.error("No se pudieron cargar los avisos:",notificationError);}
@@ -3320,7 +3389,7 @@ function showView(name){
   return;
  }
  if(name==="admin"&&currentProfile?.role!=="admin"){$("adminNav")?.classList.add("hidden");$("admin")?.classList.add("hidden");showView("profile");return}
- const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",profile:"profileView",admin:"admin",faq:"faqView",privacy:"privacyView",terms:"termsView"};
+ const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",wallet:"walletView",profile:"profileView",admin:"admin",faq:"faqView",privacy:"privacyView",terms:"termsView"};
  Object.values(views).forEach(id=>$(id)?.classList.add("hidden"));
  $(views[name]||views.home)?.classList.remove("hidden");
  document.querySelectorAll("#bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
@@ -4063,6 +4132,8 @@ async function loadNotifications(){
   .eq("user_id",currentUser.id).is("read_at",null);
  const unread=unreadResult.error?rows.filter(item=>!item.read_at).length:Number(unreadResult.count||0);
  badge?.classList.toggle("hidden",unread===0);
+ const profileUnread=$("profileUnreadNotifications");
+ if(profileUnread)profileUnread.textContent=unread?unread+" sin leer":"Todo al día";
  button?.setAttribute("aria-label",unread?"Mensajes y notificaciones: "+unread+" sin leer":"Mensajes y notificaciones");
  $("markAllNotificationsRead")?.classList.toggle("hidden",unread===0);
  if(!list)return;
@@ -4208,7 +4279,16 @@ function startOrderReviewClock(container){
 
 async function loadMyOrders(){
  if(!currentUser)return;
- const {data,error}=await db.from("orders").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false});
+ const {data,error}=await db.from("orders").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false}); 
+ const profileOrderStats=data||[];
+ const setProfileStat=(id,value)=>{const node=$(id);if(node)node.textContent=String(value);};
+ if(error){
+  ["profileOrdersTotal","profileOrdersActive","profileOrdersCompleted"].forEach(id=>setProfileStat(id,"—"));
+ }else{
+  setProfileStat("profileOrdersTotal",profileOrderStats.length);
+  setProfileStat("profileOrdersActive",profileOrderStats.filter(order=>["pending","payment_review","processing"].includes(order.status)).length);
+  setProfileStat("profileOrdersCompleted",profileOrderStats.filter(order=>order.status==="completed").length);
+ }
  const noticesResult=await db.from("user_notifications").select("order_id,title,message,created_at").eq("user_id",currentUser.id).eq("kind","order_status").order("created_at",{ascending:false}).limit(100);
  const orderEventsById=new Map();
  if(!noticesResult.error)(noticesResult.data||[]).forEach(event=>{
@@ -4284,12 +4364,34 @@ async function loadMyOrders(){
 }
 
 
+function updateWalletInfoPanel(){
+ if(!walletSettings)return;
+ const rate=Number(walletSettings.cup_per_usd||1160);
+ const rateNode=$("walletInfoCupRate"),minimumNode=$("walletInfoCupMinimum");
+ const networkNode=$("walletInfoUsdtNetwork"),addressNode=$("walletInfoUsdtAddress");
+ const copyButton=$("walletInfoCopyAddress");
+ if(rateNode)rateNode.textContent="1 USD = "+money(rate)+" CUP";
+ if(minimumNode)minimumNode.textContent=money(Math.ceil(rate))+" CUP";
+ if(networkNode)networkNode.textContent=walletSettings.usdt_network||"No disponible";
+ const validUsdt=isWalletUsdtConfigured();
+ if(addressNode)addressNode.textContent=validUsdt?walletSettings.usdt_address:"Depósitos USDT no disponibles por ahora.";
+ if(copyButton){
+  copyButton.disabled=!validUsdt;
+  copyButton.dataset.copy=validUsdt?walletSettings.usdt_address:"";
+  copyButton.textContent=validUsdt?"Copiar dirección":"Temporalmente no disponible";
+  if(!copyButton.dataset.copyHandler){
+   copyButton.dataset.copyHandler="1";
+   copyButton.addEventListener("click",()=>copyPaymentButton(copyButton));
+  }
+ }
+}
 async function loadWalletSettings(){
  if(!db)return;
  const result=await db.from("wallet_settings").select("cup_per_usd,usdt_network,usdt_address,updated_at").eq("id",1).maybeSingle();
  if(result.error)throw new Error(result.error.message);
  if(!result.data)throw new Error("No encontramos la configuración de la wallet en Supabase.");
  walletSettings=result.data;
+ updateWalletInfoPanel();
  if(currentProfile?.role==="admin"&&$("walletCupRate"))$("walletCupRate").value=walletSettings.cup_per_usd;
  updateWalletDepositMethod();
  updatePaymentInstructions();
@@ -4319,12 +4421,13 @@ async function loadWalletData(){
  let rows=[];
  for(let from=0;;from+=1000){
   const result=await db.from("wallet_transactions").select("kind,amount,currency,description,created_at,order_id,deposit_id").eq("user_id",currentUser.id).eq("currency","USD").order("created_at",{ascending:false}).range(from,from+999);
-  if(result.error){walletBalanceUSD=0;if($("walletBalance"))$("walletBalance").textContent="No disponible";if($("walletTransactions"))$("walletTransactions").textContent="No se pudo cargar la billetera. Actualiza el perfil antes de comprar con saldo.";updateCheckoutSummary();return;}
+  if(result.error){walletBalanceUSD=0;if($("walletBalance"))$("walletBalance").textContent="No disponible";if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Saldo no disponible";if($("walletTransactions"))$("walletTransactions").textContent="No se pudo cargar la billetera. Actualiza el perfil antes de comprar con saldo.";updateCheckoutSummary();return;}
   rows=rows.concat(result.data||[]);
   if(!result.data||result.data.length<1000)break;
  }
  walletBalanceUSD=rows.reduce((sum,row)=>sum+(["deposit","refund","adjustment"].includes(row.kind)?1:-1)*Number(row.amount||0),0);
  if($("walletBalance"))$("walletBalance").textContent=moneyUSD(walletBalanceUSD)+" USD";
+ if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Saldo: "+moneyUSD(walletBalanceUSD)+" USD";
  if($("walletTransactions"))$("walletTransactions").innerHTML=rows.length?rows.map(row=>{
   const label=row.kind==="purchase"?"Compra":row.kind==="deposit"?"Depósito aprobado":row.kind==="refund"?"Reembolso":"Ajuste";
   return '<article class="wallet-history-card"><strong>'+clean(label)+'</strong><div class="order-detail">'+moneyUSD(row.amount)+' USD · '+clean(row.description||"Movimiento")+'<br>'+new Date(row.created_at).toLocaleString("es-CU")+'</div></article>';
