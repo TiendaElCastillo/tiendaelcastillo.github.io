@@ -2035,7 +2035,7 @@ body{min-width:0}
   <article class="faq-item"><h3>¿Dónde veo mis pedidos?</h3><p>Inicia sesión y abre «Pedidos» en la navegación inferior. Allí verás el folio, el estado y el avance de cada solicitud.</p></article>
   <article class="faq-item"><h3>¿Qué hago si hice el mismo pago dos veces?</h3><p>No crees un segundo pedido para justificar el pago duplicado. Guarda el folio y los dos comprobantes o referencias de transacción y contacta con soporte. La tienda debe comprobar ambas operaciones antes de registrar una devolución o compensación.</p></article>
   <article class="faq-item"><h3>¿Cómo funciona la wallet?</h3><p>La wallet es saldo interno para comprar dentro de Tienda El Castillo; no es una cuenta bancaria ni un servicio de retiro de efectivo. Los depósitos se revisan manualmente y el saldo solo está disponible después de que la administración confirme el pago. Un depósito pendiente no puede utilizarse para comprar. El importe se acredita en USD usando la tasa que se muestra al crear la solicitud; por ejemplo, a 1.160 CUP/USD, 1.160 CUP equivalen a 1,00 USD.</p></article>
-  <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con la wallet falla?</h3><p>Si Central One no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el débito original a tu wallet. Si Central One sí creó la orden, el saldo se devuelve cuando el proveedor confirma el reembolso. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de la wallet.</p></article>
+  <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con la wallet falla?</h3><p>Si el servicio no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el débito original a tu wallet. Si ya se creó una orden, el saldo se devuelve cuando se confirma la devolución del proveedor. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de la wallet.</p></article>
   <article class="faq-item"><h3>¿Qué información debo enviar al reclamar?</h3><p>Indica el folio del pedido, el método de pago, la referencia de la operación cuando exista y una captura legible del comprobante. No envíes contraseñas del juego, códigos de acceso, claves bancarias ni frases de recuperación de billeteras.</p></article>
  </div></section>
  <section id="privacyView" class="store-view hidden"><div class="panel policy-panel">
@@ -2807,7 +2807,7 @@ function renderGameDetail(){
  const rows=gameProductsFor(item.name),methods=gameMethodsFor(rows),methodNames=methods.map(x=>x.name);
  if(fold(item.name)==="blood strike"&&!rows.length){
   $("gamePaymentChoices").innerHTML="";
-  $("gameDetailPlans").innerHTML='<section class="blood-strike-status-card"><span class="blood-strike-status-mark" aria-hidden="true">⌛</span><div class="blood-strike-status-copy"><span class="blood-strike-status-kicker">INTEGRACIÓN EN PREPARACIÓN</span><h2>Blood Strike · GLOBAL</h2><p>Estamos incorporando las ofertas de Central One y comprobando la validación del Player ID. Todavía no se aceptan pedidos para este juego.</p><span class="blood-strike-region-note">Región detectada: GLOBAL · paquetes pendientes de sincronización</span></div></section>';
+  $("gameDetailPlans").innerHTML='<section class="blood-strike-status-card"><span class="blood-strike-status-mark" aria-hidden="true">⌛</span><div class="blood-strike-status-copy"><span class="blood-strike-status-kicker">INTEGRACIÓN EN PREPARACIÓN</span><h2>Blood Strike · GLOBAL</h2><p>Ahora mismo no hay ofertas disponibles para este juego. Vuelve a consultar más tarde; no se aceptan pedidos hasta que aparezcan paquetes activos.</p><span class="blood-strike-region-note">Región detectada: GLOBAL · paquetes pendientes de sincronización</span></div></section>';
   $("gamePlansTitle").textContent="Ofertas de Blood Strike";
   $("gamePlansSubtitle").textContent="Los paquetes aparecerán cuando termine la sincronización segura";
   return;
@@ -2874,12 +2874,12 @@ function renderGameDetail(){
    const labels={bc:"Recargas de BC",deals:"Ofertas DEAL",passes:"Pases de Blood Strike",specials:"Vouchers y objetos especiales"};
     const notes={
      bc:"Elige la cantidad de BC que quieres recibir. La recarga se procesa para tu cuenta GLOBAL.",
-     deals:"Las etiquetas DEAL identifican ofertas del catálogo de Central One. No indican por sí solas una cantidad de BC.",
-     passes:"Pases disponibles en el catálogo GLOBAL de Central One. Comprueba el nombre exacto del pase antes de pagar.",
+     deals:"Las etiquetas DEAL identifican ofertas especiales. No indican por sí solas una cantidad de BC.",
+     passes:"Pases disponibles para la región GLOBAL. Comprueba el nombre exacto del pase antes de pagar.",
      specials:"Vouchers, cofres, bolsas y preventas son artículos distintos de los BC. Revisa el nombre completo: el contenido depende del producto y del evento."
     };
    const tabsHtml=tabs.map(([id,label,count])=>'<button type="button" class="bs-category-tab '+(activeCategory===id?"active":"")+'" role="tab" aria-selected="'+(activeCategory===id)+'" aria-controls="bloodStrike-'+id+'" onclick="selectBloodStrikeCategory(&quot;'+id+'&quot;)"><span>'+label+'</span><b>'+count+'</b></button>').join("");
-   $("gameDetailPlans").innerHTML='<div class="bs-catalog-head"><div><h2>Catálogo de Blood Strike</h2><p>'+rows.length+' productos sincronizados desde Central One · región GLOBAL</p></div><span class="bs-total">'+plans.length+' opciones</span></div>'+
+   $("gameDetailPlans").innerHTML='<div class="bs-catalog-head"><div><h2>Catálogo de Blood Strike</h2><p>'+rows.length+' ofertas disponibles · región GLOBAL</p></div><span class="bs-total">'+plans.length+' opciones</span></div>'+
     '<div class="bs-catalog-assurance"><span>🌐 Región GLOBAL</span><span>✓ ID comprobado antes del pago</span><span>🔒 Nunca pedimos tu contraseña</span></div><div class="bs-category-tabs" role="tablist" aria-label="Categorías de Blood Strike">'+tabsHtml+'</div>'+
     '<section id="bloodStrike-'+activeCategory+'" class="bs-category-panel" role="tabpanel"><div class="bs-category-title">'+labels[activeCategory]+'</div><p class="bs-category-intro">'+notes[activeCategory]+'</p><div class="bs-package-list">'+list.map(p=>gamePlanCard(p,item,gamePaymentMethod)).join("")+'</div></section>';
   }
