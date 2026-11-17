@@ -3377,18 +3377,13 @@ async function continueToPayment(){
  updateCheckoutStage("payment");
 }
 function renderCheckoutPaymentMethods(){
- const box=$("checkoutPaymentMethods"),select=$("payment"),product=products.find(item=>String(item.id)===String($("product")?.value||""));
- if(!box||!select)return;
- const methods=[{name:"Transferencia CUP",icon:"▣",short:"Transferencia CUP"},{name:"Saldo móvil",icon:"▰",short:"Saldo móvil"},{name:"USDT",icon:"₮",short:"USDT"},{name:"Saldo de Tienda El Castillo",icon:"💳",short:"Saldo de tienda"}]
-  .filter(method=>product&&Number(priceForMethod(product,method.name))>0&&isPaymentMethodReady(method.name));
- box.innerHTML=methods.length?methods.map(method=>'<button type="button" class="checkout-method-choice '+(select.value===method.name?"active":"")+'" aria-pressed="'+(select.value===method.name)+'" onclick="chooseCheckoutPaymentMethod(&quot;'+method.name+'&quot;)"><span class="checkout-method-icon">'+method.icon+'</span><span>'+method.short+'</span></button>').join(""):'<p class="empty-note">No hay métodos de pago configurados para este paquete. No realices ninguna transferencia.</p>';
+ const box=$("checkoutPaymentMethods"),method=String(checkoutLockedPaymentMethod||"");if(!box)return;
+ if(!method){box.innerHTML='<p class="empty-note">Selecciona la forma de pago en el catálogo antes de continuar.</p>';return;}
+ const item=gamePaymentCatalog.find(entry=>entry.name===method);
+ box.innerHTML='<div class="checkout-method-choice active checkout-method-locked" role="status" aria-label="Forma de pago elegida y bloqueada"><span class="checkout-method-icon">'+clean(item?.icon||"✓")+'</span><span><strong>'+clean(item?.short||method)+'</strong><small>Elegida antes de abrir el formulario</small></span><span class="checkout-method-lock" aria-hidden="true">🔒</span></div>';
 }
 function chooseCheckoutPaymentMethod(name){
- const select=$("payment");
- if(!select||!isPaymentMethodReady(name))return;
- select.value=name;
- updateCheckoutSummary();
- window.updateCheckoutSubmitState?.();
+ return String(name||"")===String(checkoutLockedPaymentMethod||"");
 }
 function showView(name){
  if(name==="giftcards")name="games";
@@ -3679,37 +3674,35 @@ function openGamePlanCheckout(button){
 }
 function updateCheckoutSummary(){
  const p=products.find(item=>String(item.id)===$("product").value);if(!p)return;
- const prices={"Transferencia CUP":p.price_transfer,"Saldo móvil":p.price_mobile,"USDT":p.price_usdt,"Saldo de Tienda El Castillo":p.price_usdt};
- const select=$("payment"),available=[];
- Array.from(select.options).forEach(option=>{
-  const isWallet=option.value==="Saldo de Tienda El Castillo";
-  const enabled=isWallet?Boolean(currentUser&&Number(prices[option.value])>0):Number(prices[option.value])>0&&isPaymentMethodReady(option.value);
-  option.disabled=!enabled;option.hidden=!enabled;if(enabled)available.push(option.value);
- });
- if(available.length&&!available.includes(select.value))select.value=available[0];
- const method=select.value;
- // Al cambiar de método, no reutilizar datos ni capturas de una operación distinta.
+ const select=$("payment"),method=String(checkoutLockedPaymentMethod||"");
+ if(!select||!method){
+  $("checkoutSummary").innerHTML='<span class="empty-note">Vuelve al catálogo y selecciona primero una forma de pago.</span>';
+  $("paymentInstructions").textContent="No se ha seleccionado una forma de pago.";
+  return;
+ }
+ if(select.value!==method)select.value=method;
+ select.disabled=true;
+ const raw=priceForMethod(p,method),isWallet=method==="Saldo de Tienda El Castillo";
+ if(Number(raw)<=0||!isPaymentMethodReady(method)){
+  $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong><small>Forma de pago elegida: '+clean(method)+'</small></div><div class="checkout-total"><strong>No disponible</strong></div>';
+  $("paymentInstructions").innerHTML='<div class="payment-unavailable"><strong>La forma de pago elegida ya no está disponible</strong><span>Vuelve al catálogo para elegir otra. No se ha creado ningún pedido.</span></div>';
+  $("walletCheckoutNote").textContent="";
+  renderCheckoutPaymentMethods();updatePaymentFields();window.updateCheckoutSubmitState?.();return;
+ }
  if(checkoutPaymentMethodPrevious&&checkoutPaymentMethodPrevious!==method){
   ["reference","senderPhone","reportedAmount","paymentProof"].forEach(id=>{const field=$(id);if(field)field.value="";});
-  previewPaymentProof();
-  if($("ordermsg"))$("ordermsg").textContent="";
+  previewPaymentProof();if($("ordermsg"))$("ordermsg").textContent="";
  }
  checkoutPaymentMethodPrevious=method;
  renderCheckoutPaymentMethods();
- const raw=prices[method],isWallet=method==="Saldo de Tienda El Castillo";
  const unit=isWallet?"USD":method==="USDT"?"USDT":"CUP";
- const amount=Number(raw)>0?(isWallet?moneyUSD(raw):money(raw)):"—",label=Number(raw)>0?unit:"Sin métodos configurados";
+ const amount=Number(raw)>0?(isWallet?moneyUSD(raw):money(raw)):"—";
  const regionLine=p.provider_region?'<small>Región de recarga '+clean(p.provider_region)+(requiresPlayerValidation(p)?' · Comprobación de ID obligatoria':'')+'</small>':'<small>Precio final según el método de pago</small>';
- $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'</div><div class="checkout-total"><strong>'+amount+'</strong><small>'+label+'</small></div>';
+ $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'<small class="checkout-locked-method">Forma de pago elegida: '+clean(method)+'</small></div><div class="checkout-total"><strong>'+amount+'</strong><small>'+unit+'</small></div>';
  syncPlayerRegionUI();
  const walletNote=$("walletCheckoutNote");
- if(walletNote){
-  walletNote.textContent=isWallet
-   ?"Tu wallet dispone de "+moneyUSD(walletBalanceUSD)+" USD. "+(walletBalanceUSD>=Number(raw)?"Tienes saldo suficiente. El importe se descontará solo cuando confirmes esta compra.":"Te faltan "+moneyUSD(Number(raw)-walletBalanceUSD)+" USD. No se creará el pedido hasta que tengas saldo suficiente.")
-   :"";
- }
- updatePaymentInstructions();
- updatePaymentFields();
+ if(walletNote)walletNote.textContent=isWallet?"Tu wallet dispone de "+moneyUSD(walletBalanceUSD)+" USD. "+(walletBalanceUSD>=Number(raw)?"Tienes saldo suficiente. El importe se descontará solo cuando confirmes esta compra.":"Te faltan "+moneyUSD(Number(raw)-walletBalanceUSD)+" USD. No se creará el pedido hasta que tengas saldo suficiente."):"";
+ updatePaymentInstructions();updatePaymentFields();window.updateCheckoutSubmitState?.();
 }
 async function loadPaymentMethods(options={}){
  if(!currentUser||!db){paymentMethods=[];paymentLoadError=null;return [];}
@@ -3820,32 +3813,37 @@ function previewPaymentProof(){
  if(file.type.startsWith("image/")){window.proofPreviewUrl=URL.createObjectURL(file);preview.src=window.proofPreviewUrl;preview.classList.remove("hidden");if(icon)icon.classList.add("hidden")}
 }
 function updatePaymentFields(){
- const copyBox=$("paymentInstructions");if(copyBox&&!copyBox.dataset.copyHandler){copyBox.dataset.copyHandler="1";copyBox.addEventListener("click",event=>{const button=event.target.closest("[data-copy]");if(button)copyPaymentButton(button);});}
+ const copyBox=$("paymentInstructions");
+ if(copyBox&&!copyBox.dataset.copyHandler){
+  copyBox.dataset.copyHandler="1";
+  copyBox.addEventListener("click",event=>{const button=event.target.closest("[data-copy]");if(button)copyPaymentButton(button);});
+ }
  const senderField=$("senderPhone");
- if(senderField&&!senderField.dataset.cubaMobileHandler){senderField.dataset.cubaMobileHandler="1";senderField.addEventListener("input",()=>{senderField.value=cubaMobileInputValue(senderField.value);});}
+ if(senderField&&!senderField.dataset.cubaMobileHandler){
+  senderField.dataset.cubaMobileHandler="1";
+  senderField.addEventListener("input",()=>{senderField.value=cubaMobileInputValue(senderField.value);});
+ }
  if(senderField){senderField.inputMode="numeric";senderField.placeholder="xxxxxxxx";}
- const method=$("payment")?.value||"";
+ const method=checkoutLockedPaymentMethod||$("payment")?.value||"";
  const isWallet=method==="Saldo de Tienda El Castillo",isTransfer=method==="Transferencia CUP",isMobile=method==="Saldo móvil",isUsdt=method==="USDT";
- $("referenceWrap")?.classList.toggle("hidden",isWallet||(!isTransfer&&!isMobile&&!isUsdt));
+ $("referenceWrap")?.classList.toggle("hidden",isWallet||(!isTransfer&&!isUsdt));
  $("senderPhoneWrap")?.classList.toggle("hidden",isWallet||(!isTransfer&&!isMobile));
  $("reportedAmountWrap")?.classList.toggle("hidden",isWallet||(!isMobile&&!isUsdt));
  $("proofWrap")?.classList.toggle("hidden",isWallet);
- $("reference").required=!isWallet&&(isTransfer||isMobile||isUsdt);
- $("reference").minLength=isUsdt?64:(isTransfer||isMobile)?3:0;
- $("reference").maxLength=isUsdt?64:100;
+ $("reference").required=!isWallet&&(isTransfer||isUsdt);
+ $("reference").minLength=isUsdt?64:isTransfer?3:0;$("reference").maxLength=isUsdt?64:100;
  $("senderPhone").required=!isWallet&&(isTransfer||isMobile);
  $("reportedAmount").required=!isWallet&&(isMobile||isUsdt);
- $("reportedAmount").min=isUsdt?"0.000001":"1";
- $("reportedAmount").step=isUsdt?"0.000001":"0.01";
+ $("reportedAmount").min=isUsdt?"0.000001":"1";$("reportedAmount").step=isUsdt?"0.000001":"0.01";
  $("paymentProof").required=!isWallet;
- $("referenceLabel").textContent=isUsdt?"Hash de transacción USDT (64 caracteres)":isMobile?"N.º de operación / folio del SMS (obligatorio)":"N.º de transacción del banco (obligatorio)";
-$("referenceHelp").textContent=isUsdt?"Copia el hash/TxID de la operación en BNB Smart Chain. Debe tener 64 caracteres hexadecimales.":isMobile?"Copia el número o folio único que aparece en el SMS de confirmación de ETECSA. No escribas el teléfono receptor.":"Copia el código que aparece junto a «Nro. Transacción» en el comprobante del banco. Es único para cada pago.";
- $("senderPhoneLabel").textContent=isMobile?"¿Desde qué número enviaste el saldo? (obligatorio)":"¿Desde qué número haces la transferencia? (obligatorio)";
- $("senderPhoneHelp").textContent=isTransfer?"Tiene que ser la misma línea con la que entras a Transfermóvil. No escribas el número receptor de la tienda.":"Escribe la línea desde la que enviaste el saldo móvil.";
+ $("referenceLabel").textContent=isUsdt?"Hash de transacción USDT (64 caracteres)":"N.º de transacción bancaria (obligatorio)";
+ $("referenceHelp").textContent=isUsdt?"Copia el hash/TxID de la operación en BNB Smart Chain. Debe tener 64 caracteres hexadecimales.":"Copia el código que aparece junto a «Nro. Transacción» en el comprobante del banco. Es único para cada pago.";
+ $("senderPhoneLabel").textContent=isMobile?"Número remitente que aparece después de «del número» en el SMS (obligatorio)":isTransfer?"Número de la línea desde la que hiciste la transferencia (obligatorio)":"¿Desde qué número haces el pago? (obligatorio)";
+ $("senderPhoneHelp").textContent=isMobile?"Escribe los 8 dígitos del remitente que aparece en el SMS de confirmación. Debe coincidir con la captura; por ejemplo, 55886764.":isTransfer?"Tiene que ser la misma línea con la que entras a Transfermóvil. No escribas el número receptor de la tienda.":"Escribe la línea desde la que realizaste el pago.";
  $("senderPhone").placeholder="xxxxxxxx";
- if($("reportedAmount").previousElementSibling)$("reportedAmount").previousElementSibling.textContent=isUsdt?"Cantidad exacta de USDT enviada":"Cantidad exacta de saldo móvil enviada";
- $("proofLabel").textContent=isUsdt?"Captura del envío USDT (obligatoria)":isMobile?"Captura del SMS de ETECSA (obligatoria)":"Captura completa de Transfermóvil (obligatoria)";
-$("proofHelp").textContent=isUsdt?"La captura debe mostrar la red, la dirección receptora, el importe y el hash de la transacción. La tienda comprobará el pago manualmente. JPG, PNG o WEBP; máximo 5 MB.":isMobile?"La captura debe mostrar el SMS de confirmación, el número receptor, la fecha, el importe y el folio de operación. JPG, PNG o WEBP; máximo 5 MB.":"La captura debe mostrar el importe, la fecha, la tarjeta destinataria y el Nro. de transacción. JPG, PNG o WEBP; máximo 5 MB.";
+ if($("reportedAmount").previousElementSibling)$("reportedAmount").previousElementSibling.textContent=isUsdt?"Cantidad exacta de USDT enviada":"Importe exacto de saldo móvil recibido (CUP)";
+ $("proofLabel").textContent=isUsdt?"Captura del envío USDT (obligatoria)":isMobile?"Captura del SMS de confirmación de ETECSA (obligatoria)":"Captura completa de Transfermóvil (obligatoria)";
+ $("proofHelp").textContent=isUsdt?"La captura debe mostrar la red, la dirección receptora, el importe y el hash de la transacción. La tienda comprobará el pago manualmente. JPG, PNG o WEBP; máximo 5 MB.":isMobile?"Adjunta una sola captura donde se lea el SMS completo, por ejemplo: «Usted ha recibido 340.0 CUP del numero 55886764». Deben verse el importe y el remitente. No se pide número de transferencia. JPG, PNG o WEBP; máximo 5 MB.":"La captura debe mostrar el importe, la fecha, la tarjeta destinataria y el Nro. de transacción. JPG, PNG o WEBP; máximo 5 MB.";
  window.updateCheckoutSubmitState?.();
 }
 function renderPaymentMethodAdmin(){
