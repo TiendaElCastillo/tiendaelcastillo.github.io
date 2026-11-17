@@ -389,3 +389,11 @@ select:focus-visible,textarea:focus-visible{
 }
 @media(prefers-reduced-motion:reduce){.profile-action-card{transition:none}}
 .bottom-nav-inner{grid-template-columns:repeat(5,minmax(0,1fr))}
+
+/* Wallet sencilla: solo saldo, transferencia CUP y reembolsos. */
+.wallet-simple-info{padding:16px 18px}
+.wallet-simple-info h3{margin:0 0 7px;color:#1b3153;font-size:16px}
+.wallet-simple-info p{margin:6px 0 0;color:#62738b;font-size:11px;line-height:1.55}
+.wallet-method-note{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 14px;padding:12px 14px;border:1px solid #dce7f5;border-radius:13px;background:#f6f9ff}
+.wallet-method-note span{color:#728198;font-size:11px}
+.wallet-method-note strong{color:#245fbf;font-size:12px}
