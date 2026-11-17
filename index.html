@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=5">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=6">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -3839,26 +3839,26 @@ function updatePaymentFields(){
  if(senderField){senderField.inputMode="numeric";senderField.placeholder="xxxxxxxx";}
  const method=$("payment")?.value||"";
  const isWallet=method==="Saldo de Tienda El Castillo",isTransfer=method==="Transferencia CUP",isMobile=method==="Saldo móvil",isUsdt=method==="USDT";
- $("referenceWrap")?.classList.toggle("hidden",isWallet||(!isTransfer&&!isUsdt));
+ $("referenceWrap")?.classList.toggle("hidden",isWallet||(!isTransfer&&!isMobile&&!isUsdt));
  $("senderPhoneWrap")?.classList.toggle("hidden",isWallet||(!isTransfer&&!isMobile));
  $("reportedAmountWrap")?.classList.toggle("hidden",isWallet||(!isMobile&&!isUsdt));
  $("proofWrap")?.classList.toggle("hidden",isWallet);
- $("reference").required=!isWallet&&(isTransfer||isUsdt);
- $("reference").minLength=isUsdt?64:isTransfer?3:0;
+ $("reference").required=!isWallet&&(isTransfer||isMobile||isUsdt);
+ $("reference").minLength=isUsdt?64:(isTransfer||isMobile)?3:0;
  $("reference").maxLength=isUsdt?64:100;
  $("senderPhone").required=!isWallet&&(isTransfer||isMobile);
  $("reportedAmount").required=!isWallet&&(isMobile||isUsdt);
  $("reportedAmount").min=isUsdt?"0.000001":"1";
  $("reportedAmount").step=isUsdt?"0.000001":"0.01";
  $("paymentProof").required=!isWallet;
- $("referenceLabel").textContent=isUsdt?"Hash de transacción USDT (64 caracteres)":"N.º de transacción del banco (obligatorio)";
- $("referenceHelp").textContent=isUsdt?"Copia el hash/TxID de la operación en BNB Smart Chain. Debe tener 64 caracteres hexadecimales.":"Copia el código que aparece junto a «Nro. Transacción» en el comprobante del banco. Es único para cada pago.";
+ $("referenceLabel").textContent=isUsdt?"Hash de transacción USDT (64 caracteres)":isMobile?"N.º de operación / folio del SMS (obligatorio)":"N.º de transacción del banco (obligatorio)";
+$("referenceHelp").textContent=isUsdt?"Copia el hash/TxID de la operación en BNB Smart Chain. Debe tener 64 caracteres hexadecimales.":isMobile?"Copia el número o folio único que aparece en el SMS de confirmación de ETECSA. No escribas el teléfono receptor.":"Copia el código que aparece junto a «Nro. Transacción» en el comprobante del banco. Es único para cada pago.";
  $("senderPhoneLabel").textContent=isMobile?"¿Desde qué número enviaste el saldo? (obligatorio)":"¿Desde qué número haces la transferencia? (obligatorio)";
  $("senderPhoneHelp").textContent=isTransfer?"Tiene que ser la misma línea con la que entras a Transfermóvil. No escribas el número receptor de la tienda.":"Escribe la línea desde la que enviaste el saldo móvil.";
  $("senderPhone").placeholder="xxxxxxxx";
  if($("reportedAmount").previousElementSibling)$("reportedAmount").previousElementSibling.textContent=isUsdt?"Cantidad exacta de USDT enviada":"Cantidad exacta de saldo móvil enviada";
  $("proofLabel").textContent=isUsdt?"Captura del envío USDT (obligatoria)":isMobile?"Captura del SMS de ETECSA (obligatoria)":"Captura completa de Transfermóvil (obligatoria)";
- $("proofHelp").textContent=isUsdt?"La captura debe mostrar la red, la dirección receptora, el importe y el hash de la transacción. La tienda comprobará el pago manualmente. JPG, PNG o WEBP; máximo 5 MB.":isMobile?"La captura debe mostrar el envío, el número receptor, la fecha y el importe. JPG, PNG o WEBP; máximo 5 MB.":"La captura debe mostrar el importe, la fecha, la tarjeta destinataria y el Nro. de transacción. JPG, PNG o WEBP; máximo 5 MB.";
+$("proofHelp").textContent=isUsdt?"La captura debe mostrar la red, la dirección receptora, el importe y el hash de la transacción. La tienda comprobará el pago manualmente. JPG, PNG o WEBP; máximo 5 MB.":isMobile?"La captura debe mostrar el SMS de confirmación, el número receptor, la fecha, el importe y el folio de operación. JPG, PNG o WEBP; máximo 5 MB.":"La captura debe mostrar el importe, la fecha, la tarjeta destinataria y el Nro. de transacción. JPG, PNG o WEBP; máximo 5 MB.";
  window.updateCheckoutSubmitState?.();
 }
 function renderPaymentMethodAdmin(){
@@ -3944,7 +3944,7 @@ function validateProofFile(file){
 async function uploadProofForOrder(orderId,method,file,reference,senderPhone,reportedAmount){
  const invalid=validateProofFile(file);if(invalid)throw new Error(invalid);
  const tx=String(reference||"").trim().toUpperCase().replace(/\s+/g,"");
- if(method==="Transferencia CUP"&&(!tx||tx.length<3||tx.length>100))throw new Error("Escribe el número de transferencia.");
+ if((method==="Transferencia CUP"||method==="Saldo móvil")&&(!tx||tx.length<3||tx.length>100))throw new Error(method==="Saldo móvil"?"Escribe el número o folio de la operación del SMS.":"Escribe el número de transferencia.");
  if(method==="USDT"&&!/^[A-F0-9]{64}$/i.test(tx))throw new Error("Escribe el hash/TxID válido de 64 caracteres hexadecimales.");
  const nationalPhone=cubaMobileNational(senderPhone);
  const phone=nationalPhone?"+53"+nationalPhone:"";
@@ -3963,7 +3963,7 @@ async function uploadProofForOrder(orderId,method,file,reference,senderPhone,rep
  const result=await db.rpc("submit_payment_proof",{
   p_order_id:orderId,
   p_proof_path:path,
-  p_reference:(method==="Transferencia CUP"||method==="USDT")?tx:null,
+  p_reference:(method==="Transferencia CUP"||method==="Saldo móvil"||method==="USDT")?tx:null,
   p_sender_phone:method==="USDT"?null:phone,
   p_reported_amount:(method==="Saldo móvil"||method==="USDT")?Number(reportedAmount):null
  });
@@ -4075,7 +4075,7 @@ async function placeOrder(){
  const file=$("paymentProof")?.files?.[0],invalid=validateProofFile(file);
  if(invalid){$("ordermsg").textContent=invalid;return;}
  const reference=$("reference").value.trim().toUpperCase().replace(/\s+/g,"");
- if(method==="Transferencia CUP"&&(reference.length<3||reference.length>100)){$("ordermsg").textContent="Escribe el N.º de transacción del banco (entre 3 y 100 caracteres).";return;}
+ if((method==="Transferencia CUP"||method==="Saldo móvil")&&(reference.length<3||reference.length>100)){$("ordermsg").textContent=method==="Saldo móvil"?"Escribe el número o folio del SMS de confirmación (entre 3 y 100 caracteres).":"Escribe el N.º de transacción del banco (entre 3 y 100 caracteres).";return;}
  if(method==="USDT"&&!/^[A-F0-9]{64}$/i.test(reference)){$("ordermsg").textContent="Escribe el hash/TxID de 64 caracteres hexadecimales de la red indicada.";return;}
  const senderPhoneNational=cubaMobileNational($("senderPhone").value);
  if((method==="Transferencia CUP"||method==="Saldo móvil")&&!senderPhoneNational){$("ordermsg").textContent="Escribe los 8 dígitos válidos de tu móvil cubano (empieza por 5).";return;}
@@ -4185,7 +4185,7 @@ function renderOrderProofRetryForm(order){
  const guidance=item?'<div class="notice" style="white-space:pre-line">'+clean(item.instructions)+'</div>':'<p class="track-note">Las instrucciones actuales no están disponibles. No vuelvas a transferir; adjunta aquí el comprobante del pago que ya realizaste.</p>';
  const unit=method==="USDT"?" USDT":method==="Saldo móvil"?" unidades de saldo móvil":" CUP";
  const phone=(method==="Transferencia CUP"||method==="Saldo móvil")?'<div class="field"><label for="retry-sender-'+id+'">Teléfono desde el que hiciste el pago</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="retry-sender-'+id+'" data-order-retry-sender type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="xxxxxxxx" maxlength="20"></div></div>':"";
- const reference=method==="Transferencia CUP"?'<div class="field"><label for="retry-reference-'+id+'">N.º de transacción bancaria</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="100" placeholder="Nro. de Transacción"></div>':method==="USDT"?'<div class="field"><label for="retry-reference-'+id+'">Hash / TxID USDT (64 caracteres)</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="64" autocapitalize="off" placeholder="Pega el hash completo"></div>':"";
+ const reference=method==="Transferencia CUP"?'<div class="field"><label for="retry-reference-'+id+'">N.º de transacción bancaria</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="100" placeholder="Nro. de Transacción"></div>':method==="Saldo móvil"?'<div class="field"><label for="retry-reference-'+id+'">N.º de operación / folio del SMS</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="100" placeholder="Folio único del SMS"></div>':method==="USDT"?'<div class="field"><label for="retry-reference-'+id+'">Hash / TxID USDT (64 caracteres)</label><input id="retry-reference-'+id+'" data-order-retry-reference maxlength="64" autocapitalize="off" placeholder="Pega el hash completo"></div>':"";
  const amount=(method==="Saldo móvil"||method==="USDT")?'<div class="field"><label for="retry-amount-'+id+'">Cantidad exacta enviada ('+(method==="USDT"?"USDT":"saldo móvil")+')</label><input id="retry-amount-'+id+'" data-order-retry-amount type="number" inputmode="decimal" min="0.01" step="'+(method==="USDT"?"0.000001":"0.01")+'" placeholder="Importe exacto"></div>':"";
  return '<details class="order-proof-retry"><summary>Completar comprobante de este pedido</summary><p class="track-note">Importe de este pedido: <strong>'+money(order.price)+unit+'</strong>. Adjunta la prueba de este mismo pago. No repitas la transferencia ni crees otro pedido.</p>'+guidance+phone+reference+amount+'<div class="field proof-field"><label for="retry-proof-'+id+'">Captura del comprobante (obligatoria)</label><input id="retry-proof-'+id+'" data-order-retry-proof type="file" accept="image/jpeg,image/png,image/webp"></div><button type="button" class="primary-btn" data-retry-order-proof data-order-id="'+id+'" data-payment-method="'+clean(method)+'">Enviar comprobante al mismo pedido</button><p class="msg" role="status" aria-live="polite"></p></details>';
 }
@@ -4347,6 +4347,7 @@ async function loadMyOrders(){
   const progress=wasCancelledBeforeProof
    ?'<p class="track-note">Este pedido se canceló antes de enviar el comprobante. No se autorizó ninguna recarga. Puedes crear un pedido nuevo desde la tienda si todavía necesitas el paquete.</p>'
    :customerOrderProgress(o,orderEventsById.get(String(o.id))||[]);
+  const rejectionInfo=o.status==="rejected"&&o.customer_rejection_reason?'<div class="order-rejection-reason"><strong>Motivo del rechazo</strong><p>'+clean(o.customer_rejection_reason)+'</p></div>':"";
   const retryProofBlock=canRetryDirectProof?renderOrderProofRetryForm(o):"";
   const cancelBlock=canCancelWithoutProof
    ?'<div class="order-actions"><button type="button" class="secondary-btn" data-cancel-unsubmitted data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Cancelar pedido incompleto</button></div><p class="track-note">Úsalo solo si no has pagado ni enviado dinero. No cancela transferencias ni devuelve pagos.</p>'
@@ -4356,7 +4357,7 @@ async function loadMyOrders(){
    (o.provider_region?'<span class="order-region-pill">🌐 Región de recarga · '+clean(o.provider_region)+'</span>':"")+
    '<div class="order-player-box"><span>Cuenta destinataria</span><strong>'+clean(o.player_name||"Nombre no disponible")+'</strong><small>ID de jugador: '+clean(o.player_id||"No disponible")+'</small></div>'+
    '<div class="order-detail">'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
-   '<span class="status">'+statusText(o.status)+'</span>'+progress+proofNote+providerInfo+retryProofBlock+cancelBlock+'</article>';
+   '<span class="status">'+statusText(o.status)+'</span>'+progress+proofNote+providerInfo+rejectionInfo+retryProofBlock+cancelBlock+'</article>';
  }).join(""):"Todavía no tienes pedidos.";
  const orderList=$("myorders");
  orderList?.querySelectorAll("[data-cancel-unsubmitted]").forEach(button=>{
@@ -4946,23 +4947,28 @@ async function toggleCustomerBlock(button){
  }
 }
 
-async function updateOrderStatus(orderId,selectId){
+async function updateOrderStatus(orderId,selectId,reasonId){
  if(currentProfile?.role!=="admin"||!currentUser)return;
  const select=$(selectId),newStatus=select?.value;
  if(!orderId||!newStatus)return;
+ const reason=String($(reasonId)?.value||"").trim();
+ if(newStatus==="rejected"&&(reason.length<5||reason.length>500)){
+  $("orderadminmsg").textContent="Escribe el motivo que verá el cliente (entre 5 y 500 caracteres).";
+  $(reasonId)?.focus();return;
+ }
  if(newStatus==="processing"&&!window.confirm("CONFIRMAR RECEPCIÓN DEL PAGO\n\nComprueba primero en tu banco o teléfono que el dinero/saldo llegó realmente. Compara el móvil del remitente, el número de transacción, el importe declarado y el comprobante.\n\nEsta acción SOLO confirma que recibiste el pago. NO envía la recarga ni utiliza saldo de Central One. La autorización de la recarga será un segundo paso separado.\n\n¿Confirmas que recibiste el pago?"))return;
- if(newStatus==="rejected"&&!window.confirm("RECHAZAR PEDIDO\n\nComprueba que el pago no se recibió o que existe un motivo válido para rechazarlo. El cliente verá el pedido como rechazado.\n\n¿Deseas rechazar este pedido?"))return;
+ if(newStatus==="rejected"&&!window.confirm("RECHAZAR PEDIDO\n\nMotivo que recibirá el cliente:\n"+reason+"\n\nNo se enviará ninguna recarga a Central One. ¿Confirmas el rechazo?"))return;
  const button=document.querySelector('[data-update-order][data-order-id="'+CSS.escape(orderId)+'"]');
  const originalText=button?.textContent||"";
  if(button){button.disabled=true;button.textContent="Guardando decisión…";}
  $("orderadminmsg").textContent="";
  try{
-  const {data,error}=await db.rpc("admin_update_order_status",{p_order_id:orderId,p_status:newStatus});
+  const {data,error}=await db.rpc("admin_update_order_status",{p_order_id:orderId,p_status:newStatus,p_reason:newStatus==="rejected"?reason:null});
   if(error)throw new Error(error.message);
   if(!data)throw new Error("Supabase no confirmó el cambio de estado.");
   $("orderadminmsg").textContent=newStatus==="processing"
    ?"Pago confirmado. Todavía NO se ha enviado la recarga ni se ha usado saldo de Central One. Revisa el pedido en «Listos para autorizar» y pulsa «Autorizar recarga» solo cuando estés seguro."
-   :"Pedido rechazado. No se envió ninguna recarga a Central One.";
+   :"Pedido rechazado. El cliente recibirá el motivo en sus mensajes y en «Mis pedidos». No se envió ninguna recarga.";
   await loadAllOrders();await loadMyOrders();
  }catch(e){
   $("orderadminmsg").textContent="No se pudo completar la decisión: "+(e.message||"Error desconocido.");
@@ -5491,6 +5497,7 @@ async function loadAllOrders(options={}){
  if(!(data||[]).length){container.textContent="No hay pedidos todavía.";return;}
  const cards=(await Promise.all((data||[]).map(async(o,i)=>{
   const selectId="order-status-"+i;
+  const rejectReasonId="order-reject-reason-"+i;
   const accountRole=accountRoleByUser.get(String(o.user_id))||"";
   const stockProduct=stockProductById.get(String(o.product_id||""))||null;
   const stockProductSyncAge=stockProduct?.provider_synced_at?Date.now()-new Date(stockProduct.provider_synced_at).getTime():Infinity;
@@ -5517,11 +5524,13 @@ async function loadAllOrders(options={}){
   const allowed=o.status==="payment_review"?["processing","rejected"]:o.status==="pending"?["rejected"]:[];
   const options=allowed.map(value=>{const item=orderStatuses.find(s=>s.value===value);return '<option value="'+value+'">'+(item?.label||value)+'</option>';}).join("");
   const actionLabel=o.status==="payment_review"?"Confirmar pago recibido":"Rechazar pedido";
+  const rejectReasonField=allowed.includes("rejected")?'<div class="order-reject-reason-field hidden" id="'+rejectReasonId+'-wrap"><label for="'+rejectReasonId+'">Motivo que verá el cliente (obligatorio)</label><textarea id="'+rejectReasonId+'" maxlength="500" rows="2" placeholder="Ej. El importe o los datos de la operación no coinciden con el comprobante."></textarea><small>Escribe entre 5 y 500 caracteres. El cliente recibirá esta explicación en sus mensajes.</small></div>':"";
   let proofLink=o.payment_source==="wallet"?'<span class="subtle">Pago descontado desde billetera</span>':'<span class="subtle">Sin comprobante</span>';
   if(o.proof_path){
    proofLink='<a href="#" data-proof-preview data-proof-path="'+clean(o.proof_path)+'" data-order-code="'+clean(o.order_code||"")+'" data-payment-reference="'+clean(o.payment_reference||"No indicado")+'" data-payment-sender-phone="'+clean(o.payment_sender_phone||"No indicado")+'" data-payment-method="'+clean(o.payment_method||"")+'" data-payment-amount="'+clean(o.price||"")+'">Ver comprobante</a>';
   }
   const providerStatus=String(o.central_one_status||"not_submitted");
+  const adminRejectionInfo=o.status==="rejected"&&o.customer_rejection_reason?'<p class="track-note"><strong>Motivo enviado al cliente:</strong> '+clean(o.customer_rejection_reason)+'</p>':"";
   const providerDate=o.central_one_submitted_at?new Date(o.central_one_submitted_at).getTime():0;
   const staleSubmitting=providerStatus==="submitting"&&providerDate>0&&(Date.now()-providerDate)>90000;
   const canAuthorize=o.status==="processing"&&Boolean(o.payment_confirmed_at||o.payment_source==="wallet"&&o.paid_at)&&
@@ -5619,8 +5628,8 @@ async function loadAllOrders(options={}){
     '<div class="admin-order-field"><span>N.º transacción</span><strong>'+clean(o.payment_reference||"No indicado")+'</strong></div>'+
     '<div class="admin-order-field admin-order-proof"><span>Comprobante</span><strong>'+proofLink+'</strong></div>'+
    '</div>'+
-   providerInfo+priceCheckHtml+safeCancelAction+walletRefundAction+
-   (allowed.length?'<div class="order-actions"><select id="'+selectId+'" aria-label="Acción para pedido '+clean(o.order_code)+'">'+options+'</select><button type="button" data-update-order data-order-id="'+clean(o.id)+'" data-select-id="'+selectId+'">'+actionLabel+'</button></div>':"")+
+   adminRejectionInfo+providerInfo+priceCheckHtml+safeCancelAction+walletRefundAction+
+   (allowed.length?rejectReasonField+'<div class="order-actions"><select id="'+selectId+'" aria-label="Acción para pedido '+clean(o.order_code)+'">'+options+'</select><button type="button" data-update-order data-order-id="'+clean(o.id)+'" data-select-id="'+selectId+'" data-reject-reason-id="'+rejectReasonId+'">'+actionLabel+'</button></div>':"")+
    providerAction+noticeComposer+
    (o.payment_confirmed_at?'<p class="track-note">Pago confirmado: '+new Date(o.payment_confirmed_at).toLocaleString("es-CU")+'</p>':"")+
   '</article>';
@@ -5651,9 +5660,10 @@ async function loadAllOrders(options={}){
  });
  container.querySelectorAll("[data-update-order]").forEach(button=>{
   const select=document.getElementById(button.dataset.selectId);
-  const syncLabel=()=>{button.textContent=select?.value==="processing"?"Confirmar pago recibido":"Rechazar pedido";};
+  const reasonWrap=document.getElementById(button.dataset.rejectReasonId+"-wrap");
+  const syncLabel=()=>{button.textContent=select?.value==="processing"?"Confirmar pago recibido":"Rechazar pedido";if(reasonWrap)reasonWrap.classList.toggle("hidden",select?.value!=="rejected");};
   select?.addEventListener("change",syncLabel);syncLabel();
-  button.addEventListener("click",()=>updateOrderStatus(button.dataset.orderId,button.dataset.selectId));
+  button.addEventListener("click",()=>updateOrderStatus(button.dataset.orderId,button.dataset.selectId,button.dataset.rejectReasonId));
  });
  container.querySelectorAll("[data-provider-submit]").forEach(button=>{
   button.addEventListener("click",()=>authorizeCentralOneOrder(button.dataset.orderId,button.dataset.orderCode));
