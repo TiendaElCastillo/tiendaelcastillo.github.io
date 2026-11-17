@@ -2110,6 +2110,273 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 
 </style>
+
+<style id="castle-visual-comfort-v2">
+
+/* Ajuste de confort visual: grafito cálido, oro champagne y plata.
+   Sobrescribe solo presentación; no altera componentes, imágenes ni lógica. */
+:root{
+ color-scheme:dark!important;
+ --bg:#191918!important;--surface:#242421!important;--ink:#eeeDE7!important;
+ --muted:#b9b6ad!important;--line:#48463e!important;
+ --blue:#c4aa72!important;--blue2:#a88c55!important;--gold:#c8ad76!important;
+ --shadow:0 6px 18px rgba(0,0,0,.20)!important;
+ --castle-ink:#eeeDE7!important;--castle-muted:#b9b6ad!important;
+ --castle-blue:#c4aa72!important;--castle-deep:#191918!important;
+ --castle-violet:#bfc1c2!important;--castle-border:#48463e!important;
+ --castle-soft:#242421!important;
+}
+html,body{background:#191918!important;color:#eeeDE7!important;color-scheme:dark}
+body{
+ background:radial-gradient(ellipse at 50% -24%,rgba(192,165,105,.055),transparent 48%),#191918!important;
+}
+main,#appMain,#store{background:transparent!important;color:#eeeDE7!important}
+a,.text-link{color:#d5bd89!important}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+ outline:2px solid rgba(205,179,121,.55)!important;outline-offset:2px!important
+}
+.site-header{
+ background:rgba(22,22,21,.97)!important;border-bottom:1px solid #504936!important;
+ box-shadow:0 3px 12px rgba(0,0,0,.18)!important;backdrop-filter:blur(12px)
+}
+.brand-logo,.footer-brand img{
+ border:1px solid #bca36e!important;
+ box-shadow:0 2px 9px rgba(0,0,0,.26)!important
+}
+.brand-name strong,.footer-brand strong{color:#e1c991!important;letter-spacing:.015em!important}
+.brand-name span,.footer-brand span{color:#c1c0bc!important}
+.header-btn{
+ background:#292824!important;border:1px solid #5a523f!important;color:#e4e1d9!important;
+ box-shadow:none!important
+}
+.header-btn.primary,.site-header .header-btn.primary,
+.primary-btn,.plan-buy,.bs-plan-buy,.mlbb-plan-buy,
+.hero-buttons .primary-btn,#store .primary-btn,.auth-submit-btn{
+ background:#c5aa70!important;border:1px solid #d5bf8e!important;
+ color:#211d14!important;box-shadow:0 3px 9px rgba(0,0,0,.16)!important;
+ font-weight:850!important
+}
+.header-btn.primary:hover,.primary-btn:hover,.plan-buy:hover,.bs-plan-buy:hover,.mlbb-plan-buy:hover{
+ background:#d0b77f!important;box-shadow:0 4px 12px rgba(0,0,0,.2)!important
+}
+.secondary-btn,.hero-buttons .secondary-btn{
+ background:#292824!important;border:1px solid #685d43!important;color:#dfc895!important
+}
+.promo-strip,.castle-promo-strip{
+ background:#25231e!important;border:1px solid #514936!important;color:#d2cec3!important;
+ box-shadow:none!important
+}
+.promo-strip strong,.promo-crown,.castle-promo-strip strong,.promo-live{color:#ddc48d!important}
+.hero,.castle-home-hero,.home-intro,.game-detail-hero,
+.auth-visual,#admin .admin-heading,.wallet-hero{
+ background:linear-gradient(125deg,#20201e 0%,#27251f 100%)!important;
+ border:1px solid #6a5a3a!important;color:#eeeDE7!important;
+ box-shadow:0 7px 18px rgba(0,0,0,.20)!important
+}
+.hero h1,.castle-home-hero h1,.home-intro h1,.auth-visual h1,
+.game-detail-copy h1,#admin .admin-heading h1,#admin .admin-heading h2{color:#e6d4aa!important}
+.hero p,.castle-home-hero p,.home-intro p,.auth-visual p,
+.auth-benefits,.game-detail-copy p,#admin .admin-heading p{color:#d0cec8!important}
+.hero-eyebrow,.castle-home-hero .hero-eyebrow,.home-intro .hero-eyebrow,
+.auth-visual .eyebrow,#auth .auth-showcase .eyebrow{
+ background:rgba(202,177,126,.08)!important;border:1px solid rgba(202,177,126,.36)!important;
+ color:#e0c995!important
+}
+.hero:after,.castle-home-hero:after,.wallet-hero:after{
+ border-color:rgba(202,177,126,.12)!important;
+ box-shadow:0 0 0 25px rgba(202,177,126,.014),0 0 0 55px rgba(202,177,126,.01)!important
+}
+.hero-visual,.castle-hero-mark,.auth-visual .orb{
+ background:#24231f!important;border:1px solid #62553b!important;
+ box-shadow:0 5px 13px rgba(0,0,0,.2)!important
+}
+.section-head h2,.panel h2,.panel h3,.auth-panel h2,
+.additional-game-heading h3,.ff-compartment-copy h3,
+.bs-catalog-head h2,.mlbb-offer-head strong{color:#e7e5df!important}
+.section-head h2:before{background:#c5aa70!important;box-shadow:none!important}
+.section-head p,.subtle,.catalog-product p,.tile-meta,
+.additional-game-heading p,.bs-catalog-head p,.mlbb-offer-head small{color:#b9b6ad!important}
+.panel,.auth-panel,.auth-login-panel,.order-card,
+.benefit,.game-tile,.gift-tile,.game-plan-card,.catalog-product,
+.ff-compartment,.wallet-panel,.wallet-history-card,.wallet-admin-card,
+.notification-item,.bs-plan-card,.mlbb-plan-card,
+#auth .auth-login-panel,#store .panel,
+#homeView #homeFeaturedProducts .catalog-product,
+#homeView .castle-benefit-row .benefit{
+ background:#242421!important;border:1px solid #48463e!important;color:#eeeDE7!important;
+ box-shadow:0 5px 14px rgba(0,0,0,.18)!important
+}
+.panel h2,.panel h3,.auth-panel h2,.game-plan-card h3,
+.game-plan-card strong,.catalog-product h3,.catalog-product h4,
+.benefit strong,.tile-title,.mlbb-plan-name,.bs-plan-copy>strong,
+.order-card strong,#ordersView .order-card>strong{color:#e7e5df!important}
+.benefit-icon,.tile-status,.plan-currency,.ff-compartment-icon,
+.ff-compartment-count,.how-badge,.bs-total,.mlbb-offer-head>b{
+ background:#302d25!important;border:1px solid #64583f!important;color:#e0c992!important
+}
+.tile-status.off{background:#292927!important;color:#c3c0b9!important;border-color:#55534b!important}
+.game-tile:hover,.gift-tile:hover,.catalog-product:hover,.order-card:hover,
+.bs-plan-card:hover,.mlbb-plan-card:hover{
+ border-color:#89764f!important;box-shadow:0 7px 17px rgba(0,0,0,.23)!important
+}
+/* Las imágenes y fondos oficiales de los juegos no se recolorean ni se sustituyen. */
+.game-detail-panel{background:transparent!important}
+.game-detail-art{border:1px solid #766344!important;box-shadow:0 5px 14px rgba(0,0,0,.22)!important}
+.game-method,.additional-game-tab,.bs-category-tab,.mlbb-category-tab,
+.free-fire-category-tab,.auth-tabs,.checkout-method-choice,
+#admin .admin-tab,#admin .admin-order-filter{
+ background:#292927!important;border:1px solid #504d43!important;color:#d1cec5!important
+}
+.game-method.active,.additional-game-tab.active,.bs-category-tab.active,
+.mlbb-category-tab.active,.free-fire-category-tab.active,
+.checkout-method-choice.active,#admin .admin-tab.active,
+#admin .admin-order-filter.active,.auth-tabs button.active{
+ background:#393326!important;border-color:#a78e5b!important;color:#ead8ae!important;
+ box-shadow:inset 0 0 0 1px rgba(202,177,126,.08)!important
+}
+.game-method.active b,.additional-game-tab.active b,.bs-category-tab.active b,
+.mlbb-category-tab.active b,.free-fire-category-tab.active b{color:#ead8ae!important}
+.plan-price strong,.product-prices strong,.catalog-product .price,
+.bs-plan-price b,.mlbb-plan-price,.checkout-total strong,
+.wallet-preview strong,#admin .admin-kpi-value{color:#dfc58e!important}
+.plan-price small,.product-prices small,.bs-plan-price small,
+.mlbb-plan-description,.mlbb-plan-price small{color:#b9b6ad!important}
+.product-prices .price-option,.price-option{
+ background:#2a2925!important;border:1px solid #514d42!important;color:#e4e1d9!important
+}
+.product-prices .price-option strong{color:#dfc58e!important}
+.provider-region-tag,.game-region-badge{
+ background:#302d25!important;border:1px solid #65583e!important;color:#e4d2a6!important
+}
+.product-art-caption,.product-art-ff-membership .product-art-caption{
+ background:rgba(20,20,19,.94)!important;border-color:rgba(202,177,126,.42)!important;color:#e4d2a6!important
+}
+.ff-empty,.game-empty-state,.auth-preview-gate,#auth .auth-preview-gate{
+ background:#262623!important;border:1px dashed #64583f!important;color:#d8d5ce!important
+}
+.field label,.wallet-field-hint{color:#c8c5bd!important}
+.field input,.field select,.search-input,textarea,
+#store input,#store select,#store textarea{
+ background:#1c1c1a!important;border:1px solid #555248!important;color:#eeeDE7!important
+}
+.field input::placeholder,.search-input::placeholder,textarea::placeholder{color:#aaa79f!important}
+.field input:focus,.field select:focus,.search-input:focus,textarea:focus{
+ border-color:#b99f6b!important;box-shadow:0 0 0 3px rgba(197,170,112,.10)!important
+}
+.checkout-summary,.checkout-product-lock,#checkoutView .checkout-stage-title,
+.payment-data-panel,.wallet-preview,.wallet-instructions,
+.wallet-admin-card .wallet-admin-summary,.home-access-note{
+ background:#292823!important;border:1px solid #57503f!important;color:#e2ded3!important
+}
+.checkout-total small,.checkout-summary small,.checkout-product-lock-copy,
+.wallet-preview small,.wallet-panel>p,.wallet-help-list{color:#c1bdb3!important}
+.checkout-stepper li{background:#292927!important;border-color:#504d43!important;color:#c7c3ba!important}
+.checkout-stepper li.active,.checkout-stepper li.done{
+ background:#373226!important;border-color:#89764f!important;color:#e5d2a6!important
+}
+.checkout-stepper li b{background:#403a2d!important;color:#e5d2a6!important}
+.checkout-method-icon{background:#393326!important;color:#e5d2a6!important}
+.auth-tabs button{background:transparent!important;color:#c7c3ba!important}
+.auth-tabs button.active{background:#393326!important;color:#e5d2a6!important}
+#auth .auth-showcase{
+ background:linear-gradient(135deg,#20201e,#29271f)!important;
+ border:1px solid #62553c!important;box-shadow:0 7px 18px rgba(0,0,0,.2)!important
+}
+#auth .auth-game-card{background:#242421!important;border-color:#565043!important}
+#auth .auth-login-panel{background:#242421!important;border-color:#565043!important}
+#auth .auth-login-kicker{color:#d9c18f!important}
+#auth .auth-showcase-copy p,#auth .auth-showcase-benefits span{color:#d0cec8!important}
+#auth .auth-submit-btn{background:#c5aa70!important;color:#211d14!important}
+#profileView .panel{background:#242421!important;border-color:#555044!important}
+#profileView .profile-card{
+ padding:14px!important;border:1px solid #555044!important;border-radius:16px!important;
+ background:#2b2a26!important;color:#eeeDE7!important
+}
+#profileView .profile-card h2,#profileView #welcome{color:#eeeDE7!important}
+#profileView .profile-email{color:#c1beb6!important;overflow-wrap:anywhere!important}
+#profileView .profile-avatar{
+ background:#403a2d!important;border:1px solid #9b8355!important;
+ color:#ead8ae!important;box-shadow:none!important
+}
+#profileView .logout-btn{
+ background:#343027!important;border:1px solid #84704a!important;
+ color:#e6d3a8!important;box-shadow:none!important
+}
+#profileView .logout-btn span{background:#47402f!important;color:#ead8ae!important}
+#profileView .logout-btn:hover{background:#3d382d!important;border-color:#a58d5b!important}
+#profileView .wallet-hero{
+ background:linear-gradient(120deg,#25241f,#302b20)!important;
+ border-color:#796544!important;box-shadow:0 6px 16px rgba(0,0,0,.2)!important
+}
+.wallet-kicker{color:#dec996!important}
+.wallet-balance{color:#f0eee8!important}
+.wallet-coin{background:#363126!important;border-color:#7c6947!important;color:#e7d1a0!important}
+.wallet-warning{background:#30291d!important;border-color:#78613a!important;color:#e6d3a8!important}
+.wallet-status{background:#393326!important;border:1px solid #685a3d!important;color:#e4d2a6!important}
+.wallet-status.approved{background:#1e3026!important;border-color:#426d53!important;color:#b4d4bc!important}
+.wallet-status.rejected{background:#382523!important;border-color:#79504a!important;color:#e6b9b2!important}
+.notice{background:#30291d!important;border:1px solid #78613a!important;color:#e6d3a8!important}
+.site-footer,#store .site-footer{
+ background:#1d1d1b!important;border:1px solid #48463e!important;
+ border-top:1px solid #5a503d!important;color:#c1beb6!important;
+ box-shadow:none!important
+}
+.site-footer,.site-footer a,.site-footer span,.footer-columns span,.footer-legal{color:#c1beb6!important}
+.site-footer strong,.footer-columns>div>strong{color:#dfc995!important}
+.footer-columns{border-color:#48463e!important}
+.footer-columns a:hover{color:#ead8ae!important}
+.bottom-nav,#bottomNav.bottom-nav{
+ background:rgba(28,28,26,.98)!important;border-top:1px solid #514d42!important;
+ box-shadow:0 -4px 14px rgba(0,0,0,.22)!important;backdrop-filter:blur(12px)
+}
+.nav-item{color:#c1beb6!important}
+.nav-item.active{
+ background:#393326!important;border:1px solid #8f7950!important;
+ color:#ead8ae!important;box-shadow:none!important
+}
+.nav-item.active:after{background:#d4bb86!important;box-shadow:none!important}
+#admin .admin-overview,#admin .admin-section-panel,
+#admin .admin-shortcut{background:#242421!important;border-color:#504b40!important;color:#e7e5df!important}
+#admin .admin-shortcut:hover{background:#302e27!important;border-color:#8f7950!important}
+#admin .order-card .order-detail{background:#302f29!important;color:#c9c5bb!important}
+#admin .admin-order-search{border-color:#555044!important}
+#admin .admin-tabs{border-color:#504b40!important}
+#ordersView .order-detail,.track-note,.order-code{color:#c1beb6!important}
+.notification-item.unread{background:#302c22!important;border-color:#8b7448!important}
+.notification-item p{color:#d8d5ce!important}
+/* Pie móvil en una sola columna para impedir palabras partidas y botones desbordados. */
+@media(max-width:560px){
+ #store .site-footer{padding:18px 15px calc(92px + env(safe-area-inset-bottom))!important}
+ #store .footer-columns{
+  grid-template-columns:minmax(0,1fr)!important;gap:16px!important;
+  padding:16px 0!important
+ }
+ #store .footer-columns>div{min-width:0!important;gap:9px!important}
+ #store .footer-columns strong{font-size:12px!important}
+ #store .footer-columns a,#store .footer-columns span{
+  display:block!important;font-size:11px!important;line-height:1.55!important;
+  overflow-wrap:normal!important;word-break:normal!important;hyphens:manual!important
+ }
+ #store .footer-columns .footer-whatsapp{
+  width:100%!important;max-width:100%!important;min-height:44px!important;
+  padding:11px 12px!important;margin-top:4px!important;border-radius:12px!important;
+  background:#373226!important;border:1px solid #84704a!important;color:#ead8ae!important;
+  white-space:normal!important;text-align:center!important;line-height:1.45!important;
+  overflow-wrap:break-word!important
+ }
+ .footer-legal{font-size:11px!important;line-height:1.65!important}
+}
+@media(max-width:390px){
+ #store .footer-columns{gap:14px!important}
+ #store .footer-columns a,#store .footer-columns span{font-size:11px!important}
+ #profileView .profile-card{padding:12px!important}
+ #profileView .profile-card h2{font-size:20px!important;overflow-wrap:anywhere!important}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{transition:none!important;animation:none!important}
+}
+
+</style>
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
