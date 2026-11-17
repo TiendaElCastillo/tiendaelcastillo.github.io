@@ -4024,7 +4024,8 @@ async function placeOrder(){
   }
  }
  if(!$("privacyConsent")?.checked){$("ordermsg").textContent="Lee y acepta la Política de privacidad y los Términos de compra para enviar tu solicitud.";return;}
- const method=$("payment").value,isWallet=method==="Saldo de Tienda El Castillo";
+ const method=String(checkoutLockedPaymentMethod||""),isWallet=method==="Saldo de Tienda El Castillo";
+ if(!method||$("payment").value!==method){$("ordermsg").textContent="La forma de pago seleccionada no coincide. Vuelve al catálogo y elige el método antes de continuar.";return;}
  const price=isWallet||method==="USDT"?product.price_usdt:method==="Saldo móvil"?product.price_mobile:method==="Transferencia CUP"?product.price_transfer:null;
  if(!(Number(price)>0)){$("ordermsg").textContent="Este producto no tiene precio para ese método de pago.";return;}
  const button=$("placeOrderBtn");
@@ -4058,14 +4059,14 @@ async function placeOrder(){
  const file=$("paymentProof")?.files?.[0],invalid=validateProofFile(file);
  if(invalid){$("ordermsg").textContent=invalid;return;}
  const reference=$("reference").value.trim().toUpperCase().replace(/\s+/g,"");
- if((method==="Transferencia CUP"||method==="Saldo móvil")&&(reference.length<3||reference.length>100)){$("ordermsg").textContent=method==="Saldo móvil"?"Escribe el número o folio del SMS de confirmación (entre 3 y 100 caracteres).":"Escribe el N.º de transacción del banco (entre 3 y 100 caracteres).";return;}
+ if(method==="Transferencia CUP"&&(reference.length<3||reference.length>100)){$("ordermsg").textContent="Escribe el N.º de transacción bancaria (entre 3 y 100 caracteres).";return;}
  if(method==="USDT"&&!/^[A-F0-9]{64}$/i.test(reference)){$("ordermsg").textContent="Escribe el hash/TxID de 64 caracteres hexadecimales de la red indicada.";return;}
  const senderPhoneNational=cubaMobileNational($("senderPhone").value);
  if((method==="Transferencia CUP"||method==="Saldo móvil")&&!senderPhoneNational){$("ordermsg").textContent="Escribe los 8 dígitos válidos de tu móvil cubano (empieza por 5).";return;}
  const senderPhone=senderPhoneNational?"+53"+senderPhoneNational:"";
  const reportedAmount=(method==="Saldo móvil"||method==="USDT")?Number($("reportedAmount").value):null;
  if((method==="Saldo móvil"||method==="USDT")&&(!Number.isFinite(reportedAmount)||reportedAmount<=0||Math.abs(reportedAmount-Number(price))>(method==="USDT"?0.000001:0.01))){
-  $("ordermsg").textContent="El importe debe coincidir exactamente con el precio del paquete: "+money(price)+" "+(method==="USDT"?"USDT":"unidades de saldo")+".";return;
+  $("ordermsg").textContent="El importe debe coincidir exactamente con el precio del paquete: "+money(price)+" "+(method==="USDT"?"USDT":"CUP")+".";return;
  }
  if(button){button.disabled=true;button.textContent="Creando pedido…";}
  $("ordermsg").textContent="";
