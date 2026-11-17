@@ -2551,7 +2551,7 @@ const gameCatalog=[
  {name:"Roblox",icon:"▣",art:"roblox",tag:"Plataforma",match:["roblox"]}
 ];
 const giftCatalog=[{name:"Xbox",icon:"X",art:"xbox",match:["xbox"]},{name:"PlayStation",icon:"PS",art:"ps",match:["playstation","psn"]},{name:"Apple",icon:"",art:"apple",match:["apple","app store"]},{name:"Nintendo",icon:"N",art:"nintendo",match:["nintendo"]}];
-let activeGameFilter="",activeGiftFilter="",gamePaymentMethod="Transferencia CUP",activeBloodStrikeCategory="bc",activePubgCategory="uc",activeArenaCategory="bonds";
+let activeGameFilter="",activeGiftFilter="",gamePaymentMethod="",activeBloodStrikeCategory="bc",activePubgCategory="uc",activeArenaCategory="bonds";
 const gamePaymentCatalog=[
  {name:"Transferencia CUP",short:"Transferencia",icon:"🏦",unit:"CUP"},
  {name:"Saldo móvil",short:"Saldo móvil",icon:"📱",unit:"saldo móvil"},
@@ -2911,10 +2911,16 @@ function renderGameDetail(){
   $("gamePlansSubtitle").textContent="Los paquetes aparecerán cuando termine la sincronización segura";
   return;
  }
- if(!methodNames.includes(gamePaymentMethod))gamePaymentMethod=methods[0]?.name||"Transferencia CUP";
+ if(!methodNames.includes(gamePaymentMethod))gamePaymentMethod="";
  const image=item.image?'<img class="game-detail-image" src="'+clean(item.image)+'" alt="'+clean(item.name)+'" loading="eager" fetchpriority="high" decoding="async"'+(item.fallbackImage?' data-fallback="'+clean(item.fallbackImage)+'" onerror="if(this.dataset.fallback){this.onerror=null;this.src=this.dataset.fallback}else{this.remove()}"':' onerror="this.onerror=null;this.remove()"')+'>':'<span>'+item.icon+'</span>';
  $("gameDetailHero").innerHTML='<div class="game-detail-hero"><div class="game-detail-art art-'+item.art+'">'+image+'</div><div class="game-detail-shade" aria-hidden="true"></div><div class="game-detail-copy"><span class="detail-eyebrow">'+clean(item.tag)+'</span><h1>'+clean(item.name)+'</h1><span class="game-recharge-mode"><span aria-hidden="true">↗</span> Recarga por ID</span>'+gameRegionBadge(rows)+'</div></div>';
  $("gamePaymentChoices").innerHTML=methods.length?methods.map(method=>gamePaymentButton(method,rows)).join(""):'<p class="empty-note">'+clean(paymentLoadError||"No hay métodos de pago activos para este juego en este momento.")+'</p>';
+ if(!gamePaymentMethod){
+  $("gamePlansTitle").textContent="Elige primero la forma de pago";
+  $("gamePlansSubtitle").textContent="Selecciona una forma de pago arriba. Después aparecerán los paquetes con el precio correspondiente.";
+  $("gameDetailPlans").innerHTML='<div class="game-empty-state"><strong>¿Cómo quieres pagar?</strong><p>Selecciona Transferencia CUP, Saldo móvil, USDT o saldo de tu tienda para ver los paquetes disponibles.</p></div>';
+  return;
+ }
  const plans=sortPackages(rows.filter(p=>isPaymentMethodReady(gamePaymentMethod)&&Number(priceForMethod(p,gamePaymentMethod))>0));
  if(fold(item.name)==="free fire"){
   const diamonds=plans.filter(p=>freeFirePackageGroup(p)==="diamonds");
@@ -3192,7 +3198,7 @@ function renderProductCatalogs(){
  $("giftProducts").innerHTML=visibleGifts.length?visibleGifts.map(productCard).join(""):'<p class="empty-note">Todavía no hay tarjetas publicadas. Consulta nuevamente más adelante.</p>';
  renderSearchProducts();
 }
-function chooseGame(name){activeGameFilter=name;gamePaymentMethod="Transferencia CUP";activeFreeFireCategory="diamonds";renderProductCatalogs();showView("games")}function chooseGift(name){activeGiftFilter=name;renderProductCatalogs();showView("giftcards")}function clearGameFilter(){activeGameFilter="";renderProductCatalogs();$("gamesCatalogPanel")?.scrollIntoView({behavior:"smooth",block:"start"})}
+function chooseGame(name){activeGameFilter=name;gamePaymentMethod="";activeFreeFireCategory="diamonds";renderProductCatalogs();showView("games")}function chooseGift(name){activeGiftFilter=name;renderProductCatalogs();showView("giftcards")}function clearGameFilter(){activeGameFilter="";renderProductCatalogs();$("gamesCatalogPanel")?.scrollIntoView({behavior:"smooth",block:"start"})}
 function scrollToHowItWorks(){document.getElementById("howItWorks")?.scrollIntoView({behavior:"smooth",block:"start"})}
 async function shareStore(){
  const url="https://tiendaelcastillo.github.io/";
