@@ -5610,8 +5610,8 @@ async function loadAllOrders(options={}){
     '<div class="admin-order-field"><span>Jugador</span><strong>'+clean(o.player_id)+' '+(o.player_name?"("+clean(o.player_name)+")":"")+'</strong></div>'+
     '<div class="admin-order-field"><span>Precio cobrado</span><strong>'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'</strong></div>'+
     '<div class="admin-order-field"><span>'+(o.payment_method==="Saldo móvil"?"Remitente del SMS":"Móvil de origen")+'</span><strong>'+clean(o.payment_sender_phone||"No indicado")+'</strong></div>'+
-    (o.payment_method==="Saldo móvil"?'<div class="admin-order-field"><span>Saldo declarado</span><strong>'+money(o.payment_reported_amount)+' unidades</strong></div>':"")+
-    '<div class="admin-order-field"><span>N.º transacción</span><strong>'+clean(o.payment_reference||"No indicado")+'</strong></div>'+
+    (o.payment_method==="Saldo móvil"?'<div class="admin-order-field"><span>Importe indicado en el SMS</span><strong>'+money(o.payment_reported_amount)+' CUP</strong></div>':"")+
+    ((o.payment_method==="Transferencia CUP"||o.payment_method==="USDT")?'<div class="admin-order-field"><span>'+(o.payment_method==="USDT"?"Hash / TxID":"N.º transacción")+'</span><strong>'+clean(o.payment_reference||"No indicado")+'</strong></div>':"")+
     '<div class="admin-order-field admin-order-proof"><span>Comprobante</span><strong>'+proofLink+'</strong></div>'+
    '</div>'+
    adminRejectionInfo+providerInfo+priceCheckHtml+safeCancelAction+walletRefundAction+
