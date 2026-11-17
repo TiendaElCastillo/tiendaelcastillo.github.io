@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=3">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=4">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -1995,69 +1995,64 @@ body{min-width:0}
 <section id="walletView" class="store-view hidden">
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
-   <div><span class="wallet-kicker">♛ BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance">0,00 USD</div><small>Este es tu saldo disponible para comprar paquetes dentro de la tienda. Los depósitos pendientes todavía no forman parte del saldo.</small></div>
+   <div><span class="wallet-kicker">♛ BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance">0,00 USD</div><small>Este es tu saldo para pagar paquetes. Los reembolsos de pedidos fallidos que correspondan también se acreditarán aquí.</small></div>
    <div class="wallet-coin" aria-hidden="true">💳</div>
   </section>
-  <section class="wallet-information wallet-panel" aria-labelledby="walletInformationTitle">
-   <div class="wallet-information-heading"><div><span class="wallet-information-kicker">INFORMACIÓN IMPORTANTE</span><h3 id="walletInformationTitle">Cómo funciona tu wallet</h3><p>Lee estas indicaciones antes de realizar un depósito.</p></div></div>
-   <div class="wallet-guide-grid">
-    <article class="wallet-guide-card"><span class="wallet-guide-icon">USD</span><div><strong>Tu saldo interno</strong><p>La wallet mantiene saldo en USD para pagar paquetes dentro de Tienda El Castillo. Solo puedes utilizar el saldo disponible; las solicitudes pendientes no cuentan como dinero acreditado.</p></div></article>
-    <article class="wallet-guide-card"><span class="wallet-guide-icon">CUP</span><div><strong>Transferencia CUP</strong><p>La tasa vigente es <b id="walletInfoCupRate">Consultando…</b>. El mínimo se actualiza con esa tasa: <b id="walletInfoCupMinimum">—</b>. El crédito se redondea hacia abajo a dos decimales.</p></div></article>
-    <article class="wallet-guide-card wallet-guide-usdt"><span class="wallet-guide-icon">₮</span><div><strong>Depósito USDT</strong><p>Se acredita 1 USDT por cada 1 USD confirmado. Mínimo: 1 USDT. Red obligatoria: <b id="walletInfoUsdtNetwork">Consultando…</b>. La comisión de red no se suma al saldo.</p><div class="wallet-info-address"><code id="walletInfoUsdtAddress">Cargando dirección…</code><button id="walletInfoCopyAddress" class="secondary-btn" type="button" disabled>Copiar dirección</button></div></div></article>
-    <article class="wallet-guide-card"><span class="wallet-guide-icon">✓</span><div><strong>Revisión y acreditación</strong><p>Enviar una solicitud no añade dinero automáticamente. El equipo comprueba la recepción real y después la aprueba o la rechaza indicando el motivo. No vuelvas a enviar dinero por una solicitud que ya esté pendiente.</p></div></article>
-   </div>
-   <div class="wallet-information-note"><strong>Protege tu dinero:</strong> verifica el importe, la red y el destino antes de enviar. No compartas contraseñas bancarias, frases de recuperación ni claves privadas. Para USDT, utiliza únicamente la red indicada en esta pantalla.</div>
+  <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
+   <h3 id="walletInformationTitle">Tu saldo de tienda</h3>
+   <p>Usa tu wallet para pagar paquetes dentro de Tienda El Castillo. Si un pedido pagado no se puede completar y corresponde una devolución, el reembolso se acreditará aquí.</p>
+   <p>Para añadir saldo, realiza una transferencia CUP y envía el comprobante. El dinero estará disponible cuando confirmemos el pago.</p>
   </section>
   <div class="wallet-content-grid">
    <section class="wallet-panel wallet-deposit-wizard">
-    <h3>Agregar fondos</h3>
-    <p>Completa los pasos en orden. Tu saldo solo se acreditará cuando la administración confirme el pago.</p>
+    <h3>Agregar saldo</h3>
+    <p>Realiza una transferencia CUP. Tu saldo estará disponible después de comprobar el pago.</p>
     <ol id="walletDepositStepper" class="wallet-deposit-stepper" aria-label="Pasos para acreditar saldo">
-     <li class="active" data-step="1"><b>1</b><span>Método e importe</span></li>
+     <li class="active" data-step="1"><b>1</b><span>Importe</span></li>
      <li data-step="2"><b>2</b><span>Realizar el pago</span></li>
-     <li data-step="3"><b>3</b><span>Enviar comprobante</span></li>
+     <li data-step="3"><b>3</b><span>Comprobante</span></li>
     </ol>
     <div id="walletDepositStep1" class="wallet-deposit-stage">
-     <div class="checkout-stage-title"><strong>1. Elige cómo vas a depositar</strong><small>Selecciona el método e indica cuánto dinero vas a enviar.</small></div>
-     <div class="field"><label for="walletDepositMethod">Método de depósito</label><select id="walletDepositMethod" onchange="updateWalletDepositMethod()"><option value="Transferencia CUP">Transferencia CUP</option><option value="USDT">USDT · BNB Smart Chain (BEP20)</option></select></div>
+     <div class="checkout-stage-title"><strong>1. Indica cuánto dinero vas a añadir</strong><small>El importe se enviará mediante transferencia CUP.</small></div>
+     <div class="wallet-method-note"><span>Único método disponible</span><strong>Transferencia CUP</strong></div>
      <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad exacta que enviarás (CUP)</label><input id="walletDepositAmount" type="number" inputmode="decimal" min="1160" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1160 CUP, equivalente a 1 USD.</small></div>
      <div id="walletDepositPreview" class="wallet-preview"><small>Saldo que recibirás tras la revisión</small><strong>0,00 USD</strong><small>El importe final se calcula y verifica en el servidor antes de acreditarse.</small></div>
      <div class="checkout-stage-actions"><span></span><button class="primary-btn" type="button" onclick="goWalletDepositStep(2)">Continuar al pago →</button></div>
     </div>
     <div id="walletDepositStep2" class="wallet-deposit-stage hidden">
-     <div class="checkout-stage-title"><strong>2. Realiza el pago y registra sus datos</strong><small>Revisa las instrucciones. Después de pagar, completa los datos de la operación.</small></div>
+     <div class="checkout-stage-title"><strong>2. Realiza la transferencia</strong><small>Copia los datos bancarios y envía exactamente el importe indicado.</small></div>
      <div id="walletDepositInstructions" class="wallet-instructions">Cargando las instrucciones de pago…</div>
      <div class="field hidden" id="walletDepositSenderPhoneWrap"><label for="walletDepositSenderPhone">Teléfono desde el que haces la transferencia</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="walletDepositSenderPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="20" placeholder="xxxxxxxx" aria-label="Ocho dígitos del móvil cubano desde el que pagaste"></div><small class="wallet-field-hint">Escribe solo los 8 dígitos de tu línea de origen; el +53 ya aparece separado.</small></div>
      <div class="field" id="walletDepositReferenceWrap"><label for="walletDepositReference">Número de transacción bancaria</label><input id="walletDepositReference" inputmode="text" maxlength="100" placeholder="Copia el Nro. de Transacción"></div>
-     <div class="field hidden" id="walletDepositTxidWrap"><label for="walletDepositTxid">Hash / TxID de la transacción</label><input id="walletDepositTxid" inputmode="text" autocapitalize="off" maxlength="64" placeholder="64 caracteres hexadecimales"><small class="wallet-field-hint">Copia el hash de la transacción confirmada en BNB Smart Chain.</small></div>
+     
      <div class="checkout-stage-actions"><button class="secondary-btn" type="button" onclick="goWalletDepositStep(1)">← Volver</button><button class="primary-btn" type="button" onclick="goWalletDepositStep(3)">Continuar a los comprobantes →</button></div>
     </div>
     <div id="walletDepositStep3" class="wallet-deposit-stage hidden">
-     <div class="checkout-stage-title"><strong>3. Adjunta las pruebas y envía tu solicitud</strong><small>Sube capturas claras donde se puedan comprobar los datos del pago.</small></div>
+     <div class="checkout-stage-title"><strong>3. Adjunta el comprobante</strong><small>Sube una captura clara de la transferencia para que podamos revisarla.</small></div>
      <div class="field proof-field wallet-proof-field">
       <label for="walletDepositProof">Capturas del comprobante (obligatorio)</label>
       <input class="proof-input" id="walletDepositProof" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="walletDepositProofHelp walletDepositProofSelection" onchange="previewWalletDepositProof()">
       <label class="proof-dropzone" for="walletDepositProof">
        <span class="proof-icon" aria-hidden="true">↑</span>
-       <span class="proof-copy"><strong id="walletDepositProofTitle">Toca aquí para seleccionar tus capturas</strong><small id="walletDepositProofHelp">Selecciona la captura de Transfermóvil o del pago USDT. Adjunta solo las capturas necesarias: de 1 a 2 imágenes JPG, PNG o WEBP, de hasta 5 MB cada una.</small></span>
+       <span class="proof-copy"><strong id="walletDepositProofTitle">Toca aquí para seleccionar tus capturas</strong><small id="walletDepositProofHelp">Selecciona la captura de tu transferencia CUP. Adjunta de 1 a 2 imágenes JPG, PNG o WEBP, de hasta 5 MB cada una.</small></span>
       </label>
       <small id="walletDepositProofSelection" class="wallet-proof-selection" role="status" aria-live="polite">Todavía no has adjuntado capturas. Pulsa el recuadro azul para elegirlas.</small>
      </div>
      <div id="walletDepositFinalSummary" class="wallet-preview"><small>Resumen de tu solicitud</small><strong>Revisa los datos antes de enviarla.</strong></div>
-     <div class="wallet-warning"><strong>Importante:</strong> enviar la solicitud no acredita dinero. Quedará pendiente hasta que la administración compruebe la recepción real. Si todo está correcto, aprobará y acreditará el saldo; si no, la rechazará indicando el motivo.</div>
+     <div class="wallet-warning">El saldo se añadirá cuando confirmemos que la transferencia llegó correctamente. Si hay algún problema, te indicaremos el motivo.</div>
      <div class="checkout-stage-actions"><button class="secondary-btn" type="button" onclick="goWalletDepositStep(2)">← Volver</button><button id="walletDepositSubmit" class="primary-btn" type="button" onclick="requestWalletDeposit()">Enviar solicitud para revisión</button></div>
     </div>
     <p id="walletDepositMsg" class="msg" role="status" aria-live="polite"></p>
    </section>
    <section class="wallet-panel">
     <h3>Movimientos de tu wallet</h3>
-    <p>Consulta depósitos, compras, fechas, importes y decisiones de revisión. El historial no elimina operaciones anteriores.</p>
+    <p>Consulta tus compras, depósitos y reembolsos, con sus fechas e importes.</p>
     <div id="walletTransactions"><p class="empty-note">Cargando movimientos…</p></div>
    </section>
   </div>
   <section class="wallet-panel">
    <h3>Historial de depósitos</h3>
-   <p>Verás cuánto enviaste, cuánto se acreditó, el método, la fecha, el estado y el motivo cuando un depósito sea rechazado.</p>
+   <p>Consulta el estado de tus depósitos y el importe que se añadió a tu saldo.</p>
    <div id="walletDepositsMine"><p class="empty-note">Cargando depósitos…</p></div>
   </section>
  </div>
@@ -4364,34 +4359,12 @@ async function loadMyOrders(){
 }
 
 
-function updateWalletInfoPanel(){
- if(!walletSettings)return;
- const rate=Number(walletSettings.cup_per_usd||1160);
- const rateNode=$("walletInfoCupRate"),minimumNode=$("walletInfoCupMinimum");
- const networkNode=$("walletInfoUsdtNetwork"),addressNode=$("walletInfoUsdtAddress");
- const copyButton=$("walletInfoCopyAddress");
- if(rateNode)rateNode.textContent="1 USD = "+money(rate)+" CUP";
- if(minimumNode)minimumNode.textContent=money(Math.ceil(rate))+" CUP";
- if(networkNode)networkNode.textContent=walletSettings.usdt_network||"No disponible";
- const validUsdt=isWalletUsdtConfigured();
- if(addressNode)addressNode.textContent=validUsdt?walletSettings.usdt_address:"Depósitos USDT no disponibles por ahora.";
- if(copyButton){
-  copyButton.disabled=!validUsdt;
-  copyButton.dataset.copy=validUsdt?walletSettings.usdt_address:"";
-  copyButton.textContent=validUsdt?"Copiar dirección":"Temporalmente no disponible";
-  if(!copyButton.dataset.copyHandler){
-   copyButton.dataset.copyHandler="1";
-   copyButton.addEventListener("click",()=>copyPaymentButton(copyButton));
-  }
- }
-}
 async function loadWalletSettings(){
  if(!db)return;
  const result=await db.from("wallet_settings").select("cup_per_usd,usdt_network,usdt_address,updated_at").eq("id",1).maybeSingle();
  if(result.error)throw new Error(result.error.message);
  if(!result.data)throw new Error("No encontramos la configuración de la wallet en Supabase.");
  walletSettings=result.data;
- updateWalletInfoPanel();
  if(currentProfile?.role==="admin"&&$("walletCupRate"))$("walletCupRate").value=walletSettings.cup_per_usd;
  updateWalletDepositMethod();
  updatePaymentInstructions();
@@ -4436,69 +4409,65 @@ async function loadWalletData(){
  updateCheckoutSummary();
 }
 function previewWalletDeposit(){
- const amount=Number($("walletDepositAmount")?.value||0),method=$("walletDepositMethod")?.value||"Transferencia CUP",box=$("walletDepositPreview");
+ const amount=Number($("walletDepositAmount")?.value||0),box=$("walletDepositPreview");
  if(!box)return;
  if(!Number.isFinite(amount)||amount<=0){
-  box.innerHTML="<small>Saldo que recibirás después de aprobar</small><strong>— USD</strong><small>Escribe la cantidad exacta que vas a enviar.</small>";
+  box.innerHTML="<small>Saldo que recibirás después de revisar el pago</small><strong>— USD</strong><small>Escribe el importe que vas a transferir.</small>";
   updateWalletDepositInstructions();
   return;
  }
- if(method==="Transferencia CUP"){
-  const rate=Number(walletSettings.cup_per_usd||1160),credit=Math.floor((amount/rate)*100)/100;
-  box.innerHTML='<small>Saldo estimado después de aprobar</small><strong>'+moneyUSD(credit)+' USD</strong><small>Cálculo: '+money(amount)+' CUP ÷ '+money(rate)+' CUP/USD, redondeado hacia abajo a dos decimales. Mínimo: '+money(Math.ceil(rate))+' CUP.</small>';
- }else{
-  box.innerHTML='<small>Saldo estimado después de aprobar</small><strong>'+moneyUSD(amount)+' USD</strong><small>Conversión 1 USDT = 1 USD. Solo se acreditará el importe que la tienda verifique como recibido en la red indicada.</small>';
- }
+ const rate=Number(walletSettings.cup_per_usd||1160);
+ const credit=Math.floor((amount/rate)*100)/100;
+ box.innerHTML='<small>Saldo estimado después de aprobar</small><strong>'+moneyUSD(credit)+' USD</strong><small>El importe final se confirmará al revisar la transferencia.</small>';
  updateWalletDepositInstructions();
 }
 function updateWalletDepositMethod(){
- const method=$("walletDepositMethod")?.value||"Transferencia CUP",isCup=method==="Transferencia CUP";
  const walletSender=$("walletDepositSenderPhone");
- if(walletSender&&!walletSender.dataset.cubaMobileHandler){walletSender.dataset.cubaMobileHandler="1";walletSender.addEventListener("input",()=>{walletSender.value=cubaMobileInputValue(walletSender.value);});}
+ if(walletSender&&!walletSender.dataset.cubaMobileHandler){
+  walletSender.dataset.cubaMobileHandler="1";
+  walletSender.addEventListener("input",()=>{walletSender.value=cubaMobileInputValue(walletSender.value);});
+ }
  if(walletSender){walletSender.inputMode="numeric";walletSender.placeholder="xxxxxxxx";}
- if(method!==walletDepositMethodPrevious){
-  walletDepositMethodPrevious=method;
-  ["walletDepositAmount","walletDepositSenderPhone","walletDepositReference","walletDepositTxid"].forEach(id=>{const field=$(id);if(field)field.value="";});
+ if(walletDepositMethodPrevious!=="Transferencia CUP"){
+  walletDepositMethodPrevious="Transferencia CUP";
+  ["walletDepositAmount","walletDepositSenderPhone","walletDepositReference"].forEach(id=>{const field=$(id);if(field)field.value="";});
   const proof=$("walletDepositProof");if(proof)proof.value="";
   previewWalletDepositProof();
  }
  const amount=$("walletDepositAmount");
- const usdtOption=$("walletDepositMethod")?.querySelector('option[value="USDT"]');
- if(usdtOption)usdtOption.disabled=!isWalletUsdtConfigured();
- $("walletDepositAmountLabel").textContent=isCup?"Cantidad exacta que enviarás (CUP)":"Cantidad exacta que enviarás (USDT)";
- $("walletDepositAmountHint").textContent=isCup?"Mínimo actual: "+money(Math.ceil(Number(walletSettings.cup_per_usd||1160)))+" CUP, equivalente a 1 USD.":"Mínimo: 1 USDT. Red: BNB Smart Chain (BEP20).";
- amount.min=isCup?String(Math.ceil(Number(walletSettings.cup_per_usd||1160))):"1";
- amount.step=isCup?"1":"0.000001";
- amount.placeholder=isCup?"Ej. 2000":"Ej. 5";
- $("walletDepositSenderPhoneWrap").classList.toggle("hidden",!isCup);
- $("walletDepositReferenceWrap").classList.toggle("hidden",!isCup);
- $("walletDepositTxidWrap").classList.toggle("hidden",isCup);
+ if(!amount)return;
+ const minimum=Math.ceil(Number(walletSettings.cup_per_usd||1160));
+ $("walletDepositAmountLabel").textContent="Cantidad exacta que enviarás (CUP)";
+ $("walletDepositAmountHint").textContent="Mínimo actual: "+money(minimum)+" CUP.";
+ amount.min=String(minimum);
+ amount.step="1";
+ amount.placeholder="Ej. 2000";
+ $("walletDepositSenderPhoneWrap")?.classList.remove("hidden");
+ $("walletDepositReferenceWrap")?.classList.remove("hidden");
+ $("walletDepositTxidWrap")?.classList.add("hidden");
  previewWalletDeposit();
 }
 function updateWalletDepositInstructions(){
- const method=$("walletDepositMethod")?.value||"Transferencia CUP",box=$("walletDepositInstructions");
+ const box=$("walletDepositInstructions");
  if(!box)return;
- if(!box.dataset.copyHandler){box.dataset.copyHandler="1";box.addEventListener("click",event=>{const button=event.target.closest("[data-copy]");if(button)copyPaymentButton(button);});}
- if(method==="Transferencia CUP"){
-  const item=paymentMethods.find(m=>m.name==="Transferencia CUP"&&m.active&&m.instructions);
-  if(!item){box.innerHTML="<strong>Datos bancarios no disponibles.</strong> No realices ninguna transferencia hasta que la tienda configure el método.";return;}
-  const raw=String(item.instructions||"").replace(/\s+/g," ");
-  const card=raw.match(/tarjeta\s*:?\s*([0-9][0-9\s-]{8,})/i)?.[1]?.trim()||"";
-  const confirm=raw.match(/m[oó]vil\s+a\s+confirmar[^+0-9]*([+]?[0-9][0-9\s-]{7,})/i)?.[1]?.trim().replace(/[.\s]+$/,"")||"";
-  const amount=money($("walletDepositAmount")?.value||0);
-  let warning=(!card||!cubaMobileNational(confirm))?'<div class="wallet-warning">Los datos bancarios están incompletos o el móvil receptor no tiene 8 dígitos cubanos válidos. No envíes dinero.</div>':"";
-  const rows=paymentCopyCard("Tarjeta bancaria para transferir",card,"payment-card-number")
-   +paymentCopyCard("Importe exacto que debes enviar",amount+" CUP","payment-card-amount")
-   +paymentCopyCubaPhoneCard("Móvil a confirmar en Transfermóvil",confirm,"payment-card-confirm","Pega solo los 8 dígitos, sin +53. El teléfono de origen se escribe aparte en el formulario.");
-  box.innerHTML='<strong>Transferencia CUP · datos para pagar</strong><p class="wallet-field-hint">Usamos la misma tarjeta y el mismo número de confirmación que en las recargas directas. Envía exactamente el importe indicado.</p>'+warning+'<div class="payment-copy-grid">'+rows+'</div><p class="wallet-field-hint">Después adjunta el comprobante, tu número de origen y el Nro. de Transacción. La captura no acredita el saldo por sí sola.</p>';
- }else{
-  if(!isWalletUsdtConfigured()){
-   box.innerHTML='<div class="wallet-warning"><strong>Depósito USDT temporalmente desactivado.</strong> No se pudo verificar la red y la dirección actuales. No envíes fondos hasta que la configuración se restablezca.</div>';
-   return;
-  }
-  const amount=moneyUSD($("walletDepositAmount")?.value||0);
-  box.innerHTML='<strong>Depósito USDT · red y destino</strong><div class="payment-copy-grid">'+paymentCopyCard("Importe exacto a enviar",amount+" USDT","payment-card-amount")+paymentCopyCard("Red obligatoria",walletSettings.usdt_network)+paymentCopyCard("Dirección de la wallet de la tienda",walletSettings.usdt_address,"payment-card-number","No uses otra red. Comprueba la dirección completa antes de confirmar.")+'</div><p class="wallet-field-hint">La conversión es 1 USDT = 1 USD. Solo se acredita tras comprobar la transacción en la blockchain. Revisa cuánto llegará al destino; la comisión de red no forma parte del saldo acreditado.</p>';
+ if(!box.dataset.copyHandler){
+  box.dataset.copyHandler="1";
+  box.addEventListener("click",event=>{const button=event.target.closest("[data-copy]");if(button)copyPaymentButton(button);});
  }
+ const item=paymentMethods.find(m=>m.name==="Transferencia CUP"&&m.active&&m.instructions);
+ if(!item){
+  box.innerHTML="<strong>Datos bancarios no disponibles.</strong> No realices ninguna transferencia hasta que la tienda configure el método.";
+  return;
+ }
+ const raw=String(item.instructions||"").replace(/\s+/g," ");
+ const card=raw.match(/tarjeta\s*:?\s*([0-9][0-9\s-]{8,})/i)?.[1]?.trim()||"";
+ const confirm=raw.match(/m[oó]vil\s+a\s+confirmar[^+0-9]*([+]?[0-9][0-9\s-]{7,})/i)?.[1]?.trim().replace(/[.\s]+$/, "")||"";
+ const amount=money($("walletDepositAmount")?.value||0);
+ const warning=(!card||!cubaMobileNational(confirm))?'<div class="wallet-warning">Los datos de transferencia están incompletos. No envíes dinero hasta que se actualicen.</div>':"";
+ const rows=paymentCopyCard("Tarjeta bancaria para transferir",card,"payment-card-number")
+  +paymentCopyCard("Importe exacto que debes enviar",amount+" CUP","payment-card-amount")
+  +paymentCopyCubaPhoneCard("Móvil a confirmar en Transfermóvil",confirm,"payment-card-confirm","Pega solo los 8 dígitos, sin +53.");
+ box.innerHTML='<strong>Datos para realizar la transferencia</strong>'+warning+'<div class="payment-copy-grid">'+rows+'</div><p class="wallet-field-hint">Después de pagar, escribe el teléfono desde el que transferiste y el número de transacción.</p>';
 }
 async function uploadWalletDepositProofs(depositId,method,files,reference,senderPhone,txid){
  const nationalPhone=method==="Transferencia CUP"?cubaMobileNational(senderPhone):"";
@@ -4537,72 +4506,109 @@ function previewWalletDepositProof(){
 }
 function goWalletDepositStep(step){
  const target=Math.max(1,Math.min(3,Number(step)||1));
- const method=$("walletDepositMethod")?.value||"Transferencia CUP";
- const isCup=method==="Transferencia CUP";
  const amount=Number($("walletDepositAmount")?.value||0);
- const minimum=isCup?Math.ceil(Number(walletSettings.cup_per_usd||1160)):1;
+ const minimum=Math.ceil(Number(walletSettings.cup_per_usd||1160));
  const msg=$("walletDepositMsg");
  if(target>=2){
-  if(!Number.isFinite(amount)||amount<minimum){if(msg)msg.textContent=isCup?"El depósito mínimo actual es "+money(minimum)+" CUP (1 USD).":"El depósito mínimo es 1 USDT.";return;}
-  if(!paymentMethods.some(m=>m.name===method&&m.active&&m.instructions)){if(msg)msg.textContent="Ese método no está configurado. No realices el pago.";return;}
+  if(!Number.isFinite(amount)||amount<minimum){
+   if(msg)msg.textContent="El depósito mínimo actual es "+money(minimum)+" CUP.";
+   return;
+  }
+  if(!paymentMethods.some(m=>m.name==="Transferencia CUP"&&m.active&&m.instructions)){
+   if(msg)msg.textContent="La transferencia CUP no está configurada. No realices el pago.";
+   return;
+  }
  }
  if(target>=3){
-  if(isCup){
-   const phone=$("walletDepositSenderPhone")?.value.trim()||"";
-   const reference=$("walletDepositReference")?.value.trim()||"";
-   if(!cubaMobileNational(phone)){if(msg)msg.textContent="Escribe los 8 dígitos válidos de tu móvil cubano (empieza por 5).";return;}
-   if(reference.length<3||reference.length>100){if(msg)msg.textContent="Escribe el Nro. de Transacción del banco.";return;}
-  }else if(!/^[a-f0-9]{64}$/.test(($("walletDepositTxid")?.value||"").trim().toLowerCase())){if(msg)msg.textContent="El TxID debe tener 64 caracteres hexadecimales. Comprueba la red y copia el hash completo.";return;}
+  const phone=$("walletDepositSenderPhone")?.value.trim()||"";
+  const reference=$("walletDepositReference")?.value.trim()||"";
+  if(!cubaMobileNational(phone)){
+   if(msg)msg.textContent="Escribe los 8 dígitos válidos de tu móvil cubano (empieza por 5).";
+   return;
+  }
+  if(reference.length<3||reference.length>100){
+   if(msg)msg.textContent="Escribe el Nro. de Transacción del banco.";
+   return;
+  }
  }
  if(target===3){
   const files=Array.from($("walletDepositProof")?.files||[]);
-  const credited=isCup?Math.floor((amount/Number(walletSettings.cup_per_usd||1160))*100)/100:amount;
-  const details=isCup?("Transferencia: "+money(amount)+" CUP · "+moneyUSD(credited)+" USD estimados"):("USDT: "+amount+" · "+moneyUSD(amount)+" USD estimados");
+  const credited=Math.floor((amount/Number(walletSettings.cup_per_usd||1160))*100)/100;
   const proofLabel=files.length?files.length+" imagen(es) seleccionada(s)":"pendiente de adjuntar";
-  $("walletDepositFinalSummary").innerHTML="<small>Resumen de tu solicitud</small><strong>"+details+"</strong><small>Método: "+(isCup?"Transferencia CUP":"USDT · BNB Smart Chain (BEP20)")+" · Comprobantes: "+proofLabel+". Adjunta las capturas en el recuadro inferior.</small>";
+  $("walletDepositFinalSummary").innerHTML="<small>Resumen de tu solicitud</small><strong>"+money(amount)+" CUP · "+moneyUSD(credited)+" USD estimados</strong><small>Comprobantes: "+proofLabel+".</small>";
   previewWalletDepositProof();
  }
  [1,2,3].forEach(n=>{
   const panel=$("walletDepositStep"+n);if(panel)panel.classList.toggle("hidden",n!==target);
   const item=document.querySelector('#walletDepositStepper [data-step="'+n+'"]');
-  if(item){item.classList.toggle("active",n===target);item.classList.toggle("done",n<target);const number=item.querySelector("b");if(number)number.textContent=n<target?"✓":String(n);}
+  if(item){
+   item.classList.toggle("active",n===target);
+   item.classList.toggle("done",n<target);
+   const number=item.querySelector("b");if(number)number.textContent=n<target?"✓":String(n);
+  }
  });
  if(msg)msg.textContent="";
 }
 async function requestWalletDeposit(){
  if(!currentUser){openAccount();return;}
- const amount=Number($("walletDepositAmount").value),method=$("walletDepositMethod").value,files=Array.from($("walletDepositProof").files||[]);
- const isCup=method==="Transferencia CUP",senderPhoneInput=$("walletDepositSenderPhone").value.trim(),senderPhoneNational=cubaMobileNational(senderPhoneInput),senderPhone=senderPhoneNational?"+53"+senderPhoneNational:"",reference=$("walletDepositReference").value.trim(),txid=$("walletDepositTxid").value.trim().toLowerCase();
- if(!Number.isFinite(amount)||amount<(isCup?Math.ceil(Number(walletSettings.cup_per_usd||1160)):1)){
-  $("walletDepositMsg").textContent=isCup?"El depósito mínimo actual es "+money(Math.ceil(Number(walletSettings.cup_per_usd||1160)))+" CUP (1 USD).":"El depósito mínimo es 1 USDT.";return;
+ const amount=Number($("walletDepositAmount").value);
+ const files=Array.from($("walletDepositProof").files||[]);
+ const senderPhoneInput=$("walletDepositSenderPhone").value.trim();
+ const senderPhoneNational=cubaMobileNational(senderPhoneInput);
+ const senderPhone=senderPhoneNational?"+53"+senderPhoneNational:"";
+ const reference=$("walletDepositReference").value.trim();
+ const minimum=Math.ceil(Number(walletSettings.cup_per_usd||1160));
+ if(!Number.isFinite(amount)||amount<minimum){
+  $("walletDepositMsg").textContent="El depósito mínimo actual es "+money(minimum)+" CUP.";
+  return;
  }
- if(!isCup&&method!=="USDT"){$("walletDepositMsg").textContent="Selecciona Transferencia CUP o USDT.";return;}
- if(!isCup&&!isWalletUsdtConfigured()){$("walletDepositMsg").textContent="El depósito USDT está temporalmente desactivado porque no se pudo verificar la red y dirección actuales. No envíes fondos.";return;}
- if(isCup){
-  if(!senderPhoneNational){$("walletDepositMsg").textContent="Escribe los 8 dígitos válidos de tu móvil cubano (empieza por 5).";return;}
-  if(reference.length<3||reference.length>100){$("walletDepositMsg").textContent="Escribe el Nro. de Transacción del banco.";return;}
- }else if(!/^[a-f0-9]{64}$/.test(txid)){
-  $("walletDepositMsg").textContent="El TxID debe tener 64 caracteres hexadecimales. Comprueba la red y copia el hash completo.";return;
+ if(!senderPhoneNational){
+  $("walletDepositMsg").textContent="Escribe los 8 dígitos válidos de tu móvil cubano (empieza por 5).";
+  return;
  }
- if(files.length<1||files.length>2){$("walletDepositMsg").textContent="Adjunta entre 1 y 2 comprobantes, solo los necesarios para comprobar el pago.";return;}
- for(const file of files){const invalid=validateProofFile(file);if(invalid){$("walletDepositMsg").textContent=invalid;return;}}
- if(!paymentMethods.some(m=>m.name===method&&m.active&&m.instructions)){$("walletDepositMsg").textContent="Ese método no está configurado. No realices el pago.";return;}
- const button=$("walletDepositSubmit");if(button){button.disabled=true;button.textContent="Creando solicitud…";}
+ if(reference.length<3||reference.length>100){
+  $("walletDepositMsg").textContent="Escribe el Nro. de Transacción del banco.";
+  return;
+ }
+ if(files.length<1||files.length>2){
+  $("walletDepositMsg").textContent="Adjunta entre 1 y 2 comprobantes.";
+  return;
+ }
+ for(const file of files){
+  const invalid=validateProofFile(file);
+  if(invalid){$("walletDepositMsg").textContent=invalid;return;}
+ }
+ if(!paymentMethods.some(m=>m.name==="Transferencia CUP"&&m.active&&m.instructions)){
+  $("walletDepositMsg").textContent="La transferencia CUP no está configurada. No realices el pago.";
+  return;
+ }
+ const button=$("walletDepositSubmit");
+ if(button){button.disabled=true;button.textContent="Creando solicitud…";}
  try{
   const created=await db.from("wallet_deposits").insert({
-   user_id:currentUser.id,amount,currency:isCup?"CUP":"USDT",payment_method:method,status:"pending"
+   user_id:currentUser.id,amount,currency:"CUP",payment_method:"Transferencia CUP",status:"pending"
   }).select("id").single();
   if(created.error)throw new Error(created.error.message);
-  try{await uploadWalletDepositProofs(created.data.id,method,files,reference,senderPhone,txid);}
-  catch(e){
+  try{
+   await uploadWalletDepositProofs(created.data.id,"Transferencia CUP",files,reference,senderPhone,"");
+  }catch(e){
    $("walletDepositMsg").textContent="La solicitud "+created.data.id.slice(0,8)+" quedó creada, pero falta completar la evidencia: "+(e.message||"error de carga")+". No crees otra solicitud; revisa el historial y adjunta los comprobantes pendientes.";
-   await loadMyWalletDeposits();return;
+   await loadMyWalletDeposits();
+   return;
   }
-  $("walletDepositMsg").textContent="Solicitud enviada a revisión. El saldo no aparecerá en tu wallet hasta que comprobemos la recepción real.";
-  $("walletDepositAmount").value="";$("walletDepositSenderPhone").value="";$("walletDepositReference").value="";$("walletDepositTxid").value="";$("walletDepositProof").value="";
-  previewWalletDepositProof();previewWalletDeposit();await loadMyWalletDeposits();
- }catch(e){$("walletDepositMsg").textContent="No se pudo crear la solicitud: "+(e.message||"error de conexión.");}
- finally{if(button){button.disabled=false;button.textContent="Enviar solicitud de depósito";}}
+  $("walletDepositMsg").textContent="Solicitud enviada. El saldo se añadirá cuando confirmemos la transferencia.";
+  $("walletDepositAmount").value="";
+  $("walletDepositSenderPhone").value="";
+  $("walletDepositReference").value="";
+  $("walletDepositProof").value="";
+  previewWalletDepositProof();
+  previewWalletDeposit();
+  await loadMyWalletDeposits();
+ }catch(e){
+  $("walletDepositMsg").textContent="No se pudo crear la solicitud: "+(e.message||"error de conexión.");
+ }finally{
+  if(button){button.disabled=false;button.textContent="Enviar solicitud de depósito";}
+ }
 }
 async function attachWalletDepositProof(id,method){
  const input=$("wallet-retry-proof-"+id),files=Array.from(input?.files||[]),reference=$("wallet-retry-reference-"+id)?.value||"",sender=$("wallet-retry-sender-"+id)?.value||"",txid=$("wallet-retry-txid-"+id)?.value||"",button=$("wallet-retry-button-"+id);
@@ -4692,7 +4698,7 @@ async function reviewWalletDeposit(id,approve){
  if(currentProfile?.role!=="admin")return;
  let note=null;
  if(approve){
-  if(!window.confirm("APROBAR DEPÓSITO\n\nComprueba en tu banco o en BNB Smart Chain que el dinero llegó a la cuenta y que coinciden el importe, la referencia/TxID, la red y la dirección.\n\nSolo después de verificarlo se acreditará el saldo USD. ¿Confirmas la recepción real?"))return;
+  if(!window.confirm("APROBAR DEPÓSITO\n\nComprueba que la transferencia llegó a tu cuenta y que coinciden el importe, el teléfono de origen y el número de transacción.\n\nSolo después de verificarlo se acreditará el saldo USD. ¿Confirmas la recepción real?"))return;
  }else{
   note=window.prompt("Escribe el motivo concreto del rechazo. El cliente podrá verlo en su historial:");
   if(note===null)return;
@@ -5684,6 +5690,6 @@ if(document.readyState==="loading"){
 </script>
 
 <script src="./assets/offline-guard.js?v=2"></script>
-<script src="./assets/admin-panel.js?v=17" async></script>
+<script src="./assets/admin-panel.js?v=18" async></script>
 </body>
 </html>
