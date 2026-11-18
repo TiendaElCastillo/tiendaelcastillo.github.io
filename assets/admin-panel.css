@@ -576,3 +576,38 @@
 @media(prefers-reduced-motion:reduce){
  #admin button.secondary-btn{transition:none!important}
 }
+
+
+/* Auditoría visual móvil: filtros de pedidos completos y sin desplazamiento lateral. */
+@media(max-width:760px){
+ #admin .admin-order-filters{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:stretch;
+  gap:7px;
+  width:100%;
+  overflow:visible!important;
+  margin:7px 0 12px!important;
+  padding:6px 0 12px!important;
+ }
+ #admin .admin-order-filter{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:initial!important;
+  width:100%;
+  min-width:0;
+  min-height:43px;
+  padding:8px 7px;
+  white-space:normal;
+  text-align:center;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+ }
+ #admin .admin-filter-count{flex:0 0 auto}
+ #admin .admin-section-panel{scroll-margin-top:138px}
+}
+@media(max-width:380px){
+ #admin .admin-order-filters{gap:6px}
+ #admin .admin-order-filter{font-size:10px;padding:8px 5px;min-height:42px}
+}
