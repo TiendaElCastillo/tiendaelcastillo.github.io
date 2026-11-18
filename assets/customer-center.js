@@ -2,7 +2,7 @@
   "use strict";
 
   // El enlace se completa cuando el propietario comparta la invitación oficial.
-  var CASTLE_WHATSAPP_CHANNEL_URL = "";
+  var CASTLE_WHATSAPP_CHANNEL_URL = "https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X";
   var CASTLE_SUPPORT_PHONE = "5351884050";
 
   var GUIDE_BOOK = {
