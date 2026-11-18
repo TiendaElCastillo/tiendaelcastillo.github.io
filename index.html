@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=14">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=15">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -1918,6 +1918,16 @@ body{min-width:0}
   <div class="section-head"><div><h2>Elige tu juego</h2><p>Solo mostramos juegos con recargas disponibles.</p></div></div>
   <div id="homeGames" class="catalog-grid"><p class="empty-note">Conectando con el catálogo de los cinco juegos disponibles…</p></div>
  </div>
+ <section class="customer-community-banner">
+  <div class="customer-community-mark" aria-hidden="true">◉</div>
+  <div class="customer-community-copy">
+   <span class="profile-eyebrow">COMUNIDAD · TIENDA EL CASTILLO</span>
+   <h2>Las novedades también se viven en comunidad</h2>
+   <p>En nuestro canal oficial de WhatsApp publicaremos anuncios, cambios de la tienda y noticias para los jugadores.</p>
+   <small data-channel-status>El botón quedará activado al añadir el enlace oficial de invitación.</small>
+  </div>
+  <a class="customer-community-button is-disabled" id="castleChannelHome" data-castle-channel aria-disabled="true">Unirme al canal oficial <span aria-hidden="true">→</span></a>
+ </section>
  <div class="home-access-note"><strong>Bienvenido a tu tienda.</strong><span>Elige un juego para explorar los paquetes y servicios disponibles. Nunca compartas la contraseña de tu cuenta de juego.</span></div>
 </section>
  <section id="gamesView" class="store-view hidden">
@@ -2032,7 +2042,34 @@ body{min-width:0}
    <button class="profile-action-card" type="button" onclick="showView('faq')"><span class="profile-action-icon">?</span><strong>Ayuda y preguntas</strong><small>Cómo comprar y resolver dudas</small></button>
   </div>
  </div>
- <div class="panel profile-security-panel">
+  <div class="panel customer-hub-section">
+  <div class="section-head"><div><h2>Comunidad</h2><p>Entérate de las novedades de Tienda El Castillo.</p></div></div>
+  <a class="customer-hub-row customer-community-profile is-disabled" id="castleChannelProfile" data-castle-channel aria-disabled="true">
+   <span class="customer-hub-icon" aria-hidden="true">◉</span>
+   <span class="customer-hub-copy"><strong>Canal oficial de WhatsApp</strong><small>Noticias, cambios, anuncios y actividades de la comunidad.</small><small data-channel-status>El botón quedará activado al añadir el enlace oficial de invitación.</small></span>
+   <span class="customer-hub-arrow" aria-hidden="true">→</span>
+  </a>
+ </div>
+ <div class="panel customer-hub-section">
+  <div class="section-head"><div><h2>Ayuda y orientación</h2><p>Resuelve tus dudas y aprende a comprar con seguridad.</p></div></div>
+  <button class="customer-hub-row" type="button" onclick="showView('guides')">
+   <span class="customer-hub-icon" aria-hidden="true">▤</span>
+   <span class="customer-hub-copy"><strong>Guías paso a paso</strong><small>Cómo recargar cada uno de los cinco juegos.</small></span><span class="customer-hub-arrow" aria-hidden="true">›</span>
+  </button>
+  <button class="customer-hub-row" type="button" onclick="showView('support')">
+   <span class="customer-hub-icon" aria-hidden="true">◌</span>
+   <span class="customer-hub-copy"><strong>Centro de soporte</strong><small>Ayuda personal para incidencias que realmente requieren revisión.</small></span><span class="customer-hub-arrow" aria-hidden="true">›</span>
+  </button>
+  <button class="customer-hub-row" type="button" onclick="showView('faq')">
+   <span class="customer-hub-icon" aria-hidden="true">?</span>
+   <span class="customer-hub-copy"><strong>Preguntas frecuentes</strong><small>Pagos, validación, pedidos y Wallet.</small></span><span class="customer-hub-arrow" aria-hidden="true">›</span>
+  </button>
+  <button class="customer-hub-row" type="button" onclick="showView('legal')">
+   <span class="customer-hub-icon" aria-hidden="true">⚖</span>
+   <span class="customer-hub-copy"><strong>Información legal</strong><small>Condiciones de compra, privacidad y reembolsos.</small></span><span class="customer-hub-arrow" aria-hidden="true">›</span>
+  </button>
+ </div>
+<div class="panel profile-security-panel">
   <h3>Seguridad de tu cuenta</h3>
   <p class="subtle">Protege el acceso a tu tienda. Nunca compartas tu contraseña, códigos de acceso ni la contraseña de tu cuenta de juego.</p>
   <button class="logout-btn block-btn" type="button" onclick="logout()"><span aria-hidden="true">↪</span> Cerrar sesión</button>
@@ -2145,6 +2182,78 @@ body{min-width:0}
 <div class="panel"><div class="order-toolbar"><h2>Pedidos de clientes</h2><div class="field-row"><button class="secondary-btn" type="button" onclick="loadAllOrders()">Actualizar</button><button class="secondary-btn" type="button" onclick="enablePaymentNotifications()">Activar avisos</button></div></div><p id="paymentNotifyStatus" class="track-note">Activa los avisos de este teléfono y mantén la tienda abierta para recibir alertas automáticas.</p><p class="track-note">Flujo de recarga: primero revisa y confirma el pago del cliente. Después aparecerá el botón <strong>«Autorizar recarga y reservar saldo»</strong>; ese segundo botón envía el pedido a Central One y es el único que usa saldo del proveedor. La solicitud queda protegida contra duplicados y podrás consultar aquí el estado real de la entrega. No marques la recarga como completada hasta que Central One informe «completed».</p><p id="orderadminmsg" class="msg" role="status"></p><div id="allorders">Cargando...</div></div>
 </section>
  
+ <section id="guidesView" class="store-view hidden">
+  <div class="panel customer-info-hero">
+   <span class="profile-eyebrow">CENTRO DE AYUDA · TIENDA EL CASTILLO</span>
+   <h1>Guías paso a paso</h1>
+   <p>Aprende a recargar cada juego, qué datos necesitas y cómo comprobar que la cuenta sea la correcta antes de pagar.</p>
+   <div class="guide-safety-note"><strong>Una regla para todos los juegos</strong><p>La tienda valida el ID antes de crear el pedido. Comprueba siempre el nombre que aparece y nunca compartas contraseñas ni códigos de acceso.</p></div>
+  </div>
+  <div id="guideList" class="panel">
+   <div class="section-head"><div><h2>Elige tu juego</h2><p>Consulta la guía del juego que vas a recargar.</p></div></div>
+   <div class="guide-game-grid">
+    <button class="guide-game-card" type="button" onclick="showGameGuide('Free Fire')"><img src="./assets/games/free-fire-tienda.webp?v=2" alt="" loading="lazy"><span><strong>Free Fire</strong><small>LATAM · Diamantes, membresías y pases</small></span><b>›</b></button>
+    <button class="guide-game-card" type="button" onclick="showGameGuide('Blood Strike')"><img src="./assets/games/blood-strike-cover.webp?v=1" alt="" loading="lazy"><span><strong>Blood Strike</strong><small>GLOBAL · BC, ofertas y pases</small></span><b>›</b></button>
+    <button class="guide-game-card" type="button" onclick="showGameGuide('Mobile Legends: Bang Bang')"><img src="./assets/games/mobile-legends-bang-bang.webp?v=2" alt="" loading="lazy"><span><strong>Mobile Legends</strong><small>GLOBAL · ID y Zone ID</small></span><b>›</b></button>
+    <button class="guide-game-card" type="button" onclick="showGameGuide('Arena Breakout')"><img src="./assets/games/arena-breakout.webp?v=1" alt="" loading="lazy"><span><strong>Arena Breakout</strong><small>GLOBAL · Bonds, pases y cases</small></span><b>›</b></button>
+    <button class="guide-game-card" type="button" onclick="showGameGuide('PUBG Mobile')"><img src="./assets/games/pubg-mobile.webp?v=1" alt="" loading="lazy"><span><strong>PUBG Mobile</strong><small>GLOBAL · UC y ofertas especiales</small></span><b>›</b></button>
+   </div>
+  </div>
+  <div id="guideDetail" class="panel guide-detail-panel hidden"></div>
+ </section>
+ <section id="supportView" class="store-view hidden">
+  <div class="panel customer-info-hero">
+   <span class="profile-eyebrow">ATENCIÓN PERSONAL · TIENDA EL CASTILLO</span>
+   <h1>Centro de soporte</h1>
+   <p>Queremos ayudarte cuando exista una incidencia que necesite intervención. Antes de escribir, revisa el estado de tu pedido y los avisos de tu cuenta.</p>
+  </div>
+  <div class="panel support-gate-panel">
+   <div class="support-normal-status">
+    <strong>¿Tu pedido aparece pendiente, en revisión o en proceso?</strong>
+    <p>Esos estados forman parte del recorrido normal. Consulta «Órdenes» y «Mensajes y avisos» para ver el avance. No necesitas abrir un chat para pedir una actualización rutinaria.</p>
+    <button class="secondary-btn block-btn" type="button" onclick="showView('orders')">Consultar mis órdenes</button>
+   </div>
+   <div class="field">
+    <label for="supportIssue">¿Qué incidencia necesitas resolver?</label>
+    <select id="supportIssue" onchange="updateSupportGuidance()">
+     <option value="">Selecciona el motivo</option>
+     <option value="pending">Mi pedido figura pendiente o en proceso</option>
+     <option value="payment">Realicé el pago, pero no encuentro el pedido</option>
+     <option value="duplicate">Hice dos pagos para una misma compra</option>
+     <option value="rejected">El pedido fue rechazado, pero el pago sí se realizó</option>
+     <option value="delivered">El pedido figura entregado, pero no recibí el contenido</option>
+     <option value="wallet">Tengo una diferencia en un depósito o movimiento de Wallet</option>
+    </select>
+   </div>
+   <div class="field">
+    <label for="supportReference">Folio del pedido o referencia del pago</label>
+    <input id="supportReference" type="text" maxlength="100" placeholder="Ej. EC-XXXXXXXX o referencia bancaria" oninput="updateSupportGuidance()">
+    <small class="field-hint">No escribas contraseñas, PIN bancarios ni frases de recuperación.</small>
+   </div>
+   <div class="field">
+    <label for="supportDetails">Detalles adicionales (opcional)</label>
+    <textarea id="supportDetails" rows="3" maxlength="500" placeholder="Describe brevemente qué ocurrió." oninput="updateSupportGuidance()"></textarea>
+   </div>
+   <div id="supportGuidance" class="support-guidance" aria-live="polite">
+    <strong>Primero identifica el problema.</strong><p>Te mostraremos los pasos adecuados y cuándo hace falta contactar con una persona.</p>
+   </div>
+   <a id="supportContactLink" class="primary-btn block-btn support-contact-link" hidden target="_blank" rel="noopener noreferrer">Contactar soporte por WhatsApp</a>
+   <p class="track-note">Para acelerar la revisión, ten preparado el folio y la evidencia correspondiente. El soporte no es un canal para consultar promociones ni pedir actualizaciones normales del estado.</p>
+   <button class="text-link" type="button" onclick="showView('faq')">Consultar preguntas frecuentes</button>
+  </div>
+ </section>
+ <section id="legalView" class="store-view hidden">
+  <div class="panel customer-info-hero">
+   <span class="profile-eyebrow">TRANSPARENCIA · TIENDA EL CASTILLO</span>
+   <h1>Información legal</h1>
+   <p>Consulta cómo funciona el servicio, cómo tratamos tus datos y qué hacer si surge un problema con un pago o una recarga.</p>
+  </div>
+  <div class="panel legal-hub-list">
+   <button class="customer-hub-row" type="button" onclick="showView('terms')"><span class="customer-hub-icon" aria-hidden="true">▤</span><span class="customer-hub-copy"><strong>Términos y condiciones de compra</strong><small>Pedidos, pagos, validación de cuentas, entregas y cancelaciones.</small></span><span class="customer-hub-arrow">›</span></button>
+   <button class="customer-hub-row" type="button" onclick="showView('privacy')"><span class="customer-hub-icon" aria-hidden="true">◇</span><span class="customer-hub-copy"><strong>Privacidad y datos personales</strong><small>Qué información utilizamos, para qué y cómo solicitar una revisión.</small></span><span class="customer-hub-arrow">›</span></button>
+   <button class="customer-hub-row" type="button" onclick="showView('terms')"><span class="customer-hub-icon" aria-hidden="true">↺</span><span class="customer-hub-copy"><strong>Pagos, cancelaciones y reembolsos</strong><small>Qué ocurre si un pago se duplica o una recarga no se completa.</small></span><span class="customer-hub-arrow">›</span></button>
+  </div>
+ </section>
  <section id="faqView" class="store-view hidden"><div class="panel policy-panel">
   <button class="text-link" type="button" onclick="showView('home')">← Volver a la tienda</button><span class="policy-kicker">AYUDA · TIENDA EL CASTILLO</span><h1>Preguntas frecuentes</h1><p class="subtle">Respuestas claras antes de enviar tu pedido.</p>
   <article class="faq-item"><h3>¿Cómo hago una compra?</h3><p>Elige un paquete, escribe tu ID y espera a que se compruebe. Revisa que el nombre mostrado sea el de tu cuenta. Después selecciona el método de pago, realiza el pago exacto, completa los datos solicitados y adjunta la captura.</p></article>
@@ -2154,8 +2263,9 @@ body{min-width:0}
   <article class="faq-item"><h3>¿Tengo que dar la contraseña de Free Fire?</h3><p>No. Nunca compartas tu contraseña, códigos de acceso ni datos para iniciar sesión en el juego. Solo necesitamos el ID del jugador.</p></article>
   <article class="faq-item"><h3>¿Qué significa «Verificando pago»?</h3><p>Significa que recibimos tu solicitud y estamos revisando el pago. Adjuntar una captura no confirma por sí solo que el dinero o el saldo haya llegado. La recarga se autoriza después de comprobar la recepción.</p></article>
   <article class="faq-item"><h3>¿La recarga es instantánea?</h3><p>No prometemos entrega instantánea. La revisión del pago es manual y, una vez confirmado, la recarga depende de la disponibilidad y la respuesta del servicio de entrega. Consulta el avance en «Mis pedidos».</p></article>
-  <article class="faq-item"><h3>¿Qué hago si el pedido se demora o falla?</h3><p>No vuelvas a pagar ni crees otro pedido para la misma compra. Guarda el folio del pedido y la captura, revisa su estado en «Mis pedidos» y contacta con el canal oficial de atención de Tienda El Castillo.</p></article>
-  <article class="faq-item"><h3>¿Cómo contacto con Tienda El Castillo?</h3><p>Escríbenos por WhatsApp al <a href="https://wa.me/5351884050" target="_blank" rel="noopener noreferrer">+53 51884050</a> únicamente para incidencias importantes que no puedas resolver desde tu cuenta, como un pago cobrado que no se refleja o un pedido bloqueado. Para consultar el progreso normal del pedido, revisa «Mis pedidos» y «Mensajes». La atención depende de la disponibilidad del administrador; no hay un horario fijo ni respuesta inmediata garantizada. Ten a mano el folio de tu pedido y nunca compartas la contraseña del juego.</p></article>
+  <article class="faq-item"><h3>¿Qué hago si el pedido se demora o falla?</h3><p>Consulta primero el estado en «Órdenes» y los avisos de tu cuenta. Si aparece pendiente, en revisión o en proceso, ese estado forma parte del recorrido normal. No realices otro pago ni crees otro pedido. Utiliza el Centro de soporte cuando exista un error, una diferencia en el pago o una entrega que figure completada y no se haya reflejado.</p></article>
+  <article class="faq-item"><h3>¿Cómo contacto con Tienda El Castillo?</h3><p>Abre el «Centro de soporte» desde tu perfil, selecciona el motivo y prepara el folio o la referencia correspondiente. El sistema te mostrará qué información hace falta y habilitará el contacto por WhatsApp para incidencias que requieran revisión personal. Los estados pendientes o en proceso se consultan desde «Órdenes» y «Mensajes y avisos».</p></article>
+  <article class="faq-item"><h3>¿Dónde se publican las novedades de la tienda?</h3><p>En el canal oficial de WhatsApp compartiremos anuncios, cambios de la tienda y novedades para la comunidad. Es un canal informativo; no sustituye el seguimiento de pedidos ni el soporte personal.</p></article>
   <article class="faq-item"><h3>¿Dónde veo mis pedidos?</h3><p>Inicia sesión y abre «Pedidos» en la navegación inferior. Allí verás el folio, el estado y el avance de cada solicitud.</p></article>
   <article class="faq-item"><h3>¿Qué hago si hice el mismo pago dos veces?</h3><p>No crees un segundo pedido para justificar el pago duplicado. Guarda el folio y los dos comprobantes o referencias de transacción y contacta con soporte. La tienda debe comprobar ambas operaciones antes de registrar una devolución o compensación.</p></article>
   <article class="faq-item"><h3>¿Cómo funciona la wallet?</h3><p>La wallet es saldo interno para comprar dentro de Tienda El Castillo; no es una cuenta bancaria ni un servicio de retiro de efectivo. Los depósitos se revisan manualmente y el saldo solo está disponible después de que la administración confirme el pago. Un depósito pendiente no puede utilizarse para comprar. El importe se acredita en USD usando la tasa que se muestra al crear la solicitud; por ejemplo, a 1.160 CUP/USD, 1.160 CUP equivalen a 1,00 USD.</p></article>
@@ -2170,6 +2280,10 @@ body{min-width:0}
   <h3>Con quién se comparten</h3><p>Los datos se procesan mediante los servicios técnicos necesarios para operar la tienda. Cuando el cliente solicita una recarga, solo los datos del juego necesarios para validar y entregar el producto pueden comunicarse al servicio de distribución correspondiente. No se solicitan ni se comparten contraseñas del juego.</p>
   <h3>Comprobantes y seguridad</h3><p>Las capturas se guardan en un espacio privado y el acceso de administración está restringido. La web utiliza conexión HTTPS. No subas imágenes que muestren contraseñas, códigos de acceso ni información ajena al pago.</p>
   <h3>Conservación y derechos</h3><p>Los datos se conservan durante el tiempo necesario para gestionar los pedidos, atender reclamaciones y cumplir las obligaciones aplicables. Las personas pueden solicitar información sobre sus datos y pedir su rectificación, actualización u otras acciones que correspondan conforme a la normativa aplicable.</p>
+  <h3>Cookies y almacenamiento del dispositivo</h3>
+  <p>La tienda utiliza almacenamiento técnico del navegador para mantener la sesión, recordar datos necesarios para el funcionamiento y proteger operaciones frente a envíos duplicados. Los servicios de autenticación y verificación de seguridad pueden utilizar mecanismos técnicos propios. El código actual de la tienda no incorpora herramientas propias de publicidad personalizada ni seguimiento publicitario.</p>
+  <h3>Canal comunitario</h3>
+  <p>Unirse al canal de WhatsApp es voluntario. La decisión de seguir el canal se gestiona desde WhatsApp y no es necesaria para crear una cuenta, comprar o recibir una recarga. El canal comunitario no se utiliza para publicar datos de pedidos ni información privada de clientes.</p>
   <p class="policy-note"><strong>Importante:</strong> esta página explica el tratamiento operativo de la tienda; no sustituye una revisión jurídica. Antes de abrir al público de forma amplia, el titular debe confirmar la identidad legal del responsable, el canal de contacto para ejercer derechos y las condiciones aplicables al alojamiento y tratamiento de datos.</p>
  </div></section>
  <section id="termsView" class="store-view hidden"><div class="panel policy-panel">
@@ -2183,10 +2297,12 @@ body{min-width:0}
   <article class="faq-item"><h3>7. Pedidos no entregados y pagos duplicados</h3><p>Si el pago se confirma pero la recarga no llega, no debes volver a pagar por el mismo pedido. La tienda revisará el comprobante y el estado de la operación para encontrar una solución. Primero intentaremos completar o corregir la entrega cuando sea técnicamente posible. Si no se puede completar, la administración comunicará la solución disponible y, cuando corresponda, coordinará la devolución por el medio original. Un abono a la wallet solo se utilizará como alternativa con la aceptación del cliente. Los pagos duplicados requieren comprobar las dos operaciones y no se acreditan automáticamente.</p></article>
   <article class="faq-item"><h3>8. Recargas entregadas y datos del jugador</h3><p>Antes de pagar, el cliente debe comprobar que el nombre mostrado al validar el ID corresponde a la cuenta correcta. Si el nombre no coincide, no continúes y solicita ayuda. Una recarga digital confirmada como entregada a la cuenta indicada normalmente no puede revertirse; no se aceptan cambios por arrepentimiento después de la entrega. Los errores atribuibles al proceso de la tienda o a la entrega serán revisados con el folio y las pruebas del caso.</p></article>
   <article class="faq-item"><h3>9. Wallet y depósitos</h3><p>La wallet contiene saldo interno para comprar productos dentro de Tienda El Castillo y no funciona como una cuenta bancaria ni como un servicio de retiro de efectivo. Los depósitos se revisan manualmente y no forman parte del saldo disponible hasta que la administración los apruebe. Revisa siempre el importe, la moneda, la red y los datos de destino que muestra tu cuenta antes de enviar fondos.</p></article>
-  <article class="faq-item"><h3>10. Cómo solicitar una revisión</h3><p>Para solicitar ayuda, facilita el folio del pedido, el método de pago, la referencia de la transacción y una captura legible. Los canales de atención se indican en Preguntas frecuentes. Nunca envíes contraseñas, códigos de acceso ni frases de recuperación. La tienda no garantiza entrega instantánea ni una respuesta inmediata, pero mantendrá el estado y la comunicación de la incidencia en los canales disponibles.</p></article>
+  <article class="faq-item"><h3>10. Cómo solicitar una revisión</h3><p>Para solicitar ayuda, utiliza el Centro de soporte de tu perfil, selecciona el motivo y facilita el folio o la referencia correspondiente. El contacto personal se habilita para incidencias concretas que necesiten revisión. Los estados pendientes, en revisión o en proceso se consultan desde «Órdenes» y «Mensajes y avisos». Nunca envíes contraseñas, códigos de acceso, claves bancarias ni frases de recuperación.</p></article>
+  <article class="faq-item"><h3>11. Información y novedades de la comunidad</h3><p>La tienda puede publicar anuncios sobre cambios, servicios y actividades en su canal comunitario de WhatsApp. Unirse es voluntario y no condiciona el acceso a la tienda, la compra ni la atención de un pedido. Las comunicaciones privadas sobre una compra se mantienen en la cuenta del cliente y los canales de soporte habilitados.</p></article>
+  <article class="faq-item"><h3>12. Seguridad y uso responsable</h3><p>El cliente debe utilizar sus propios datos de juego y revisar el importe, la región y el método de pago antes de confirmar. No se deben enviar contraseñas ni códigos de acceso. La tienda puede detener una solicitud cuando existan datos incompatibles, evidencia insuficiente, señales de duplicidad o una incidencia que deba revisarse antes de continuar.</p></article>
   <p class="policy-note">Estas condiciones describen el procedimiento operativo actual de la tienda y no sustituyen una revisión jurídica. Ningún estado de «comprobante recibido» equivale a pago confirmado. La tienda no debe solicitar un segundo pago para intentar resolver una incidencia del mismo pedido.</p>
  </div></section>
-<footer class="site-footer"><div class="footer-brand"><img src="./assets/el-castillo-icon.webp" alt="" width="42" height="42"><div><strong>Tienda El Castillo</strong><span>Más que una tienda · Productos, servicios y soluciones</span></div></div><p class="footer-warm-signature"><span><img src="./assets/el-castillo-icon.webp" alt="" width="25" height="25"></span> Gracias por elegirnos. En El Castillo, tu confianza importa.</p><div class="footer-columns"><div><strong>Tu compra</strong><a href="#catalogo" onclick="showView('games');return false">Catálogo de juegos</a><span>Transferencia CUP, saldo móvil y USDT</span><a href="#pedidos" onclick="currentUser?showView('orders'):openAccount();return false">Seguimiento de pedidos</a></div><div><strong>Ayuda e información</strong><a href="#ayuda" onclick="showView('faq');return false">Preguntas frecuentes</a><a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a><a href="#condiciones" onclick="showView('terms');return false">Términos de compra</a><a href="./recargar-free-fire-cuba.html">Guía de recarga</a><a class="footer-whatsapp" href="https://wa.me/5351884050" target="_blank" rel="noopener noreferrer">Soporte WhatsApp · solo cuando sea necesario: +53 51884050</a></div></div><p class="footer-legal">Tienda El Castillo es un servicio independiente. No está afiliada ni respaldada por Garena. Las marcas y juegos pertenecen a sus respectivos propietarios.</p></footer>
+<footer class="site-footer"><div class="footer-brand"><img src="./assets/el-castillo-icon.webp" alt="" width="42" height="42"><div><strong>Tienda El Castillo</strong><span>Más que una tienda · Productos, servicios y soluciones</span></div></div><p class="footer-warm-signature"><span><img src="./assets/el-castillo-icon.webp" alt="" width="25" height="25"></span> Gracias por elegirnos. En El Castillo, tu confianza importa.</p><div class="footer-columns"><div><strong>Tu compra</strong><a href="#catalogo" onclick="showView('games');return false">Catálogo de juegos</a><span>Transferencia CUP, saldo móvil y USDT</span><a href="#pedidos" onclick="currentUser?showView('orders'):openAccount();return false">Seguimiento de pedidos</a></div><div><strong>Ayuda e información</strong><a <a href="#guias" onclick="showView('guides');return false">Guías paso a paso</a><a href="#ayuda" onclick="showView('faq');return false">Preguntas frecuentes</a><a href="#soporte" onclick="showView('support');return false">Centro de soporte</a><a href="#legal" onclick="showView('legal');return false">Información legal</a><a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a></div></div><p class="footer-legal">Tienda El Castillo es un servicio independiente. No está afiliada ni respaldada por Garena. Las marcas y juegos pertenecen a sus respectivos propietarios.</p></footer>
 </section>
 </main>
 <nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="wallet" onclick="showView('wallet')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 14h2"/></svg></span>Wallet</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
@@ -3443,7 +3559,7 @@ function showView(name){
   return;
  }
  if(name==="admin"&&currentProfile?.role!=="admin"){$("adminNav")?.classList.add("hidden");$("admin")?.classList.add("hidden");showView("profile");return}
- const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",wallet:"walletView",profile:"profileView",admin:"admin",faq:"faqView",privacy:"privacyView",terms:"termsView"};
+ const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",wallet:"walletView",profile:"profileView",admin:"admin",guides:"guidesView",support:"supportView",legal:"legalView",faq:"faqView",privacy:"privacyView",terms:"termsView"};
  Object.values(views).forEach(id=>$(id)?.classList.add("hidden"));
  $(views[name]||views.home)?.classList.remove("hidden");
  document.querySelectorAll("#bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
@@ -5908,5 +6024,6 @@ if(document.readyState==="loading"){
 
 <script src="./assets/offline-guard.js?v=2"></script>
 <script src="./assets/admin-panel.js?v=18" async></script>
+<script src="./assets/customer-center.js?v=1" defer></script>
 </body>
 </html>
