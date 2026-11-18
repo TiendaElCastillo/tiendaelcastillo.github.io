@@ -1529,3 +1529,34 @@ button:active:not(:disabled){
 @media(prefers-reduced-motion:reduce){
  .customer-hub-row,.customer-community-button,.guide-game-card{transition:none!important}
 }
+
+
+/* WhatsApp: símbolo reconocible, sin sustituir la identidad de El Castillo. */
+.whatsapp-brand-glyph{display:block;width:28px;height:28px;fill:currentColor;flex:0 0 auto}
+.customer-community-mark{
+ background:#25d366;
+ border-color:#1fb957;
+ color:#fff;
+ border-radius:50%;
+}
+.customer-community-mark .whatsapp-brand-glyph{width:30px;height:30px}
+.customer-hub-icon.customer-whatsapp-icon{
+ border-color:#bce9cb;
+ background:#e9f9ef;
+ color:#159447;
+ border-radius:50%;
+}
+.customer-whatsapp-icon .whatsapp-brand-glyph{width:25px;height:25px}
+.support-gate-panel .field[hidden],
+.support-evidence-note[hidden],
+#supportReferenceWrap[hidden],
+#supportDetailsWrap[hidden],
+#supportEvidenceNote[hidden],
+#supportStatusAction[hidden]{display:none!important}
+.support-status-action{
+ padding:12px;
+ border:1px solid #dce8f6;
+ border-radius:13px;
+ background:#f8fbff;
+}
+#supportGuidance{margin-top:2px}
