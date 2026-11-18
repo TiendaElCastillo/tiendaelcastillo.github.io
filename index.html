@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=7">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=8">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/castle-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -1891,6 +1891,15 @@ body{min-width:0}
   <h1>Juegos disponibles para recargar</h1>
   <p>Tenemos recargas de Free Fire LATAM, Blood Strike GLOBAL, Mobile Legends: Bang Bang GLOBAL, PUBG Mobile GLOBAL y Arena Breakout GLOBAL. Selecciona un juego para consultar sus opciones.</p>
  </div>
+ <div id="homeAnnouncementBanner" class="home-announcement-banner hidden" aria-live="polite"></div>
+ <section class="store-delivery-card" aria-label="Recargas entregadas">
+  <div class="store-delivery-emblem" aria-hidden="true">♛</div>
+  <div class="store-delivery-copy">
+   <span class="store-delivery-kicker">CONFIANZA QUE CRECE CON CADA PEDIDO</span>
+   <strong><span id="storeDeliveredCount" aria-live="polite">—</span> <span id="storeDeliveryLabel">recargas entregadas</span></strong>
+   <p id="storeDeliveryNote">Cada entrega cuenta. Gracias por confiar en Tienda El Castillo.</p>
+  </div>
+ </section>
  <div class="section castle-games-section">
   <div class="section-head"><div><h2>Elige tu juego</h2><p>Solo mostramos juegos con recargas disponibles.</p></div></div>
   <div id="homeGames" class="catalog-grid"><p class="empty-note">Conectando con el catálogo de los cinco juegos disponibles…</p></div>
@@ -1958,24 +1967,53 @@ body{min-width:0}
  </div>
 </div></section>
 <section id="ordersView" class="store-view hidden"><div class="panel"><h2>Mis pedidos</h2><p class="subtle">Revisa el estado y el progreso de tus solicitudes.</p><div id="myorders">Cargando...</div></div></section>
-<section id="notificationsView" class="store-view hidden"><div class="panel"><div class="notification-panel-head"><div><h2>Mensajes y notificaciones</h2><p class="subtle">Aquí recibirás avisos privados y actualizaciones del estado de tus pedidos.</p></div><button id="markAllNotificationsRead" class="secondary-btn hidden" type="button" onclick="markAllNotificationsRead()">Marcar todo como leído</button></div><div id="notificationList" aria-live="polite">Cargando mensajes...</div></div></section>
+<section id="notificationsView" class="store-view hidden">
+ <section id="storeAnnouncementAdminPanel" class="panel store-announcement-admin hidden" aria-labelledby="storeAnnouncementAdminTitle">
+  <div class="store-announcement-admin-heading"><div><span class="store-announcement-kicker">COMUNICACIÓN CON CLIENTES</span><h2 id="storeAnnouncementAdminTitle">Avisos de la tienda</h2><p class="subtle">Publica novedades o informa de mantenimientos. Los clientes los verán en sus notificaciones.</p></div><span class="store-announcement-admin-mark" aria-hidden="true">♛</span></div>
+  <div class="field"><label for="storeAnnouncementTitle">Título del aviso</label><input id="storeAnnouncementTitle" type="text" maxlength="100" placeholder="Ej. Mantenimiento programado" autocomplete="off"></div>
+  <div class="field"><label for="storeAnnouncementMessage">Mensaje para los clientes</label><textarea id="storeAnnouncementMessage" rows="3" maxlength="1200" placeholder="Explica qué sucederá, cuándo y cómo afectará a los pedidos."></textarea><small class="subtle">Hasta 1.200 caracteres. No incluyas datos privados ni información de proveedores.</small></div>
+  <div class="field-row">
+   <div class="field"><label for="storeAnnouncementType">Tipo de aviso</label><select id="storeAnnouncementType" onchange="updateStoreAnnouncementType()"><option value="store">Novedad de la tienda</option><option value="maintenance">Mantenimiento</option></select></div>
+   <div class="field"><label>Publicación</label><label class="store-announcement-check"><input id="storeAnnouncementPublishNow" type="checkbox" checked> Publicar ahora</label></div>
+  </div>
+  <label class="store-announcement-check store-announcement-home-check"><input id="storeAnnouncementShowHome" type="checkbox"> Destacar también en el inicio</label>
+  <div class="store-announcement-form-actions"><button id="storeAnnouncementSaveBtn" class="primary-btn" type="button" onclick="saveStoreAnnouncement()">Publicar aviso</button><button id="storeAnnouncementCancelBtn" class="secondary-btn hidden" type="button" onclick="resetStoreAnnouncementEditor()">Cancelar edición</button></div>
+  <p id="storeAnnouncementAdminMsg" class="msg" role="status"></p>
+  <div class="store-announcement-admin-list-wrap"><h3>Avisos creados</h3><div id="storeAnnouncementAdminList"><p class="empty-note">Cargando avisos…</p></div></div>
+ </section>
+ <div class="panel notification-center-panel">
+  <div class="notification-panel-head"><div><span class="notification-center-kicker">TU ESPACIO DE NOVEDADES</span><h2>Notificaciones</h2><p class="subtle">Pedidos, avisos importantes y novedades de Tienda El Castillo.</p></div><button id="markAllNotificationsRead" class="secondary-btn hidden" type="button" onclick="markAllNotificationsRead()">Marcar todo como leído</button></div>
+  <div class="notification-filters" role="tablist" aria-label="Filtrar notificaciones">
+   <button class="notification-filter active" type="button" role="tab" aria-selected="true" data-notification-filter="all" onclick="setNotificationFeedFilter('all')"><span>♧ Todas</span><b id="notificationCountAll">0</b></button>
+   <button class="notification-filter" type="button" role="tab" aria-selected="false" data-notification-filter="orders" onclick="setNotificationFeedFilter('orders')"><span>✓ Pedidos</span><b id="notificationCountOrders">0</b></button>
+   <button class="notification-filter" type="button" role="tab" aria-selected="false" data-notification-filter="store" onclick="setNotificationFeedFilter('store')"><span>♛ Tienda</span><b id="notificationCountStore">0</b></button>
+  </div>
+  <div id="notificationList" class="notification-feed" aria-live="polite">Cargando notificaciones…</div>
+ </div>
+</section>
  
 <section id="profileView" class="store-view hidden">
+ <div class="profile-page-heading">
+  <div><span class="profile-eyebrow">♛ TIENDA EL CASTILLO</span><h1>Mi perfil</h1><p>Tu cuenta, siempre contigo.</p></div>
+  <div class="profile-page-emblem"><img src="./assets/castle-logo.webp" alt="" width="82" height="82" loading="lazy" decoding="async"></div>
+ </div>
  <div class="panel account-overview-panel">
   <div class="profile-card">
    <div class="profile-avatar" id="profileAvatar">EC</div>
-   <div class="profile-welcome-copy"><span class="profile-eyebrow">CENTRO DE CUENTA</span><h2 id="welcome">Hola</h2><p id="profileEmail" class="profile-email"></p></div>
+   <div class="profile-welcome-copy"><span class="profile-eyebrow">TU ESPACIO PERSONAL</span><h2 id="welcome">Hola</h2><p id="profileEmail" class="profile-email"></p></div>
    <span class="profile-account-type" id="profileAccountType">Cliente</span>
   </div>
   <div class="profile-facts">
    <div><span>Miembro desde</span><strong id="profileMemberSince">Cargando…</strong></div>
    <div><span>Tipo de cuenta</span><strong id="profileRole">Cliente</strong></div>
   </div>
+  <div class="profile-activity-heading"><strong>Mi actividad</strong><span>El estado de tus recargas, siempre a mano</span></div>
   <div class="profile-stat-grid" aria-label="Resumen de actividad">
-   <article class="profile-stat"><span>Pedidos totales</span><strong id="profileOrdersTotal">—</strong></article>
-   <article class="profile-stat"><span>En proceso</span><strong id="profileOrdersActive">—</strong></article>
-   <article class="profile-stat"><span>Completados</span><strong id="profileOrdersCompleted">—</strong></article>
+   <article class="profile-stat profile-stat-total"><span>Pedidos realizados</span><strong id="profileOrdersTotal">—</strong></article>
+   <article class="profile-stat profile-stat-active"><span>En proceso</span><strong id="profileOrdersActive">—</strong></article>
+   <article class="profile-stat profile-stat-complete"><span>Recargas entregadas</span><strong id="profileOrdersCompleted">—</strong></article>
   </div>
+  <div class="profile-care-note"><span aria-hidden="true">♛</span><div><strong>Estamos pendientes de tus pedidos.</strong><p>Desde aquí puedes revisar tus compras, consultar tu saldo y enterarte de cualquier aviso importante.</p></div></div>
  </div>
  <div class="panel">
   <div class="section-head"><div><h2>Accesos rápidos</h2><p>Las herramientas que más utilizas en tu cuenta.</p></div></div>
@@ -2505,6 +2543,7 @@ async function openStore(user){
  if(currentProfile.role==="admin") $("adminNav").classList.remove("hidden");
  $("notificationsButton")?.classList.remove("hidden");
  try{await loadNotifications();}catch(notificationError){console.error("No se pudieron cargar los avisos:",notificationError);}
+ try{await loadStoreDeliveryStats();}catch(deliveryStatsError){console.warn("No se pudo consultar el contador de recargas entregadas:",deliveryStatsError);}
  startNotificationPolling();
  // Load payment methods first: the catalogue renderer depends on this data.
  try{await loadPaymentMethods({render:false});}
@@ -4105,68 +4144,215 @@ async function placeOrder(){
  finally{if(button)window.updateCheckoutSubmitState?.();}
 }
 
+async function loadStoreDeliveryStats(){
+ const countNode=$("storeDeliveredCount"),labelNode=$("storeDeliveryLabel"),noteNode=$("storeDeliveryNote");
+ if(!countNode||!db)return;
+ const {data,error}=await db.rpc("get_total_delivered_recargas");
+ if(error){countNode.textContent="—";if(noteNode)noteNode.textContent="El contador se actualizará cuando vuelva la conexión.";return;}
+ const count=Math.max(0,Number(data)||0);
+ countNode.textContent=count.toLocaleString("es-CU");
+ if(labelNode)labelNode.textContent=count===1?"recarga entregada":"recargas entregadas";
+ if(noteNode)noteNode.textContent=count===0?"Estamos preparando las primeras entregas. Gracias por acompañarnos.":"Cada entrega cuenta. Gracias por confiar en Tienda El Castillo.";
+}
+let notificationFeedFilter="all";
+let notificationOrderRows=[];
+let notificationStoreRows=[];
+let notificationStoreReadIds=new Set();
+let adminStoreAnnouncements=[];
+let editingStoreAnnouncementId="";
 function openNotificationCenter(){
  if(!currentUser){openAccount();return;}
  showView("notifications");
  loadNotifications();
+ if(currentProfile?.role==="admin")loadStoreAnnouncementAdmin();
+}
+function setNotificationFeedFilter(filter){
+ notificationFeedFilter=["all","orders","store"].includes(filter)?filter:"all";
+ document.querySelectorAll("[data-notification-filter]").forEach(button=>{
+  const active=button.dataset.notificationFilter===notificationFeedFilter;
+  button.classList.toggle("active",active);button.setAttribute("aria-selected",active?"true":"false");
+ });
+ renderNotificationFeed();
+}
+function notificationGroupLabel(value){
+ const date=new Date(value);if(Number.isNaN(date.getTime()))return "Otros";
+ const today=new Date();today.setHours(0,0,0,0);
+ const day=new Date(date);day.setHours(0,0,0,0);
+ const delta=Math.round((today-day)/86400000);
+ if(delta===0)return "Hoy";if(delta===1)return "Ayer";if(delta>1&&delta<7)return "Esta semana";
+ return date.toLocaleDateString("es-CU",{day:"numeric",month:"long",year:"numeric"});
+}
+function notificationTimeLabel(value){
+ const date=new Date(value);if(Number.isNaN(date.getTime()))return "";
+ const minutes=Math.max(0,Math.floor((Date.now()-date.getTime())/60000));
+ if(minutes<1)return "ahora mismo";if(minutes<60)return "hace "+minutes+" min";
+ const hours=Math.floor(minutes/60);if(hours<24)return "hace "+hours+(hours===1?" hora":" horas");
+ const days=Math.floor(hours/24);if(days<7)return "hace "+days+(days===1?" día":" días");
+ return date.toLocaleString("es-CU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+}
+function renderNotificationFeed(){
+ const list=$("notificationList");if(!list)return;
+ const all=[
+  ...notificationOrderRows.map(item=>({...item,source:"order",isRead:Boolean(item.read_at)})),
+  ...notificationStoreRows.map(item=>({...item,source:"store",isRead:notificationStoreReadIds.has(String(item.id))}))
+ ].sort((a,b)=>new Date(b.created_at).getTime()-new Date(a.created_at).getTime());
+ const orders=all.filter(item=>item.source==="order"),store=all.filter(item=>item.source==="store");
+ const countAll=$("notificationCountAll"),countOrders=$("notificationCountOrders"),countStore=$("notificationCountStore");
+ if(countAll)countAll.textContent=String(all.length);if(countOrders)countOrders.textContent=String(orders.length);if(countStore)countStore.textContent=String(store.length);
+ const filtered=notificationFeedFilter==="orders"?orders:notificationFeedFilter==="store"?store:all;
+ if(!filtered.length){
+  list.innerHTML=notificationFeedFilter==="orders"?'<p class="notification-empty">Todavía no tienes actualizaciones de pedidos.</p>':
+   notificationFeedFilter==="store"?'<p class="notification-empty">La tienda todavía no ha publicado avisos. Cuando haya novedades o mantenimientos, aparecerán aquí.</p>':
+   '<p class="notification-empty">Todavía no tienes notificaciones. Aquí aparecerán las actualizaciones de tus pedidos y los avisos de la tienda.</p>';
+  return;
+ }
+ const groups=new Map();
+ filtered.forEach(item=>{const label=notificationGroupLabel(item.created_at);if(!groups.has(label))groups.set(label,[]);groups.get(label).push(item);});
+ list.innerHTML=Array.from(groups.entries()).map(([label,items])=>{
+  const cards=items.map(item=>{
+   const isStore=item.source==="store",maintenance=isStore&&item.category==="maintenance";
+   const kind=maintenance?"Mantenimiento":isStore?"Tienda":"Pedido",icon=maintenance?"⚒":isStore?"♛":"✓";
+   const sourceClass=maintenance?"maintenance":isStore?"store":"order";
+   const readAction=item.isRead?'<span class="notification-read-label">Leído</span>':
+    isStore?'<button class="notification-read-btn" type="button" data-store-announcement-read="'+clean(item.id)+'">Marcar como leído</button>':
+    '<button class="notification-read-btn" type="button" data-notification-read="'+clean(item.id)+'">Marcar como leído</button>';
+   return '<article class="notification-item '+(item.isRead?"read":"unread")+' notification-kind-'+sourceClass+'"><span class="notification-item-icon" aria-hidden="true">'+icon+'</span><div class="notification-item-body"><div class="notification-item-head"><strong>'+clean(item.title||"Aviso de la tienda")+'</strong><span class="notification-item-time">'+clean(notificationTimeLabel(item.created_at))+'</span></div><p>'+clean(item.message||"")+'</p><div class="notification-item-footer"><span class="notification-type">'+kind+'</span>'+readAction+'</div></div></article>';
+  }).join("");
+  return '<section class="notification-day-group"><h3 class="notification-day-heading">'+clean(label)+'</h3><div class="notification-day-list">'+cards+'</div></section>';
+ }).join("");
+ list.querySelectorAll("[data-notification-read]").forEach(button=>button.addEventListener("click",()=>markNotificationRead(button.dataset.notificationRead)));
+ list.querySelectorAll("[data-store-announcement-read]").forEach(button=>button.addEventListener("click",()=>markStoreAnnouncementRead(button.dataset.storeAnnouncementRead)));
+}
+function renderHomeAnnouncementBanner(){
+ const banner=$("homeAnnouncementBanner");if(!banner)return;
+ const featured=notificationStoreRows.find(item=>item.show_on_home===true);
+ if(!featured){banner.classList.add("hidden");banner.innerHTML="";return;}
+ const maintenance=featured.category==="maintenance";banner.classList.remove("hidden");
+ banner.innerHTML='<span class="home-announcement-icon" aria-hidden="true">'+(maintenance?"⚒":"♛")+'</span><div class="home-announcement-copy"><span>'+(maintenance?"AVISO DE MANTENIMIENTO":"AVISO DE LA TIENDA")+'</span><strong>'+clean(featured.title)+'</strong><p>'+clean(featured.message)+'</p></div><button type="button" onclick="openNotificationCenter()" aria-label="Ver todos los avisos">›</button>';
+ banner.classList.toggle("maintenance",maintenance);
 }
 async function loadNotifications(){
  const list=$("notificationList"),badge=$("notificationBadge"),button=$("notificationsButton");
+ $("storeAnnouncementAdminPanel")?.classList.toggle("hidden",currentProfile?.role!=="admin");
  if(!currentUser||!db){badge?.classList.add("hidden");return;}
- const {data,error}=await db.from("user_notifications")
-  .select("id,order_id,kind,title,message,created_at,read_at")
-  .eq("user_id",currentUser.id)
-  .order("created_at",{ascending:false})
-  .limit(50);
- if(error){
-  if(list)list.textContent="No se pudieron cargar los mensajes. Comprueba tu conexión y vuelve a intentarlo.";
-  return;
- }
- const rows=data||[];
- const unreadResult=await db.from("user_notifications").select("id",{count:"exact",head:true})
-  .eq("user_id",currentUser.id).is("read_at",null);
- const unread=unreadResult.error?rows.filter(item=>!item.read_at).length:Number(unreadResult.count||0);
+ const [ordersResult,announcementsResult,readsResult]=await Promise.all([
+  db.from("user_notifications").select("id,order_id,kind,title,message,created_at,read_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(50),
+  db.from("store_announcements").select("id,title,message,category,show_on_home,created_at,starts_at,ends_at").eq("is_published",true).order("created_at",{ascending:false}).limit(50),
+  db.from("store_announcement_reads").select("announcement_id").eq("user_id",currentUser.id)
+ ]);
+ if(ordersResult.error){notificationOrderRows=[];console.warn("No se pudieron cargar las notificaciones de pedidos:",ordersResult.error.message);}
+ else notificationOrderRows=ordersResult.data||[];
+ if(announcementsResult.error){notificationStoreRows=[];console.warn("No se pudieron cargar los avisos de la tienda:",announcementsResult.error.message);}
+ else notificationStoreRows=announcementsResult.data||[];
+ notificationStoreReadIds=new Set(readsResult.error?[]:(readsResult.data||[]).map(row=>String(row.announcement_id)));
+ const unreadOrders=notificationOrderRows.filter(item=>!item.read_at).length;
+ const unreadStore=notificationStoreRows.filter(item=>!notificationStoreReadIds.has(String(item.id))).length;
+ const unread=unreadOrders+unreadStore;
  badge?.classList.toggle("hidden",unread===0);
- const profileUnread=$("profileUnreadNotifications");
- if(profileUnread)profileUnread.textContent=unread?unread+" sin leer":"Todo al día";
- button?.setAttribute("aria-label",unread?"Mensajes y notificaciones: "+unread+" sin leer":"Mensajes y notificaciones");
+ const profileUnread=$("profileUnreadNotifications");if(profileUnread)profileUnread.textContent=unread?unread+" sin leer":"Todo al día";
+ button?.setAttribute("aria-label",unread?"Notificaciones: "+unread+" sin leer":"Notificaciones");
  $("markAllNotificationsRead")?.classList.toggle("hidden",unread===0);
+ renderNotificationFeed();renderHomeAnnouncementBanner();
  if(!list)return;
- if(!rows.length){list.innerHTML='<p class="empty-note">Todavía no tienes mensajes ni notificaciones. Aquí aparecerán los avisos y los cambios de estado de tus pedidos.</p>';return;}
- list.innerHTML=rows.map(item=>{
-  const isRead=Boolean(item.read_at);
-  const kind=item.kind==="order_status"?"Actualización de pedido":"Mensaje de la tienda";
-  return '<article class="notification-item '+(isRead?"read":"unread")+'"><div class="notification-item-head"><strong>'+clean(item.title)+'</strong><span class="notification-type">'+kind+'</span></div><p>'+clean(item.message)+'</p><small>'+new Date(item.created_at).toLocaleString("es-CU")+'</small>'+
-   (isRead?'<span class="notification-read-label">Leído</span>':'<button class="secondary-btn notification-read-btn" type="button" data-notification-read="'+clean(item.id)+'">Marcar como leído</button>')+'</article>';
- }).join("");
- list.querySelectorAll("[data-notification-read]").forEach(readButton=>{
-  readButton.addEventListener("click",()=>markNotificationRead(readButton.dataset.notificationRead));
- });
 }
 async function markNotificationRead(notificationId){
  if(!currentUser||!notificationId)return;
- const result=await db.from("user_notifications").update({read_at:new Date().toISOString()})
-  .eq("id",notificationId).eq("user_id",currentUser.id).is("read_at",null).select("id").maybeSingle();
+ const result=await db.from("user_notifications").update({read_at:new Date().toISOString()}).eq("id",notificationId).eq("user_id",currentUser.id).is("read_at",null).select("id").maybeSingle();
  if(result.error){window.alert("No se pudo marcar el mensaje como leído. Comprueba tu conexión.");return;}
+ await loadNotifications();
+}
+async function markStoreAnnouncementRead(announcementId){
+ if(!currentUser||!announcementId)return;
+ const result=await db.from("store_announcement_reads").insert({announcement_id:announcementId,user_id:currentUser.id});
+ if(result.error&&result.error.code!=="23505"){window.alert("No se pudo marcar el aviso como leído. Comprueba tu conexión.");return;}
  await loadNotifications();
 }
 async function markAllNotificationsRead(){
  if(!currentUser)return;
- const result=await db.from("user_notifications").update({read_at:new Date().toISOString()})
-  .eq("user_id",currentUser.id).is("read_at",null);
- if(result.error){window.alert("No se pudieron marcar los mensajes como leídos. Comprueba tu conexión.");return;}
+ const now=new Date().toISOString();
+ const orderResult=await db.from("user_notifications").update({read_at:now}).eq("user_id",currentUser.id).is("read_at",null);
+ if(orderResult.error){window.alert("No se pudieron marcar los mensajes como leídos. Comprueba tu conexión.");return;}
+ const unreadAnnouncements=notificationStoreRows.filter(item=>!notificationStoreReadIds.has(String(item.id)));
+ if(unreadAnnouncements.length){
+  const insertResult=await db.from("store_announcement_reads").insert(unreadAnnouncements.map(item=>({announcement_id:item.id,user_id:currentUser.id})));
+  if(insertResult.error&&insertResult.error.code!=="23505")window.alert("Los avisos se actualizaron parcialmente. Vuelve a intentarlo.");
+ }
  await loadNotifications();
 }
-function stopNotificationPolling(){
- if(notificationPoll){clearInterval(notificationPoll);notificationPoll=null;}
+function updateStoreAnnouncementType(){
+ const type=$("storeAnnouncementType")?.value;
+ if($("storeAnnouncementShowHome")&&type==="maintenance")$("storeAnnouncementShowHome").checked=true;
 }
+function resetStoreAnnouncementEditor(){
+ editingStoreAnnouncementId="";
+ if($("storeAnnouncementTitle"))$("storeAnnouncementTitle").value="";
+ if($("storeAnnouncementMessage"))$("storeAnnouncementMessage").value="";
+ if($("storeAnnouncementType"))$("storeAnnouncementType").value="store";
+ if($("storeAnnouncementShowHome"))$("storeAnnouncementShowHome").checked=false;
+ if($("storeAnnouncementPublishNow"))$("storeAnnouncementPublishNow").checked=true;
+ if($("storeAnnouncementSaveBtn"))$("storeAnnouncementSaveBtn").textContent="Publicar aviso";
+ $("storeAnnouncementCancelBtn")?.classList.add("hidden");
+ if($("storeAnnouncementAdminMsg"))$("storeAnnouncementAdminMsg").textContent="";
+}
+async function loadStoreAnnouncementAdmin(){
+ if(!currentUser||currentProfile?.role!=="admin")return;
+ const list=$("storeAnnouncementAdminList");if(list)list.innerHTML='<p class="empty-note">Cargando avisos…</p>';
+ const result=await db.from("store_announcements").select("id,title,message,category,show_on_home,is_published,created_at,updated_at").order("created_at",{ascending:false}).limit(100);
+ if(result.error){if(list)list.innerHTML='<p class="empty-note">No se pudieron cargar los avisos: '+clean(result.error.message)+'</p>';return;}
+ adminStoreAnnouncements=result.data||[];renderStoreAnnouncementAdminList();
+}
+function renderStoreAnnouncementAdminList(){
+ const list=$("storeAnnouncementAdminList");if(!list)return;
+ if(!adminStoreAnnouncements.length){list.innerHTML='<p class="empty-note">Todavía no has creado avisos. Aquí podrás preparar el próximo mantenimiento o comunicar novedades.</p>';return;}
+ list.innerHTML=adminStoreAnnouncements.map(item=>{
+  const category=item.category==="maintenance"?"Mantenimiento":"Novedad";
+  return '<article class="store-announcement-admin-card"><div><div class="store-announcement-admin-tags"><span>'+category+'</span><b class="'+(item.is_published?"published":"paused")+'">'+(item.is_published?"Publicado":"Pausado")+'</b>'+(item.show_on_home?'<i>Destacado en inicio</i>':'')+'</div><strong>'+clean(item.title)+'</strong><p>'+clean(item.message)+'</p><small>'+new Date(item.created_at).toLocaleDateString("es-CU",{day:"numeric",month:"long",year:"numeric"})+'</small></div><div class="store-announcement-admin-card-actions"><button type="button" class="secondary-btn" data-announcement-edit="'+clean(item.id)+'">Editar</button><button type="button" class="secondary-btn" data-announcement-toggle="'+clean(item.id)+'">'+(item.is_published?"Pausar":"Publicar")+'</button><button type="button" class="secondary-btn store-announcement-delete" data-announcement-delete="'+clean(item.id)+'">Eliminar</button></div></article>';
+ }).join("");
+ list.querySelectorAll("[data-announcement-edit]").forEach(button=>button.addEventListener("click",()=>editStoreAnnouncement(button.dataset.announcementEdit)));
+ list.querySelectorAll("[data-announcement-toggle]").forEach(button=>button.addEventListener("click",()=>toggleStoreAnnouncement(button.dataset.announcementToggle)));
+ list.querySelectorAll("[data-announcement-delete]").forEach(button=>button.addEventListener("click",()=>deleteStoreAnnouncement(button.dataset.announcementDelete)));
+}
+function editStoreAnnouncement(announcementId){
+ const item=adminStoreAnnouncements.find(row=>String(row.id)===String(announcementId));if(!item)return;
+ editingStoreAnnouncementId=String(item.id);
+ $("storeAnnouncementTitle").value=item.title||"";$("storeAnnouncementMessage").value=item.message||"";
+ $("storeAnnouncementType").value=item.category||"store";$("storeAnnouncementShowHome").checked=Boolean(item.show_on_home);
+ $("storeAnnouncementPublishNow").checked=Boolean(item.is_published);$("storeAnnouncementSaveBtn").textContent="Guardar cambios";
+ $("storeAnnouncementCancelBtn").classList.remove("hidden");$("storeAnnouncementAdminMsg").textContent="Editando: "+item.title;
+ $("storeAnnouncementTitle").scrollIntoView({behavior:"smooth",block:"center"});
+}
+async function saveStoreAnnouncement(){
+ if(currentProfile?.role!=="admin"||!currentUser)return;
+ const title=String($("storeAnnouncementTitle")?.value||"").trim(),message=String($("storeAnnouncementMessage")?.value||"").trim();
+ const category=$("storeAnnouncementType")?.value==="maintenance"?"maintenance":"store",msg=$("storeAnnouncementAdminMsg");
+ if(title.length<3||title.length>100||message.length<5||message.length>1200){if(msg)msg.textContent="Escribe un título de 3 a 100 caracteres y un mensaje de 5 a 1.200 caracteres.";return;}
+ const now=new Date().toISOString();
+ const payload={title,message,category,show_on_home:Boolean($("storeAnnouncementShowHome")?.checked),is_published:Boolean($("storeAnnouncementPublishNow")?.checked),updated_at:now};
+ if(msg)msg.textContent="Guardando aviso…";
+ const result=editingStoreAnnouncementId
+  ?await db.from("store_announcements").update(payload).eq("id",editingStoreAnnouncementId).select("id").maybeSingle()
+  :await db.from("store_announcements").insert({...payload,created_by:currentUser.id,starts_at:now}).select("id").single();
+ if(result.error){if(msg)msg.textContent="No se pudo guardar: "+result.error.message;return;}
+ resetStoreAnnouncementEditor();await loadStoreAnnouncementAdmin();await loadNotifications();
+ if(msg)msg.textContent="Aviso guardado correctamente.";
+}
+async function toggleStoreAnnouncement(announcementId){
+ if(currentProfile?.role!=="admin")return;
+ const item=adminStoreAnnouncements.find(row=>String(row.id)===String(announcementId));if(!item)return;
+ const result=await db.from("store_announcements").update({is_published:!item.is_published,updated_at:new Date().toISOString()}).eq("id",announcementId);
+ if(result.error){window.alert("No se pudo cambiar el estado del aviso: "+result.error.message);return;}
+ await loadStoreAnnouncementAdmin();await loadNotifications();
+}
+async function deleteStoreAnnouncement(announcementId){
+ if(currentProfile?.role!=="admin"||!window.confirm("¿Eliminar este aviso de forma permanente?"))return;
+ const result=await db.from("store_announcements").delete().eq("id",announcementId);
+ if(result.error){window.alert("No se pudo eliminar el aviso: "+result.error.message);return;}
+ await loadStoreAnnouncementAdmin();await loadNotifications();
+}
+function stopNotificationPolling(){if(notificationPoll){clearInterval(notificationPoll);notificationPoll=null;}}
 function startNotificationPolling(){
- stopNotificationPolling();
- if(!currentUser)return;
- const userId=currentUser.id;
- notificationPoll=setInterval(()=>{
-  if(currentUser?.id===userId&&document.visibilityState!=="hidden")loadNotifications();
- },60000);
+ stopNotificationPolling();if(!currentUser)return;const userId=currentUser.id;
+ notificationPoll=setInterval(()=>{if(currentUser?.id===userId&&document.visibilityState!=="hidden")loadNotifications();},60000);
 }
 
 function renderOrderProofRetryForm(order){
