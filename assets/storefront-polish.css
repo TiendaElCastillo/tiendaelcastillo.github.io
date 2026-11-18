@@ -995,3 +995,84 @@ button:active:not(:disabled){
 @media(prefers-reduced-motion:reduce){
  .castle-brand-lockup{filter:none}
 }
+
+
+/* Auditoría visual móvil 2026-11-18: claridad del contador, formularios y estados vacíos. */
+#homeView .store-delivery-copy{
+ min-width:0;
+}
+#homeView .store-delivery-copy>strong{
+ display:block!important;
+ margin-top:3px!important;
+ font-size:clamp(46px,13vw,56px)!important;
+ line-height:.96!important;
+ letter-spacing:-.06em!important;
+}
+#homeView #storeDeliveredCount{
+ font-size:inherit!important;
+ line-height:inherit!important;
+}
+#homeView .store-delivery-label{
+ margin-top:5px!important;
+ font-size:14px!important;
+ line-height:1.25!important;
+ font-weight:900!important;
+}
+#homeView .store-delivery-main{
+ align-items:center;
+}
+#notificationsView .store-announcement-admin .field-row{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+#notificationsView .store-announcement-admin .field-row>.field{
+ min-width:0;
+}
+#notificationsView .store-announcement-admin .field-row>.field:last-child .store-announcement-check{
+ min-height:42px;
+ padding:8px 10px;
+ border:1px solid #dfe8f4;
+ border-radius:11px;
+ background:#fff;
+}
+#notificationsView .store-announcement-admin .store-announcement-check input{
+ flex:0 0 16px;
+ margin:0;
+}
+#walletTransactions .empty-note,
+#walletDepositsMine .empty-note{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ min-height:54px;
+ margin:10px 0 0;
+ padding:13px 14px;
+ border:1px dashed #d4e1f1;
+ border-radius:14px;
+ background:linear-gradient(120deg,#f9fbff,#fff);
+ color:#687b94;
+ font-size:11px;
+ line-height:1.5;
+}
+#walletTransactions .empty-note::before,
+#walletDepositsMine .empty-note::before{
+ content:"";
+ display:block;
+ flex:0 0 28px;
+ width:28px;
+ height:28px;
+ border:1px solid #dce8f8;
+ border-radius:9px;
+ background:#edf4ff url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+}
+@media(max-width:600px){
+ #homeView .store-delivery-card{padding:15px 14px 13px}
+ #homeView .store-delivery-copy>strong{font-size:clamp(46px,13vw,54px)!important}
+ #notificationsView .store-announcement-admin .field-row{grid-template-columns:1fr;gap:7px}
+ #notificationsView .store-announcement-admin .field-row>.field:last-child .store-announcement-check{min-height:40px}
+ #walletTransactions .empty-note,#walletDepositsMine .empty-note{font-size:10.5px}
+}
+@media(prefers-reduced-motion:reduce){
+ #homeView .store-delivery-copy>strong{animation:none!important}
+}
