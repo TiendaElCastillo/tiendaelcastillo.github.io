@@ -48,3 +48,13 @@
 - No sustituir las imágenes oficiales de los juegos por ilustraciones generadas.
 - No cambiar precios, paquetes, orden del catálogo, métodos ni lógica de pago durante el pulido visual.
 - Mantener la web ligera y usable en teléfonos Android y conexiones lentas.
+
+## Ajuste posterior solicitado — iconos vacíos y perfil
+
+- Causa de los cuadros vacíos: el CSS de `assets/storefront-polish.css` cargaba el emblema con rutas `./assets/el-castillo-icon.webp`. Al estar el CSS dentro de `assets/`, el navegador intentaba buscar `/assets/assets/el-castillo-icon.webp`.
+- Corregidas las 10 referencias para cargar `./el-castillo-icon.webp` desde la carpeta correcta. Esto cubre el emblema de las tarjetas de juegos, el encabezado del catálogo, el mensaje de bienvenida y los estados vacíos del Wallet.
+- Perfil reorganizado: bienvenida con nombre y correo, fecha de ingreso, resumen de actividad, accesos a Wallet/Pedidos/Avisos/Ayuda y seguridad/cierre de sesión.
+- Eliminadas las etiquetas visuales «Administrador/Cliente» y el campo «Tipo de cuenta» de la pestaña de perfil. Los permisos y la detección interna del rol administrador permanecen activos.
+- Versiones publicadas: `storefront-polish.css?v=14`; caché de Service Worker `shell-v159`.
+- Verificación de código: cero referencias antiguas a `./assets/el-castillo-icon.webp`; HTML y Service Worker usan la misma versión CSS; las referencias de actividad y accesos siguen presentes; autorización interna de administrador y métodos de pago permanecen intactos.
+- Pendiente de confirmación visual final: abrir la web desde el móvil después de que GitHub Pages publique los cambios y comprobar que el emblema ya aparece en todos los lugares señalados.
