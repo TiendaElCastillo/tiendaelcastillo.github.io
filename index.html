@@ -2208,10 +2208,10 @@ body{min-width:0}
    <p>Queremos ayudarte cuando exista una incidencia que necesite intervención. Antes de escribir, revisa el estado de tu pedido y los avisos de tu cuenta.</p>
   </div>
   <div class="panel support-gate-panel">
-   <div class="support-normal-status">
-    <strong>¿Tu pedido aparece pendiente, en revisión o en proceso?</strong>
-    <p>Esos estados forman parte del recorrido normal. Consulta «Órdenes» y «Mensajes y avisos» para ver el avance. No necesitas abrir un chat para pedir una actualización rutinaria.</p>
-    <button class="secondary-btn block-btn" type="button" onclick="showView('orders')">Consultar mis órdenes</button>
+   <div class="support-normal-status" id="supportNormalStatus">
+    <strong id="supportNormalTitle">Antes de contactar</strong>
+    <p id="supportNormalMessage">Revisa primero «Órdenes» y «Mensajes y avisos». Los estados normales se consultan desde tu cuenta; el soporte personal se reserva para incidencias concretas.</p>
+    <button id="supportNormalButton" class="secondary-btn block-btn" type="button" onclick="showView('orders')">Consultar mis órdenes</button>
    </div>
    <div class="field">
     <label for="supportIssue">¿Qué incidencia necesitas resolver?</label>
