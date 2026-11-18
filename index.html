@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=13">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=14">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -2008,29 +2008,23 @@ body{min-width:0}
  
 <section id="profileView" class="store-view hidden">
  <div class="profile-page-heading">
-  <div><span class="profile-eyebrow"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> TIENDA EL CASTILLO</span><h1>Mi perfil</h1><p>Tu cuenta, siempre contigo.</p></div>
+  <div><span class="profile-eyebrow"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> TU ESPACIO PERSONAL</span><h1>Mi perfil</h1><p>Tus compras, tu saldo y tus avisos en un solo lugar.</p></div>
   <div class="profile-page-emblem"><img src="./assets/el-castillo-icon.webp" alt="" width="82" height="82" loading="lazy" decoding="async"></div>
  </div>
  <div class="panel account-overview-panel">
   <div class="profile-card">
    <div class="profile-avatar" id="profileAvatar">EC</div>
-   <div class="profile-welcome-copy"><span class="profile-eyebrow">TU ESPACIO PERSONAL</span><h2 id="welcome">Hola</h2><p id="profileEmail" class="profile-email"></p><span class="profile-welcome-note">Qué bueno tenerte por aquí. Tu espacio está listo para ti.</span></div>
-   <span class="profile-account-type" id="profileAccountType">Cliente</span>
+   <div class="profile-welcome-copy"><span class="profile-eyebrow">BIENVENIDO/A</span><h2 id="welcome">Hola</h2><p id="profileEmail" class="profile-email"></p><span class="profile-member-since">Miembro desde <strong id="profileMemberSince">Cargando…</strong></span></div>
   </div>
-  <div class="profile-facts">
-   <div><span>Miembro desde</span><strong id="profileMemberSince">Cargando…</strong></div>
-   <div><span>Tipo de cuenta</span><strong id="profileRole">Cliente</strong></div>
-  </div>
-  <div class="profile-activity-heading"><strong>Mi actividad</strong><span>El estado de tus recargas, siempre a mano</span></div>
+  <div class="profile-activity-heading"><strong>Tu actividad</strong><span>Tus pedidos y recargas, siempre a mano</span></div>
   <div class="profile-stat-grid" aria-label="Resumen de actividad">
    <article class="profile-stat profile-stat-total"><span>Pedidos realizados</span><strong id="profileOrdersTotal">—</strong></article>
    <article class="profile-stat profile-stat-active"><span>En proceso</span><strong id="profileOrdersActive">—</strong></article>
    <article class="profile-stat profile-stat-complete"><span>Recargas entregadas</span><strong id="profileOrdersCompleted">—</strong></article>
   </div>
-  <div class="profile-care-note"><span><img src="./assets/el-castillo-icon.webp" alt="" width="31" height="31"></span><div><strong>Estamos pendientes de tus pedidos.</strong><p>Desde aquí puedes revisar tus compras, consultar tu saldo y enterarte de cualquier aviso importante.</p></div></div>
  </div>
  <div class="panel">
-  <div class="section-head"><div><h2>Accesos rápidos</h2><p>Las herramientas que más utilizas en tu cuenta.</p></div></div>
+  <div class="section-head"><div><h2>Accesos rápidos</h2><p>Entra directamente a lo que necesitas.</p></div></div>
   <div class="profile-action-grid">
    <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon">▣</span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Saldo: 0,00 USD</small></button>
    <button class="profile-action-card" type="button" onclick="showView('orders')"><span class="profile-action-icon">▤</span><strong>Mis pedidos</strong><small>Consulta entregas y estados</small></button>
@@ -2039,8 +2033,8 @@ body{min-width:0}
   </div>
  </div>
  <div class="panel profile-security-panel">
-  <h3>Información de tu cuenta</h3>
-  <p class="subtle">Utiliza siempre tu propio correo y no compartas tu contraseña, códigos de acceso ni datos privados del juego. La tienda nunca necesita la contraseña de tu cuenta de juego.</p>
+  <h3>Seguridad de tu cuenta</h3>
+  <p class="subtle">Protege el acceso a tu tienda. Nunca compartas tu contraseña, códigos de acceso ni la contraseña de tu cuenta de juego.</p>
   <button class="logout-btn block-btn" type="button" onclick="logout()"><span aria-hidden="true">↪</span> Cerrar sesión</button>
  </div>
 </section>
@@ -2551,9 +2545,6 @@ async function openStore(user){
  if($("profileAvatar"))$("profileAvatar").textContent=profileInitials||"EC";
  const memberSince=currentProfile.created_at||user.created_at||"";
  if($("profileMemberSince"))$("profileMemberSince").textContent=memberSince?new Date(memberSince).toLocaleDateString("es-CU",{day:"numeric",month:"long",year:"numeric"}):"No disponible";
- const profileRoleLabel=currentProfile.role==="admin"?"Administrador":"Cliente";
- if($("profileRole"))$("profileRole").textContent=profileRoleLabel;
- if($("profileAccountType"))$("profileAccountType").textContent=profileRoleLabel;
  if(currentProfile.role==="admin") $("adminNav").classList.remove("hidden");
  $("notificationsButton")?.classList.remove("hidden");
  try{await loadNotifications();}catch(notificationError){console.error("No se pudieron cargar los avisos:",notificationError);}
