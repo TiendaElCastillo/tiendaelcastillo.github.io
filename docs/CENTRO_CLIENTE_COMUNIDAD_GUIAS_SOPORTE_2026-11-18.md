@@ -60,3 +60,12 @@ Configurar el enlace oficial del canal cuando el propietario lo comparta; despu�
 - Enlace del canal comunitario facilitado por el propietario: https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X
 - El canal se distingue del soporte personal. Los anuncios se publican en el canal; las incidencias se filtran desde el Centro de soporte.
 - HTML carga `customer-center.js?v=2`; el Service Worker precarga la misma versión y utiliza `shell-v161` para forzar la actualización en móviles.
+
+## Corrección posterior del Centro de soporte
+
+- La selección de un pedido pendiente o depósito de Wallet pendiente ya no muestra campos de folio ni detalles que no hacen falta.
+- Esos casos muestran un único acceso contextual al seguimiento de Órdenes o al historial de depósitos; no abren WhatsApp.
+- El aviso superior genérico se oculta cuando el cliente selecciona una incidencia real o uno de esos estados, evitando mensajes que no corresponden al caso.
+- Para incidencias que sí requieren intervención, el folio/referencia se muestra y se exige antes de habilitar el enlace de WhatsApp prellenado.
+- El canal comunitario usa el símbolo reconocible de WhatsApp en verde, acompañado del nombre de Tienda El Castillo; la marca general permanece azul y blanca.
+- Versiones posteriores: CSS v16, customer-center.js v3 y caché shell-v162.
