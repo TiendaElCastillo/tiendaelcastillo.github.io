@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=16">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=17">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -2039,7 +2039,7 @@ body{min-width:0}
    <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon">▣</span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Saldo: 0,00 USD</small></button>
    <button class="profile-action-card" type="button" onclick="showView('orders')"><span class="profile-action-icon">▤</span><strong>Mis pedidos</strong><small>Consulta entregas y estados</small></button>
    <button class="profile-action-card" type="button" onclick="showView('notifications')"><span class="profile-action-icon">✉</span><strong>Mensajes y avisos</strong><small id="profileUnreadNotifications">Revisa las novedades de tu cuenta</small></button>
-   <button class="profile-action-card" type="button" onclick="showView('faq')"><span class="profile-action-icon">?</span><strong>Ayuda y preguntas</strong><small>Cómo comprar y resolver dudas</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('help')"><span class="profile-action-icon">?</span><strong>Centro de ayuda</strong><small>Guías, pagos, pedidos y soporte</small></button>
   </div>
  </div>
   <div class="panel customer-hub-section">
@@ -2182,6 +2182,47 @@ body{min-width:0}
 <div class="panel"><div class="order-toolbar"><h2>Pedidos de clientes</h2><div class="field-row"><button class="secondary-btn" type="button" onclick="loadAllOrders()">Actualizar</button><button class="secondary-btn" type="button" onclick="enablePaymentNotifications()">Activar avisos</button></div></div><p id="paymentNotifyStatus" class="track-note">Activa los avisos de este teléfono y mantén la tienda abierta para recibir alertas automáticas.</p><p class="track-note">Flujo de recarga: primero revisa y confirma el pago del cliente. Después aparecerá el botón <strong>«Autorizar recarga y reservar saldo»</strong>; ese segundo botón envía el pedido a Central One y es el único que usa saldo del proveedor. La solicitud queda protegida contra duplicados y podrás consultar aquí el estado real de la entrega. No marques la recarga como completada hasta que Central One informe «completed».</p><p id="orderadminmsg" class="msg" role="status"></p><div id="allorders">Cargando...</div></div>
 </section>
  
+ <section id="helpView" class="store-view hidden">
+  <div class="panel customer-info-hero help-center-hero">
+   <span class="profile-eyebrow">AYUDA AL CLIENTE · TIENDA EL CASTILLO</span>
+   <h1>Centro de ayuda</h1>
+   <p>Encuentra cómo comprar, dónde localizar tu ID, qué significa cada estado y cuándo hace falta contactar con nosotros.</p>
+   <div class="help-center-highlight"><strong>¿Tu pedido está pendiente o en revisión?</strong><p>Consulta «Órdenes» y «Mensajes y avisos». Esos estados forman parte del proceso normal y no requieren abrir un chat para pedir una actualización.</p><button class="secondary-btn" type="button" onclick="showView('orders')">Ver mis órdenes</button></div>
+  </div>
+  <div class="panel help-center-shortcuts">
+   <div class="section-head"><div><h2>¿Qué necesitas?</h2><p>Ve directamente a la información que buscas.</p></div></div>
+   <div class="help-shortcut-grid">
+    <button type="button" onclick="showView('guides')"><span aria-hidden="true">▤</span><strong>Guías de los juegos</strong><small>Cómo encontrar tu ID y recargar.</small></button>
+    <button type="button" onclick="showView('faq')"><span aria-hidden="true">?</span><strong>Preguntas frecuentes</strong><small>Pagos, comprobantes y Wallet.</small></button>
+    <button type="button" onclick="showView('support')"><span aria-hidden="true">◌</span><strong>Soporte personal</strong><small>Solo para incidencias que requieren revisión.</small></button>
+    <button type="button" onclick="showView('legal')"><span aria-hidden="true">⚖</span><strong>Información legal</strong><small>Condiciones, privacidad y reembolsos.</small></button>
+   </div>
+  </div>
+  <div class="panel help-status-panel">
+   <div class="section-head"><div><h2>Entiende el estado de tu pedido</h2><p>Así sabes qué está ocurriendo y qué debes hacer.</p></div></div>
+   <article class="help-status-item"><span class="help-status-dot is-pending">1</span><div><strong>Pendiente</strong><p>El pedido está creado, pero el pago aún no aparece confirmado. Comprueba si completaste los datos y enviaste el comprobante. Si todavía no pagaste, sigue las instrucciones del mismo pedido. No crees otro para la misma compra.</p></div></article>
+   <article class="help-status-item"><span class="help-status-dot is-review">2</span><div><strong>Verificando pago</strong><p>Recibimos el comprobante y estamos comprobando que el dinero o saldo haya llegado. La captura por sí sola no confirma el pago. Revisa los avisos de tu cuenta; no hace falta escribir solo para preguntar si ya lo vimos.</p></div></article>
+   <article class="help-status-item"><span class="help-status-dot is-processing">3</span><div><strong>Pago confirmado · pendiente de recarga</strong><p>El pago ya fue comprobado. La tienda todavía debe preparar o autorizar la entrega. No vuelvas a pagar ni crees otro pedido.</p></div></article>
+   <article class="help-status-item"><span class="help-status-dot is-processing">4</span><div><strong>Recarga en curso</strong><p>La solicitud de recarga ya está siendo procesada. Espera la actualización del pedido. «En proceso» no significa todavía que el contenido haya llegado.</p></div></article>
+   <article class="help-status-item"><span class="help-status-dot is-complete">5</span><div><strong>Entregado</strong><p>El proveedor confirmó la entrega. Comprueba que estás en la cuenta correcta del juego. Si el pedido figura entregado pero el contenido no aparece, reúne el folio y una captura para soporte.</p></div></article>
+   <article class="help-status-item"><span class="help-status-dot is-problem">6</span><div><strong>Rechazado, fallido o cancelado</strong><p>Abre el pedido para consultar el motivo y los avisos. Si ya realizaste el pago y no entiendes qué ocurrió, contacta con soporte con el folio y el comprobante. No vuelvas a transferir para resolver la misma operación.</p></div></article>
+  </div>
+  <div class="panel help-payment-panel">
+   <div class="section-head"><div><h2>Antes de enviar un pago</h2><p>Prepara solo los datos que corresponden al método elegido.</p></div></div>
+   <article><strong>Transferencia CUP</strong><p>Envía exactamente el importe del resumen. Ten a mano el número de transacción, el teléfono desde el que pagaste y la captura solicitada.</p></article>
+   <article><strong>Saldo móvil</strong><p>Envía exactamente el saldo indicado. Se solicita el teléfono de origen y la captura del SMS; este método no utiliza número de transacción bancaria.</p></article>
+   <article><strong>USDT</strong><p>Comprueba la red y la dirección que muestra el checkout. El importe debe coincidir; tendrás que indicar el TxID de la operación y adjuntar el comprobante.</p></article>
+   <article><strong>Saldo de Tienda El Castillo</strong><p>Solo puedes comprar con saldo que ya esté disponible en tu Wallet. Un depósito pendiente de revisión todavía no se puede gastar.</p></article>
+   <p class="help-warning"><strong>Importante:</strong> nunca compartas contraseñas, códigos SMS, PIN bancarios, frases de recuperación ni acceso remoto a tu teléfono.</p>
+  </div>
+  <div class="panel help-community-panel">
+   <div class="customer-hub-row">
+    <span class="customer-hub-icon customer-whatsapp-icon" aria-hidden="true"><svg class="whatsapp-brand-glyph" viewBox="0 0 24 24"><path d="M12.03 2C6.52 2 2.04 6.48 2.04 11.99c0 1.76.46 3.48 1.33 4.99L2 22l5.16-1.35c1.49.81 3.16 1.24 4.87 1.24h.01c5.51 0 9.99-4.48 9.99-9.99 0-2.67-1.04-5.18-2.93-7.06A9.93 9.93 0 0012.03 2zm0 18.2h-.01a8.2 8.2 0 01-4.18-1.14l-.3-.18-3.06.8.82-2.99-.2-.31a8.18 8.18 0 01-1.26-4.39c0-4.52 3.68-8.2 8.2-8.2 2.19 0 4.25.85 5.8 2.4a8.15 8.15 0 012.4 5.8c0 4.52-3.68 8.2-8.21 8.2zm4.5-6.14c-.25-.13-1.47-.72-1.7-.8-.23-.08-.4-.13-.57.13-.17.25-.65.8-.8.96-.15.17-.3.19-.55.06-.25-.13-1.06-.39-2.02-1.23-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.52.12-.12.25-.3.38-.44.12-.15.16-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.2-.49-.41-.42-.57-.43-.15-.01-.32-.01-.49-.01-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.7 4.29 3.79.6.26 1.07.42 1.44.54.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.29z"/></svg></span>
+    <span class="customer-hub-copy"><strong>Canal comunitario de WhatsApp</strong><small>Novedades y anuncios de Tienda El Castillo. Es informativo y no sustituye el seguimiento de pedidos ni el soporte.</small></span>
+    <a class="help-community-link" data-castle-channel aria-disabled="true">Unirme</a>
+   </div>
+  </div>
+ </section>
  <section id="guidesView" class="store-view hidden">
   <div class="panel customer-info-hero">
    <span class="profile-eyebrow">CENTRO DE AYUDA · TIENDA EL CASTILLO</span>
@@ -3563,7 +3604,7 @@ function showView(name){
   return;
  }
  if(name==="admin"&&currentProfile?.role!=="admin"){$("adminNav")?.classList.add("hidden");$("admin")?.classList.add("hidden");showView("profile");return}
- const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",wallet:"walletView",profile:"profileView",admin:"admin",guides:"guidesView",support:"supportView",legal:"legalView",faq:"faqView",privacy:"privacyView",terms:"termsView"};
+ const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",wallet:"walletView",profile:"profileView",admin:"admin",help:"helpView",guides:"guidesView",support:"supportView",legal:"legalView",faq:"faqView",privacy:"privacyView",terms:"termsView"};
  Object.values(views).forEach(id=>$(id)?.classList.add("hidden"));
  $(views[name]||views.home)?.classList.remove("hidden");
  document.querySelectorAll("#bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
@@ -6028,6 +6069,6 @@ if(document.readyState==="loading"){
 
 <script src="./assets/offline-guard.js?v=2"></script>
 <script src="./assets/admin-panel.js?v=18" async></script>
-<script src="./assets/customer-center.js?v=4" defer></script>
+<script src="./assets/customer-center.js?v=5" defer></script>
 </body>
 </html>
