@@ -190,6 +190,10 @@
     var evidenceNote = document.getElementById("supportEvidenceNote");
     var statusAction = document.getElementById("supportStatusAction");
     var statusButton = document.getElementById("supportStatusActionButton");
+    var normalStatus = document.getElementById("supportNormalStatus");
+    var normalTitle = document.getElementById("supportNormalTitle");
+    var normalMessage = document.getElementById("supportNormalMessage");
+    var normalButton = document.getElementById("supportNormalButton");
     if (!issueSelect || !referenceInput || !guidance || !contact) return;
 
     var issueKey = issueSelect.value;
@@ -208,6 +212,10 @@
     contact.removeAttribute("href");
 
     if (!issue) {
+      if (normalStatus) normalStatus.hidden = false;
+      if (normalTitle) normalTitle.textContent = "Antes de contactar";
+      if (normalMessage) normalMessage.textContent = "Revisa primero «Órdenes» y «Mensajes y avisos». Los estados normales se consultan desde tu cuenta; el soporte personal se reserva para incidencias concretas.";
+      if (normalButton) { normalButton.textContent = "Consultar mis órdenes"; normalButton.onclick = function () { if (typeof window.showView === "function") window.showView("orders"); }; }
       guidance.innerHTML = '<strong>Selecciona el motivo de tu consulta.</strong><p>Te indicaremos qué revisar y si realmente hace falta contactar con soporte.</p>';
       if (statusButton) statusButton.onclick = null;
       return;
@@ -216,6 +224,10 @@
     guidance.innerHTML = '<strong>' + escapeHtml(issue.title) + '</strong><p>' + escapeHtml(issue.message) + '</p>';
 
     if (isRoutineStatus) {
+      // These are normal waiting states: show one contextual status path, not a contact form.
+      if (referenceInput) referenceInput.value = "";
+      if (detailsInput) detailsInput.value = "";
+      if (normalStatus) normalStatus.hidden = true;
       if (statusButton) {
         if (issueKey === "wallet_pending") {
           statusButton.textContent = "Ver historial de depósitos";
@@ -227,6 +239,8 @@
       }
       return;
     }
+
+    if (normalStatus) normalStatus.hidden = true;
 
     if (reference.length < 3) {
       guidance.innerHTML += '<p class="support-reference-reminder">Escribe el folio del pedido o la referencia del pago para preparar el contacto.</p>';
