@@ -607,3 +607,55 @@ select:focus-visible,textarea:focus-visible{
 @media(prefers-reduced-motion:reduce){
  .store-delivery-card,.notification-item,.profile-page-emblem{transition:none!important}
 }
+
+
+/* Contador principal: identidad del Castillo, energía y cifras protagonistas. */
+.store-delivery-card{
+ display:block;isolation:isolate;min-height:0;margin:22px 0 28px;padding:17px 19px 15px;
+ border:1px solid rgba(118,163,238,.46);border-radius:25px;overflow:hidden;
+ background:
+  radial-gradient(ellipse at 92% 8%,rgba(194,164,255,.30),transparent 36%),
+  radial-gradient(ellipse at 4% 100%,rgba(67,221,194,.20),transparent 40%),
+  linear-gradient(125deg,#f8fffe 0%,#f5f8ff 48%,#f3f0ff 100%);
+ box-shadow:0 13px 30px rgba(48,88,157,.12),inset 0 1px 0 rgba(255,255,255,.95);
+}
+.store-delivery-card:before{
+ content:"";position:absolute;z-index:-1;right:-60px;top:32px;width:220px;height:220px;
+ border:1px solid rgba(93,129,218,.15);border-radius:50%;
+ box-shadow:0 0 0 17px rgba(109,142,222,.045),0 0 0 38px rgba(109,142,222,.035),0 0 0 61px rgba(109,142,222,.025);
+}
+.store-delivery-card:after{right:-24px;bottom:-100px;width:170px;height:170px;border-color:rgba(68,190,176,.20);box-shadow:0 0 0 15px rgba(68,190,176,.045),0 0 0 34px rgba(68,190,176,.025)}
+.store-delivery-topline{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:1}
+.store-delivery-live{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid rgba(61,174,139,.22);border-radius:99px;background:rgba(226,250,240,.88);color:#218b6c;font-size:8px;font-weight:950;letter-spacing:.11em}
+.store-delivery-live i{width:7px;height:7px;border-radius:50%;background:#35c88c;box-shadow:0 0 0 4px rgba(53,200,140,.14);animation:castleLivePulse 1.9s ease-out infinite}
+.store-delivery-crown{display:grid;place-items:center;width:32px;height:32px;border:1px solid rgba(134,114,213,.18);border-radius:11px;background:rgba(255,255,255,.7);color:#7761c7;font-size:20px}
+.store-delivery-main{display:flex;align-items:center;gap:16px;margin:14px 0 13px;position:relative;z-index:1}
+.store-delivery-emblem{flex:0 0 68px;width:68px;height:68px;border:1px solid rgba(255,255,255,.6);border-radius:21px;background:linear-gradient(145deg,#397df0 0%,#6259d8 58%,#8c64dc 100%);color:#fff;box-shadow:0 9px 19px rgba(76,94,202,.25),inset 0 1px 1px rgba(255,255,255,.42);font-size:0}
+.store-delivery-emblem span{font-size:32px;filter:drop-shadow(0 2px 3px rgba(19,39,90,.25))}
+.store-delivery-copy{min-width:0;position:relative;z-index:1}
+.store-delivery-kicker{display:block;color:#4d8290;font-size:9px;font-weight:950;letter-spacing:.15em;line-height:1.5}
+.store-delivery-copy>strong{display:block;margin-top:1px;color:#17345f;font-size:clamp(39px,9vw,54px);font-weight:1000;line-height:1.02;letter-spacing:-.055em;font-variant-numeric:tabular-nums;text-shadow:0 2px 0 rgba(255,255,255,.75)}
+.store-delivery-copy>strong span{display:inline-block;background:linear-gradient(100deg,#183a73 0%,#286bd4 56%,#735bd2 100%);background-clip:text;-webkit-background-clip:text;color:transparent}
+.store-delivery-label{display:block;margin-top:4px;color:#2b4c75;font-size:14px;font-weight:900;letter-spacing:-.02em}
+.store-delivery-bottom{display:flex;align-items:center;gap:9px;position:relative;z-index:1;padding:10px 11px;border:1px solid rgba(206,221,240,.8);border-radius:14px;background:rgba(255,255,255,.68)}
+.store-delivery-check{display:grid;place-items:center;flex:0 0 23px;width:23px;height:23px;border-radius:50%;background:linear-gradient(145deg,#43c99a,#1a9c85);color:#fff;font-size:13px;font-weight:950;box-shadow:0 3px 8px rgba(29,163,129,.2)}
+.store-delivery-bottom p{margin:0;color:#63758f;font-size:10px;line-height:1.5;font-weight:650}
+@keyframes castleLivePulse{0%{box-shadow:0 0 0 0 rgba(53,200,140,.35)}75%,100%{box-shadow:0 0 0 6px rgba(53,200,140,0)}}
+@media(max-width:600px){
+ .store-delivery-card{margin:19px 0 24px;padding:15px 15px 13px;border-radius:22px}
+ .store-delivery-main{gap:13px;margin:13px 0 12px}
+ .store-delivery-emblem{flex-basis:60px;width:60px;height:60px;border-radius:18px}
+ .store-delivery-emblem span{font-size:29px}
+ .store-delivery-copy>strong{font-size:clamp(39px,10vw,49px)}
+ .store-delivery-label{font-size:13px}
+ .store-delivery-live{font-size:7px;letter-spacing:.09em}
+}
+@media(max-width:360px){
+ .store-delivery-main{gap:10px}
+ .store-delivery-emblem{flex-basis:53px;width:53px;height:53px;border-radius:16px}
+ .store-delivery-emblem span{font-size:25px}
+ .store-delivery-copy>strong{font-size:37px}
+ .store-delivery-label{font-size:12px}
+ .store-delivery-bottom p{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.store-delivery-live i{animation:none}}
