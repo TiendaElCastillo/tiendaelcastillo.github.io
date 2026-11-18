@@ -894,3 +894,40 @@ select:focus-visible,textarea:focus-visible{
  #homeView .home-access-note::before{width:29px;height:29px;font-size:15px}
  .customer-empty-state{padding:20px 13px}
 }
+
+
+/* Firma final y una respuesta sutil en los controles de la tienda. */
+.footer-warm-signature{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ margin:13px 0 15px;
+ padding:10px 12px;
+ border:1px solid #e0e9f5;
+ border-radius:13px;
+ background:linear-gradient(110deg,#f5f8ff,#fff);
+ color:#637b9b;
+ font-size:10px;
+ line-height:1.45;
+}
+.footer-warm-signature>span{
+ display:grid;
+ place-items:center;
+ flex:0 0 25px;
+ width:25px;
+ height:25px;
+ border-radius:8px;
+ background:#eaf1ff;
+ color:#3972cb;
+ font-size:15px;
+}
+button:not(:disabled){
+ transition:transform .14s ease,box-shadow .18s ease,filter .18s ease,border-color .18s ease;
+}
+button:active:not(:disabled){
+ transform:translateY(1px) scale(.985);
+}
+@media(prefers-reduced-motion:reduce){
+ button:not(:disabled){transition:none!important}
+ button:active:not(:disabled){transform:none!important}
+}
