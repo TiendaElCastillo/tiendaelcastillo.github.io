@@ -4193,10 +4193,10 @@ function notificationTimeLabel(value){
 function renderNotificationFeed(){
  const list=$("notificationList");if(!list)return;
  const all=[
-  ...notificationOrderRows.map(item=>({...item,source:"order",isRead:Boolean(item.read_at)})),
+  ...notificationOrderRows.map(item=>({...item,source:item.kind==="order_status"?"order":"store_message",isRead:Boolean(item.read_at)})),
   ...notificationStoreRows.map(item=>({...item,source:"store",isRead:notificationStoreReadIds.has(String(item.id))}))
  ].sort((a,b)=>new Date(b.created_at).getTime()-new Date(a.created_at).getTime());
- const orders=all.filter(item=>item.source==="order"),store=all.filter(item=>item.source==="store");
+ const orders=all.filter(item=>item.source==="order"),store=all.filter(item=>item.source!=="order");
  const countAll=$("notificationCountAll"),countOrders=$("notificationCountOrders"),countStore=$("notificationCountStore");
  if(countAll)countAll.textContent=String(all.length);if(countOrders)countOrders.textContent=String(orders.length);if(countStore)countStore.textContent=String(store.length);
  const filtered=notificationFeedFilter==="orders"?orders:notificationFeedFilter==="store"?store:all;
@@ -4210,11 +4210,11 @@ function renderNotificationFeed(){
  filtered.forEach(item=>{const label=notificationGroupLabel(item.created_at);if(!groups.has(label))groups.set(label,[]);groups.get(label).push(item);});
  list.innerHTML=Array.from(groups.entries()).map(([label,items])=>{
   const cards=items.map(item=>{
-   const isStore=item.source==="store",maintenance=isStore&&item.category==="maintenance";
+   const isStore=item.source!=="order",isAnnouncement=item.source==="store",maintenance=isAnnouncement&&item.category==="maintenance";
    const kind=maintenance?"Mantenimiento":isStore?"Tienda":"Pedido",icon=maintenance?"⚒":isStore?"♛":"✓";
    const sourceClass=maintenance?"maintenance":isStore?"store":"order";
    const readAction=item.isRead?'<span class="notification-read-label">Leído</span>':
-    isStore?'<button class="notification-read-btn" type="button" data-store-announcement-read="'+clean(item.id)+'">Marcar como leído</button>':
+    isAnnouncement?'<button class="notification-read-btn" type="button" data-store-announcement-read="'+clean(item.id)+'">Marcar como leído</button>':
     '<button class="notification-read-btn" type="button" data-notification-read="'+clean(item.id)+'">Marcar como leído</button>';
    return '<article class="notification-item '+(item.isRead?"read":"unread")+' notification-kind-'+sourceClass+'"><span class="notification-item-icon" aria-hidden="true">'+icon+'</span><div class="notification-item-body"><div class="notification-item-head"><strong>'+clean(item.title||"Aviso de la tienda")+'</strong><span class="notification-item-time">'+clean(notificationTimeLabel(item.created_at))+'</span></div><p>'+clean(item.message||"")+'</p><div class="notification-item-footer"><span class="notification-type">'+kind+'</span>'+readAction+'</div></div></article>';
   }).join("");
@@ -4352,7 +4352,7 @@ async function deleteStoreAnnouncement(announcementId){
 function stopNotificationPolling(){if(notificationPoll){clearInterval(notificationPoll);notificationPoll=null;}}
 function startNotificationPolling(){
  stopNotificationPolling();if(!currentUser)return;const userId=currentUser.id;
- notificationPoll=setInterval(()=>{if(currentUser?.id===userId&&document.visibilityState!=="hidden")loadNotifications();},60000);
+ notificationPoll=setInterval(()=>{if(currentUser?.id===userId&&document.visibilityState!=="hidden"){loadNotifications();loadStoreDeliveryStats();}},60000);
 }
 
 function renderOrderProofRetryForm(order){
