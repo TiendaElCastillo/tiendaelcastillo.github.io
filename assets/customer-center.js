@@ -10,40 +10,48 @@
       image: "./assets/games/free-fire-tienda.webp?v=2",
       region: "LATAM",
       account: "Introduce el ID de tu jugador. La tienda comprueba la cuenta y muestra el nombre detectado.",
-      category: "Empieza por Diamantes, la moneda principal. Después encontrarás membresías, pases y ofertas especiales disponibles.",
+      category: "Empieza por Diamantes. Después encontrarás fragmentos y cajas Evo, fragmentos de armas Evo, pases Booyah y tarjetas semanales o mensuales.",
       notes: "Free Fire se ofrece en región LATAM. Comprueba que la cuenta y la región correspondan antes de pagar.",
+      findId: "Entra al juego, toca tu nombre o perfil en la pantalla principal y abre la pestaña Galería. El ID aparece debajo de tu nombre. Copia el número; no uses tu apodo.",
+      source: '<a href="https://ffsoporte.garena.com/hc/es-419/articles/360031572451--C%C3%B3mo-encuentro-mi-n%C3%BAmero-de-ID" target="_blank" rel="noopener noreferrer">Ayuda oficial de Garena: dónde encontrar el ID</a>',
       id: "Un campo: ID del jugador."
     },
     "Blood Strike": {
       image: "./assets/games/blood-strike-cover.webp?v=1",
       region: "GLOBAL",
       account: "Escribe el identificador que solicita el formulario. Los paquetes publicados admiten validación por ID.",
-      category: "Empieza por BC, la moneda principal. Después revisa las ofertas, pases y paquetes especiales.",
+      category: "Empieza por BC. Después revisa los Deals, Strike Pass, Level Up Pass y las ofertas de vouchers, cofres y colaboraciones disponibles.",
       notes: "Los paquetes publicados de Blood Strike son GLOBAL. Comprueba el nombre de la cuenta que aparece tras validar.",
+      findId: "Entra al juego, toca tu avatar para abrir el perfil y busca el ID de jugador (UID) en la información de tu cuenta. Copia el identificador, no el apodo. La posición puede variar con las actualizaciones.",
       id: "Un campo de ID del jugador."
     },
     "Mobile Legends: Bang Bang": {
       image: "./assets/games/mobile-legends-bang-bang.webp?v=2",
       region: "GLOBAL",
       account: "Necesitas introducir el ID del jugador y el Zone ID del servidor. Ambos datos deben corresponder a la misma cuenta.",
-      category: "Empieza por Diamantes. Después revisa las tarjetas semanales, mensuales, Twilight y demás ofertas disponibles.",
+      category: "Empieza por Diamantes. Después encontrarás el Paquete Élite Semanal y Mensual, el Pase Semanal y el Twilight Pass.",
       notes: "La tienda solo publica Mobile Legends GLOBAL. No omitas el Zone ID: es necesario para identificar correctamente el servidor.",
+      findId: "Toca tu avatar en la esquina superior izquierda y abre tu perfil. Verás un número con este formato de ejemplo: 12345678 (1234). El número antes de los paréntesis es el ID del jugador; el número dentro de los paréntesis es el Zone ID. Nuestra compra pide ambos por separado.",
+      source: '<a href="https://us.support.codashop.com/hc/en-us/articles/4405767170575-Where-Can-I-find-My-Mobile-Legends-User-ID" target="_blank" rel="noopener noreferrer">Guía de Codashop: localizar User ID y Zone ID</a>',
       id: "Dos campos: ID del jugador y Zone ID."
     },
     "Arena Breakout": {
       image: "./assets/games/arena-breakout.webp?v=1",
       region: "GLOBAL",
       account: "Introduce el ID de jugador que solicita el formulario y espera a que se compruebe la cuenta.",
-      category: "Empieza por Bonds, la moneda principal. Después consulta los pases, cases y paquetes especiales disponibles.",
+      category: "Empieza por Bonds. Después encontrarás Beginner Select, Cases, pases de batalla y paquetes especiales como MAXACE y TAGTICAL.",
       notes: "Los paquetes publicados de Arena Breakout son GLOBAL. No compartas credenciales ni acceso a tu cuenta.",
+      findId: "Abre tu perfil de jugador desde la pantalla principal y busca el ID de tu operador junto a la información de la cuenta. Copia el ID completo. No uses el nombre de operador como sustituto.",
       id: "Un campo: ID del jugador."
     },
     "PUBG Mobile": {
       image: "./assets/games/pubg-mobile.webp?v=1",
       region: "GLOBAL",
       account: "Introduce el ID de jugador que solicita el formulario y verifica el nombre que devuelve la comprobación.",
-      category: "Empieza por UC, la moneda principal. Después revisa Prime, Elite Pass, WOW Coins y las demás ofertas publicadas.",
+      category: "Empieza por UC. Después encontrarás WOW Coins, Elite Pass y Elite Pass Plus, Prime y Prime Plus, packs y ofertas semanales.",
       notes: "Los paquetes publicados de PUBG Mobile son GLOBAL. Confirma el ID antes de realizar el pago.",
+      findId: "Abre tu perfil tocando el avatar de la esquina superior izquierda. Entra en Info → Basic Info y localiza tu Character ID (UID). Usa el botón de copiar si aparece; no confundas el ID con tu apodo.",
+      source: '<a href="https://pubgmobile.helpshift.com/hc/en/3-pubg-mobile/faq/614-where-can-i-find-my-character-id-uid/?p=all" target="_blank" rel="noopener noreferrer">Ayuda oficial de PUBG Mobile: localizar Character ID</a>',
       id: "Un campo: ID del jugador."
     }
   };
@@ -51,11 +59,12 @@
   var COMMON_STEPS = [
     "Inicia sesión o crea tu cuenta en Tienda El Castillo. Así podrás consultar tus pedidos y recibir avisos.",
     "Abre «Juegos» y selecciona el juego que quieres recargar.",
-    "Empieza por la moneda principal del juego. Los pases, membresías y ofertas especiales aparecen después.",
-    "Selecciona el método de pago para consultar los precios correspondientes y elige el paquete que necesitas.",
-    "Escribe los datos de la cuenta que solicita el formulario y pulsa para comprobarlos. Revisa que el nombre mostrado coincida con tu jugador.",
-    "Continúa al pago. Sigue las instrucciones del método elegido y envía exactamente el importe que aparece en el resumen.",
-    "Envía la solicitud y consulta su avance en «Órdenes» y en «Mensajes y avisos». No envíes un segundo pago para el mismo pedido."
+    "Empieza por la moneda principal. Después encontrarás pases, membresías y ofertas especiales.",
+    "Selecciona el método de pago para consultar sus precios y elige el paquete.",
+    "Abre el perfil del juego y copia el ID exacto. En Mobile Legends copia también el Zone ID.",
+    "En el checkout introduce los datos de la cuenta. Espera la validación y comprueba que el nombre mostrado corresponda a tu jugador.",
+    "Sigue las instrucciones del método elegido y envía exactamente el importe que aparece en el resumen.",
+    "Envía la solicitud y consulta su avance en «Órdenes» y «Mensajes y avisos». No envíes un segundo pago para el mismo pedido."
   ];
 
   var SUPPORT_CASES = {
@@ -165,8 +174,8 @@
         '<img src="' + escapeHtml(guide.image) + '" alt="' + escapeHtml(gameName) + '" loading="lazy" decoding="async">' +
         '<div><span class="guide-region-tag">REGIÓN ' + escapeHtml(guide.region) + '</span><h2>' + escapeHtml(gameName) + '</h2><p>' + escapeHtml(guide.id) + '</p></div>' +
       '</div>' +
-      '<div class="guide-game-notice"><strong>Datos de la cuenta</strong><p>' + escapeHtml(guide.account) + '</p><p>' + escapeHtml(guide.notes) + '</p></div>' +
-      '<div class="guide-category-note"><strong>Orden del catálogo</strong><p>' + escapeHtml(guide.category) + '</p></div>' +
+      '<div class="guide-game-notice"><strong>Datos de la cuenta que necesitas</strong><p>' + escapeHtml(guide.account) + '</p><p>' + escapeHtml(guide.notes) + '</p><strong>¿Dónde encuentro mi ID?</strong><p>' + escapeHtml(guide.findId) + '</p>' + (guide.source ? '<p class="guide-source-link">' + guide.source + '</p>' : '') + '</div>' +
+      '<div class="guide-category-note"><strong>Qué encontrarás en el catálogo</strong><p>' + escapeHtml(guide.category) + '</p></div>' +
       '<h3 class="guide-section-title">Cómo hacer tu recarga</h3>' +
       '<ol class="guide-step-list">' + steps + '</ol>' +
       '<h3 class="guide-section-title">Qué debes enviar según el método de pago</h3>' +
