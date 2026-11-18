@@ -68,4 +68,4 @@ Configurar el enlace oficial del canal cuando el propietario lo comparta; despu�
 - El aviso superior genérico se oculta cuando el cliente selecciona una incidencia real o uno de esos estados, evitando mensajes que no corresponden al caso.
 - Para incidencias que sí requieren intervención, el folio/referencia se muestra y se exige antes de habilitar el enlace de WhatsApp prellenado.
 - El canal comunitario usa el símbolo reconocible de WhatsApp en verde, acompañado del nombre de Tienda El Castillo; la marca general permanece azul y blanca.
-- Versiones posteriores: CSS v16, customer-center.js v3 y caché shell-v162.
+- Versiones finales de esta corrección: CSS v16, customer-center.js v4 y caché shell-v163.
