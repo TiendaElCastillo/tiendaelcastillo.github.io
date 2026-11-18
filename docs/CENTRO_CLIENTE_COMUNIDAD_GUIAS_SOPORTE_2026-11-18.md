@@ -69,3 +69,15 @@ Configurar el enlace oficial del canal cuando el propietario lo comparta; despu�
 - Para incidencias que sí requieren intervención, el folio/referencia se muestra y se exige antes de habilitar el enlace de WhatsApp prellenado.
 - El canal comunitario usa el símbolo reconocible de WhatsApp en verde, acompañado del nombre de Tienda El Castillo; la marca general permanece azul y blanca.
 - Versiones finales de esta corrección: CSS v16, customer-center.js v4 y caché shell-v163.
+
+## Ampliación útil del Centro de ayuda
+
+- Se añadió una vista central «Centro de ayuda» accesible desde el acceso rápido del perfil.
+- Reúne guías, FAQ, soporte e información legal; incluye un glosario de estados de pedido (Pendiente, Verificando pago, Pago confirmado, Recarga en curso, Entregado, Rechazado/Fallido/Cancelado) y explica el siguiente paso sin pedir que el cliente escriba por una espera normal.
+- Añade una guía de los datos que requiere cada método: Transferencia CUP, Saldo móvil, USDT y Wallet, con recordatorios de seguridad.
+- Las cinco guías ahora explican dónde localizar el ID en cada juego y describen las categorías que aparecen actualmente en el catálogo publicado.
+- Mobile Legends explica por separado el User ID y el Zone ID.
+- Se añaden enlaces de referencia a la ayuda de Garena para Free Fire, Codashop para Mobile Legends y la ayuda oficial de PUBG Mobile.
+- La vista de ayuda enlaza al canal comunitario ya configurado.
+- Versiones publicadas: estilos v17, script customer-center v5 y caché del Service Worker shell-v164.
+- No se modificaron los paquetes ni precios del catálogo, pagos, pedidos, ni lógica de autorización.
