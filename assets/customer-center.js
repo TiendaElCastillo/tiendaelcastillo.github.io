@@ -82,6 +82,10 @@
     wallet: {
       title: "Hay una diferencia en un depósito o movimiento de la Wallet.",
       message: "Los depósitos pendientes no forman parte del saldo disponible hasta que se aprueban. Contacta solo si el depósito aparece aprobado y el saldo no se refleja, o si hay un movimiento ya registrado con un importe incorrecto. Adjunta la referencia o el folio correspondiente."
+    },
+    wallet_pending: {
+      title: "El depósito de Wallet todavía está pendiente de revisión.",
+      message: "Un depósito pendiente no forma parte del saldo disponible y no puede utilizarse para comprar. Consulta el estado en el historial de depósitos. No hace falta contactar por una solicitud que todavía no aparece aprobada."
     }
   };
 
@@ -197,7 +201,7 @@
 
     guidance.innerHTML = '<strong>' + escapeHtml(issue.title) + '</strong><p>' + escapeHtml(issue.message) + '</p>';
 
-    if (issueKey === "pending") {
+    if (issueKey === "pending" || issueKey === "wallet_pending") {
       contact.hidden = true;
       contact.removeAttribute("href");
       return;
