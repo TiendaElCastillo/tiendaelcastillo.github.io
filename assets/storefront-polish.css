@@ -676,7 +676,7 @@ select:focus-visible,textarea:focus-visible{
  bottom:-55px;
  width:clamp(125px,28vw,190px);
  aspect-ratio:1;
- background:url("./assets/el-castillo-icon.webp") center/contain no-repeat;
+ background:url("./el-castillo-icon.webp") center/contain no-repeat;
  opacity:.075;
  line-height:1;
  pointer-events:none;
@@ -715,7 +715,7 @@ select:focus-visible,textarea:focus-visible{
  flex:0 0 25px;
  border:1px solid #dce8fa;
  border-radius:9px;
- background:#edf4ff url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+ background:#edf4ff url("./el-castillo-icon.webp") center/cover no-repeat;
 }
 #homeGames .game-tile{
  position:relative;
@@ -734,7 +734,7 @@ select:focus-visible,textarea:focus-visible{
  height:25px;
  border:1px solid rgba(255,255,255,.66);
  border-radius:9px;
- background:rgba(255,255,255,.9) url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+ background:rgba(255,255,255,.9) url("./el-castillo-icon.webp") center/cover no-repeat;
  box-shadow:0 3px 9px rgba(14,31,59,.14);
  pointer-events:none;
 }
@@ -782,7 +782,7 @@ select:focus-visible,textarea:focus-visible{
  height:32px;
  border:1px solid #dce8fa;
  border-radius:11px;
- background:#edf4ff url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+ background:#edf4ff url("./el-castillo-icon.webp") center/cover no-repeat;
 }
 #homeView .home-access-note strong{grid-column:2;color:#294362;font-size:12px}
 #homeView .home-access-note span{grid-column:2;color:#718098;font-size:10px;line-height:1.5}
@@ -960,7 +960,7 @@ button:active:not(:disabled){
 .promo-strip .castle-inline-icon{width:22px;height:22px;vertical-align:middle}
 #castlePaymentAlertToast:before{
  content:"";
- background:url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+ background:url("./el-castillo-icon.webp") center/cover no-repeat;
  border:1px solid rgba(255,255,255,.18);
  color:transparent;
 }
@@ -968,23 +968,23 @@ button:active:not(:disabled){
  content:"";
  width:clamp(125px,28vw,190px);
  aspect-ratio:1;
- background:url("./assets/el-castillo-icon.webp") center/contain no-repeat;
+ background:url("./el-castillo-icon.webp") center/contain no-repeat;
  opacity:.075;
  font-size:0;
 }
 #homeView .castle-games-section .section-head h2::before{
  content:"";
- background:#edf4ff url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+ background:#edf4ff url("./el-castillo-icon.webp") center/cover no-repeat;
  font-size:0;
 }
 #homeGames .game-tile::before{
  content:"";
- background:rgba(255,255,255,.9) url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+ background:rgba(255,255,255,.9) url("./el-castillo-icon.webp") center/cover no-repeat;
  font-size:0;
 }
 #homeView .home-access-note::before{
  content:"";
- background:#edf4ff url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+ background:#edf4ff url("./el-castillo-icon.webp") center/cover no-repeat;
  font-size:0;
 }
 @media(max-width:520px){
@@ -1064,7 +1064,7 @@ button:active:not(:disabled){
  height:28px;
  border:1px solid #dce8f8;
  border-radius:9px;
- background:#edf4ff url("./assets/el-castillo-icon.webp") center/cover no-repeat;
+ background:#edf4ff url("./el-castillo-icon.webp") center/cover no-repeat;
 }
 @media(max-width:600px){
  #homeView .store-delivery-card{padding:15px 14px 13px}
@@ -1075,4 +1075,61 @@ button:active:not(:disabled){
 }
 @media(prefers-reduced-motion:reduce){
  #homeView .store-delivery-copy>strong{animation:none!important}
+}
+
+
+/* Perfil actualizado: bienvenida, fecha de ingreso y actividad sin etiquetas de rol. */
+#profileView .profile-card{
+ align-items:center;
+ gap:14px;
+}
+#profileView .profile-welcome-copy{
+ min-width:0;
+ flex:1 1 auto;
+}
+#profileView .profile-welcome-copy h2{
+ margin:3px 0 5px;
+ font-size:clamp(23px,5vw,30px);
+ line-height:1.12;
+}
+#profileView .profile-email{
+ font-size:12px;
+ line-height:1.45;
+ overflow-wrap:anywhere;
+}
+#profileView .profile-member-since{
+ display:flex;
+ flex-wrap:wrap;
+ align-items:baseline;
+ gap:4px;
+ margin-top:9px;
+ color:#72839b;
+ font-size:10px;
+ line-height:1.45;
+}
+#profileView .profile-member-since strong{
+ color:#315b91;
+ font-size:11px;
+ font-weight:850;
+}
+#profileView .profile-activity-heading{
+ margin-top:21px;
+}
+#profileView .profile-stat-grid{
+ margin-top:12px;
+}
+#profileView .profile-security-panel p{
+ margin:0 0 13px;
+ font-size:11px;
+ line-height:1.6;
+}
+#profileView .logout-btn{
+ min-height:44px;
+ border-radius:12px;
+}
+@media(max-width:390px){
+ #profileView .profile-card{gap:10px}
+ #profileView .profile-welcome-copy h2{font-size:22px}
+ #profileView .profile-member-since{margin-top:7px;font-size:9px}
+ #profileView .profile-member-since strong{font-size:10px}
 }
