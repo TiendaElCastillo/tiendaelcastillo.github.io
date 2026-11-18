@@ -183,34 +183,53 @@
     var issueSelect = document.getElementById("supportIssue");
     var referenceInput = document.getElementById("supportReference");
     var detailsInput = document.getElementById("supportDetails");
+    var referenceWrap = document.getElementById("supportReferenceWrap");
+    var detailsWrap = document.getElementById("supportDetailsWrap");
     var guidance = document.getElementById("supportGuidance");
     var contact = document.getElementById("supportContactLink");
+    var evidenceNote = document.getElementById("supportEvidenceNote");
+    var statusAction = document.getElementById("supportStatusAction");
+    var statusButton = document.getElementById("supportStatusActionButton");
     if (!issueSelect || !referenceInput || !guidance || !contact) return;
 
     var issueKey = issueSelect.value;
     var issue = SUPPORT_CASES[issueKey];
     var reference = referenceInput.value.trim();
     var extra = detailsInput ? detailsInput.value.trim() : "";
+    var isRoutineStatus = issueKey === "pending" || issueKey === "wallet_pending";
+
+    // Do not request a folio or a personal chat for ordinary waiting states.
+    if (referenceWrap) referenceWrap.hidden = !issue || isRoutineStatus;
+    if (detailsWrap) detailsWrap.hidden = !issue || isRoutineStatus;
+    if (evidenceNote) evidenceNote.hidden = !issue || isRoutineStatus;
+    if (statusAction) statusAction.hidden = !isRoutineStatus;
+
+    contact.hidden = true;
+    contact.removeAttribute("href");
 
     if (!issue) {
-      guidance.innerHTML = '<strong>Primero identifica el problema.</strong><p>Te mostraremos los pasos adecuados y cuándo hace falta contactar con una persona.</p>';
-      contact.hidden = true;
-      contact.removeAttribute("href");
+      guidance.innerHTML = '<strong>Selecciona el motivo de tu consulta.</strong><p>Te indicaremos qué revisar y si realmente hace falta contactar con soporte.</p>';
+      if (statusButton) statusButton.onclick = null;
       return;
     }
 
     guidance.innerHTML = '<strong>' + escapeHtml(issue.title) + '</strong><p>' + escapeHtml(issue.message) + '</p>';
 
-    if (issueKey === "pending" || issueKey === "wallet_pending") {
-      contact.hidden = true;
-      contact.removeAttribute("href");
+    if (isRoutineStatus) {
+      if (statusButton) {
+        if (issueKey === "wallet_pending") {
+          statusButton.textContent = "Ver historial de depósitos";
+          statusButton.onclick = function () { if (typeof window.showView === "function") window.showView("wallet"); };
+        } else {
+          statusButton.textContent = "Consultar mis órdenes";
+          statusButton.onclick = function () { if (typeof window.showView === "function") window.showView("orders"); };
+        }
+      }
       return;
     }
 
     if (reference.length < 3) {
-      guidance.innerHTML += '<p class="support-reference-reminder">Añade el folio del pedido o la referencia del pago para preparar el mensaje.</p>';
-      contact.hidden = true;
-      contact.removeAttribute("href");
+      guidance.innerHTML += '<p class="support-reference-reminder">Escribe el folio del pedido o la referencia del pago para preparar el contacto.</p>';
       return;
     }
 
