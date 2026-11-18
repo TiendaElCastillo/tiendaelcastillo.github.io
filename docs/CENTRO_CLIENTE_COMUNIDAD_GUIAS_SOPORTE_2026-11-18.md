@@ -52,3 +52,11 @@ El soporte abre WhatsApp con un texto preparado que incluye el motivo y la refer
 ## Próximo paso
 
 Configurar el enlace oficial del canal cuando el propietario lo comparta; después, probar visualmente el perfil, Inicio, cada guía y el flujo de soporte en el móvil y en escritorio.
+
+## Datos comunitarios confirmados por el propietario
+
+- Nombre comercial público: **Tienda El Castillo**. No se indicó un nombre comercial alternativo.
+- Número de soporte confirmado: **+53 51884050**.
+- Enlace del canal comunitario facilitado por el propietario: https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X
+- El canal se distingue del soporte personal. Los anuncios se publican en el canal; las incidencias se filtran desde el Centro de soporte.
+- HTML carga `customer-center.js?v=2`; el Service Worker precarga la misma versión y utiliza `shell-v161` para forzar la actualización en móviles.
