@@ -659,3 +659,238 @@ select:focus-visible,textarea:focus-visible{
  .store-delivery-bottom p{font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){.store-delivery-live i{animation:none}}
+
+
+/* Detalles cálidos de marca: pequeños acentos, misma paleta y carga ligera. */
+#homeView .home-intro{
+ position:relative;
+ overflow:hidden;
+ isolation:isolate;
+}
+#homeView .home-intro>*{position:relative;z-index:1}
+#homeView .home-intro::after{
+ content:"♛";
+ position:absolute;
+ z-index:0;
+ right:13px;
+ bottom:-55px;
+ color:rgba(229,239,255,.075);
+ font-size:clamp(125px,28vw,190px);
+ line-height:1;
+ pointer-events:none;
+ transform:rotate(-9deg);
+}
+#homeView .home-intro-signature{
+ display:inline-flex;
+ align-items:center;
+ gap:7px;
+ margin-top:13px;
+ padding:6px 10px;
+ border:1px solid rgba(224,237,255,.23);
+ border-radius:99px;
+ background:rgba(255,255,255,.09);
+ color:#e5efff;
+ font-size:10px;
+ font-weight:800;
+ letter-spacing:.015em;
+}
+#homeView .home-intro-signature>span{
+ color:#d8e6ff;
+ font-size:14px;
+ line-height:1;
+}
+#homeView .castle-games-section .section-head h2{
+ display:flex;
+ align-items:center;
+ gap:8px;
+}
+#homeView .castle-games-section .section-head h2::before{
+ content:"♛";
+ display:inline-grid;
+ place-items:center;
+ width:25px;
+ height:25px;
+ flex:0 0 25px;
+ border:1px solid #dce8fa;
+ border-radius:9px;
+ background:#edf4ff;
+ color:#3972cb;
+ font-size:13px;
+}
+#homeGames .game-tile{
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+}
+#homeGames .game-tile::before{
+ content:"♛";
+ position:absolute;
+ z-index:4;
+ top:8px;
+ right:8px;
+ display:grid;
+ place-items:center;
+ width:25px;
+ height:25px;
+ border:1px solid rgba(255,255,255,.66);
+ border-radius:9px;
+ background:rgba(255,255,255,.9);
+ color:#315f9f;
+ font-size:14px;
+ box-shadow:0 3px 9px rgba(14,31,59,.14);
+ pointer-events:none;
+}
+#homeGames .tile-info{position:relative}
+#homeGames .tile-status{
+ display:inline-flex;
+ align-items:center;
+ gap:5px;
+ border:1px solid #dce8f7;
+ border-radius:99px;
+ padding:5px 9px;
+}
+#homeGames .tile-status::before{
+ content:"✓";
+ display:inline-grid;
+ place-items:center;
+ width:13px;
+ height:13px;
+ border-radius:50%;
+ background:#dff3e9;
+ color:#21805e;
+ font-size:8px;
+ font-weight:950;
+}
+#homeView .home-access-note{
+ position:relative;
+ display:grid;
+ grid-template-columns:34px minmax(0,1fr);
+ align-items:center;
+ gap:2px 10px;
+ margin:19px 0 7px;
+ padding:13px 15px 13px 13px;
+ border:1px solid #dce7f5;
+ border-radius:16px;
+ background:linear-gradient(120deg,#fff 0%,#f8fbff 100%);
+ box-shadow:0 5px 16px rgba(22,48,86,.035);
+}
+#homeView .home-access-note::before{
+ content:"♛";
+ grid-column:1;
+ grid-row:1/3;
+ display:grid;
+ place-items:center;
+ width:32px;
+ height:32px;
+ border:1px solid #dce8fa;
+ border-radius:11px;
+ background:#edf4ff;
+ color:#3972cb;
+ font-size:17px;
+}
+#homeView .home-access-note strong{grid-column:2;color:#294362;font-size:12px}
+#homeView .home-access-note span{grid-column:2;color:#718098;font-size:10px;line-height:1.5}
+
+/* El contador saluda con una aparición suave solo cuando cambia su valor real. */
+#storeDeliveredCount.delivery-count-arrived{
+ display:inline-block;
+ animation:castle-count-arrive .48s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes castle-count-arrive{
+ from{opacity:.25;transform:translateY(7px) scale(.96)}
+ to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Pequeña respuesta al tacto: clara, rápida y sin animar de más. */
+#homeGames .game-tile,
+#homeView .home-access-note,
+#profileView .profile-action-card,
+#store .catalog-product,
+#store .order-card,
+#homeView .gift-tile{
+ transition:transform .16s ease,box-shadow .18s ease,border-color .18s ease;
+}
+#homeGames .game-tile:active,
+#homeView .gift-tile:active,
+#profileView .profile-action-card:active,
+#store .catalog-product:active,
+#store .order-card:active{
+ transform:translateY(1px) scale(.99);
+ border-color:#c6d9f2;
+ box-shadow:0 3px 10px rgba(22,48,86,.07);
+}
+#homeView .home-access-note:active{transform:scale(.995)}
+#homeView .home-access-note:hover{
+ border-color:#cadcf3;
+ box-shadow:0 8px 18px rgba(22,48,86,.055);
+}
+
+/* El perfil conserva el correo y suma una frase humana debajo. */
+.profile-welcome-note{
+ display:block;
+ margin-top:5px;
+ color:#64809f;
+ font-size:10px;
+ line-height:1.45;
+}
+#profileView .profile-welcome-copy h2{letter-spacing:-.04em}
+#profileView .profile-care-note{
+ box-shadow:0 4px 12px rgba(26,58,102,.035);
+}
+
+/* Un primer pedido se siente como una invitación, no como un error vacío. */
+.customer-empty-state{
+ display:grid;
+ justify-items:center;
+ gap:7px;
+ margin:12px 0;
+ padding:24px 17px;
+ border:1px dashed #cbdcf0;
+ border-radius:18px;
+ background:radial-gradient(circle at 50% 0,rgba(67,126,215,.08),transparent 48%),linear-gradient(150deg,#fbfdff,#f5f8ff);
+ text-align:center;
+}
+.customer-empty-crown{
+ display:grid;
+ place-items:center;
+ width:46px;
+ height:46px;
+ border:1px solid #d8e5f6;
+ border-radius:15px;
+ background:#edf4ff;
+ color:#3972cb;
+ font-size:24px;
+ box-shadow:0 5px 13px rgba(39,92,164,.08);
+}
+.customer-empty-state>strong{color:#294362;font-size:14px;line-height:1.35}
+.customer-empty-state>p{max-width:290px;margin:0;color:#74839a;font-size:11px;line-height:1.55}
+.customer-empty-state>.primary-btn{width:auto;min-width:145px;margin-top:5px;padding:10px 16px;font-size:11px}
+
+/* Mantener los movimientos reducidos para quien lo prefiera. */
+@media(hover:hover){
+ #homeGames .game-tile:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 25px rgba(22,48,86,.105);
+  border-color:#c6d9f2;
+ }
+ #homeGames .game-tile:hover .game-art-image{
+  transform:scale(1.025);
+ }
+}
+#homeGames .game-art-image{transition:transform .35s ease}
+@media(prefers-reduced-motion:reduce){
+ #storeDeliveredCount.delivery-count-arrived{animation:none!important}
+ #homeGames .game-tile,
+ #homeGames .game-art-image,
+ #homeView .home-access-note,
+ #profileView .profile-action-card,
+ #store .catalog-product,
+ #store .order-card,
+ #homeView .gift-tile{transition:none!important}
+}
+@media(max-width:390px){
+ #homeView .home-intro-signature{font-size:9px;padding:6px 8px}
+ #homeView .home-access-note{padding:12px 11px;grid-template-columns:30px minmax(0,1fr);gap:2px 8px}
+ #homeView .home-access-note::before{width:29px;height:29px;font-size:15px}
+ .customer-empty-state{padding:20px 13px}
+}
