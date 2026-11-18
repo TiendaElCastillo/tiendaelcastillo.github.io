@@ -1890,6 +1890,7 @@ body{min-width:0}
   <span class="hero-eyebrow">♛ TIENDA EL CASTILLO · RECARGAS PARA CUBA</span>
   <h1>Juegos disponibles para recargar</h1>
   <p>Tenemos recargas de Free Fire LATAM, Blood Strike GLOBAL, Mobile Legends: Bang Bang GLOBAL, PUBG Mobile GLOBAL y Arena Breakout GLOBAL. Selecciona un juego para consultar sus opciones.</p>
+  <span class="home-intro-signature"><span aria-hidden="true">♛</span> Tu próxima partida empieza aquí</span>
  </div>
  <div id="homeAnnouncementBanner" class="home-announcement-banner hidden" aria-live="polite"></div>
  <section class="store-delivery-card" aria-label="Total de recargas entregadas">
@@ -2011,7 +2012,7 @@ body{min-width:0}
  <div class="panel account-overview-panel">
   <div class="profile-card">
    <div class="profile-avatar" id="profileAvatar">EC</div>
-   <div class="profile-welcome-copy"><span class="profile-eyebrow">TU ESPACIO PERSONAL</span><h2 id="welcome">Hola</h2><p id="profileEmail" class="profile-email"></p></div>
+   <div class="profile-welcome-copy"><span class="profile-eyebrow">TU ESPACIO PERSONAL</span><h2 id="welcome">Hola</h2><p id="profileEmail" class="profile-email"></p><span class="profile-welcome-note">Qué bueno tenerte por aquí. Tu espacio está listo para ti.</span></div>
    <span class="profile-account-type" id="profileAccountType">Cliente</span>
   </div>
   <div class="profile-facts">
@@ -4161,6 +4162,12 @@ async function loadStoreDeliveryStats(){
  const {data,error}=await db.rpc("get_total_delivered_recargas");
  if(error){countNode.textContent="—";if(noteNode)noteNode.textContent="El contador se actualizará cuando vuelva la conexión.";return;}
  const count=Math.max(0,Number(data)||0);
+ if(countNode.dataset.lastCount!==String(count)){
+  countNode.dataset.lastCount=String(count);
+  countNode.classList.remove("delivery-count-arrived");
+  void countNode.offsetWidth;
+  countNode.classList.add("delivery-count-arrived");
+ }
  countNode.textContent=count.toLocaleString("es-CU");
  if(labelNode)labelNode.textContent=count===1?"recarga entregada":"recargas entregadas";
  if(noteNode)noteNode.textContent=count===0?"Estamos preparando las primeras entregas. Gracias por acompañarnos.":"Cada entrega cuenta. Gracias por confiar en Tienda El Castillo.";
@@ -4547,7 +4554,7 @@ async function loadMyOrders(){
    '<div class="order-player-box"><span>Cuenta destinataria</span><strong>'+clean(o.player_name||"Nombre no disponible")+'</strong><small>ID de jugador: '+clean(o.player_id||"No disponible")+'</small></div>'+
    '<div class="order-detail">'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
    '<span class="status">'+statusText(o.status)+'</span>'+progress+proofNote+providerInfo+rejectionInfo+retryProofBlock+cancelBlock+'</article>';
- }).join(""):"Todavía no tienes pedidos.";
+ }).join(""):'<div class="customer-empty-state"><span class="customer-empty-crown" aria-hidden="true">♛</span><strong>Tu próxima recarga puede empezar aquí</strong><p>Aún no tienes pedidos. Explora los juegos y encuentra tu próximo paquete favorito.</p><button type="button" class="primary-btn" onclick="showView(&quot;home&quot;)">Explorar juegos</button></div>';
  const orderList=$("myorders");
  orderList?.querySelectorAll("[data-cancel-unsubmitted]").forEach(button=>{
   button.addEventListener("click",()=>cancelUnsubmittedOrder(button.dataset.orderId,button.dataset.orderCode,button));
