@@ -4799,6 +4799,13 @@ async function loadWalletSettings(){
  updateWalletDepositMethod();
  updatePaymentInstructions();
  updateCheckoutSummary();
+ // USDT's payment button depends on the loaded wallet address/network. Refresh an open
+ // game detail when settings arrive in the background so it does not stay falsely disabled.
+ if(activeGameFilter){
+  try{renderGameDetail();}
+  catch(renderError){console.warn("No se pudo actualizar la disponibilidad de pago del juego:",renderError);}
+ }
+ window.updateCheckoutSubmitState?.();
 }
 async function saveWalletSettings(){
  if(currentProfile?.role!=="admin")return;
