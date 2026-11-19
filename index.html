@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=19">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=20">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -3038,6 +3038,15 @@ function freeFirePlanIcon(p,item){
  if(gameName!=="free fire")return '<span class="plan-icon-emoji" aria-hidden="true">'+gameCurrency(item).icon+'</span>';
  const label=fold(String(p.name||"")+" "+String(p.description||""));
  const amount=Number(p.amount||0);
+ if(group==="evo"){
+  const isBox=/cajas?\s+de\s+fragmentos/.test(label);
+  const src=isBox?"ff-evo-crate.webp":"ff-evo-token.webp";
+  const alt=isBox?"Caja de fragmentos Evo Universal":"Token Evo Universal para fragmentos de arma";
+  return '<img class="plan-icon-image ff-owned-art-icon" src="./assets/'+src+'" alt="'+alt+'" loading="lazy" decoding="async" width="256" height="256" onerror="this.onerror=null;this.remove()">';
+ }
+ if(group==="booyah"&&/norte|sur/.test(label)){
+  return '<img class="plan-icon-image ff-owned-art-icon ff-booyah-icon" src="./assets/ff-booyah-latam.webp" alt="Insignia del Pase Booyah LATAM" loading="lazy" decoding="async" width="256" height="256" onerror="this.onerror=null;this.remove()">';
+ }
  let src="",position="0%",size="200% 100%",alt="";
  if(group==="diamonds"){
   if(amount===110){src="ff-diamonds-small-medium.webp";alt="Paquete de 110 diamantes"}
@@ -3343,9 +3352,10 @@ function productArtwork(p){
  const amount=Number(p.amount||0);
  if(isFreeFire&&group==="evo"){
   const isBox=/cajas?\s+de\s+fragmentos/.test(label);
-  const title=isBox?"CAJAS DE FRAGMENTOS EVO":"FRAGMENTOS DE ARMA EVO";
-  const icon=isBox?"📦":"⚔️";
-  return '<div class="product-art product-art-evo" role="img" aria-label="'+title+'"><span class="product-art-evo-icon" aria-hidden="true">'+icon+'</span><span class="product-art-evo-label">'+title+'</span></div>';
+  const title=isBox?"Cajas de fragmentos Evo":"Fragmentos de arma Evo";
+  const src=isBox?"ff-evo-crate.webp":"ff-evo-token.webp";
+  const alt=isBox?"Caja de fragmentos Evo Universal":"Token Evo Universal";
+  return '<div class="product-art product-art-evo product-art-user-image"><img src="./assets/'+src+'" alt="'+alt+'" loading="lazy" decoding="async" width="256" height="256" onerror="this.onerror=null;this.remove()"><span class="product-art-caption">'+title+'</span></div>';
  }
  if(isFreeFire&&group==="passes"){
   if(/mensual|monthly/.test(label))return '<div class="product-art product-art-ff-membership ff-member-monthly" role="img" aria-label="Membresía mensual de Free Fire"><span class="product-art-caption"><strong>Membresía mensual</strong><small>1.800 diamantes · 30 días</small></span></div>';
@@ -3353,7 +3363,9 @@ function productArtwork(p){
   if(/semanal|weekly/.test(label))return '<div class="product-art product-art-ff-membership ff-member-weekly" role="img" aria-label="Membresía semanal de Free Fire"><span class="product-art-caption"><strong>Membresía semanal</strong><small>340 diamantes · 7 días</small></span></div>';
  }
  let file="",position="0%",alt="",caption="";
- if(isFreeFire&&group==="booyah"){
+ if(isFreeFire&&group==="booyah"&&/norte|sur/.test(label)){
+  return '<div class="product-art product-art-booyah product-art-user-image"><img src="./assets/ff-booyah-latam.webp" alt="Insignia del Pase Booyah LATAM" loading="lazy" decoding="async" width="256" height="256" onerror="this.onerror=null;this.remove()"><span class="product-art-caption">Pase Booyah LATAM</span></div>';
+ }else if(isFreeFire&&group==="booyah"){
   file="ff-diamonds-chest-booyah.webp";position="100%";alt="Pase Booyah Premium de Free Fire";caption="Booyah Pass Premium";
  }else if(isFreeFire&&group==="diamonds"){
   caption=amount.toLocaleString("es-ES")+" diamantes";
