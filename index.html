@@ -4322,12 +4322,19 @@ async function placeOrder(){
     p_request_id:requestInfo.requestId
    });
    if(result.error)throw new Error(result.error.message);
+   if(!result.data||!result.data.order_code)throw new Error("El servidor no confirmó el número de pedido. Conservamos la solicitud para evitar un doble descuento; comprueba «Mis pedidos» antes de repetir.");
+   // The RPC response confirms the charge and order are committed. A later UI refresh
+   // must never turn a successful purchase into a failure message.
    clearWalletRequestIdentity(requestInfo);
    resetPlayerValidation();
    $("ordermsg").textContent=result.data.already_processed?"Este pedido ya se había creado. No se descontó saldo otra vez. Pedido "+result.data.order_code+".":"Compra creada correctamente. Pedido "+result.data.order_code+". Se descontaron "+moneyUSD(result.data.price)+" USD de tu wallet.";
    $("checkoutDoneMessage").textContent="Tu pedido "+result.data.order_code+" fue pagado con el saldo de tu wallet. Puedes consultar su progreso en «Mis pedidos».";
-   await Promise.all([loadWalletData(),loadMyOrders()]);
    showView("orders");
+   try{await loadWalletData();}catch(refreshWalletError){console.warn("El pedido quedó creado; no se pudo actualizar el saldo visual:",refreshWalletError);}
+   try{await loadMyOrders();}catch(refreshOrdersError){
+    console.warn("El pedido quedó creado; no se pudo actualizar el historial:",refreshOrdersError);
+    $("checkoutDoneMessage").textContent+=" El pedido ya está registrado. Si el historial no aparece, vuelve a abrir «Pedidos»; no repitas la compra.";
+   }
   }catch(e){
    $("ordermsg").textContent="No se pudo completar la compra. No se descontará saldo si el pedido no se creó: "+(e.message||"error de conexión.");
   }finally{if(button)window.updateCheckoutSubmitState?.();}
@@ -4369,12 +4376,17 @@ async function placeOrder(){
   try{await uploadProofForOrder(data.id,method,file,reference,senderPhone,reportedAmount);}
   catch(uploadError){
    $("ordermsg").textContent="El pedido "+data.order_code+" quedó creado, pero no se pudo asociar el comprobante: "+(uploadError.message||"error de carga")+". En «Mis pedidos» puedes adjuntar los datos y la captura al mismo pedido. No crees otro pedido ni repitas el pago.";
-   await loadMyOrders();showView("orders");return;
+   try{await loadMyOrders();}catch(refreshError){console.warn("El pedido está creado; no se pudo refrescar el historial:",refreshError);}
+   showView("orders");return;
   }
   $("ordermsg").textContent="Comprobante y datos recibidos. Pedido "+data.order_code+" enviado a revisión. La recarga se realizará únicamente después de verificar el pago.";
   $("checkoutDoneMessage").textContent="Tu pedido "+data.order_code+" fue recibido y quedó pendiente de revisión del pago.";
   $("player").value="";$("playername").value="";resetPlayerValidation();$("reference").value="";$("senderPhone").value="";$("reportedAmount").value="";$("paymentProof").value="";previewPaymentProof();
-  await loadMyOrders();showView("orders");
+  try{await loadMyOrders();}catch(refreshError){
+   console.warn("Pedido y comprobante recibidos; no se pudo refrescar el historial:",refreshError);
+   $("checkoutDoneMessage").textContent+=" Tu pedido está registrado, pero el historial no pudo actualizarse todavía. Vuelve a abrir «Pedidos» y no repitas el pago.";
+  }
+  showView("orders");
  }catch(e){$("ordermsg").textContent="Error de conexión. Comprueba tu conexión e inténtalo de nuevo. Si el pedido llegó a crearse, revisa «Mis pedidos» antes de repetirlo.";}
  finally{if(button)window.updateCheckoutSubmitState?.();}
 }
