@@ -66,6 +66,7 @@ Revisión de código y base de datos:
 - La compresión de comprobantes de pedidos se reutiliza también para depósitos Wallet, reduciendo tamaño antes de subir desde móvil.
 - Se corrigió el flujo del depósito incompleto: si una solicitud queda creada pero sin comprobante, la pantalla no crea otra; pide completar la solicitud pendiente desde el historial.
 - El botón de envío de depósito ahora tiene texto consistente con la revisión manual.
+- Una vez que el servidor confirma una compra con wallet o un pedido directo con comprobante, los fallos posteriores al refrescar el saldo/historial se manejan aparte. La pantalla conserva el número de pedido y avisa que no se repita la compra; así no se presenta como fallido un cargo ya confirmado.
 
 ## 4. Alcance de los depósitos de Wallet
 La configuración de la wallet verificada en Supabase conserva la tasa de 1160 CUP/USD y una dirección BNB Smart Chain (BEP20) configurada para pagos USDT directos de juegos.
@@ -80,7 +81,7 @@ Importante: la regla actual de la base de datos permite añadir saldo a Wallet �
 - HTML y service worker apuntan a `storefront-polish.css?v=21`.
 - Service worker: `shell-v169`; emblema de Wallet en precaché.
 - La consulta RLS de Supabase ya no muestra políticas `anon` de lectura en `products` ni `payment_methods`.
-- GitHub Pages publicó el último commit de código con éxito: https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/actions/runs/44611227480
+- GitHub Pages publicó el último commit de código con éxito: https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/actions/runs/44612971282
 
 No se realizó una compra real ni una transferencia de prueba. Tampoco se pudo ejecutar una comprobación visual interactiva en el mismo navegador Redmi del propietario; esa última comprobación debe hacerla el propietario en su dispositivo.
 
