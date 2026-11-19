@@ -1592,3 +1592,94 @@ button:active:not(:disabled){
 .guide-source-link{margin:8px 0 0!important;font-size:10px!important}
 .guide-source-link a{color:#2867bd;font-weight:800;text-decoration:underline}
 @media(max-width:560px){.help-shortcut-grid{grid-template-columns:1fr 1fr;gap:8px}.help-shortcut-grid button{min-height:88px;padding:10px}.help-status-item p,.help-payment-panel article p{font-size:10px}}
+
+ 
+/* v18 — acabado final: interacción táctil, campos y lectura de precios. */
+#siteHeader .header-btn{
+ min-height:42px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ -webkit-tap-highlight-color:transparent;
+ touch-action:manipulation;
+}
+#store .primary-btn,#store .secondary-btn,
+#store .plan-buy,#store .bs-plan-buy,#store .mlbb-plan-buy,
+#auth .auth-submit-btn{
+ min-height:44px;
+ -webkit-tap-highlight-color:transparent;
+ touch-action:manipulation;
+}
+#store .primary-btn:active:not(:disabled),
+#store .secondary-btn:active:not(:disabled),
+#store .plan-buy:active:not(:disabled),
+#store .bs-plan-buy:active:not(:disabled),
+#store .mlbb-plan-buy:active:not(:disabled),
+#auth .auth-submit-btn:active:not(:disabled),
+#siteHeader .header-btn:active:not(:disabled){
+ transform:translateY(1px) scale(.985);
+ filter:brightness(.98);
+}
+#store .field input:not([type=checkbox]):not([type=file]),
+#store .field select,#store .search-input,
+#store .field textarea{
+ min-height:46px;
+ border-color:#dce5f1;
+ transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+}
+#store .field input:not([type=checkbox]):not([type=file]):focus,
+#store .field select:focus,#store .search-input:focus,
+#store .field textarea:focus{
+ border-color:#8fb4e9;
+ background:#fff;
+ box-shadow:0 0 0 3px rgba(52,124,240,.11);
+}
+#store .catalog-product,#store .order-card,
+#store .game-tile,#store .gift-tile{
+ min-width:0;
+}
+#store .catalog-product h3,#store .tile-title,
+#store .order-detail,#store .track-note{
+ overflow-wrap:anywhere;
+}
+#store .catalog-product .price,
+#gameDetailPlans .plan-price strong,
+#gameDetailPlans .bs-plan-price b,
+#gameDetailPlans .mlbb-plan-price,
+#store .store-delivery-copy>strong{
+ font-variant-numeric:tabular-nums;
+}
+#bottomNav .nav-item{
+ min-height:48px;
+ -webkit-tap-highlight-color:transparent;
+ touch-action:manipulation;
+ transition:background .16s ease,color .16s ease,transform .16s ease;
+}
+#bottomNav .nav-item:active{transform:scale(.97)}
+@media(hover:hover){
+ #store .order-card:hover{
+  border-color:#c9d9ed;
+  box-shadow:0 9px 22px rgba(22,48,86,.075);
+ }
+}
+@media(max-width:560px){
+ #store .section-head{min-width:0}
+ #store .section-head h2{line-height:1.2}
+ #store .field-row{gap:9px}
+ #store .checkout-stage-actions{gap:8px}
+}
+@media(max-width:360px){
+ #siteHeader .header-inner{gap:7px}
+ #siteHeader .header-btn{padding:7px 8px;font-size:10px}
+ #siteHeader .brand-name strong{font-size:12px}
+ #bottomNav .nav-item{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ #siteHeader .header-btn,#store .primary-btn,#store .secondary-btn,
+ #store .plan-buy,#store .bs-plan-buy,#store .mlbb-plan-buy,
+ #bottomNav .nav-item{transition:none!important}
+ #siteHeader .header-btn:active,#store .primary-btn:active,
+ #store .secondary-btn:active,#store .plan-buy:active,
+ #store .bs-plan-buy:active,#store .mlbb-plan-buy:active,
+ #bottomNav .nav-item:active{transform:none!important}
+}
