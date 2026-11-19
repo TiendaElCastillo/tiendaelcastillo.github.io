@@ -270,7 +270,7 @@ window.addEventListener("DOMContentLoaded",function(){
 /* Wallet Tienda El Castillo: panel financiero claro y móvil */
 .wallet-shell{display:grid;gap:16px}
 .wallet-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:22px;border-radius:22px;background:linear-gradient(125deg,#10284f 0%,#194c92 62%,#286be0 100%);color:#fff;box-shadow:0 14px 34px rgba(20,55,112,.18)}
-.wallet-hero:after{content:"";position:absolute;width:210px;height:210px;border:1px solid rgba(255,255,255,.16);border-radius:50%;right:-55px;top:-88px;box-shadow:0 0 0 22px rgba(255,255,255,.035),0 0 0 48px rgba(255,255,255,.025)}
+.wallet-hero:after{content:"";position:absolute;width:142px;height:142px;right:52px;top:50%;bottom:auto;transform:translateY(-50%) rotate(5deg);border:0;border-radius:0;box-shadow:none;background:url("./assets/el-castillo-watermark.svg") center/contain no-repeat;opacity:.13;pointer-events:none;z-index:0}.wallet-hero>div:first-child{position:relative;z-index:1}.wallet-hero .wallet-coin{position:relative;z-index:1}
 .wallet-kicker{font-size:10px;font-weight:850;letter-spacing:.13em;text-transform:uppercase;color:#d7e7ff}
 .wallet-hero h2{font-size:17px;margin:6px 0 8px;color:#fff}
 .wallet-balance{font-size:clamp(27px,6vw,39px);font-weight:950;letter-spacing:-.04em;line-height:1.1;color:#fff}
@@ -1971,7 +1971,7 @@ body{min-width:0}
   <div id="checkoutSummary" class="checkout-summary" aria-live="polite"></div><p id="walletCheckoutNote" class="track-note" aria-live="polite"></p>
   <div class="field hidden" id="senderPhoneWrap"><label id="senderPhoneLabel" for="senderPhone">¿Desde qué número haces el pago? (obligatorio)</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="senderPhone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="xxxxxxxx" maxlength="20" aria-label="Ocho dígitos del móvil cubano desde el que pagaste"></div><small class="field-hint" id="senderPhoneHelp">Escribe los 8 dígitos de la línea desde la que realizaste el pago.</small></div>
   <div id="paymentInstructions" class="payment-data-panel" role="status" aria-live="polite"></div>
-  <div class="field hidden" id="referenceWrap"><label id="referenceLabel" for="reference">Nro. Transacción (obligatorio)</label><input id="reference" inputmode="text" autocapitalize="characters" autocomplete="off" minlength="3" maxlength="100" placeholder="Ej. AY600UJ716R999" oninput="this.value=this.value.toUpperCase().replace(/\\s/g,'')"><small id="referenceHelp" class="field-hint">Copia el código que aparece junto a «Nro. Transacción» en el comprobante del banco. Es único para cada pago.</small></div>
+  <div class="field hidden" id="referenceWrap"><label id="referenceLabel" for="reference">Nro. Transacción (obligatorio)</label><input id="reference" inputmode="text" autocapitalize="characters" autocomplete="off" minlength="3" maxlength="100" placeholder="Ej. AY600UJ716R999" oninput="this.value=this.value.toUpperCase().replace(/\s/g,'')"><small id="referenceHelp" class="field-hint">Copia el código que aparece junto a «Nro. Transacción» en el comprobante del banco. Es único para cada pago.</small></div>
   <div class="field hidden" id="reportedAmountWrap"><label for="reportedAmount">Cantidad exacta de saldo móvil enviada</label><input id="reportedAmount" type="number" inputmode="decimal" min="1" step="0.01" placeholder="Escribe el importe exacto"></div>
   <div class="field proof-field" id="proofWrap"><label id="proofLabel" for="paymentProof">Captura del comprobante (obligatoria)</label><input class="proof-input" id="paymentProof" type="file" accept="image/jpeg,image/png,image/webp" onchange="previewPaymentProof()"><label class="proof-dropzone" for="paymentProof"><span class="proof-icon" aria-hidden="true">↑</span><span class="proof-copy"><strong id="proofTitle">Añadir comprobante</strong><small id="proofHelp">La captura debe mostrar el importe, la fecha, el destinatario y el Nro. de transacción. JPG, PNG o WEBP; máximo 5 MB.</small><small class="proof-limits">No recortes ni tapes los datos de la operación.</small></span><img id="proofPreview" class="proof-preview hidden" alt="Vista previa del comprobante seleccionado"></label></div>
   <div class="privacy-consent"><label for="privacyConsent"><input id="privacyConsent" type="checkbox" value="yes"><span>He leído y acepto la <a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a> y los <a href="#condiciones" onclick="showView('terms');return false">Términos de compra</a>.</span></label></div>
@@ -3183,8 +3183,8 @@ function renderGameDetail(){
   const empty=label=>'<div class="ff-empty"><span>✦</span><strong>'+label+'</strong><small>Prueba otro método de pago si no aparecen paquetes.</small></div>';
   const subgroup=(title,list)=>list.length?'<section class="ff-subgroup"><h4>'+title+'</h4><div class="ff-package-list">'+cards(sortPackages(list))+'</div></section>':"";
   const compartment=(id,title,description,icon,list,content)=>'<section class="ff-compartment ff-compartment-'+id+'"><header class="ff-compartment-head"><span class="ff-compartment-icon" aria-hidden="true">'+icon+'</span><div class="ff-compartment-copy"><span class="ff-compartment-kicker">FREE FIRE</span><h3>'+title+'</h3><p>'+description+'</p></div><span class="ff-compartment-count">'+list.length+'</span></header><div class="ff-compartment-body">'+content+'</div></section>';
-  const evoBoxes=evo.filter(p=>/cajas?\\s+de\\s+fragmentos/.test(fold(p.name||"")));
-  const evoWeapons=evo.filter(p=>/fragmentos\\s+de\\s+arma/.test(fold(p.name||"")));
+  const evoBoxes=evo.filter(p=>/cajas?\s+de\s+fragmentos/.test(fold(p.name||"")));
+  const evoWeapons=evo.filter(p=>/fragmentos\s+de\s+arma/.test(fold(p.name||"")));
   const booyahNorth=booyah.filter(p=>/norte/.test(fold(p.name||"")));
   const booyahSouth=booyah.filter(p=>/sur/.test(fold(p.name||"")));
   const booyahPremium=booyah.filter(p=>/premium/.test(fold(p.name||""))&&!/norte|sur/.test(fold(p.name||"")));
@@ -4906,10 +4906,11 @@ async function uploadWalletDepositProofs(depositId,method,files,reference,sender
  const paths=[];
  for(const file of files){
   const invalid=validateProofFile(file);if(invalid)throw new Error(invalid);
-  const ext=file.type==="image/jpeg"?"jpg":file.type==="image/png"?"png":"webp";
+  const uploadFile=await optimizeProofForUpload(file);
+  const ext=uploadFile.type==="image/jpeg"?"jpg":uploadFile.type==="image/png"?"png":"webp";
   const token=(typeof crypto!=="undefined"&&crypto.randomUUID)?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==="x"?r:(r&3|8)).toString(16)});
   const path=currentUser.id+"/"+depositId+"/"+token+"."+ext;
-  const upload=await db.storage.from("payment-proofs").upload(path,file,{contentType:file.type,cacheControl:"3600",upsert:false});
+  const upload=await db.storage.from("payment-proofs").upload(path,uploadFile,{contentType:uploadFile.type,cacheControl:"3600",upsert:false});
   if(upload.error)throw new Error("No se pudo subir una captura: "+upload.error.message);
   paths.push(path);
  }
@@ -5020,6 +5021,19 @@ async function requestWalletDeposit(){
   $("walletDepositMsg").textContent="La transferencia CUP no está configurada. No realices el pago.";
   return;
  }
+ const pendingCheck=await db.from("wallet_deposits").select("id,amount,created_at")
+  .eq("user_id",currentUser.id).eq("status","pending").is("proof_path",null)
+  .order("created_at",{ascending:false}).limit(1).maybeSingle();
+ if(pendingCheck.error){
+  $("walletDepositMsg").textContent="No pudimos comprobar si ya tienes una solicitud sin comprobante. Revisa tu historial antes de crear otra.";
+  return;
+ }
+ if(pendingCheck.data){
+  $("walletDepositMsg").textContent="Ya tienes una solicitud de depósito ("+pendingCheck.data.id.slice(0,8)+") pendiente de comprobante por "+money(pendingCheck.data.amount)+" CUP. Completa esa misma solicitud desde el Historial de depósitos; no crees otra para evitar duplicados.";
+  await loadMyWalletDeposits();
+  $("walletDepositsMine")?.scrollIntoView({behavior:"smooth",block:"start"});
+  return;
+ }
  const button=$("walletDepositSubmit");
  if(button){button.disabled=true;button.textContent="Creando solicitud…";}
  try{
@@ -5045,7 +5059,7 @@ async function requestWalletDeposit(){
  }catch(e){
   $("walletDepositMsg").textContent="No se pudo crear la solicitud: "+(e.message||"error de conexión.");
  }finally{
-  if(button){button.disabled=false;button.textContent="Enviar solicitud de depósito";}
+  if(button){button.disabled=false;button.textContent="Enviar solicitud para revisión";}
  }
 }
 async function attachWalletDepositProof(id,method){
