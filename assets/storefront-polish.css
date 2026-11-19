@@ -1683,3 +1683,85 @@ button:active:not(:disabled){
  #store .bs-plan-buy:active,#store .mlbb-plan-buy:active,
  #bottomNav .nav-item:active{transform:none!important}
 }
+
+
+/* v19 — Free Fire: pestañas independientes para cada familia de ofertas. */
+#gameDetailPlans .free-fire-category-tabs{
+ display:grid;
+ grid-template-columns:repeat(5,minmax(0,1fr));
+ gap:8px;
+ margin:13px 0 16px;
+}
+#gameDetailPlans .free-fire-category-tab{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:6px;
+ min-width:0;
+ min-height:57px;
+ padding:9px 8px;
+ border:1px solid #e1e8f2;
+ border-radius:14px;
+ background:linear-gradient(180deg,#fff,#f9fbff);
+ color:#536782;
+ font-size:11px;
+ font-weight:850;
+ line-height:1.25;
+ text-align:center;
+ box-shadow:0 4px 12px rgba(20,45,84,.045);
+ cursor:pointer;
+ -webkit-tap-highlight-color:transparent;
+ touch-action:manipulation;
+ transition:border-color .16s ease,background .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+#gameDetailPlans .free-fire-category-tab span{min-width:0;overflow-wrap:anywhere}
+#gameDetailPlans .free-fire-category-tab b{
+ flex:0 0 auto;
+ display:grid;
+ place-items:center;
+ min-width:22px;
+ height:22px;
+ padding:0 6px;
+ border-radius:20px;
+ background:#f0f4fa;
+ color:#71829a;
+ font-size:10px;
+ font-weight:900;
+}
+#gameDetailPlans .free-fire-category-tab.active{
+ border-color:#8eb6ef!important;
+ background:#edf4ff!important;
+ color:#205fc5!important;
+ box-shadow:inset 0 0 0 1px rgba(55,116,207,.1),0 5px 14px rgba(35,94,173,.06)!important;
+}
+#gameDetailPlans .free-fire-category-tab.active b{background:#dceaff;color:#205fc5!important}
+#gameDetailPlans .free-fire-category-tab:active{transform:translateY(1px) scale(.985)}
+#gameDetailPlans .free-fire-category-panel[hidden]{display:none!important}
+#gameDetailPlans .free-fire-category-panel>.ff-compartment{margin-top:0}
+@media(max-width:760px){
+ #gameDetailPlans .free-fire-category-tabs{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ #gameDetailPlans .free-fire-category-tab{
+  min-height:58px;
+  flex-direction:column;
+  gap:4px;
+  padding:8px 5px;
+  font-size:10px;
+ }
+ #gameDetailPlans .free-fire-category-tab b{min-width:21px;height:20px;font-size:9px}
+}
+@media(max-width:380px){
+ #gameDetailPlans .free-fire-category-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ #gameDetailPlans .free-fire-category-tab{min-height:54px;flex-direction:row;font-size:10px}
+}
+@media(hover:hover){
+ #gameDetailPlans .free-fire-category-tab:not(.active):hover{
+  border-color:#bfd2ec;
+  background:#f7faff;
+  color:#2d5f9f;
+  box-shadow:0 7px 16px rgba(20,45,84,.075);
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #gameDetailPlans .free-fire-category-tab{transition:none!important}
+ #gameDetailPlans .free-fire-category-tab:active{transform:none}
+}
