@@ -1852,3 +1852,42 @@ button:active:not(:disabled){
 @media(prefers-reduced-motion:reduce){
  .plan-currency .ff-owned-art-icon,.product-art-user-image>img{transition:none!important}
 }
+
+
+/* v21 — carga inicial visible y estados de espera del catálogo. */
+#homeGames .game-tile:disabled,
+#gamesTiles .game-tile:disabled{
+ opacity:.92!important;
+ cursor:progress!important;
+ filter:saturate(.84);
+}
+#homeGames .game-tile:disabled .tile-status,
+#gamesTiles .game-tile:disabled .tile-status{
+ display:inline-flex;
+ align-items:center;
+ gap:5px;
+ color:#456b9b!important;
+ background:#edf4ff!important;
+ border:1px solid #dce9fa!important;
+}
+#homeGames .game-tile:disabled .tile-status:before,
+#gamesTiles .game-tile:disabled .tile-status:before{
+ content:"";
+ width:6px;
+ height:6px;
+ border-radius:50%;
+ background:#5b91dc;
+ box-shadow:0 0 0 3px rgba(91,145,220,.12);
+}
+#gameDetailPlans .plan-currency .ff-owned-art-icon{
+ display:block!important;
+ width:100%!important;
+ height:100%!important;
+ max-width:none!important;
+ max-height:none!important;
+ object-position:center!important;
+}
+#gameDetailPlans .plan-currency .ff-booyah-icon{
+ object-fit:contain!important;
+ padding:2px!important;
+}
