@@ -3169,7 +3169,6 @@ function renderGameDetail(){
    '<div class="ff-browser-head"><h2>Elige tu paquete</h2><span class="ff-total">'+plans.length+' opciones</span></div>'+
    (categories.length>1?'<div class="free-fire-category-tabs" role="tablist" aria-label="Categorías de Free Fire">'+tabsHtml+'</div>':"")+
    (panelsHtml||empty("No hay paquetes disponibles para este método de pago"));
- }
 }else if(fold(item.name)==="mobile legends: bang bang"){
   const diamonds=plans.filter(p=>mobileLegendsCatalogCategory(p)==="diamonds");
   const passes=plans.filter(p=>mobileLegendsCatalogCategory(p)==="passes");
