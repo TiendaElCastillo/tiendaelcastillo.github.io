@@ -4153,6 +4153,7 @@ async function loadProducts(){
   if(error){
    products=[];
    catalogLoading=false;
+   try{renderProductCatalogs();}catch(renderError){console.error("No se pudo limpiar el catálogo de carga:",renderError);}
    const message="No se pudo cargar el catálogo: "+error.message;
    $("gamesProducts").innerHTML='<p class="empty-note">'+clean(message)+'</p>';
    $("gamePaymentChoices").innerHTML='<p class="empty-note">'+clean(message)+'</p>';
@@ -4176,10 +4177,10 @@ async function loadProducts(){
  }catch(error){
   catalogLoading=false;
   console.error("Error de catálogo:",error);
+  try{renderProductCatalogs();}catch(renderError){console.error("No se pudo mostrar el estado del catálogo:",renderError);}
   const message="Error de conexión al cargar productos: "+(error?.message||String(error));
   const box=$("gamesProducts");if(box)box.innerHTML='<p class="empty-note">'+clean(message)+'</p>';
   const choices=$("gamePaymentChoices");if(choices)choices.innerHTML='<p class="empty-note">'+clean(message)+'</p>';
-  try{renderProductCatalogs();}catch(renderError){console.error("No se pudo mostrar el estado del catálogo:",renderError);}
  }
 }
 async function optimizeProofForUpload(file){
