@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=18">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=19">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -3128,15 +3128,18 @@ function renderGameDetail(){
  }
  const plans=sortPackages(rows.filter(p=>isPaymentMethodReady(gamePaymentMethod)&&Number(priceForMethod(p,gamePaymentMethod))>0));
  if(fold(item.name)==="free fire"){
+  
   const diamonds=plans.filter(p=>freeFirePackageGroup(p)==="diamonds");
   const evo=plans.filter(p=>freeFirePackageGroup(p)==="evo");
-  const passes=plans.filter(p=>["passes","booyah"].includes(freeFirePackageGroup(p)));
+  const passes=plans.filter(p=>freeFirePackageGroup(p)==="passes");
+  const booyah=plans.filter(p=>freeFirePackageGroup(p)==="booyah");
   const levels=plans.filter(p=>freeFirePackageGroup(p)==="levels");
   const cards=list=>list.map(p=>gamePlanCard(p,item,gamePaymentMethod)).join("");
   const empty=label=>'<div class="ff-empty"><span>✦</span><strong>'+label+'</strong><small>Prueba otro método de pago si no aparecen paquetes.</small></div>';
   const subgroup=(title,list)=>list.length?'<section class="ff-subgroup"><h4>'+title+'</h4><div class="ff-package-list">'+cards(sortPackages(list))+'</div></section>':"";
   const compartment=(id,title,description,icon,list,content)=>'<section class="ff-compartment ff-compartment-'+id+'"><header class="ff-compartment-head"><span class="ff-compartment-icon" aria-hidden="true">'+icon+'</span><div class="ff-compartment-copy"><span class="ff-compartment-kicker">FREE FIRE</span><h3>'+title+'</h3><p>'+description+'</p></div><span class="ff-compartment-count">'+list.length+'</span></header><div class="ff-compartment-body">'+content+'</div></section>';
-  const booyah=passes.filter(p=>freeFirePackageGroup(p)==="booyah");
+  const evoBoxes=evo.filter(p=>/cajas?\\s+de\\s+fragmentos/.test(fold(p.name||"")));
+  const evoWeapons=evo.filter(p=>/fragmentos\\s+de\\s+arma/.test(fold(p.name||"")));
   const booyahNorth=booyah.filter(p=>/norte/.test(fold(p.name||"")));
   const booyahSouth=booyah.filter(p=>/sur/.test(fold(p.name||"")));
   const booyahPremium=booyah.filter(p=>/premium/.test(fold(p.name||""))&&!/norte|sur/.test(fold(p.name||"")));
@@ -3145,28 +3148,29 @@ function renderGameDetail(){
    subgroup("Pase Booyah · LATAM Sur",booyahSouth)+
    subgroup("Pase Booyah Premium",booyahPremium)+
    subgroup("Otros pases Booyah",booyahOther);
-  const passContent=subgroup("Pases semanales y mensuales",passes.filter(p=>freeFirePackageGroup(p)==="passes"))+booyahContent;
-  const evoBoxes=evo.filter(p=>/cajas?\s+de\s+fragmentos/.test(fold(p.name||"")));
-  const evoWeapons=evo.filter(p=>/fragmentos\s+de\s+arma/.test(fold(p.name||"")));
-  const evoContent=subgroup("Cajas de fragmentos Evo",evoBoxes)+subgroup("Fragmentos de arma Evo",evoWeapons);
-  const extraContent=(evo.length?compartment("evo","Fragmentos Evo","Cajas y fragmentos para tus armas Evo","⚔️",evo,evoContent):"")+
-   (passes.length?compartment("passes","Pases y tarjetas","Pases semanales, mensuales y Booyah","🎟️",passes,passContent):"")+
-   (levels.length?compartment("levels","Mejoras de nivel","Paquetes para subir de nivel","🏆",levels,'<div class="ff-package-list">'+cards(levels)+'</div>'):"");
-  const activeCategory=activeFreeFireCategory==="extra"?"extra":"diamonds";
-  const totalExtra=evo.length+passes.length+levels.length;
+  const categories=[
+   {id:"diamonds",label:"💎 Diamantes",list:diamonds,content:compartment("diamonds","Diamantes","Paquetes de diamantes para tu cuenta","💎",diamonds,diamonds.length?'<div class="ff-package-list">'+cards(diamonds)+'</div>':empty("No hay paquetes de diamantes para este pago"))},
+   {id:"evo",label:"⚔️ Fragmentos Evo",list:evo,content:compartment("evo","Fragmentos Evo","Cajas y fragmentos para tus armas Evo","⚔️",evo,subgroup("Cajas de fragmentos Evo",evoBoxes)+subgroup("Fragmentos de arma Evo",evoWeapons))},
+   {id:"levels",label:"🏆 Mejoras de nivel",list:levels,content:compartment("levels","Mejoras de nivel","Paquetes para subir de nivel","🏆",levels,levels.length?'<div class="ff-package-list">'+cards(levels)+'</div>':empty("No hay mejoras de nivel para este pago"))},
+   {id:"passes",label:"🎟️ Pases y tarjetas",list:passes,content:compartment("passes","Pases y tarjetas","Tarjetas semanales y mensuales","🎟️",passes,subgroup("Pases semanales y mensuales",passes))},
+   {id:"booyah",label:"👑 Pase Booyah",list:booyah,content:compartment("booyah","Pase Booyah","Ofertas regionales y versión Premium","🎟️",booyah,booyahContent)}
+  ].filter(category=>category.list.length>0);
+  const activeCategory=categories.some(category=>category.id===activeFreeFireCategory)
+   ?activeFreeFireCategory:(categories[0]?.id||"diamonds");
+  activeFreeFireCategory=activeCategory;
+  const tabsHtml=categories.map(category=>
+   '<button type="button" class="free-fire-category-tab '+(activeCategory===category.id?"active":"")+'" role="tab" aria-selected="'+(activeCategory===category.id)+'" aria-controls="freeFire'+category.id.charAt(0).toUpperCase()+category.id.slice(1)+'Panel" onclick="selectFreeFireCategory(&quot;'+category.id+'&quot;)"><span>'+category.label+'</span><b>'+category.list.length+'</b></button>'
+  ).join("");
+  const panelsHtml=categories.map(category=>{
+   const panelId="freeFire"+category.id.charAt(0).toUpperCase()+category.id.slice(1)+"Panel";
+   return '<section id="'+panelId+'" class="free-fire-category-panel '+(activeCategory===category.id?"active":"hidden")+'" role="tabpanel">'+category.content+'</section>';
+  }).join("");
   $("gameDetailPlans").innerHTML=
    '<div class="ff-browser-head"><h2>Elige tu paquete</h2><span class="ff-total">'+plans.length+' opciones</span></div>'+
-   '<div class="free-fire-category-tabs" role="tablist" aria-label="Categorías de Free Fire">'+
-    '<button type="button" class="free-fire-category-tab '+(activeCategory==="diamonds"?"active":"")+'" role="tab" aria-selected="'+(activeCategory==="diamonds")+'" aria-controls="freeFireDiamondsPanel" onclick="selectFreeFireCategory(&quot;diamonds&quot;)"><span>💎 Diamantes</span><b>'+diamonds.length+'</b></button>'+
-    '<button type="button" class="free-fire-category-tab '+(activeCategory==="extra"?"active":"")+'" role="tab" aria-selected="'+(activeCategory==="extra")+'" aria-controls="freeFireExtraPanel" onclick="selectFreeFireCategory(&quot;extra&quot;)"><span>🎁 Ofertas extra</span><b>'+totalExtra+'</b></button>'+
-   '</div>'+
-   '<section id="freeFireDiamondsPanel" class="free-fire-category-panel '+(activeCategory==="diamonds"?"active":"")+'" role="tabpanel">'+
-    compartment("diamonds","Diamantes","Paquetes de diamantes para tu cuenta","💎",diamonds,diamonds.length?'<div class="ff-package-list">'+cards(diamonds)+'</div>':empty("No hay paquetes de diamantes para este pago"))+
-   '</section>'+
-   '<section id="freeFireExtraPanel" class="free-fire-category-panel '+(activeCategory==="extra"?"active":"")+'" role="tabpanel">'+
-    (extraContent||empty("No hay ofertas extra para este método de pago"))+
-   '</section>';
- }else if(fold(item.name)==="mobile legends: bang bang"){
+   (categories.length>1?'<div class="free-fire-category-tabs" role="tablist" aria-label="Categorías de Free Fire">'+tabsHtml+'</div>':"")+
+   (panelsHtml||empty("No hay paquetes disponibles para este método de pago"));
+ }
+}else if(fold(item.name)==="mobile legends: bang bang"){
   const diamonds=plans.filter(p=>mobileLegendsCatalogCategory(p)==="diamonds");
   const passes=plans.filter(p=>mobileLegendsCatalogCategory(p)==="passes");
   const memberships=plans.filter(p=>mobileLegendsCatalogCategory(p)==="memberships");
@@ -3244,7 +3248,7 @@ function renderGameDetail(){
  $("gamePlansSubtitle").textContent=methods.length?"Precios en "+gamePaymentMethod:"Sin métodos de pago disponibles";
 }
 function selectFreeFireCategory(category){
- activeFreeFireCategory=category==="extra"?"extra":"diamonds";
+ activeFreeFireCategory=["diamonds","evo","levels","passes","booyah"].includes(category)?category:"diamonds";
  renderGameDetail();
 }
 function selectMobileLegendsCategory(category){
