@@ -1941,3 +1941,55 @@ button:active:not(:disabled){
   opacity:.31!important;
  }
 }
+
+
+/* v23 — emblema oficial visible en Wallet e icono de cartera en el perfil. */
+.wallet-hero:after{
+ content:none!important;
+ display:none!important;
+}
+.wallet-hero:before{
+ z-index:0!important;
+}
+.wallet-watermark{
+ position:absolute!important;
+ display:block!important;
+ width:178px!important;
+ height:178px!important;
+ right:22px!important;
+ top:50%!important;
+ bottom:auto!important;
+ transform:translateY(-50%)!important;
+ object-fit:cover!important;
+ object-position:center!important;
+ border-radius:50%!important;
+ opacity:.38!important;
+ mix-blend-mode:screen;
+ filter:saturate(1.28) brightness(1.22);
+ pointer-events:none!important;
+ z-index:1!important;
+}
+.wallet-hero>div:first-of-type,
+.wallet-hero .wallet-coin{
+ position:relative!important;
+ z-index:2!important;
+}
+.wallet-line-icon{
+ display:block;
+ width:22px;
+ height:22px;
+ flex:0 0 22px;
+ fill:none;
+ stroke:currentColor;
+ stroke-width:1.8;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}
+@media(max-width:680px){
+ .wallet-watermark{
+  width:154px!important;
+  height:154px!important;
+  right:2px!important;
+  opacity:.42!important;
+ }
+}
