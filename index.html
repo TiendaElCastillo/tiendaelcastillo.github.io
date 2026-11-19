@@ -1821,7 +1821,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=22">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=23">
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -2036,7 +2036,7 @@ body{min-width:0}
  <div class="panel">
   <div class="section-head"><div><h2>Accesos rápidos</h2><p>Entra directamente a lo que necesitas.</p></div></div>
   <div class="profile-action-grid">
-   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon">▣</span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Saldo: 0,00 USD</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><svg class="wallet-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 6.5h13.5A2.5 2.5 0 0 1 21 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h12"/><path d="M3 8h14.5A2.5 2.5 0 0 1 20 10.5V12h-4.2a2.3 2.3 0 0 0 0 4.6H21"/><circle cx="16" cy="14.8" r=".65" fill="currentColor" stroke="none"/></svg></span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Saldo: 0,00 USD</small></button>
    <button class="profile-action-card" type="button" onclick="showView('orders')"><span class="profile-action-icon">▤</span><strong>Mis pedidos</strong><small>Consulta entregas y estados</small></button>
    <button class="profile-action-card" type="button" onclick="showView('notifications')"><span class="profile-action-icon"><svg class="messages-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.25 11.25a7.25 7.25 0 0 1-7.25 7.25H7l-3.25 2V11.25A7.25 7.25 0 0 1 11 4h2a7.25 7.25 0 0 1 7.25 7.25Z"/><path d="M8.5 10h7M8.5 13.75h4.75"/></svg></span><strong>Mensajes y avisos</strong><small id="profileUnreadNotifications">Revisa las novedades de tu cuenta</small></button>
    <button class="profile-action-card" type="button" onclick="showView('help')"><span class="profile-action-icon">?</span><strong>Centro de ayuda</strong><small>Guías, pagos, pedidos y soporte</small></button>
@@ -2078,6 +2078,7 @@ body{min-width:0}
 <section id="walletView" class="store-view hidden">
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
+   <img class="wallet-watermark" src="./assets/el-castillo-icon.webp" alt="" aria-hidden="true" width="180" height="180" loading="lazy" decoding="async">
    <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando saldo…</div><small>Este es tu saldo para pagar paquetes. Los reembolsos de pedidos fallidos que correspondan también se acreditarán aquí.</small></div>
    <div class="wallet-coin wallet-coin-art" aria-hidden="true">
     <svg viewBox="0 0 180 150" role="img" focusable="false">
