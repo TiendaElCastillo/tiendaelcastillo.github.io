@@ -611,3 +611,35 @@
  #admin .admin-order-filters{gap:6px}
  #admin .admin-order-filter{font-size:10px;padding:8px 5px;min-height:42px}
 }
+
+
+/* Centro de soporte con tickets y conversación dentro de la cuenta */
+.support-tickets-panel{margin-top:14px}
+.support-ticket-card{display:flex;width:100%;flex-direction:column;gap:7px;margin:9px 0;padding:14px;border:1px solid #e1e8f2;border-radius:15px;background:#fff;text-align:left;color:#263a57;box-shadow:0 3px 10px rgba(20,45,90,.035)}
+.support-ticket-card:active{background:#f5f8ff}
+.support-ticket-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.support-ticket-card-top strong{font-size:12px;color:#245fbd}
+.support-ticket-subject{font-size:14px;line-height:1.35}
+.support-ticket-card small{font-size:11px;color:#718098;line-height:1.45;overflow-wrap:anywhere}
+.support-ticket-reference{color:#405a7c!important}
+.support-ticket-status{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border:1px solid #dce6f4;border-radius:30px;background:#f3f6fb;color:#52647d;font-size:10px;font-weight:850;white-space:nowrap}
+.support-ticket-status.status-open{background:#eef5ff;border-color:#cfe0ff;color:#245fbd}
+.support-ticket-status.status-in_progress{background:#fff7e9;border-color:#f1dfb8;color:#8b5b12}
+.support-ticket-status.status-waiting_customer{background:#f3efff;border-color:#ded4ff;color:#6245a5}
+.support-ticket-status.status-resolved{background:#eaf8f0;border-color:#ccebd9;color:#207347}
+.support-ticket-status.status-closed{background:#f0f2f5;border-color:#dce1e8;color:#6c7788}
+.support-ticket-thread{margin-top:16px;padding-top:14px;border-top:1px solid #e3eaf4}
+.support-thread-header{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin:12px 0;padding:13px;border:1px solid #e0e9f4;border-radius:14px;background:#f8faff}
+.support-thread-header strong{font-size:15px;line-height:1.4;color:#1f3658;overflow-wrap:anywhere}
+.support-thread-header small{font-size:11px;color:#718098;line-height:1.45;overflow-wrap:anywhere}
+.support-chat-messages{display:grid;gap:10px;max-height:56vh;overflow:auto;padding:6px 1px 12px}
+.support-chat-message{max-width:92%;padding:12px 13px;border:1px solid #e0e8f2;border-radius:14px 14px 14px 5px;background:#f7f9fc;overflow-wrap:anywhere}
+.support-chat-message.mine{justify-self:end;border-color:#cfe0ff;border-radius:14px 14px 5px 14px;background:#eff5ff}
+.support-chat-author{display:block;margin-bottom:5px;color:#275eae;font-size:11px}
+.support-chat-message p{margin:0;color:#2d405d;font-size:13px;line-height:1.55;white-space:pre-wrap}
+.support-chat-message small{display:block;margin-top:7px;color:#7a8799;font-size:10px}
+.support-thread-actions{margin-top:12px}
+.support-ticket-thread[hidden],.support-gate-panel[hidden]{display:none!important}
+.admin-support-panel #adminSupportTickets{display:grid;gap:8px}
+.admin-support-ticket-card{background:linear-gradient(150deg,#fff,#f8faff)}
+@media(max-width:520px){.support-ticket-card{padding:12px}.support-chat-message{max-width:96%}.support-thread-header{padding:11px}}
