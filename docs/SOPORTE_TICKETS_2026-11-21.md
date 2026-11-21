@@ -51,3 +51,10 @@ El cliente los consulta en «Centro de soporte → Mis solicitudes». La adminis
 ## Prueba pendiente después de publicar
 
 Completar una prueba real desde una cuenta cliente y otra sesión administradora: crear un ticket, comprobar que aparece en «Admin → Soporte», contestarlo desde Administración y verificar que el cliente puede leer la respuesta. Esa prueba interactiva depende de iniciar sesión en el navegador y no se simula con la consulta SQL.
+
+
+## Ajuste de rendimiento posterior
+
+- Migración adicional aplicada: `20261121141927_index_support_message_sender_id`.
+- Añade el índice `support_messages_sender_id_idx` para la clave foránea del autor de cada mensaje.
+- La revisión posterior dejó de señalar claves foráneas sin índice en las tablas nuevas de soporte.
