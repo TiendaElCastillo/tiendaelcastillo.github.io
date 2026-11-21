@@ -1822,6 +1822,7 @@ body{min-width:0}
 
 
   <link rel="stylesheet" href="./assets/storefront-polish.css?v=23">
+<script src="./assets/posthog.js?v=1" defer></script>
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -2545,8 +2546,11 @@ async function register(){
  try{
   const {data,error}=await db.auth.signUp({email,password,options:{captchaToken,data:{full_name:name},emailRedirectTo:location.origin+location.pathname}});
   if(error){$("authmsg").textContent=error.message;return}
-  if(data.session){await openStore(data.user)}
-  else{
+  if(data.session){
+   await openStore(data.user);
+   window.castleAnalytics?.capture?.("store_signup_completed",{source:"email"});
+  }else{
+   window.castleAnalytics?.capture?.("store_signup_submitted",{source:"email"});
    $("authmsg").textContent="¡Bienvenido a Tienda El Castillo! Tu cuenta se creó correctamente. Revisa tu Gmail (o el correo que registraste): debe haberte llegado un mensaje de confirmación para activar tu cuenta. Abre el correo y pulsa «Confirmar mi cuenta». Después vuelve a esta página e inicia sesión. Si no lo ves, revisa Spam, Promociones o Correo no deseado.";
    $("resendConfirmationWrap")?.classList.remove("hidden");
   }
@@ -2705,6 +2709,7 @@ async function login(){
   }
   if(!data?.user){$("authmsg").textContent="Supabase no devolvió una sesión. Confirma tu correo e inténtalo otra vez.";return}
   await openStore(data.user);
+  window.castleAnalytics?.capture?.("store_login_completed",{source:"email"});
  }catch(error){
   $("authmsg").textContent="No pudimos iniciar sesión por un problema de conexión. Tus datos siguen escritos; inténtalo de nuevo.";
   console.error("Error de inicio de sesión:",error);
@@ -2740,6 +2745,7 @@ async function openStore(user){
   currentProfile=created.data;
  }
 
+ if(user?.id)window.castleAnalytics?.identify?.(String(user.id),{account_role:currentProfile?.role||"customer"});
  const profileName=String(currentProfile.full_name||"").trim();
  const profileInitialSource=profileName||String(user.email||"EC").split("@")[0];
  const profileInitials=profileInitialSource.trim().split(/\s+/).slice(0,2).map(part=>part.charAt(0)).join("").toUpperCase();
@@ -3504,7 +3510,7 @@ function renderProductCatalogs(){
  $("giftProducts").innerHTML=visibleGifts.length?visibleGifts.map(productCard).join(""):'<p class="empty-note">Todavía no hay tarjetas publicadas. Consulta nuevamente más adelante.</p>';
  renderSearchProducts();
 }
-function chooseGame(name){activeGameFilter=name;gamePaymentMethod="";activeFreeFireCategory="diamonds";renderProductCatalogs();showView("games")}function chooseGift(name){activeGiftFilter=name;renderProductCatalogs();showView("giftcards")}function clearGameFilter(){activeGameFilter="";renderProductCatalogs();$("gamesCatalogPanel")?.scrollIntoView({behavior:"smooth",block:"start"})}
+function chooseGame(name){activeGameFilter=name;gamePaymentMethod="";activeFreeFireCategory="diamonds";renderProductCatalogs();window.castleAnalytics?.capture?.("store_game_opened",{game:name});showView("games")}function chooseGift(name){activeGiftFilter=name;renderProductCatalogs();showView("giftcards")}function clearGameFilter(){activeGameFilter="";renderProductCatalogs();$("gamesCatalogPanel")?.scrollIntoView({behavior:"smooth",block:"start"})}
 function scrollToHowItWorks(){document.getElementById("howItWorks")?.scrollIntoView({behavior:"smooth",block:"start"})}
 async function shareStore(){
  const url="https://tiendaelcastillo.github.io/";
@@ -3687,6 +3693,7 @@ async function continueToPayment(){
  if(button){button.disabled=false;button.textContent="Continuar al pago →";}
  updateCheckoutSummary();
  updateCheckoutStage("payment");
+ window.castleAnalytics?.capture?.("store_checkout_payment_step",{game:p.game,package:p.name,payment_method:checkoutLockedPaymentMethod});
 }
 function renderCheckoutPaymentMethods(){
  const box=$("checkoutPaymentMethods"),method=String(checkoutLockedPaymentMethod||"");if(!box)return;
@@ -3708,6 +3715,7 @@ function showView(name){
  const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",wallet:"walletView",profile:"profileView",admin:"admin",help:"helpView",guides:"guidesView",support:"supportView",legal:"legalView",faq:"faqView",privacy:"privacyView",terms:"termsView"};
  Object.values(views).forEach(id=>$(id)?.classList.add("hidden"));
  $(views[name]||views.home)?.classList.remove("hidden");
+ if(["home","games","search","checkout","orders","notifications","wallet","profile","help","guides","support","legal","faq","privacy","terms"].includes(name))window.castleAnalytics?.capture?.("store_section_opened",{view:name});
  document.querySelectorAll("#bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
  $("bottomNav").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -3964,7 +3972,9 @@ function openCheckout(productId,preferredMethod){
  $("player").value="";$("playername").value="";$("reference").value="";$("senderPhone").value="";
  $("reportedAmount").value="";$("paymentProof").value="";previewPaymentProof();
  $("selectedProductText").textContent=p.game+" · "+p.name;$("ordermsg").textContent="";
- updateCheckoutSummary();syncPlayerRegionUI();showView("checkout");window.updateCheckoutSubmitState?.();
+ updateCheckoutSummary();syncPlayerRegionUI();showView("checkout");
+ window.castleAnalytics?.capture?.("store_checkout_opened",{game:p.game,package:p.name,payment_method:method});
+ window.updateCheckoutSubmitState?.();
  return true;
 }
 function openGamePlanCheckout(button){
@@ -4366,6 +4376,7 @@ async function placeOrder(){
    // The RPC response confirms the charge and order are committed. A later UI refresh
    // must never turn a successful purchase into a failure message.
    clearWalletRequestIdentity(requestInfo);
+   window.castleAnalytics?.capture?.("store_order_submitted",{game:product.game,package:product.name,payment_method:"Saldo de Tienda El Castillo"});
    resetPlayerValidation();
    $("ordermsg").textContent=result.data.already_processed?"Este pedido ya se había creado. No se descontó saldo otra vez. Pedido "+result.data.order_code+".":"Compra creada correctamente. Pedido "+result.data.order_code+". Se descontaron "+moneyUSD(result.data.price)+" USD de tu wallet.";
    $("checkoutDoneMessage").textContent="Tu pedido "+result.data.order_code+" fue pagado con el saldo de tu wallet. Puedes consultar su progreso en «Mis pedidos».";
@@ -4419,6 +4430,7 @@ async function placeOrder(){
    try{await loadMyOrders();}catch(refreshError){console.warn("El pedido está creado; no se pudo refrescar el historial:",refreshError);}
    showView("orders");return;
   }
+  window.castleAnalytics?.capture?.("store_order_submitted",{game:product.game,package:product.name,payment_method:method});
   $("ordermsg").textContent="Comprobante y datos recibidos. Pedido "+data.order_code+" enviado a revisión. La recarga se realizará únicamente después de verificar el pago.";
   $("checkoutDoneMessage").textContent="Tu pedido "+data.order_code+" fue recibido y quedó pendiente de revisión del pago.";
   $("player").value="";$("playername").value="";resetPlayerValidation();$("reference").value="";$("senderPhone").value="";$("reportedAmount").value="";$("paymentProof").value="";previewPaymentProof();
@@ -6180,7 +6192,7 @@ async function logout(){
  stopCustomerOrderRealtime();
  stopAdminPaymentPolling();
  stopNotificationPolling();
- await db.auth.signOut();pendingCheckoutAfterLogin=false;currentUser=null;currentProfile=null;
+ await db.auth.signOut();window.castleAnalytics?.reset?.();pendingCheckoutAfterLogin=false;currentUser=null;currentProfile=null;
  $("siteHeader").classList.add("hidden");$("store").classList.add("hidden");$("bottomNav").classList.add("hidden");$("adminNav").classList.add("hidden");$("notificationsButton")?.classList.add("hidden");$("notificationBadge")?.classList.add("hidden");
  $("auth").classList.remove("hidden");setAuthMode("login");window.scrollTo({top:0,behavior:"smooth"});
 }
