@@ -247,7 +247,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#e8effd 0,transparent 48%),v
  .mlbb-plan-price{font-size:15px}
  .mlbb-plan-buy{font-size:11px;padding:8px}
 }
-.blood-strike-status-card{display:flex;gap:14px;align-items:flex-start;margin:14px 0 22px;padding:20px 18px;border:1px solid #e4dce5;border-radius:18px;background:linear-gradient(135deg,#151c2b 0%,#263448 62%,#4a2430 100%);color:#fff;box-shadow:0 14px 30px rgba(16,28,48,.12)}.blood-strike-status-mark{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.13);font-size:24px}.blood-strike-status-copy{min-width:0}.blood-strike-status-kicker{display:block;margin:1px 0 7px;color:#ffbd9c;font-size:10px;font-weight:900;letter-spacing:.12em}.blood-strike-status-copy h2{margin:0 0 8px;color:#fff;font-size:19px;line-height:1.15}.blood-strike-status-copy p{margin:0;color:#e5eaf2;font-size:13px;line-height:1.55}.blood-strike-region-note{display:inline-flex;margin-top:12px;padding:7px 9px;border:1px solid rgba(255,255,255,.16);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:10px;font-weight:750}</style><link rel="preload" as="image" href="./assets/el-castillo-icon.webp" type="image/webp"><link rel="stylesheet" href="./assets/admin-panel.css?v=32">
+.blood-strike-status-card{display:flex;gap:14px;align-items:flex-start;margin:14px 0 22px;padding:20px 18px;border:1px solid #e4dce5;border-radius:18px;background:linear-gradient(135deg,#151c2b 0%,#263448 62%,#4a2430 100%);color:#fff;box-shadow:0 14px 30px rgba(16,28,48,.12)}.blood-strike-status-mark{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.13);font-size:24px}.blood-strike-status-copy{min-width:0}.blood-strike-status-kicker{display:block;margin:1px 0 7px;color:#ffbd9c;font-size:10px;font-weight:900;letter-spacing:.12em}.blood-strike-status-copy h2{margin:0 0 8px;color:#fff;font-size:19px;line-height:1.15}.blood-strike-status-copy p{margin:0;color:#e5eaf2;font-size:13px;line-height:1.55}.blood-strike-region-note{display:inline-flex;margin-top:12px;padding:7px 9px;border:1px solid rgba(255,255,255,.16);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:10px;font-weight:750}</style><link rel="preload" as="image" href="./assets/el-castillo-icon.webp" type="image/webp"><link rel="stylesheet" href="./assets/admin-panel.css?v=33">
 <script>
 /* Salvavidas independiente: incluso si falla otro script externo, la pantalla inicial no queda bloqueada. */
 window.addEventListener("DOMContentLoaded",function(){
@@ -2181,6 +2181,23 @@ body{min-width:0}
 </div>
 
 <div class="panel"><div class="order-toolbar"><h2>Pedidos de clientes</h2><div class="field-row"><button class="secondary-btn" type="button" onclick="loadAllOrders()">Actualizar</button><button class="secondary-btn" type="button" onclick="enablePaymentNotifications()">Activar avisos</button></div></div><p id="paymentNotifyStatus" class="track-note">Activa los avisos de este teléfono y mantén la tienda abierta para recibir alertas automáticas.</p><p class="track-note">Flujo de recarga: primero revisa y confirma el pago del cliente. Después aparecerá el botón <strong>«Autorizar recarga y reservar saldo»</strong>; ese segundo botón envía el pedido a Central One y es el único que usa saldo del proveedor. La solicitud queda protegida contra duplicados y podrás consultar aquí el estado real de la entrega. No marques la recarga como completada hasta que Central One informe «completed».</p><p id="orderadminmsg" class="msg" role="status"></p><div id="allorders">Cargando...</div></div>
+
+ <div class="panel admin-support-panel">
+  <div class="order-toolbar"><div><h2>Solicitudes de soporte</h2><p class="subtle">Mensajes recibidos desde el Centro de soporte de la tienda.</p></div><button class="secondary-btn" type="button" onclick="loadAdminSupportTickets()">Actualizar</button></div>
+  <p id="adminSupportMessage" class="msg" role="status">Las nuevas incidencias aparecerán aquí.</p>
+  <div id="adminSupportTickets"><p class="empty-note">Pulsa «Actualizar» para cargar las solicitudes.</p></div>
+  <div id="adminSupportThread" class="support-ticket-thread" hidden>
+   <button class="text-link" type="button" onclick="closeAdminSupportTicket()">← Volver a solicitudes</button>
+   <div id="adminSupportThreadHeader" class="support-thread-header"></div>
+   <div id="adminSupportThreadMessages" class="support-chat-messages"></div>
+   <div class="support-thread-actions">
+    <div class="field"><label for="adminSupportReply">Responder al cliente</label><textarea id="adminSupportReply" rows="3" maxlength="1500" placeholder="Escribe la respuesta que verá el cliente en su cuenta…"></textarea></div>
+    <button class="primary-btn block-btn" type="button" onclick="sendAdminSupportReply()">Enviar respuesta</button>
+    <button class="secondary-btn block-btn" type="button" onclick="resolveAdminSupportTicket()">Marcar como resuelta</button>
+    <p id="adminSupportReplyStatus" class="msg" role="status"></p>
+   </div>
+  </div>
+ </div>
 </section>
  
  <section id="helpView" class="store-view hidden">
@@ -2249,43 +2266,65 @@ body{min-width:0}
    <h1>Centro de soporte</h1>
    <p>Queremos ayudarte cuando exista una incidencia que necesite intervención. Antes de escribir, revisa el estado de tu pedido y los avisos de tu cuenta.</p>
   </div>
+  
   <div class="panel support-gate-panel">
    <div class="support-normal-status" id="supportNormalStatus">
-    <strong id="supportNormalTitle">Antes de contactar</strong>
-    <p id="supportNormalMessage">Revisa primero «Órdenes» y «Mensajes y avisos». Los estados normales se consultan desde tu cuenta; el soporte personal se reserva para incidencias concretas.</p>
+    <strong id="supportNormalTitle">Atención desde tu cuenta</strong>
+    <p id="supportNormalMessage">Selecciona el motivo y envía tu consulta aquí mismo. Recibirás un folio y podrás leer la respuesta del equipo desde esta pantalla. Para una espera normal, consulta primero el estado de tu pedido o depósito.</p>
     <button id="supportNormalButton" class="secondary-btn block-btn" type="button" onclick="showView('orders')">Consultar mis órdenes</button>
    </div>
    <div class="field">
     <label for="supportIssue">¿Qué incidencia necesitas resolver?</label>
     <select id="supportIssue" onchange="updateSupportGuidance()">
      <option value="">Selecciona el motivo</option>
-     <option value="pending">Mi pedido figura pendiente o en proceso</option>
+     <option value="pending">Mi pedido lleva demasiado tiempo pendiente o en proceso</option>
      <option value="payment">Realicé el pago, pero no encuentro el pedido</option>
      <option value="duplicate">Hice dos pagos para una misma compra</option>
      <option value="rejected">El pedido fue rechazado, pero el pago sí se realizó</option>
      <option value="delivered">El pedido figura entregado, pero no recibí el contenido</option>
-     <option value="wallet_pending">Mi depósito de Wallet todavía está pendiente de revisión</option>
-     <option value="wallet">Mi depósito ya fue aprobado o un movimiento de Wallet es incorrecto</option>
+     <option value="wallet_pending">Mi depósito de Wallet lleva demasiado tiempo pendiente</option>
+     <option value="wallet">Mi depósito fue aprobado o un movimiento de Wallet es incorrecto</option>
     </select>
    </div>
+   <div class="field" id="supportSubjectWrap" hidden>
+    <label for="supportSubject">Asunto</label>
+    <input id="supportSubject" type="text" maxlength="120" placeholder="Resume el problema en pocas palabras">
+   </div>
    <div class="field" id="supportReferenceWrap" hidden>
-    <label for="supportReference">Folio del pedido o referencia del pago</label>
-    <input id="supportReference" type="text" maxlength="100" placeholder="Ej. EC-XXXXXXXX o referencia bancaria" oninput="updateSupportGuidance()">
+    <label for="supportReference">Folio del pedido o referencia del pago (si la tienes)</label>
+    <input id="supportReference" type="text" maxlength="100" placeholder="Ej. EC-XXXXXXXX o referencia bancaria">
     <small class="field-hint">No escribas contraseñas, PIN bancarios ni frases de recuperación.</small>
    </div>
    <div class="field" id="supportDetailsWrap" hidden>
-    <label for="supportDetails">Detalles adicionales (opcional)</label>
-    <textarea id="supportDetails" rows="3" maxlength="500" placeholder="Describe brevemente qué ocurrió." oninput="updateSupportGuidance()"></textarea>
+    <label for="supportDetails">Cuéntanos qué ocurrió</label>
+    <textarea id="supportDetails" rows="4" maxlength="1500" placeholder="Describe qué pasó, cuándo ocurrió y qué necesitas que revisemos." required></textarea>
+    <small class="field-hint">No incluyas contraseñas, códigos de acceso ni datos secretos de pago.</small>
    </div>
    <div id="supportGuidance" class="support-guidance" aria-live="polite">
-    <strong>Primero identifica el problema.</strong><p>Selecciona un motivo y te mostraremos el siguiente paso.</p>
+    <strong>Selecciona el motivo de tu consulta.</strong><p>Te mostraremos qué información conviene incluir.</p>
    </div>
    <div id="supportStatusAction" class="support-status-action" hidden>
-    <button id="supportStatusActionButton" class="secondary-btn block-btn" type="button">Consultar el estado</button>
+    <button id="supportStatusActionButton" class="secondary-btn block-btn" type="button">Consultar estado</button>
    </div>
-   <a id="supportContactLink" class="primary-btn block-btn support-contact-link" hidden target="_blank" rel="noopener noreferrer">Contactar soporte por WhatsApp</a>
-   <p id="supportEvidenceNote" class="track-note" hidden>Ten preparado el folio y la evidencia relacionada con la incidencia. No envíes contraseñas, códigos de acceso ni datos bancarios secretos.</p>
+   <button id="supportSubmitButton" class="primary-btn block-btn" type="button" onclick="submitSupportTicket()" hidden>Enviar incidencia</button>
+   <p id="supportSubmitMessage" class="msg" role="status" aria-live="polite"></p>
+   <p class="track-note">Tu consulta se guarda en el sistema de atención de Tienda El Castillo. No se envía automáticamente a WhatsApp ni al correo.</p>
    <button class="text-link" type="button" onclick="showView('faq')">Consultar preguntas frecuentes</button>
+  </div>
+  <div class="panel support-tickets-panel">
+   <div class="section-head"><div><h2>Mis solicitudes</h2><p>Consulta tus incidencias y las respuestas del equipo.</p></div><button class="secondary-btn" type="button" onclick="loadCustomerSupportTickets()">Actualizar</button></div>
+   <div id="supportTicketsList"><p class="empty-note">Cargando tus solicitudes…</p></div>
+   <div id="supportTicketThread" class="support-ticket-thread" hidden>
+    <button class="text-link" type="button" onclick="closeCustomerSupportTicket()">← Volver a mis solicitudes</button>
+    <div id="supportTicketThreadHeader" class="support-thread-header"></div>
+    <div id="supportTicketMessages" class="support-chat-messages"></div>
+    <div id="supportCustomerReplyBox" class="field">
+     <label for="supportReplyMessage">Responder a Tienda El Castillo</label>
+     <textarea id="supportReplyMessage" rows="3" maxlength="1500" placeholder="Escribe tu respuesta…"></textarea>
+     <button class="primary-btn block-btn" type="button" onclick="sendCustomerSupportReply()">Enviar respuesta</button>
+     <p id="supportReplyMessageStatus" class="msg" role="status"></p>
+    </div>
+   </div>
   </div>
  </section>
  <section id="legalView" class="store-view hidden">
@@ -6171,7 +6210,7 @@ if(document.readyState==="loading"){
 </script>
 
 <script src="./assets/offline-guard.js?v=2"></script>
-<script src="./assets/admin-panel.js?v=18" async></script>
-<script src="./assets/customer-center.js?v=5" defer></script>
+<script src="./assets/admin-panel.js?v=19" async></script>
+<script src="./assets/customer-center.js?v=6" defer></script>
 </body>
 </html>

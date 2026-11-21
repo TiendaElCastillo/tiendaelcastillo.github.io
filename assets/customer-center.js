@@ -188,82 +188,408 @@
     if (typeof window.showView === "function") window.showView("guides");
   }
 
+  function supportElement(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  }
+
+  var SUPPORT_STATUS_LABELS = {
+    open: "Recibida",
+    in_progress: "En revisión",
+    waiting_customer: "Respuesta enviada",
+    resolved: "Resuelta",
+    closed: "Cerrada"
+  };
+  var SUPPORT_CATEGORY_LABELS = {
+    pending: "Pedido pendiente o en proceso",
+    payment: "Pago no reflejado",
+    duplicate: "Pago duplicado",
+    rejected: "Pedido rechazado con pago realizado",
+    delivered: "Contenido no recibido",
+    wallet_pending: "Depósito de Wallet pendiente",
+    wallet: "Incidencia de Wallet"
+  };
+  var activeCustomerSupportTicketId = null;
+  var activeAdminSupportTicketId = null;
+
+  function supportDate(value) {
+    var date = new Date(value);
+    return isNaN(date.getTime()) ? "Fecha no disponible" :
+      date.toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" });
+  }
+
+  function supportCurrentDb() {
+    return typeof db !== "undefined" && db && typeof currentUser !== "undefined" && currentUser ? db : null;
+  }
+
   function updateSupportGuidance() {
     var issueSelect = document.getElementById("supportIssue");
-    var referenceInput = document.getElementById("supportReference");
-    var detailsInput = document.getElementById("supportDetails");
+    var subjectWrap = document.getElementById("supportSubjectWrap");
+    var subjectInput = document.getElementById("supportSubject");
     var referenceWrap = document.getElementById("supportReferenceWrap");
     var detailsWrap = document.getElementById("supportDetailsWrap");
+    var referenceInput = document.getElementById("supportReference");
+    var detailsInput = document.getElementById("supportDetails");
     var guidance = document.getElementById("supportGuidance");
-    var contact = document.getElementById("supportContactLink");
-    var evidenceNote = document.getElementById("supportEvidenceNote");
+    var submit = document.getElementById("supportSubmitButton");
     var statusAction = document.getElementById("supportStatusAction");
     var statusButton = document.getElementById("supportStatusActionButton");
     var normalStatus = document.getElementById("supportNormalStatus");
     var normalTitle = document.getElementById("supportNormalTitle");
     var normalMessage = document.getElementById("supportNormalMessage");
     var normalButton = document.getElementById("supportNormalButton");
-    if (!issueSelect || !referenceInput || !guidance || !contact) return;
+    if (!issueSelect || !guidance) return;
 
-    var issueKey = issueSelect.value;
-    var issue = SUPPORT_CASES[issueKey];
-    var reference = referenceInput.value.trim();
-    var extra = detailsInput ? detailsInput.value.trim() : "";
-    var isRoutineStatus = issueKey === "pending" || issueKey === "wallet_pending";
-
-    // Do not request a folio or a personal chat for ordinary waiting states.
-    if (referenceWrap) referenceWrap.hidden = !issue || isRoutineStatus;
-    if (detailsWrap) detailsWrap.hidden = !issue || isRoutineStatus;
-    if (evidenceNote) evidenceNote.hidden = !issue || isRoutineStatus;
-    if (statusAction) statusAction.hidden = !isRoutineStatus;
-
-    contact.hidden = true;
-    contact.removeAttribute("href");
-
-    if (!issue) {
-      if (normalStatus) normalStatus.hidden = false;
-      if (normalTitle) normalTitle.textContent = "Antes de contactar";
-      if (normalMessage) normalMessage.textContent = "Revisa primero «Órdenes» y «Mensajes y avisos». Los estados normales se consultan desde tu cuenta; el soporte personal se reserva para incidencias concretas.";
-      if (normalButton) { normalButton.textContent = "Consultar mis órdenes"; normalButton.onclick = function () { if (typeof window.showView === "function") window.showView("orders"); }; }
-      guidance.innerHTML = '<strong>Selecciona el motivo de tu consulta.</strong><p>Te indicaremos qué revisar y si realmente hace falta contactar con soporte.</p>';
-      if (statusButton) statusButton.onclick = null;
-      return;
+    var key = issueSelect.value;
+    var issue = SUPPORT_CASES[key];
+    if (normalStatus) normalStatus.hidden = Boolean(issue);
+    if (subjectWrap) subjectWrap.hidden = !issue;
+    if (referenceWrap) referenceWrap.hidden = !issue;
+    if (detailsWrap) detailsWrap.hidden = !issue;
+    if (submit) submit.hidden = !issue;
+    if (issue && subjectInput && (!subjectInput.value.trim() || subjectInput.dataset.category !== key)) {
+      var defaults = {
+        pending: "Pedido pendiente o en proceso",
+        payment: "Pago realizado no reflejado",
+        duplicate: "Pago duplicado",
+        rejected: "Pedido rechazado con pago",
+        delivered: "Contenido no recibido",
+        wallet_pending: "Depósito de Wallet pendiente",
+        wallet: "Incidencia con Wallet"
+      };
+      subjectInput.value = defaults[key] || "Consulta de soporte";
+      subjectInput.dataset.category = key;
     }
-
-    guidance.innerHTML = '<strong>' + escapeHtml(issue.title) + '</strong><p>' + escapeHtml(issue.message) + '</p>';
-
-    if (isRoutineStatus) {
-      // These are normal waiting states: show one contextual status path, not a contact form.
-      if (referenceInput) referenceInput.value = "";
-      if (detailsInput) detailsInput.value = "";
-      if (normalStatus) normalStatus.hidden = true;
-      if (statusButton) {
-        if (issueKey === "wallet_pending") {
-          statusButton.textContent = "Ver historial de depósitos";
-          statusButton.onclick = function () { if (typeof window.showView === "function") window.showView("wallet"); };
-        } else {
-          statusButton.textContent = "Consultar mis órdenes";
-          statusButton.onclick = function () { if (typeof window.showView === "function") window.showView("orders"); };
-        }
+    if (statusAction) statusAction.hidden = !(key === "pending" || key === "wallet_pending");
+    if (statusButton) {
+      if (key === "wallet_pending") {
+        statusButton.textContent = "Revisar historial de depósitos";
+        statusButton.onclick = function () { if (typeof window.showView === "function") window.showView("wallet"); };
+      } else if (key === "pending") {
+        statusButton.textContent = "Consultar mis órdenes";
+        statusButton.onclick = function () { if (typeof window.showView === "function") window.showView("orders"); };
+      } else {
+        statusButton.onclick = null;
       }
+    }
+    if (!issue) {
+      if (normalTitle) normalTitle.textContent = "Atención desde tu cuenta";
+      if (normalMessage) normalMessage.textContent = "Selecciona el motivo y envía tu consulta aquí mismo. Recibirás un folio y podrás leer la respuesta del equipo desde esta pantalla.";
+      if (normalButton) {
+        normalButton.textContent = "Consultar mis órdenes";
+        normalButton.onclick = function () { if (typeof window.showView === "function") window.showView("orders"); };
+      }
+      guidance.innerHTML = "<strong>Selecciona el motivo de tu consulta.</strong><p>Te mostraremos qué información conviene incluir.</p>";
       return;
     }
-
-    if (normalStatus) normalStatus.hidden = true;
-
-    if (reference.length < 3) {
-      guidance.innerHTML += '<p class="support-reference-reminder">Escribe el folio del pedido o la referencia del pago para preparar el contacto.</p>';
-      return;
-    }
-
-    var message = "Hola, necesito ayuda con una incidencia de Tienda El Castillo." +
-      "\nMotivo: " + issue.title +
-      "\nFolio o referencia: " + reference +
-      (extra ? "\nDetalles: " + extra : "") +
-      "\nAdjuntaré la evidencia necesaria. Gracias.";
-    contact.href = "https://wa.me/" + CASTLE_SUPPORT_PHONE + "?text=" + encodeURIComponent(message);
-    contact.hidden = false;
+    var message = issue.message;
+    if (key === "pending") message += " Si la espera ya supera el tiempo indicado o el estado no se actualiza, puedes enviar una incidencia aquí.";
+    if (key === "wallet_pending") message += " Si ya pasó el plazo de revisión o el estado no coincide con tu historial, puedes consultarnos desde aquí.";
+    guidance.innerHTML = "<strong>" + escapeHtml(issue.title) + "</strong><p>" + escapeHtml(message) + "</p>";
+    if (referenceInput) referenceInput.placeholder = key.indexOf("wallet") === 0
+      ? "Folio del depósito o referencia, si la tienes"
+      : "Folio EC-XXXXXXXX o referencia del pago (opcional)";
+    if (detailsInput) detailsInput.required = true;
   }
+
+  async function submitSupportTicket() {
+    var client = supportCurrentDb();
+    var issue = document.getElementById("supportIssue");
+    var subject = document.getElementById("supportSubject");
+    var reference = document.getElementById("supportReference");
+    var details = document.getElementById("supportDetails");
+    var button = document.getElementById("supportSubmitButton");
+    var status = document.getElementById("supportSubmitMessage");
+    if (!client) { if (status) status.textContent = "Tu sesión no está activa. Inicia sesión de nuevo para enviar la consulta."; return; }
+    var key = issue ? issue.value : "";
+    var subjectText = subject ? subject.value.trim() : "";
+    var referenceText = reference ? reference.value.trim() : "";
+    var body = details ? details.value.trim() : "";
+    if (!SUPPORT_CASES[key]) { if (status) status.textContent = "Selecciona el motivo de la incidencia."; return; }
+    if (subjectText.length < 4 || subjectText.length > 120) { if (status) status.textContent = "Escribe un asunto de entre 4 y 120 caracteres."; subject?.focus(); return; }
+    if (referenceText.length > 100) { if (status) status.textContent = "La referencia no puede superar 100 caracteres."; return; }
+    if (body.length < 8 || body.length > 1500) { if (status) status.textContent = "Describe lo ocurrido con al menos 8 caracteres."; details?.focus(); return; }
+    if (button) { button.disabled = true; button.textContent = "Enviando incidencia…"; }
+    if (status) status.textContent = "Guardando tu solicitud de forma segura…";
+    try {
+      var result = await client.rpc("create_support_ticket", {
+        p_category: key,
+        p_subject: subjectText,
+        p_reference: referenceText || null,
+        p_message: body
+      });
+      if (result.error) throw result.error;
+      var row = result.data || {};
+      var code = row.ticket_code || (Array.isArray(row) && row[0] && row[0].ticket_code) || "folio generado";
+      if (status) status.textContent = "Incidencia enviada correctamente. Tu folio es " + code + ". Puedes seguir la conversación en «Mis solicitudes».";
+      if (details) details.value = "";
+      if (reference) reference.value = "";
+      if (subject) subject.value = "";
+      if (issue) issue.value = "";
+      updateSupportGuidance();
+      await loadCustomerSupportTickets();
+    } catch (error) {
+      console.error("No se pudo enviar la incidencia:", error);
+      if (status) status.textContent = error && error.message ? error.message : "No se pudo enviar la incidencia. Comprueba tu conexión e inténtalo de nuevo.";
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "Enviar incidencia"; }
+    }
+  }
+
+  async function loadCustomerSupportTickets() {
+    var client = supportCurrentDb();
+    var list = document.getElementById("supportTicketsList");
+    if (!list) return;
+    if (!client) { list.textContent = "Inicia sesión para consultar tus solicitudes."; return; }
+    list.textContent = "Cargando tus solicitudes…";
+    var result = await client.from("support_tickets")
+      .select("id,ticket_code,category,subject,reference,status,created_at,updated_at")
+      .order("updated_at", { ascending: false }).limit(30);
+    if (result.error) {
+      list.textContent = "No pudimos cargar tus solicitudes. Comprueba tu conexión e inténtalo de nuevo.";
+      console.error("Error cargando solicitudes del cliente:", result.error);
+      return;
+    }
+    list.replaceChildren();
+    if (!result.data || !result.data.length) {
+      list.append(supportElement("p", "empty-note", "Todavía no has enviado ninguna incidencia."));
+      return;
+    }
+    result.data.forEach(function (ticket) {
+      var card = supportElement("button", "support-ticket-card");
+      card.type = "button";
+      var top = supportElement("span", "support-ticket-card-top");
+      top.append(
+        supportElement("strong", "", ticket.ticket_code),
+        supportElement("span", "support-ticket-status status-" + ticket.status, SUPPORT_STATUS_LABELS[ticket.status] || ticket.status)
+      );
+      card.append(top);
+      card.append(supportElement("strong", "support-ticket-subject", ticket.subject));
+      card.append(supportElement("small", "", (SUPPORT_CATEGORY_LABELS[ticket.category] || "Consulta") + " · Actualizada " + supportDate(ticket.updated_at)));
+      card.addEventListener("click", function () { openCustomerSupportTicket(ticket.id); });
+      list.append(card);
+    });
+  }
+
+  function appendSupportMessages(container, messages, ticket, adminView) {
+    container.replaceChildren();
+    if (!messages || !messages.length) {
+      container.append(supportElement("p", "empty-note", "Todavía no hay mensajes en esta solicitud."));
+      return;
+    }
+    messages.forEach(function (message) {
+      var mine = adminView ? message.sender_id !== ticket.user_id : message.sender_id === currentUser.id;
+      var bubble = supportElement("article", "support-chat-message" + (mine ? " mine" : ""));
+      bubble.append(supportElement("strong", "support-chat-author",
+        adminView ? (mine ? "Tienda El Castillo" : "Cliente") : (mine ? "Tú" : "Tienda El Castillo")));
+      bubble.append(supportElement("p", "", message.body));
+      bubble.append(supportElement("small", "", supportDate(message.created_at)));
+      container.append(bubble);
+    });
+  }
+
+  async function openCustomerSupportTicket(ticketId) {
+    var client = supportCurrentDb();
+    var thread = document.getElementById("supportTicketThread");
+    var list = document.getElementById("supportTicketsList");
+    var compose = document.querySelector("#supportView .support-gate-panel");
+    var header = document.getElementById("supportTicketThreadHeader");
+    var messagesBox = document.getElementById("supportTicketMessages");
+    if (!client || !thread || !header || !messagesBox) return;
+    activeCustomerSupportTicketId = ticketId;
+    header.textContent = "Cargando solicitud…";
+    messagesBox.replaceChildren();
+    thread.hidden = false;
+    if (list) list.hidden = true;
+    if (compose) compose.hidden = true;
+    var ticketResult = await client.from("support_tickets")
+      .select("id,user_id,ticket_code,category,subject,reference,status,created_at,updated_at")
+      .eq("id", ticketId).single();
+    if (ticketResult.error) { header.textContent = "No pudimos abrir esta solicitud."; return; }
+    var ticket = ticketResult.data;
+    var messageResult = await client.from("support_messages")
+      .select("id,sender_id,body,created_at")
+      .eq("ticket_id", ticketId).order("created_at", { ascending: true });
+    if (messageResult.error) { header.textContent = "No pudimos cargar los mensajes de esta solicitud."; return; }
+    header.replaceChildren(
+      supportElement("strong", "", ticket.ticket_code + " · " + ticket.subject),
+      supportElement("span", "support-ticket-status status-" + ticket.status, SUPPORT_STATUS_LABELS[ticket.status] || ticket.status),
+      supportElement("small", "", SUPPORT_CATEGORY_LABELS[ticket.category] || "Consulta")
+    );
+    appendSupportMessages(messagesBox, messageResult.data, ticket, false);
+    var replyBox = document.getElementById("supportCustomerReplyBox");
+    if (replyBox) replyBox.hidden = ticket.status === "closed";
+  }
+
+  function closeCustomerSupportTicket() {
+    activeCustomerSupportTicketId = null;
+    var thread = document.getElementById("supportTicketThread");
+    var list = document.getElementById("supportTicketsList");
+    var compose = document.querySelector("#supportView .support-gate-panel");
+    if (thread) thread.hidden = true;
+    if (list) list.hidden = false;
+    if (compose) compose.hidden = false;
+    loadCustomerSupportTickets();
+  }
+
+  async function sendCustomerSupportReply() {
+    var client = supportCurrentDb();
+    var input = document.getElementById("supportReplyMessage");
+    var status = document.getElementById("supportReplyMessageStatus");
+    var body = input ? input.value.trim() : "";
+    if (!client || !activeCustomerSupportTicketId) return;
+    if (body.length < 8 || body.length > 1500) { if (status) status.textContent = "Escribe una respuesta de entre 8 y 1500 caracteres."; return; }
+    if (status) status.textContent = "Enviando respuesta…";
+    var result = await client.rpc("reply_support_ticket", { p_ticket_id: activeCustomerSupportTicketId, p_message: body });
+    if (result.error) { if (status) status.textContent = result.error.message || "No se pudo enviar la respuesta."; return; }
+    if (input) input.value = "";
+    if (status) status.textContent = "Respuesta enviada.";
+    var id = activeCustomerSupportTicketId;
+    await openCustomerSupportTicket(id);
+    await loadCustomerSupportTickets();
+  }
+
+  async function loadAdminSupportTickets() {
+    var client = supportCurrentDb();
+    var list = document.getElementById("adminSupportTickets");
+    var status = document.getElementById("adminSupportMessage");
+    if (!list) return;
+    if (!client || typeof currentProfile === "undefined" || currentProfile?.role !== "admin") {
+      list.textContent = "Esta bandeja solo está disponible para administración.";
+      return;
+    }
+    if (status) status.textContent = "Actualizando solicitudes…";
+    list.textContent = "Cargando incidencias…";
+    var result = await client.from("support_tickets")
+      .select("id,user_id,ticket_code,category,subject,reference,status,created_at,updated_at")
+      .order("updated_at", { ascending: false }).limit(100);
+    if (result.error) {
+      list.textContent = "No se pudieron cargar las incidencias. Comprueba la conexión y los permisos.";
+      if (status) status.textContent = result.error.message || "Error al cargar soporte.";
+      console.error("Error de bandeja de soporte:", result.error);
+      return;
+    }
+    var userIds = Array.from(new Set((result.data || []).map(function (ticket) { return ticket.user_id; })));
+    var profilesById = {};
+    if (userIds.length) {
+      var profiles = await client.from("profiles").select("id,full_name,email").in("id", userIds);
+      if (!profiles.error) (profiles.data || []).forEach(function (profile) { profilesById[profile.id] = profile; });
+    }
+    list.replaceChildren();
+    if (!result.data || !result.data.length) {
+      list.append(supportElement("p", "empty-note", "Todavía no hay incidencias de clientes."));
+      if (status) status.textContent = "Bandeja actualizada. No hay solicitudes pendientes.";
+      return;
+    }
+    result.data.forEach(function (ticket) {
+      var profile = profilesById[ticket.user_id] || {};
+      var customer = profile.full_name || profile.email || "Cliente";
+      var card = supportElement("button", "support-ticket-card admin-support-ticket-card");
+      card.type = "button";
+      var top = supportElement("span", "support-ticket-card-top");
+      top.append(
+        supportElement("strong", "", ticket.ticket_code),
+        supportElement("span", "support-ticket-status status-" + ticket.status, SUPPORT_STATUS_LABELS[ticket.status] || ticket.status)
+      );
+      card.append(top);
+      card.append(supportElement("strong", "support-ticket-subject", ticket.subject));
+      card.append(supportElement("small", "", customer + " · " + (SUPPORT_CATEGORY_LABELS[ticket.category] || "Consulta") + " · " + supportDate(ticket.updated_at)));
+      if (ticket.reference) card.append(supportElement("small", "support-ticket-reference", "Referencia: " + ticket.reference));
+      card.addEventListener("click", function () { openAdminSupportTicket(ticket.id); });
+      list.append(card);
+    });
+    if (status) status.textContent = result.data.length + " solicitud(es) cargada(s).";
+  }
+
+  async function openAdminSupportTicket(ticketId) {
+    var client = supportCurrentDb();
+    var thread = document.getElementById("adminSupportThread");
+    var list = document.getElementById("adminSupportTickets");
+    var header = document.getElementById("adminSupportThreadHeader");
+    var messagesBox = document.getElementById("adminSupportThreadMessages");
+    if (!client || !thread || !header || !messagesBox) return;
+    activeAdminSupportTicketId = ticketId;
+    thread.hidden = false;
+    if (list) list.hidden = true;
+    header.textContent = "Cargando solicitud…";
+    var ticketResult = await client.from("support_tickets")
+      .select("id,user_id,ticket_code,category,subject,reference,status,created_at,updated_at")
+      .eq("id", ticketId).single();
+    if (ticketResult.error) { header.textContent = "No pudimos abrir esta solicitud."; return; }
+    var ticket = ticketResult.data;
+    if (ticket.status === "open") {
+      await client.from("support_tickets").update({ status: "in_progress", updated_at: new Date().toISOString() }).eq("id", ticket.id);
+      ticket.status = "in_progress";
+    }
+    var profiles = await client.from("profiles").select("full_name,email").eq("id", ticket.user_id).maybeSingle();
+    var customer = profiles.data?.full_name || profiles.data?.email || "Cliente";
+    var messageResult = await client.from("support_messages")
+      .select("id,sender_id,body,created_at")
+      .eq("ticket_id", ticketId).order("created_at", { ascending: true });
+    if (messageResult.error) { header.textContent = "No pudimos cargar los mensajes."; return; }
+    header.replaceChildren(
+      supportElement("strong", "", ticket.ticket_code + " · " + ticket.subject),
+      supportElement("span", "support-ticket-status status-" + ticket.status, SUPPORT_STATUS_LABELS[ticket.status] || ticket.status),
+      supportElement("small", "", customer + " · " + (SUPPORT_CATEGORY_LABELS[ticket.category] || "Consulta")),
+      supportElement("small", "", ticket.reference ? "Referencia: " + ticket.reference : "Sin referencia aportada")
+    );
+    appendSupportMessages(messagesBox, messageResult.data, ticket, true);
+    var replyBox = document.querySelector("#adminSupportThread .support-thread-actions");
+    if (replyBox) replyBox.hidden = ticket.status === "closed";
+  }
+
+  function closeAdminSupportTicket() {
+    activeAdminSupportTicketId = null;
+    var thread = document.getElementById("adminSupportThread");
+    var list = document.getElementById("adminSupportTickets");
+    if (thread) thread.hidden = true;
+    if (list) list.hidden = false;
+    loadAdminSupportTickets();
+  }
+
+  async function sendAdminSupportReply() {
+    var client = supportCurrentDb();
+    var input = document.getElementById("adminSupportReply");
+    var status = document.getElementById("adminSupportReplyStatus");
+    var body = input ? input.value.trim() : "";
+    if (!client || !activeAdminSupportTicketId) return;
+    if (body.length < 8 || body.length > 1500) { if (status) status.textContent = "Escribe una respuesta de entre 8 y 1500 caracteres."; return; }
+    if (status) status.textContent = "Enviando respuesta al cliente…";
+    var result = await client.rpc("reply_support_ticket", { p_ticket_id: activeAdminSupportTicketId, p_message: body });
+    if (result.error) { if (status) status.textContent = result.error.message || "No se pudo enviar la respuesta."; return; }
+    if (input) input.value = "";
+    if (status) status.textContent = "Respuesta enviada. El cliente podrá verla en «Mis solicitudes».";
+    var id = activeAdminSupportTicketId;
+    await openAdminSupportTicket(id);
+    await loadAdminSupportTickets();
+  }
+
+  async function resolveAdminSupportTicket() {
+    var client = supportCurrentDb();
+    var status = document.getElementById("adminSupportReplyStatus");
+    if (!client || !activeAdminSupportTicketId) return;
+    var result = await client.from("support_tickets")
+      .update({ status: "resolved", updated_at: new Date().toISOString() })
+      .eq("id", activeAdminSupportTicketId);
+    if (result.error) { if (status) status.textContent = result.error.message || "No se pudo actualizar el estado."; return; }
+    if (status) status.textContent = "Solicitud marcada como resuelta.";
+    var id = activeAdminSupportTicketId;
+    await openAdminSupportTicket(id);
+    await loadAdminSupportTickets();
+  }
+
+  window.submitSupportTicket = submitSupportTicket;
+  window.loadCustomerSupportTickets = loadCustomerSupportTickets;
+  window.openCustomerSupportTicket = openCustomerSupportTicket;
+  window.closeCustomerSupportTicket = closeCustomerSupportTicket;
+  window.sendCustomerSupportReply = sendCustomerSupportReply;
+  window.loadAdminSupportTickets = loadAdminSupportTickets;
+  window.openAdminSupportTicket = openAdminSupportTicket;
+  window.closeAdminSupportTicket = closeAdminSupportTicket;
+  window.sendAdminSupportReply = sendAdminSupportReply;
+  window.resolveAdminSupportTicket = resolveAdminSupportTicket;
 
   window.showGuideList = showGuideList;
   window.showGameGuide = showGameGuide;
@@ -272,6 +598,16 @@
   function initCustomerCenter() {
     activateCommunityButtons();
     updateSupportGuidance();
+    if (typeof window.showView === "function" && !window.showView.__castleSupportHooked) {
+      var originalShowView = window.showView;
+      var hookedShowView = function (name) {
+        var result = originalShowView.apply(this, arguments);
+        if (name === "support") loadCustomerSupportTickets();
+        return result;
+      };
+      hookedShowView.__castleSupportHooked = true;
+      window.showView = hookedShowView;
+    }
   }
 
   if (document.readyState === "loading") {

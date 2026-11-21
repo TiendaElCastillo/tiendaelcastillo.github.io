@@ -7,14 +7,14 @@ function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className
 function initAdminLayout(){
  const admin=document.getElementById("admin");if(!admin||admin.dataset.organized==="1")return;
  const panels=Array.from(admin.children).filter(n=>n.classList&&n.classList.contains("panel"));
- if(panels.length!==7)return;
+ if(panels.length!==8)return;
  admin.dataset.organized="1";
  const heading=el("div","admin-heading");
  heading.append(el("div","admin-kicker","PANEL DE CONTROL"));
  heading.append(el("h1","","Administración"));
  heading.append(el("p","subtle","Cada herramienta en su apartado. Entra solo en lo que necesitas."));
  const nav=el("nav","admin-tabs");nav.setAttribute("aria-label","Apartados de administración");
- const tabs=[["overview","Resumen"],["orders","Pedidos"],["wallet","Wallet"],["products","Productos"],["payments","Pagos"],["pricing","Precios y capital"],["central","Central One"]];
+ const tabs=[["overview","Resumen"],["orders","Pedidos"],["wallet","Wallet"],["products","Productos"],["payments","Pagos"],["pricing","Precios y capital"],["central","Central One"],["support","Soporte"]];
  tabs.forEach(([key,label])=>{const b=el("button","admin-tab"+(key==="overview"?" active":""),label);b.type="button";b.dataset.adminTab=key;b.addEventListener("click",()=>showAdminSection(key));nav.append(b);});
  const overview=el("div","panel admin-overview");overview.dataset.adminSection="overview";
  overview.append(el("h2","","Resumen del negocio"));
@@ -29,10 +29,10 @@ function initAdminLayout(){
  });
  overview.append(metrics);
  const shortcuts=el("div","admin-shortcuts");
- const cards=[["orders","Pedidos","Revisa pagos y autoriza recargas"],["wallet","Wallet","Revisa depósitos y acredita saldo de clientes"],["products","Productos","Crea, edita y activa paquetes"],["payments","Pagos","Configura métodos e instrucciones de cobro"],["pricing","Precios y capital","Actualiza tasas y calcula precios"],["central","Central One","Consulta catálogo y saldo mayorista"]];
+ const cards=[["orders","Pedidos","Revisa pagos y autoriza recargas"],["wallet","Wallet","Revisa depósitos y acredita saldo de clientes"],["products","Productos","Crea, edita y activa paquetes"],["payments","Pagos","Configura métodos e instrucciones de cobro"],["pricing","Precios y capital","Actualiza tasas y calcula precios"],["central","Central One","Consulta catálogo y saldo mayorista"],["support","Soporte","Lee y responde las incidencias de clientes"]];
  cards.forEach(([key,title,desc])=>{const b=el("button","admin-shortcut");b.type="button";b.append(el("strong","",title),el("span","",desc));b.addEventListener("click",()=>showAdminSection(key));shortcuts.append(b);});
  overview.append(shortcuts,el("p","track-note","Flujo seguro: primero verifica que el dinero llegó. Después autoriza la recarga. Antes del envío, el sistema vuelve a comprobar el coste real de Central One y bloquea cualquier operación que produzca pérdidas. Confirmar el pago no envía diamantes; la entrega solo termina cuando Central One confirma el resultado."));
- const sectionForPanel=["central","central","pricing","products","payments","wallet","orders"];
+ const sectionForPanel=["central","central","pricing","products","payments","wallet","orders","support"];
  panels.forEach((panel,i)=>{panel.dataset.adminSection=sectionForPanel[i];panel.classList.add("admin-section-panel");});
  admin.insertBefore(overview,panels[0]);
  admin.insertBefore(nav,overview);
@@ -42,10 +42,11 @@ function initAdminLayout(){
  showAdminSection("overview");
 }
 function showAdminSection(key){
- const valid=["overview","orders","wallet","products","payments","pricing","central"];
+ const valid=["overview","orders","wallet","products","payments","pricing","central","support"];
  const selected=valid.includes(key)?key:"overview";
  document.querySelectorAll("#admin [data-admin-section]").forEach(n=>n.classList.toggle("hidden",n.dataset.adminSection!==selected));
  document.querySelectorAll("#admin [data-admin-tab]").forEach(n=>n.classList.toggle("active",n.dataset.adminTab===selected));
+ if(selected==="support"&&typeof window.loadAdminSupportTickets==="function")window.loadAdminSupportTickets();
 }
 
 let activeWalletDepositFilter="all";
