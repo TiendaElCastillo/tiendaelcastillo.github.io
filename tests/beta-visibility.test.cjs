@@ -22,7 +22,7 @@ function blockBetween(source, start, end) {
 test("la web muestra un único aviso discreto de fase beta", () => {
   const notices = index.match(/class="castle-beta-banner"/g) || [];
   assert.equal(notices.length, 1, "Debe existir un solo aviso beta compartido");
-  assert.match(index, /<strong>FASE BETA<\/strong>\s*·\\s*Estamos mejorando la tienda contigo/i);
+  assert.ok(index.includes('<strong>FASE BETA</strong> · Estamos mejorando la tienda contigo.'));
   assert.doesNotMatch(index, /pedidos pequeños|evita compras grandes/i);
 });
 
