@@ -1855,6 +1855,58 @@ body{min-width:0}
     page_location: safePageLocation
   });
 </script>
+
+<style id="customer-orders-compact-style">
+#ordersView .orders-page-heading{margin-bottom:15px}
+#ordersView .orders-page-heading h2{margin:0 0 5px;color:#1b2e4d;letter-spacing:-.035em}
+#ordersView .orders-page-heading p{margin:0}
+#ordersView #myordersList{display:grid;gap:13px}
+#ordersView .order-day-group{overflow:hidden;border:1px solid #e1e8f2;border-radius:17px;background:#fff;box-shadow:0 5px 16px rgba(20,45,84,.035)}
+#ordersView .order-day-group-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:linear-gradient(110deg,#f4f8ff,#f8faff);border-bottom:1px solid #e8edf5}
+#ordersView .order-day-group-header strong{font-size:13px;font-weight:900;color:#213756}
+#ordersView .order-day-group-header strong:before{content:"";display:inline-block;width:4px;height:17px;margin-right:9px;vertical-align:-4px;border-radius:5px;background:#3984f6}
+#ordersView .order-day-count{flex:0 0 auto;padding:5px 9px;border-radius:20px;background:#e9f1ff;color:#2866cf;font-size:10px;font-weight:850}
+#ordersView .order-day-items{display:grid}
+#ordersView .order-summary-item{margin:0;padding:0;border:0;border-radius:0;box-shadow:none}
+#ordersView .order-summary-item+.order-summary-item{border-top:1px solid #edf0f5}
+#ordersView .order-summary-button{display:grid;width:100%;gap:7px;padding:13px 14px;border:0;border-radius:0;background:#fff;color:#1c2b43;text-align:left;cursor:pointer;transition:background .16s ease}
+#ordersView .order-summary-button:hover{background:#f8faff}
+#ordersView .order-summary-button:focus-visible{position:relative;z-index:1;outline:3px solid rgba(36,104,242,.28);outline-offset:-3px}
+#ordersView .order-summary-top{display:flex;align-items:center;justify-content:space-between;gap:9px;min-width:0}
+#ordersView .order-summary-title{min-width:0;color:#213756;font-size:13px;line-height:1.3;font-weight:900;overflow-wrap:anywhere}
+#ordersView .order-summary-status{flex:0 0 auto;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:4px 8px;border-radius:20px;font-size:10px;line-height:1.25;font-weight:850}
+#ordersView .order-summary-status.is-completed{background:#e7f8ef;color:#21865a}
+#ordersView .order-summary-status.is-review,#ordersView .order-summary-status.is-pending{background:#fff5df;color:#9a6a12}
+#ordersView .order-summary-status.is-processing{background:#eaf1ff;color:#2865c7}
+#ordersView .order-summary-status.is-attention{background:#fff0ef;color:#b84949}
+#ordersView .order-summary-status.is-cancelled{background:#eef1f5;color:#66748a}
+#ordersView .order-summary-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#78869b;font-size:10px;line-height:1.35}
+#ordersView .order-summary-meta>span{min-width:0;overflow-wrap:anywhere}
+#ordersView .order-summary-amount{flex:0 0 auto;color:#17233c;font-size:14px;font-weight:950;white-space:nowrap}
+#ordersView .order-summary-player{color:#54647c;font-size:11px;overflow-wrap:anywhere}
+#ordersView .order-summary-open{display:flex;align-items:center;justify-content:flex-end;gap:5px;color:#356dce;font-size:10px;font-weight:850}
+#ordersView .order-summary-open span{font-size:18px;line-height:10px}
+#ordersView .order-detail-screen{padding-top:2px}
+#ordersView .order-detail-back{display:inline-flex;align-items:center;gap:7px;min-height:41px;margin:0 0 13px;padding:8px 12px;border:1px solid #dfe7f2;border-radius:12px;background:#f8faff;color:#315f9d;font-size:12px;font-weight:850}
+#ordersView .order-detail-back:focus-visible{outline:3px solid rgba(36,104,242,.25);outline-offset:2px}
+#ordersView .order-detail-back span{font-size:18px;line-height:1}
+#ordersView .order-detail-heading{margin:0 0 12px;padding:14px 15px;border:1px solid #e1e9f4;border-radius:16px;background:linear-gradient(140deg,#f7faff,#eef4ff)}
+#ordersView .order-detail-heading span{color:#6880a4;font-size:9px;font-weight:900;letter-spacing:.13em}
+#ordersView .order-detail-heading h3{margin:5px 0;color:#1c3152;font-size:17px;line-height:1.25;overflow-wrap:anywhere}
+#ordersView .order-detail-heading p{margin:0;color:#77869b;font-size:11px;font-weight:750}
+#ordersView #myorderDetailContent .order-card{margin:0}
+@media(max-width:520px){
+ #ordersView .orders-page-heading{margin-bottom:12px}
+ #ordersView .order-day-group-header{padding:10px 12px}
+ #ordersView .order-summary-button{gap:6px;padding:12px}
+ #ordersView .order-summary-title{font-size:12px}
+ #ordersView .order-summary-status{max-width:43%;font-size:9px;padding:4px 7px}
+ #ordersView .order-summary-meta{font-size:9px}
+ #ordersView .order-summary-amount{font-size:13px}
+ #ordersView .order-summary-player{font-size:10px}
+ #ordersView .order-detail-heading h3{font-size:16px}
+}
+</style>
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -2023,7 +2075,7 @@ body{min-width:0}
   </div>
  </div>
 </div></section>
-<section id="ordersView" class="store-view hidden"><div class="panel"><h2>Mis pedidos</h2><p class="subtle">Revisa el estado y el progreso de tus solicitudes.</p><div id="myorders">Cargando...</div></div></section>
+<section id="ordersView" class="store-view hidden"><div class="panel"><div class="orders-page-heading"><h2>Mis pedidos</h2><p class="subtle">Tus compras, organizadas para que encuentres cada pedido fácilmente.</p></div><div id="myorders"><div id="myordersList">Cargando...</div><section id="myorderDetailView" class="order-detail-screen hidden" aria-label="Detalle del pedido"><button class="order-detail-back" type="button" data-close-order-detail><span aria-hidden="true">←</span> Volver a mis pedidos</button><div id="myorderDetailContent"></div></section></div></div></section>
 <section id="notificationsView" class="store-view hidden">
  <section id="storeAnnouncementAdminPanel" class="panel store-announcement-admin hidden" aria-labelledby="storeAnnouncementAdminTitle">
   <div class="store-announcement-admin-heading"><div><span class="store-announcement-kicker">COMUNICACIÓN CON CLIENTES</span><h2 id="storeAnnouncementAdminTitle">Avisos de la tienda</h2><p class="subtle">Publica novedades o informa de mantenimientos. Los clientes los verán en sus notificaciones.</p></div><span class="store-announcement-admin-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="42" height="42"></span></div>
@@ -2424,6 +2476,7 @@ body{min-width:0}
 </section>
 </main>
 <nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="wallet" onclick="showView('wallet')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 14h2"/></svg></span>Wallet</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
+<script src="./assets/customer-orders-view.js?v=1"></script>
 <script>
 window.onCastleCaptchaSuccess=function(token){window.castleCaptchaToken=token;const m=document.getElementById("authmsg");if(m&&m.textContent.includes("CAPTCHA"))m.textContent="";};
 window.onCastleCaptchaExpired=function(){window.castleCaptchaToken=null;};
@@ -4797,9 +4850,118 @@ function startOrderReviewClock(container){
  castleOrderReviewClockInterval=window.setInterval(update,1000);
 }
 
+let selectedCustomerOrderId = null;
+let customerOrdersCache = [];
+let customerOrderEventsCache = new Map();
+
+function renderCustomerOrderDetailHtml(o, statusEvents) {
+ const canRetryDirectProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.payment_confirmed_at&&!o.central_one_order_id&&["Transferencia CUP","Saldo móvil","USDT"].includes(o.payment_method);
+ const proofNote=o.payment_source==="wallet"
+  ?'<p class="track-note">El pago se realizó con el saldo de tu wallet.</p>'
+  :o.proof_path
+   ?'<p class="track-note">Comprobante recibido y guardado de forma privada.</p>'
+   :canRetryDirectProof
+    ?'<p class="track-note">Este pedido ya está creado, pero todavía no tiene comprobante. Completa los datos y adjunta la captura aquí mismo; no crees otro pedido ni repitas el pago.</p>'
+    :["pending","payment_review"].includes(o.status)
+     ?'<p class="track-note">El pedido está pendiente de revisión del pago.</p>':"";
+ const customerProviderStatus=String(o.central_one_status||"not_submitted");
+ const customerProviderError=String(o.central_one_error_code||"");
+ const customerWalletRefund=o.central_one_response?.wallet_refund;
+ const externalRefundReview=o.central_one_response?.external_payment_refund_review;
+ let providerInfo="";
+ if(o.central_one_order_id){
+  if(customerWalletRefund?.refunded===true){
+   providerInfo='<p class="track-note"><strong>Devolución acreditada:</strong> el importe de tu compra ya fue devuelto a tu billetera de Tienda El Castillo.</p>';
+  }else if(externalRefundReview?.required===true){
+   providerInfo='<p class="track-note"><strong>Devolución en revisión:</strong> estamos revisando la devolución de tu compra. Te informaremos desde «Mensajes». No vuelvas a pagar.</p>';
+  }else if(["failed","cancelled"].includes(customerProviderStatus)){
+   providerInfo='<p class="track-note">No pudimos completar la recarga. El equipo de Tienda El Castillo está revisando tu pedido y la solución correspondiente. No realices otro pago ni crees otro pedido.</p>';
+  }
+ }else if(customerProviderError==="admin_cancelled_before_provider"){
+  if(customerWalletRefund?.refunded===true){
+   providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
+  }else{
+   providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
+  }
+ }else if(customerProviderError==="provider_product_unavailable"){
+  providerInfo='<p class="track-note"><strong>Paquete agotado temporalmente.</strong> No se llegó a crear la recarga. La administración está revisando tu pago para acreditar, si corresponde, el equivalente en USD a tu cartera de Tienda El Castillo. No vuelvas a pagar ni crees otro pedido.</p>';
+ }else if(customerProviderError){
+  providerInfo='<p class="track-note"><strong>Tu pago está registrado.</strong> Existe una demora técnica antes de iniciar la recarga. Tu pedido sigue guardado y el equipo de Tienda El Castillo lo revisará. No vuelvas a pagar ni crees otro pedido.</p>';
+ }else if(customerProviderStatus==="unknown"){
+  providerInfo='<p class="track-note">Estamos comprobando el estado de tu recarga. Tu pedido sigue registrado. No pagues de nuevo ni crees otro pedido.</p>';
+ }else if(customerProviderStatus==="submitting"){
+  providerInfo='<p class="track-note">Estamos preparando tu recarga. No necesitas hacer otro pago ni crear otro pedido.</p>';
+ }else if(customerProviderStatus==="rejected"){
+  providerInfo='<p class="track-note">Todavía no pudimos iniciar la recarga. El equipo de Tienda El Castillo revisará tu pedido y te informará. No realices otro pago.</p>';
+ }
+ const canCancelWithoutProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.paid_at&&!o.payment_confirmed_at&&!o.central_one_order_id&&!o.central_one_submitted_at&&!o.central_one_idempotency_key&&(!o.central_one_status||o.central_one_status==="not_submitted");
+ const wasCancelledBeforeProof=o.status==="cancelled"&&o.payment_source==="direct"&&!o.proof_path&&!o.central_one_order_id;
+ const progress=wasCancelledBeforeProof
+  ?'<p class="track-note">Este pedido se canceló antes de enviar el comprobante. No se autorizó ninguna recarga. Puedes crear un pedido nuevo desde la tienda si todavía necesitas el paquete.</p>'
+  :customerOrderProgress(o,statusEvents||[]);
+ const rejectionInfo=o.status==="rejected"&&o.customer_rejection_reason?'<div class="order-rejection-reason"><strong>Motivo del rechazo</strong><p>'+clean(o.customer_rejection_reason)+'</p></div>':"";
+ const retryProofBlock=canRetryDirectProof?renderOrderProofRetryForm(o):"";
+ const cancelBlock=canCancelWithoutProof
+  ?'<div class="order-actions"><button type="button" class="secondary-btn" data-cancel-unsubmitted data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Cancelar pedido incompleto</button></div><p class="track-note">Úsalo solo si no has pagado ni enviado dinero. No cancela transferencias ni devuelve pagos.</p>'
+  :"";
+ return '<article class="order-card" data-order-card-id="'+clean(o.id)+'"><div class="order-code">Pedido '+clean(o.order_code)+'</div>'+
+  '<strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong>'+
+  (o.provider_region?'<span class="order-region-pill">🌐 Región de recarga · '+clean(o.provider_region)+'</span>':"")+
+  '<div class="order-player-box"><span>Cuenta destinataria</span><strong>'+clean(o.player_name||"Nombre no disponible")+'</strong><small>ID de jugador: '+clean(o.player_id||"No disponible")+'</small></div>'+
+  '<div class="order-detail">'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
+  '<span class="status">'+statusText(o.status)+'</span>'+progress+proofNote+providerInfo+rejectionInfo+retryProofBlock+cancelBlock+'</article>';
+}
+
+function bindCustomerOrderNavigation() {
+ const root=$("myorders");
+ if(!root||root.dataset.orderNavigationBound==="true")return;
+ root.addEventListener("click",function(event){
+  const target=event.target;
+  if(!target||typeof target.closest!=="function")return;
+  const openButton=target.closest("[data-open-order-detail]");
+  if(openButton&&root.contains(openButton)){
+   openCustomerOrderDetail(openButton.dataset.orderId);
+   return;
+  }
+  const backButton=target.closest("[data-close-order-detail]");
+  if(backButton&&root.contains(backButton))closeCustomerOrderDetail();
+ });
+ root.dataset.orderNavigationBound="true";
+}
+
+function openCustomerOrderDetail(orderId, shouldScroll) {
+ const order=customerOrdersCache.find(item=>String(item.id)===String(orderId));
+ const list=$("myordersList");
+ const detailView=$("myorderDetailView");
+ const content=$("myorderDetailContent");
+ if(!order||!list||!detailView||!content)return;
+ selectedCustomerOrderId=String(order.id);
+ list.classList.add("hidden");
+ detailView.classList.remove("hidden");
+ const heading='<div class="order-detail-heading"><span>DETALLE DEL PEDIDO</span><h3>'+clean(order.game)+' · '+clean(order.package_name)+'</h3><p>'+clean(order.order_code)+'</p></div>';
+ content.innerHTML=heading+renderCustomerOrderDetailHtml(order,customerOrderEventsCache.get(String(order.id))||[]);
+ content.querySelectorAll("[data-cancel-unsubmitted]").forEach(button=>{
+  button.addEventListener("click",()=>cancelUnsubmittedOrder(button.dataset.orderId,button.dataset.orderCode,button));
+ });
+ content.querySelectorAll("[data-retry-order-proof]").forEach(button=>{
+  button.addEventListener("click",()=>retryMissingOrderProof(button.dataset.orderId,button));
+ });
+ startOrderReviewClock(content);
+ if(shouldScroll!==false)window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function closeCustomerOrderDetail() {
+ selectedCustomerOrderId=null;
+ $("myorderDetailContent")?.replaceChildren();
+ $("myorderDetailView")?.classList.add("hidden");
+ $("myordersList")?.classList.remove("hidden");
+ startOrderReviewClock(null);
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
 async function loadMyOrders(){
  if(!currentUser)return;
- const {data,error}=await db.from("orders").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false}); 
+ const {data,error}=await db.from("orders").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false});
  const profileOrderStats=data||[];
  const setProfileStat=(id,value)=>{const node=$(id);if(node)node.textContent=String(value);};
  if(error){
@@ -4816,74 +4978,41 @@ async function loadMyOrders(){
   if(!orderEventsById.has(key))orderEventsById.set(key,[]);
   orderEventsById.get(key).push(event);
  });
- $("myorders").innerHTML=error?"Error: "+clean(error.message):
- (data||[]).length?(data||[]).map(o=>{
-  const canRetryDirectProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.payment_confirmed_at&&!o.central_one_order_id&&["Transferencia CUP","Saldo móvil","USDT"].includes(o.payment_method);
-  const proofNote=o.payment_source==="wallet"
-   ?'<p class="track-note">El pago se realizó con el saldo de tu wallet.</p>'
-   :o.proof_path
-    ?'<p class="track-note">Comprobante recibido y guardado de forma privada.</p>'
-    :canRetryDirectProof
-     ?'<p class="track-note">Este pedido ya está creado, pero todavía no tiene comprobante. Completa los datos y adjunta la captura aquí mismo; no crees otro pedido ni repitas el pago.</p>'
-     :["pending","payment_review"].includes(o.status)
-      ?'<p class="track-note">El pedido está pendiente de revisión del pago.</p>':"";
-  const customerProviderStatus=String(o.central_one_status||"not_submitted");
-  const customerProviderError=String(o.central_one_error_code||"");
-  const customerWalletRefund=o.central_one_response?.wallet_refund;
-  const externalRefundReview=o.central_one_response?.external_payment_refund_review;
-  let providerInfo="";
-  if(o.central_one_order_id){
-   if(customerWalletRefund?.refunded===true){
-    providerInfo='<p class="track-note"><strong>Devolución acreditada:</strong> el importe de tu compra ya fue devuelto a tu billetera de Tienda El Castillo.</p>';
-   }else if(externalRefundReview?.required===true){
-    providerInfo='<p class="track-note"><strong>Devolución en revisión:</strong> estamos revisando la devolución de tu compra. Te informaremos desde «Mensajes». No vuelvas a pagar.</p>';
-   }else if(["failed","cancelled"].includes(customerProviderStatus)){
-    providerInfo='<p class="track-note">No pudimos completar la recarga. El equipo de Tienda El Castillo está revisando tu pedido y la solución correspondiente. No realices otro pago ni crees otro pedido.</p>';
-   }
-  }else if(customerProviderError==="admin_cancelled_before_provider"){
-   if(customerWalletRefund?.refunded===true){
-    providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
-   }else{
-    providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
-   }
-  }else if(customerProviderError==="provider_product_unavailable"){
-   providerInfo='<p class="track-note"><strong>Paquete agotado temporalmente.</strong> No se llegó a crear la recarga. La administración está revisando tu pago para acreditar, si corresponde, el equivalente en USD a tu cartera de Tienda El Castillo. No vuelvas a pagar ni crees otro pedido.</p>';
-  }else if(customerProviderError){
-   providerInfo='<p class="track-note"><strong>Tu pago está registrado.</strong> Existe una demora técnica antes de iniciar la recarga. Tu pedido sigue guardado y el equipo de Tienda El Castillo lo revisará. No vuelvas a pagar ni crees otro pedido.</p>';
-  }else if(customerProviderStatus==="unknown"){
-   providerInfo='<p class="track-note">Estamos comprobando el estado de tu recarga. Tu pedido sigue registrado. No pagues de nuevo ni crees otro pedido.</p>';
-  }else if(customerProviderStatus==="submitting"){
-   providerInfo='<p class="track-note">Estamos preparando tu recarga. No necesitas hacer otro pago ni crear otro pedido.</p>';
-  }else if(customerProviderStatus==="rejected"){
-   providerInfo='<p class="track-note">Todavía no pudimos iniciar la recarga. El equipo de Tienda El Castillo revisará tu pedido y te informará. No realices otro pago.</p>';
-  }
-  const canCancelWithoutProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.paid_at&&!o.payment_confirmed_at&&!o.central_one_order_id&&!o.central_one_submitted_at&&!o.central_one_idempotency_key&&(!o.central_one_status||o.central_one_status==="not_submitted");
-  const wasCancelledBeforeProof=o.status==="cancelled"&&o.payment_source==="direct"&&!o.proof_path&&!o.central_one_order_id;
-  const progress=wasCancelledBeforeProof
-   ?'<p class="track-note">Este pedido se canceló antes de enviar el comprobante. No se autorizó ninguna recarga. Puedes crear un pedido nuevo desde la tienda si todavía necesitas el paquete.</p>'
-   :customerOrderProgress(o,orderEventsById.get(String(o.id))||[]);
-  const rejectionInfo=o.status==="rejected"&&o.customer_rejection_reason?'<div class="order-rejection-reason"><strong>Motivo del rechazo</strong><p>'+clean(o.customer_rejection_reason)+'</p></div>':"";
-  const retryProofBlock=canRetryDirectProof?renderOrderProofRetryForm(o):"";
-  const cancelBlock=canCancelWithoutProof
-   ?'<div class="order-actions"><button type="button" class="secondary-btn" data-cancel-unsubmitted data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Cancelar pedido incompleto</button></div><p class="track-note">Úsalo solo si no has pagado ni enviado dinero. No cancela transferencias ni devuelve pagos.</p>'
-   :"";
-  return '<article class="order-card" data-order-card-id="'+clean(o.id)+'"><div class="order-code">Pedido '+clean(o.order_code)+'</div>'+
-   '<strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong>'+
-   (o.provider_region?'<span class="order-region-pill">🌐 Región de recarga · '+clean(o.provider_region)+'</span>':"")+
-   '<div class="order-player-box"><span>Cuenta destinataria</span><strong>'+clean(o.player_name||"Nombre no disponible")+'</strong><small>ID de jugador: '+clean(o.player_id||"No disponible")+'</small></div>'+
-   '<div class="order-detail">'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
-   '<span class="status">'+statusText(o.status)+'</span>'+progress+proofNote+providerInfo+rejectionInfo+retryProofBlock+cancelBlock+'</article>';
- }).join(""):'<div class="customer-empty-state"><span class="customer-empty-crown"><img src="./assets/el-castillo-icon.webp" alt="" width="46" height="46"></span><strong>Tu próxima recarga puede empezar aquí</strong><p>Aún no tienes pedidos. Explora los juegos y encuentra tu próximo paquete favorito.</p><button type="button" class="primary-btn" onclick="showView(&quot;home&quot;)">Explorar juegos</button></div>';
- const orderList=$("myorders");
- orderList?.querySelectorAll("[data-cancel-unsubmitted]").forEach(button=>{
-  button.addEventListener("click",()=>cancelUnsubmittedOrder(button.dataset.orderId,button.dataset.orderCode,button));
- });
- orderList?.querySelectorAll("[data-retry-order-proof]").forEach(button=>{
-  button.addEventListener("click",()=>retryMissingOrderProof(button.dataset.orderId,button));
- });
- startOrderReviewClock(orderList);
+ const list=$("myordersList");
+ if(!list)return;
+ bindCustomerOrderNavigation();
+ if(error){
+  list.innerHTML='<p class="empty-note">No se pudieron cargar tus pedidos: '+clean(error.message||error)+'</p>';
+  selectedCustomerOrderId=null;
+  $("myorderDetailView")?.classList.add("hidden");
+  list.classList.remove("hidden");
+  startOrderReviewClock(null);
+  return;
+ }
+ customerOrdersCache=data||[];
+ customerOrderEventsCache=orderEventsById;
+ const view=window.CustomerOrdersView;
+ if(!view){
+  list.textContent="No se pudo cargar la vista de pedidos. Actualiza la página e inténtalo de nuevo.";
+  return;
+ }
+ const groups=view.groupByDay(customerOrdersCache,"es-CU");
+ list.innerHTML=groups.length?groups.map(group=>
+  '<section class="order-day-group"><header class="order-day-group-header"><strong>'+clean(group.label)+'</strong><span class="order-day-count">'+group.count+' '+(group.count===1?"pedido":"pedidos")+'</span></header><div class="order-day-items">'+
+  group.orders.map(order=>{
+   const amountCurrency=order.payment_source==="wallet"?"USD":order.payment_method==="USDT"?"USDT":"CUP";
+   return view.renderSummary(order,{statusLabel:statusText(order.status),amountLabel:money(order.price)+" "+amountCurrency});
+  }).join("")+'</div></section>'
+ ).join(""):'<div class="customer-empty-state"><span class="customer-empty-crown"><img src="./assets/el-castillo-icon.webp" alt="" width="46" height="46"></span><strong>Tu próxima recarga puede empezar aquí</strong><p>Aún no tienes pedidos. Explora los juegos y encuentra tu próximo paquete favorito.</p><button type="button" class="primary-btn" onclick="showView(&quot;home&quot;)">Explorar juegos</button></div>';
+ if(selectedCustomerOrderId&&customerOrdersCache.some(order=>String(order.id)===selectedCustomerOrderId)){
+  openCustomerOrderDetail(selectedCustomerOrderId,false);
+ }else{
+  selectedCustomerOrderId=null;
+  list.classList.remove("hidden");
+  $("myorderDetailView")?.classList.add("hidden");
+  startOrderReviewClock(null);
+ }
 }
-
 
 async function loadWalletSettings(){
  if(!db)return;
