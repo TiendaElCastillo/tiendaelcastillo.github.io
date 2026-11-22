@@ -2856,7 +2856,7 @@ async function openStore(user){
  });
  runStoreBackground("pedidos del cliente",async()=>{
   try{await loadMyOrders();}
-  catch(orderError){const list=$("myorders");if(list)list.textContent="No se pudieron cargar tus pedidos: "+clean(orderError.message||orderError);}
+  catch(orderError){const list=$("myordersList");if(list)list.textContent="No se pudieron cargar tus pedidos: "+clean(orderError.message||orderError);}
   startCustomerOrderRealtime();
  });
 
@@ -4769,11 +4769,11 @@ async function retryMissingOrderProof(orderId,button){
   await uploadProofForOrder(orderId,method,file,reference,sender,amount);
   await loadMyOrders();
   const note=document.createElement("p");note.className="track-note";note.textContent="Comprobante recibido y asociado al mismo pedido. La tienda revisará el pago antes de autorizar la recarga.";
-  $("myorders")?.prepend(note);
+  $("myorderDetailContent")?.prepend(note);
  }catch(error){
   const latest=await db.from("orders").select("proof_path,status").eq("id",orderId).eq("user_id",currentUser.id).maybeSingle();
   if(!latest.error&&latest.data?.proof_path){
-   await loadMyOrders();const note=document.createElement("p");note.className="track-note";note.textContent="El comprobante ya aparece asociado al pedido. Actualizamos su estado para evitar un envío duplicado."; $("myorders")?.prepend(note);return;
+   await loadMyOrders();const note=document.createElement("p");note.className="track-note";note.textContent="El comprobante ya aparece asociado al pedido. Actualizamos su estado para evitar un envío duplicado."; $("myorderDetailContent")?.prepend(note);return;
   }
   if(msg)msg.textContent="No se pudo asociar el comprobante: "+(error?.message||"comprueba tu conexión.")+" No repitas el pago. Corrige los datos y vuelve a enviar la captura de este mismo pedido.";
  }finally{if(button.isConnected){button.disabled=false;button.textContent=original;}}
@@ -4794,12 +4794,12 @@ async function cancelUnsubmittedOrder(orderId,orderCode,button){
   if(error)throw new Error(error.message);
   if(data?.status!=="cancelled")throw new Error("La tienda no confirmó la cancelación.");
   await loadMyOrders();
-  const list=$("myorders");
-  if(list){
+  const detailContent=$("myorderDetailContent");
+  if(detailContent){
    const message=document.createElement("p");
    message.className="track-note";
    message.textContent="El pedido "+(data.order_code||orderCode||"")+" quedó cancelado porque no tenía comprobante. Puedes volver a la tienda y crear uno nuevo.";
-   list.prepend(message);
+   detailContent.prepend(message);
   }
  }catch(error){
   button.disabled=false;button.textContent=originalText;
