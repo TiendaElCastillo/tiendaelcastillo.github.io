@@ -38,7 +38,7 @@ test("el mensaje de compartir informa correctamente que la tienda está en beta"
   const share = blockBetween(index, "async function shareStore()", "const productSearchSynonyms");
   assert.match(share, /fase beta/i);
   assert.match(share, /pedidos pequeños/i);
-  assert.match(share, /evitar compras grandes/i);
+  assert.match(share, /evita compras grandes/i);
 });
 
 test("los metadatos de buscadores y redes explican la fase beta", () => {
