@@ -48,6 +48,19 @@
     return classes[String(status || "")] || "pending";
   }
 
+  function shortStatusLabel(status) {
+    const labels = {
+      pending: "Pendiente",
+      payment_review: "En revisión",
+      processing: "En curso",
+      completed: "Entregado",
+      rejected: "Rechazado",
+      failed: "Incidencia",
+      cancelled: "Cancelado"
+    };
+    return labels[String(status || "")] || "En actualización";
+  }
+
   function renderSummary(order, options) {
     const data = order || {};
     const settings = options || {};
@@ -78,6 +91,7 @@
   root.CustomerOrdersView = {
     groupByDay: groupByDay,
     renderSummary: renderSummary,
-    statusClass: statusClass
+    statusClass: statusClass,
+    shortStatusLabel: shortStatusLabel
   };
 })(window);
