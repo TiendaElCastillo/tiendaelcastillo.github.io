@@ -1830,7 +1830,30 @@ body{min-width:0}
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-M1PVYTP3X8');
+
+  // Enlaces de confirmación y recuperación pueden llevar códigos temporales en la URL.
+  // Para protegerlos, GA4 recibe solo el origen y la ruta, nunca la consulta ni el fragmento.
+  var safePageLocation = window.location.origin + window.location.pathname;
+  var safePageReferrer = '';
+  try {
+    if (document.referrer) {
+      var referrerUrl = new URL(document.referrer);
+      safePageReferrer = referrerUrl.origin;
+    }
+  } catch (_) {}
+
+  var safePageContext = {
+    send_page_view: false,
+    page_location: safePageLocation
+  };
+  if (safePageReferrer) safePageContext.page_referrer = safePageReferrer;
+
+  // Enviar una sola vista de página con contexto protegido.
+  gtag('config', 'G-M1PVYTP3X8', safePageContext);
+  gtag('event', 'page_view', {
+    page_title: document.title,
+    page_location: safePageLocation
+  });
 </script>
 </head>
 <body>
