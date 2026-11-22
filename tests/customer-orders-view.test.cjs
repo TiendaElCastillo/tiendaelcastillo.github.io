@@ -73,6 +73,16 @@ test("renderSummary escapes untrusted customer and game data", () => {
   assert.match(html, /&lt;script&gt;/);
 });
 
+test("shortStatusLabel keeps long lifecycle states compact", () => {
+  assert.equal(view.shortStatusLabel("pending"), "Pendiente");
+  assert.equal(view.shortStatusLabel("payment_review"), "En revisión");
+  assert.equal(view.shortStatusLabel("processing"), "En curso");
+  assert.equal(view.shortStatusLabel("completed"), "Entregado");
+  assert.equal(view.shortStatusLabel("rejected"), "Rechazado");
+  assert.equal(view.shortStatusLabel("failed"), "Incidencia");
+  assert.equal(view.shortStatusLabel("cancelled"), "Cancelado");
+});
+
 test("statusClass maps each customer-visible lifecycle state to a stable style", () => {
   assert.equal(view.statusClass("completed"), "completed");
   assert.equal(view.statusClass("payment_review"), "review");
