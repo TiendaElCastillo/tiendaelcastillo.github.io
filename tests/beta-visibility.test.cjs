@@ -5,9 +5,11 @@ const path = require("node:path");
 
 const root = path.join(__dirname, "..");
 const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
-const generalGuide = fs.readFileSync(path.join(root, "recargas-juegos-cuba.html"), "utf8");
-const freeFireGuide = fs.readFileSync(path.join(root, "recargar-free-fire-cuba.html"), "utf8");
-const mobileLegendsGuide = fs.readFileSync(path.join(root, "recargar-mobile-legends-cuba.html"), "utf8");
+const guides = [
+  fs.readFileSync(path.join(root, "recargas-juegos-cuba.html"), "utf8"),
+  fs.readFileSync(path.join(root, "recargar-free-fire-cuba.html"), "utf8"),
+  fs.readFileSync(path.join(root, "recargar-mobile-legends-cuba.html"), "utf8")
+];
 
 function blockBetween(source, start, end) {
   const from = source.indexOf(start);
@@ -17,51 +19,44 @@ function blockBetween(source, start, end) {
   return source.slice(from, to);
 }
 
-test("el acceso antes de iniciar sesión explica la fase beta y desaconseja compras grandes", () => {
-  const auth = blockBetween(index, '<section id="auth"', '<section id="store"');
-  assert.match(auth, /FASE BETA/i);
-  assert.match(auth, /evita compras grandes/i);
-  assert.match(auth, /pedidos pequeños/i);
+test("la web muestra un único aviso discreto de fase beta", () => {
+  const notices = index.match(/class="castle-beta-banner"/g) || [];
+  assert.equal(notices.length, 1, "Debe existir un solo aviso beta compartido");
+  assert.match(index, /FASE BETA[^<]*Estamos mejorando la tienda contigo/i);
+  assert.doesNotMatch(index, /pedidos pequeños|evita compras grandes/i);
 });
 
-test("la entrada de la tienda conserva el aviso beta en las vistas autenticadas", () => {
-  const store = blockBetween(index, '<section id="store"', '<\/main>');
-  const notice = store.indexOf('class="castle-beta-store-note"');
-  const home = store.indexOf('<section id="homeView"');
-  assert.notEqual(notice, -1, "Falta el aviso beta dentro de la tienda");
-  assert.notEqual(home, -1, "No se encontró la vista de inicio");
-  assert.ok(notice < home, "El aviso debe permanecer fuera de las vistas internas");
-  assert.match(store.slice(notice, notice + 700), /evita compras grandes/i);
+test("el mismo aviso queda visible antes y después de iniciar sesión", () => {
+  const notice = index.indexOf('class="castle-beta-banner"');
+  const auth = index.indexOf('<section id="auth"');
+  const store = index.indexOf('<section id="store"');
+  assert.ok(notice >= 0 && auth > notice && store > notice, "El aviso debe estar antes de las vistas pública y autenticada");
+  assert.doesNotMatch(blockBetween(index, '<section id="auth"', '<section id="store"'), /FASE BETA/i);
+  assert.doesNotMatch(blockBetween(index, '<section id="store"', '</main>'), /FASE BETA/i);
 });
 
-test("el mensaje de compartir informa correctamente que la tienda está en beta", () => {
+test("el mensaje de compartir promociona el servicio sin repetir el aviso beta", () => {
   const share = blockBetween(index, "async function shareStore()", "const productSearchSynonyms");
-  assert.match(share, /fase beta/i);
-  assert.match(share, /pedidos pequeños/i);
-  assert.match(share, /evita compras grandes/i);
+  assert.match(share, /recargas de juegos desde Cuba/i);
+  assert.match(share, /sigue tus pedidos desde tu cuenta/i);
+  assert.doesNotMatch(share, /fase beta|pedidos pequeños|compras grandes/i);
 });
 
-test("los metadatos de buscadores y redes explican la fase beta", () => {
-  assert.match(index, /<meta name="description" content="[^"]*fase beta/i);
-  assert.match(index, /<meta property="og:description" content="[^"]*fase beta/i);
-  assert.match(index, /<meta name="twitter:description" content="[^"]*fase beta/i);
+test("los metadatos mantienen una descripción comercial clara", () => {
+  assert.match(index, /<meta name="description" content="Recargas digitales para Free Fire/i);
+  assert.match(index, /<meta property="og:description" content="Recargas digitales para Free Fire/i);
+  assert.match(index, /<meta name="twitter:description" content="Recargas digitales de juegos en Cuba/i);
+  assert.doesNotMatch(index.match(/<meta name="description" content="([^"]*)"/)?.[1] || "", /fase beta/i);
 });
 
-test("las tres guías públicas recomiendan pedidos pequeños y no compras grandes", () => {
-  for (const [name, guide] of [
-    ["guía general", generalGuide],
-    ["guía Free Fire", freeFireGuide],
-    ["guía Mobile Legends", mobileLegendsGuide]
-  ]) {
-    assert.match(guide, /fase beta/i, name + " debe conservar el aviso beta");
-    assert.match(guide, /pedidos pequeños/i, name + " debe recomendar pedidos pequeños");
-    assert.match(guide, /evita compras grandes/i, name + " debe desaconsejar compras grandes");
+test("las guías públicas no repiten el aviso beta", () => {
+  for (const guide of guides) {
+    assert.doesNotMatch(guide, /fase beta|pedidos pequeños|evita compras grandes/i);
   }
 });
 
-test("la pantalla de acceso ofrece compartir la tienda y seguir el canal oficial", () => {
+test("el acceso conserva las acciones para compartir y seguir novedades", () => {
   const auth = blockBetween(index, '<section id="auth"', '<section id="store"');
   assert.match(auth, /onclick="shareStore()"/);
-  assert.match(auth, /shareStoreMsg/);
   assert.match(auth, /whatsapp.com\/channel/);
 });
