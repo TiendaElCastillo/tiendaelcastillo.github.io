@@ -1,6 +1,6 @@
 # Pedidos compactos con vista de detalle — Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Convertir «Mis pedidos» en una lista agrupada y compacta que abre el detalle completo de un pedido sin cambiar sus procesos.
 
@@ -35,26 +35,27 @@
 **Interfaces:**
 - Produce `window.CustomerOrdersView.groupByDay(orders, locale)`, que devuelve grupos en el orden recibido con `key`, `label` y `orders`.
 - Produce `window.CustomerOrdersView.renderSummary(order, options)`, que devuelve una fila HTML accesible y compacta; `options` aporta `statusLabel` y `amountLabel`.
-- Produce `window.CustomerOrdersView.statusClass(status)` para clases visuales seguras según estado.
+- Produce `window.CustomerOrdersView.statusClass(status)` para clases visuales seguras según estado y `shortStatusLabel(status)` para etiquetas breves en la lista.
 
-- [ ] **Step 1: Escribir pruebas que fallen primero**
+- [x] **Step 1: Escribir pruebas que fallen primero**
   - `groupByDay` agrupa por día local y conserva el orden de los pedidos.
   - `renderSummary` muestra juego, paquete, folio, fecha, cuenta, importe y estado, pero no expone `player_id`, `proof_path` ni el método de pago completo.
   - `renderSummary` escapa texto no confiable de los datos del pedido.
   - `statusClass` asigna clases para completado, revisión, proceso, rechazo/fallo y cancelación.
+  - `shortStatusLabel` resume los estados largos en etiquetas compactas.
 
-- [ ] **Step 2: Ejecutar las pruebas y comprobar que fallan**
+- [x] **Step 2: Ejecutar las pruebas y comprobar que fallan**
   - Run: `node --test tests/customer-orders-view.test.cjs`
   - Expected: FAIL por la ausencia de `assets/customer-orders-view.js`.
 
-- [ ] **Step 3: Implementar el módulo**
+- [x] **Step 3: Implementar el módulo**
   - Añadir solo funciones puras de agrupación, escape, resumen y clase de estado; sin dependencias externas ni acceso a Supabase.
 
-- [ ] **Step 4: Ejecutar las pruebas**
+- [x] **Step 4: Ejecutar las pruebas**
   - Run: `node --test tests/customer-orders-view.test.cjs`
   - Expected: PASS en todos los casos.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
   - Commit: `feat: add compact customer order summaries`
 
 ### Task 2: Integrar lista compacta y pantalla de detalle
@@ -69,29 +70,29 @@
 - `closeCustomerOrderDetail()` regresa a la lista y detiene el reloj del detalle.
 - `loadMyOrders()` conserva su consulta, estadísticas, notificaciones y condiciones de acciones; renderiza la lista agrupada y actualiza el detalle si ya estaba abierto.
 
-- [ ] **Step 1: Modificar el HTML de «Mis pedidos»**
+- [x] **Step 1: Modificar el HTML de «Mis pedidos»**
   - Mantener `#myorders` como contenedor estable.
   - Añadir `#myordersList` para los resúmenes y `#myorderDetailView` + `#myorderDetailContent` para el detalle.
 
-- [ ] **Step 2: Añadir estilos compactos y adaptables**
+- [x] **Step 2: Añadir estilos compactos y adaptables**
   - Mostrar título, estado, folio/fecha, nombre de jugador, importe y una indicación de apertura.
   - Agrupar por fecha con contador de pedidos.
   - Dar foco visible y objetivos táctiles adecuados; no añadir imágenes ni recursos externos.
 
-- [ ] **Step 3: Separar el renderizado en la lógica existente**
+- [x] **Step 3: Separar el renderizado en la lógica existente**
   - Guardar en memoria los pedidos y eventos ya consultados.
   - Renderizar la lista con `CustomerOrdersView`.
   - Mover el marcado actual de cada pedido a `renderCustomerOrderDetailHtml` sin alterar sus condiciones ni mensajes.
   - Delegar los clics de abrir/volver desde `#myorders`.
   - Volver a asociar los manejadores de comprobante/cancelación y el reloj al contenido del detalle después de cada renderizado.
 
-- [ ] **Step 4: Verificar**
+- [x] **Step 4: Verificar**
   - Run: `node --test tests/customer-orders-view.test.cjs`
   - Run: `node --check assets/customer-orders-view.js`
-  - Run: `node tests/check-inline-scripts.cjs` (compilar los scripts incrustados de `index.html` sin ejecutarlos).
+  - Compilación de los 3 scripts incrustados de `index.html` en el entorno de verificación: 0 errores.
   - Revisar el diff para confirmar que no cambian consultas, RPC, columnas ni condiciones de autorización/pago.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
   - Commit: `feat: add compact customer order detail view`
 
 ### Final review
