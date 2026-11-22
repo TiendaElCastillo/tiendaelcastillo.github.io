@@ -5001,7 +5001,7 @@ async function loadMyOrders(){
   '<section class="order-day-group"><header class="order-day-group-header"><strong>'+clean(group.label)+'</strong><span class="order-day-count">'+group.count+' '+(group.count===1?"pedido":"pedidos")+'</span></header><div class="order-day-items">'+
   group.orders.map(order=>{
    const amountCurrency=order.payment_source==="wallet"?"USD":order.payment_method==="USDT"?"USDT":"CUP";
-   return view.renderSummary(order,{statusLabel:statusText(order.status),amountLabel:money(order.price)+" "+amountCurrency});
+   return view.renderSummary(order,{statusLabel:view.shortStatusLabel(order.status),amountLabel:money(order.price)+" "+amountCurrency});
   }).join("")+'</div></section>'
  ).join(""):'<div class="customer-empty-state"><span class="customer-empty-crown"><img src="./assets/el-castillo-icon.webp" alt="" width="46" height="46"></span><strong>Tu próxima recarga puede empezar aquí</strong><p>Aún no tienes pedidos. Explora los juegos y encuentra tu próximo paquete favorito.</p><button type="button" class="primary-btn" onclick="showView(&quot;home&quot;)">Explorar juegos</button></div>';
  if(selectedCustomerOrderId&&customerOrdersCache.some(order=>String(order.id)===selectedCustomerOrderId)){
