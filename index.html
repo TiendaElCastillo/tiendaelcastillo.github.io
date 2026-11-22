@@ -1907,11 +1907,22 @@ body{min-width:0}
  #ordersView .order-detail-heading h3{font-size:16px}
 }
 </style>
+<style id="castle-beta-visibility-v1">
+.castle-beta-banner{width:calc(100% - 28px);max-width:1120px;margin:0 auto 12px;padding:7px 10px;border:1px solid rgba(164,91,207,.18);border-radius:10px;background:rgba(164,91,207,.07);color:#6a4b7e;font-size:11px;line-height:1.35;text-align:center}
+.castle-beta-banner strong{color:#734491;font-weight:850;letter-spacing:.06em;margin-right:4px}
+.castle-beta-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.castle-beta-share{min-height:38px;padding:8px 12px;border:1px solid rgba(255,255,255,.45);border-radius:11px;background:#fff;color:#452263;font-size:12px;font-weight:850}
+.castle-beta-share:focus-visible,.castle-beta-channel:focus-visible{outline:3px solid #e6b7ff;outline-offset:3px}
+.castle-beta-channel{color:#6d3c91;font-size:12px;font-weight:750;text-decoration:underline;text-underline-offset:3px}
+.castle-share-status{min-height:0!important}
+.castle-share-status:empty{display:none}
+</style>
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
 <header id="siteHeader" class="site-header hidden"><div class="header-inner"><a class="brand" href="./" aria-label="Tienda El Castillo, inicio"><img class="brand-logo" src="./assets/el-castillo-icon.webp" alt="Emblema de Tienda El Castillo" width="42" height="42"><span class="brand-name"><strong>Tienda El Castillo</strong><span>Más que una tienda</span></span></a><div class="header-actions"><button class="header-btn notification-header-btn hidden" id="notificationsButton" type="button" onclick="openNotificationCenter()" aria-label="Mensajes y notificaciones"><span aria-hidden="true"><svg class="messages-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.25 11.25a7.25 7.25 0 0 1-7.25 7.25H7l-3.25 2V11.25A7.25 7.25 0 0 1 11 4h2a7.25 7.25 0 0 1 7.25 7.25Z"/><path d="M8.5 10h7M8.5 13.75h4.75"/></svg></span><span class="notification-label">Mensajes</span><i id="notificationBadge" class="notification-badge hidden" aria-hidden="true"></i></button><button class="header-btn" type="button" onclick="currentUser?showView('profile'):openAccount()">Mi cuenta</button><button class="header-btn primary hidden" id="adminNav" type="button" onclick="showView('admin')">Admin</button></div></div></header>
 <main id="appMain">
+<div class="castle-beta-banner" role="note" aria-label="Aviso de fase beta"><strong>FASE BETA</strong> · Estamos mejorando la tienda contigo.</div>
 <section id="setup" class="hidden"><input id="url"><input id="key"><button onclick="connect()">Conectar</button></section>
 <section id="auth" class="auth-layout auth-showcase-layout">
  <div class="auth-showcase">
@@ -1920,6 +1931,11 @@ body{min-width:0}
    <span class="eyebrow"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> TIENDA EL CASTILLO · MÁS QUE UNA TIENDA</span>
    <h1>Recargas de juegos desde Cuba</h1>
    <p>Conoce los juegos que ofrecemos. Inicia sesión o crea tu cuenta para entrar en la tienda y acceder a todos los paquetes y servicios.</p>
+   <div class="castle-beta-actions">
+    <button class="castle-beta-share" type="button" onclick="shareStore()">Compartir tienda</button>
+    <a class="castle-beta-channel" href="https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X" target="_blank" rel="noopener noreferrer">Seguir novedades en WhatsApp</a>
+   </div>
+   <p class="castle-share-status" id="shareStoreMsg" role="status" aria-live="polite"></p>
   </div>
   <div class="auth-showcase-games" aria-label="Juegos con servicios disponibles">
    <article class="auth-game-card">
@@ -3600,7 +3616,7 @@ function scrollToHowItWorks(){document.getElementById("howItWorks")?.scrollIntoV
 async function shareStore(){
  const url="https://tiendaelcastillo.github.io/";
  const title="Tienda El Castillo 🏰 · Recargas de juegos en Cuba";
- const text="Recarga tus juegos favoritos desde Cuba. Elige tu paquete, paga por transferencia CUP, saldo móvil, USDT o saldo de tu billetera y sigue tu pedido desde tu cuenta.";
+ const text="Descubre Tienda El Castillo: consulta las recargas de juegos disponibles en Cuba y sigue tus pedidos desde tu cuenta.";
  const msg=$("shareStoreMsg");
  try{
   if(navigator.share){
