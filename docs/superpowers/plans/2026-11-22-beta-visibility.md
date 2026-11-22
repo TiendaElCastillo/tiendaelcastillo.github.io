@@ -1,82 +1,36 @@
-# Refuerzo de visibilidad y aviso de fase beta — Implementation Plan
+# Aviso beta discreto y difusión de Tienda El Castillo
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+**Fecha:** 22 de noviembre de 2026
 
-**Goal:** Mostrar una sola mención discreta de fase beta en la web, visible tanto a visitantes como a clientes con sesión iniciada.
+## Objetivo
+Mostrar una única nota pequeña y tranquilizadora de fase beta, sin repetirla ni hacer que el cliente dude de que su recarga llegará. Preparar material promocional orgánico para atraer jugadores.
 
-**Architecture:** Mantener la web estática y ligera. Añadir HTML/CSS sin dependencias y reutilizar la función `shareStore()` y el canal de WhatsApp existentes. Actualizar el texto de los metadatos y de las guías actuales; no introducir servicios externos ni cambiar flujos de compra.
+## Decisión visual y de experiencia
+- Una sola línea, colocada inmediatamente dentro de la aplicación, antes de las secciones de acceso y tienda: **FASE BETA · Estamos mejorando la tienda contigo.**
+- Fondo muy suave en tono violeta, borde ligero y tipografía pequeña, sin ocupar espacio importante.
+- No mencionar pedidos pequeños o compras grandes en el aviso, metadatos, compartir o guías.
+- Mantener las opciones públicas de compartir la web y seguir el canal oficial de WhatsApp.
+- Mantener las descripciones comerciales normales en buscadores y redes.
+- Conservar las guías públicas informativas sin mensajes repetidos de fase beta.
 
-**Tech Stack:** HTML, CSS, JavaScript existente, Node.js `node:test`, GitHub Pages, Canva.
+## Límites
+- Mantener el inicio de sesión obligatorio para ver paquetes y precios.
+- No modificar precios, catálogo, pagos, autenticación, pedidos, billetera, Supabase ni el flujo de recargas.
+- No mencionar proveedores externos ni prometer entrega instantánea.
+- No crear ni activar anuncios pagados.
+- Publicar contenido en Facebook solo a través de una conexión compatible y después de comprobar los textos y recursos creativos.
 
-**Spec:** `docs/superpowers/specs/2026-11-22-beta-visibility-design.md`
+## Implementación
+- [x] Reemplazar los dos avisos grandes por un único aviso común a la pantalla pública y a la tienda autenticada.
+- [x] Separar el aviso de los botones «Compartir tienda» y «Seguir novedades en WhatsApp».
+- [x] Eliminar menciones beta de los textos de compartir, metadatos y tres guías públicas.
+- [x] Restaurar metadatos comerciales originales.
+- [x] Añadir pruebas de regresión para la única nota y la ausencia de avisos repetidos.
+- [ ] Ejecutar pruebas Node.js completas y revisar visualmente en navegador.
+- [ ] Actualizar el registro de la tarea cuando termine la verificación.
 
-## Global Constraints
-- El aviso debe aparecer una sola vez en un elemento común a las vistas pública y autenticada.
-- El aviso debe ser breve y tranquilizador, sin advertencias sobre cantidades.
-- No revelar precios o paquetes antes del inicio de sesión.
-- No mencionar proveedores externos ni prometer entrega inmediata.
-- No publicar en redes ni activar anuncios.
-- No cambiar pagos, precios, catálogo, autenticación, pedidos, billetera ni Supabase.
-- No añadir dependencias ni imágenes pesadas.
-
-## Review Focus
-- La advertencia debe verse en móvil sin empujar el formulario de acceso fuera de una zona razonable.
-- El botón de compartir debe funcionar en navegadores Android con `navigator.share` y mantener el respaldo de copiar enlace.
-- El aviso de la tienda debe quedar fuera de las vistas internas y no desaparecer al cambiar entre catálogo, pedidos y perfil.
-- Los metadatos Open Graph, Twitter y descripción normal deben coincidir en el mensaje de beta.
-- Las guías públicas deben seguir sin mostrar catálogo ni precios.
-
----
-
-### Task 1: Pruebas de seguridad y difusión
-
-**Files:**
-- Create: `tests/beta-visibility.test.cjs`
-- Verify: `tests/beta-visibility.test.cjs`
-
-- [x] **Step 1: Write the failing tests** — assert beta notice before login, persistent notice in the store, beta-safe share text, metadata coverage, public guide warnings, and public share/channel actions.
-- [x] **Step 2: Run against main** — six checks fail because the current page lacks the requested visible notice, share CTA, and beta metadata.
-
-### Task 2: Acceso, tienda y difusión orgánica
-
-**Files:**
-- Modify: `index.html`
-- Test: `tests/beta-visibility.test.cjs`
-
-- [x] **Step 1: Add a compact beta warning** inside `#auth`, before login/register, with the exact recommendation from the spec.
-- [x] **Step 2: Add visible share and channel actions** inside the public access view; reuse `shareStore()` and the existing official WhatsApp channel URL.
-- [x] **Step 3: Add one compact persistent beta strip** as a sibling of the authenticated views, before `#homeView`.
-- [x] **Step 4: Update the share payload** in `shareStore()` to say beta, start small, and avoid large purchases.
-- [x] **Step 5: Update description, Open Graph and Twitter descriptions** without changing the page title, canonical URL, analytics scripts or schema markup.
-- [ ] **Step 6: Run** `node --test tests/beta-visibility.test.cjs` and `node tests/check-inline-scripts.cjs`.
-
-### Task 3: Guías públicas y revisión final
-
-**Files:**
-- Modify: `recargas-juegos-cuba.html`
-- Modify: `recargar-free-fire-cuba.html`
-- Modify: `recargar-mobile-legends-cuba.html`
-- Test: `tests/beta-visibility.test.cjs`
-
-- [x] **Step 1: Update the beta caution copy** in the existing safety section and notice on each public guide.
-- [ ] **Step 2: Run** `node --test tests/beta-visibility.test.cjs`, `node --test tests/customer-orders-view.test.cjs`, and `node tests/check-inline-scripts.cjs`.
-- [x] **Step 3: Review the diff** to confirm only public copy, lightweight display markup/styles, share text, metadata and tests changed.
-- [x] **Step 4: Open a pull request** for review; do not merge or publish without the user's approval.
-
-## Completion checklist
-- [x] Beta warning appears on the login/register screen.
-- [x] Beta warning remains visible in the authenticated storefront.
-- [x] Public visitors can share the store and open the WhatsApp channel.
-- [x] Share text and search/social metadata disclose beta status.
-- [x] All public guides explicitly recommend small orders and warn against large purchases.
-- [ ] Tests and inline-script syntax checks pass.
-- [x] No private operational systems or financial settings changed.
-
-
-## Current execution status (22 Nov 2026)
-
-- Se cambió el enfoque: un solo aviso compacto compartido por las vistas de acceso y tienda: `FASE BETA · Estamos mejorando la tienda contigo.`
-- Se retiraron las advertencias repetidas de los textos de compartir, metadatos y tres guías públicas.
-- Las acciones de compartir y seguir el canal de WhatsApp quedan separadas del aviso.
-- Pendiente: ejecutar `node --test tests/beta-visibility.test.cjs`, `node --test tests/customer-orders-view.test.cjs` y `node tests/check-inline-scripts.cjs`. No se afirma que estas pruebas estén ejecutadas.
-- PR #16 se actualizará y revisará para integrar el cambio autorizado por el usuario.
+## Verificación disponible
+- Comprobaciones estáticas del contenido actual: una sola nota global; ninguna repetición en acceso, tienda, compartir o guías.
+- Sintaxis de los tres scripts JavaScript incrustados: 3/3 analizados correctamente.
+- Las pruebas Node.js aún no se ejecutaron porque el entorno no pudo resolver github.com al intentar clonar el repositorio.
+- PR #16 actualizado con este cambio, pendiente de la integración y de la verificación que aún se pueda realizar.
