@@ -38,6 +38,24 @@
     }, e.__SV = 1);
   }(document, window.posthog || []);
 
+  // Limpiar direcciones automáticas antes de enviar cualquier evento.
+  // Evita transmitir códigos temporales de confirmación o recuperación en consultas o fragmentos.
+  const stripUrlSecrets = (target) => {
+    if (!target || typeof target !== "object" || Array.isArray(target)) return;
+    Object.keys(target).forEach((key) => {
+      if (/(url|referrer|href)/i.test(key) && typeof target[key] === "string") {
+        target[key] = target[key].split(/[?#]/, 1)[0];
+      }
+    });
+  };
+  const sanitizePostHogEvent = (event) => {
+    if (!event) return null;
+    stripUrlSecrets(event.properties);
+    stripUrlSecrets(event.$set);
+    stripUrlSecrets(event.$set_once);
+    return event;
+  };
+
   const allowedProperties = new Set(["game", "package", "payment_method", "view", "account_role", "source"]);
   const cleanProperties = (input) => {
     const output = {};
@@ -61,7 +79,8 @@
       capture_pageleave: false,
       disable_session_recording: true,
       person_profiles: "identified_only",
-      persistence: "localStorage+cookie"
+      persistence: "localStorage+cookie",
+      before_send: sanitizePostHogEvent
     });
 
     // Keep the public analytics API narrow so private checkout fields cannot be sent by mistake.
