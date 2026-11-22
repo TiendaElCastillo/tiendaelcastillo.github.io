@@ -43,11 +43,11 @@
 - Modify: `index.html`
 - Test: `tests/beta-visibility.test.cjs`
 
-- [ ] **Step 1: Add a compact beta warning** inside `#auth`, before login/register, with the exact recommendation from the spec.
-- [ ] **Step 2: Add visible share and channel actions** inside the public access view; reuse `shareStore()` and the existing official WhatsApp channel URL.
-- [ ] **Step 3: Add one compact persistent beta strip** as a sibling of the authenticated views, before `#homeView`.
-- [ ] **Step 4: Update the share payload** in `shareStore()` to say beta, start small, and avoid large purchases.
-- [ ] **Step 5: Update description, Open Graph and Twitter descriptions** without changing the page title, canonical URL, analytics scripts or schema markup.
+- [x] **Step 1: Add a compact beta warning** inside `#auth`, before login/register, with the exact recommendation from the spec.
+- [x] **Step 2: Add visible share and channel actions** inside the public access view; reuse `shareStore()` and the existing official WhatsApp channel URL.
+- [x] **Step 3: Add one compact persistent beta strip** as a sibling of the authenticated views, before `#homeView`.
+- [x] **Step 4: Update the share payload** in `shareStore()` to say beta, start small, and avoid large purchases.
+- [x] **Step 5: Update description, Open Graph and Twitter descriptions** without changing the page title, canonical URL, analytics scripts or schema markup.
 - [ ] **Step 6: Run** `node --test tests/beta-visibility.test.cjs` and `node tests/check-inline-scripts.cjs`.
 
 ### Task 3: Guías públicas y revisión final
@@ -58,16 +58,25 @@
 - Modify: `recargar-mobile-legends-cuba.html`
 - Test: `tests/beta-visibility.test.cjs`
 
-- [ ] **Step 1: Update the beta caution copy** in the existing safety section and notice on each public guide.
+- [x] **Step 1: Update the beta caution copy** in the existing safety section and notice on each public guide.
 - [ ] **Step 2: Run** `node --test tests/beta-visibility.test.cjs`, `node --test tests/customer-orders-view.test.cjs`, and `node tests/check-inline-scripts.cjs`.
-- [ ] **Step 3: Review the diff** to confirm only public copy, lightweight display markup/styles, share text, metadata and tests changed.
-- [ ] **Step 4: Open a pull request** for review; do not merge or publish without the user's approval.
+- [x] **Step 3: Review the diff** to confirm only public copy, lightweight display markup/styles, share text, metadata and tests changed.
+- [x] **Step 4: Open a pull request** for review; do not merge or publish without the user's approval.
 
 ## Completion checklist
-- [ ] Beta warning appears on the login/register screen.
-- [ ] Beta warning remains visible in the authenticated storefront.
-- [ ] Public visitors can share the store and open the WhatsApp channel.
-- [ ] Share text and search/social metadata disclose beta status.
-- [ ] All public guides explicitly recommend small orders and warn against large purchases.
+- [x] Beta warning appears on the login/register screen.
+- [x] Beta warning remains visible in the authenticated storefront.
+- [x] Public visitors can share the store and open the WhatsApp channel.
+- [x] Share text and search/social metadata disclose beta status.
+- [x] All public guides explicitly recommend small orders and warn against large purchases.
 - [ ] Tests and inline-script syntax checks pass.
-- [ ] No private operational systems or financial settings changed.
+- [x] No private operational systems or financial settings changed.
+
+
+## Current execution status (22 Nov 2026)
+
+- Implemented changes: access warning, persistent authenticated-store warning, share and WhatsApp actions, share payload, SEO/social descriptions, and all three public guide warnings.
+- Static verification: 11/11 targeted checks passed; three inline scripts parsed successfully.
+- Pending: run `node --test tests/beta-visibility.test.cjs`, `node --test tests/customer-orders-view.test.cjs`, and `node tests/check-inline-scripts.cjs` in an environment with the repository available. GitHub DNS resolution failed in this environment, so a local clone and full Node test run could not be completed.
+- PR #16 is open as a draft. Do not merge or deploy until automated tests and visual review are complete.
+- Canva's revised social graphic is still an unsaved draft; visual preview could not be verified, so it was not committed or published.
