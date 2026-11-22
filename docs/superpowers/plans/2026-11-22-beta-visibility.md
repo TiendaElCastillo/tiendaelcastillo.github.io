@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Mostrar claramente la fase beta y recomendar pedidos pequeños en el acceso, tienda, enlaces compartidos y guías públicas, facilitando que los visitantes compartan la web.
+**Goal:** Mostrar una sola mención discreta de fase beta en la web, visible tanto a visitantes como a clientes con sesión iniciada.
 
 **Architecture:** Mantener la web estática y ligera. Añadir HTML/CSS sin dependencias y reutilizar la función `shareStore()` y el canal de WhatsApp existentes. Actualizar el texto de los metadatos y de las guías actuales; no introducir servicios externos ni cambiar flujos de compra.
 
@@ -11,8 +11,8 @@
 **Spec:** `docs/superpowers/specs/2026-11-22-beta-visibility-design.md`
 
 ## Global Constraints
-- El aviso debe aparecer antes del registro y dentro de la tienda autenticada.
-- La frase al cliente debe recomendar pedidos pequeños y evitar compras grandes.
+- El aviso debe aparecer una sola vez en un elemento común a las vistas pública y autenticada.
+- El aviso debe ser breve y tranquilizador, sin advertencias sobre cantidades.
 - No revelar precios o paquetes antes del inicio de sesión.
 - No mencionar proveedores externos ni prometer entrega inmediata.
 - No publicar en redes ni activar anuncios.
@@ -75,8 +75,8 @@
 
 ## Current execution status (22 Nov 2026)
 
-- Implemented changes: access warning, persistent authenticated-store warning, share and WhatsApp actions, share payload, SEO/social descriptions, and all three public guide warnings.
-- Static verification: 11/11 targeted checks passed; three inline scripts parsed successfully.
-- Pending: run `node --test tests/beta-visibility.test.cjs`, `node --test tests/customer-orders-view.test.cjs`, and `node tests/check-inline-scripts.cjs` in an environment with the repository available. GitHub DNS resolution failed in this environment, so a local clone and full Node test run could not be completed.
-- PR #16 is open as a draft. Do not merge or deploy until automated tests and visual review are complete.
-- Canva's revised social graphic is still an unsaved draft; visual preview could not be verified, so it was not committed or published.
+- Se cambió el enfoque: un solo aviso compacto compartido por las vistas de acceso y tienda: `FASE BETA · Estamos mejorando la tienda contigo.`
+- Se retiraron las advertencias repetidas de los textos de compartir, metadatos y tres guías públicas.
+- Las acciones de compartir y seguir el canal de WhatsApp quedan separadas del aviso.
+- Pendiente: ejecutar `node --test tests/beta-visibility.test.cjs`, `node --test tests/customer-orders-view.test.cjs` y `node tests/check-inline-scripts.cjs`. No se afirma que estas pruebas estén ejecutadas.
+- PR #16 se actualizará y revisará para integrar el cambio autorizado por el usuario.
