@@ -68,7 +68,16 @@
     window.castleAnalytics = Object.freeze({
       capture(eventName, properties) {
         if (typeof eventName !== "string" || !/^[a-z][a-z0-9_]{1,60}$/.test(eventName)) return;
-        try { window.posthog.capture(eventName, cleanProperties(properties)); } catch (_) {}
+        const safeProperties = cleanProperties(properties);
+
+        // Mantener el registro existente en PostHog.
+        try { window.posthog.capture(eventName, safeProperties); } catch (_) {}
+
+        // Reenviar a Google Analytics solo eventos cortos y propiedades permitidas.
+        // No se envían identificadores de usuario, correos, teléfonos ni datos del pedido.
+        if (eventName.length <= 40 && typeof window.gtag === "function") {
+          try { window.gtag("event", eventName, safeProperties); } catch (_) {}
+        }
       },
       identify(userId, properties) {
         if (typeof userId !== "string" || !userId || userId.length > 100) return;
