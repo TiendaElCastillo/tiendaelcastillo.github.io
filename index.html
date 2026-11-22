@@ -1907,13 +1907,11 @@ body{min-width:0}
  #ordersView .order-detail-heading h3{font-size:16px}
 }
 </style>
-<style id="castle-beta-visibility-v1">
-.castle-beta-banner{width:calc(100% - 28px);max-width:1120px;margin:0 auto 12px;padding:7px 10px;border:1px solid rgba(164,91,207,.18);border-radius:10px;background:rgba(164,91,207,.07);color:#6a4b7e;font-size:11px;line-height:1.35;text-align:center}
-.castle-beta-banner strong{color:#734491;font-weight:850;letter-spacing:.06em;margin-right:4px}
-.castle-beta-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
-.castle-beta-share{min-height:38px;padding:8px 12px;border:1px solid rgba(255,255,255,.45);border-radius:11px;background:#fff;color:#452263;font-size:12px;font-weight:850}
-.castle-beta-share:focus-visible,.castle-beta-channel:focus-visible{outline:3px solid #e6b7ff;outline-offset:3px}
-.castle-beta-channel{color:#6d3c91;font-size:12px;font-weight:750;text-decoration:underline;text-underline-offset:3px}
+<style id="castle-home-social-links-v1">
+.castle-home-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
+.castle-share-button{min-height:38px;padding:8px 12px;border:1px solid rgba(255,255,255,.45);border-radius:11px;background:#fff;color:#452263;font-size:12px;font-weight:850}
+.castle-share-button:focus-visible,.castle-channel-link:focus-visible{outline:3px solid #e6b7ff;outline-offset:3px}
+.castle-channel-link{color:#6d3c91;font-size:12px;font-weight:750;text-decoration:underline;text-underline-offset:3px}
 .castle-share-status{min-height:0!important}
 .castle-share-status:empty{display:none}
 </style>
@@ -1930,7 +1928,6 @@ body{min-width:0}
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
 <header id="siteHeader" class="site-header hidden"><div class="header-inner"><a class="brand" href="./" aria-label="Tienda El Castillo, inicio"><img class="brand-logo" src="./assets/el-castillo-icon.webp" alt="Emblema de Tienda El Castillo" width="42" height="42"><span class="brand-name"><strong>Tienda El Castillo</strong><span>Más que una tienda</span></span></a><div class="header-actions"><button class="header-btn notification-header-btn hidden" id="notificationsButton" type="button" onclick="openNotificationCenter()" aria-label="Mensajes y notificaciones"><span aria-hidden="true"><svg class="messages-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.25 11.25a7.25 7.25 0 0 1-7.25 7.25H7l-3.25 2V11.25A7.25 7.25 0 0 1 11 4h2a7.25 7.25 0 0 1 7.25 7.25Z"/><path d="M8.5 10h7M8.5 13.75h4.75"/></svg></span><span class="notification-label">Mensajes</span><i id="notificationBadge" class="notification-badge hidden" aria-hidden="true"></i></button><button class="header-btn" type="button" onclick="currentUser?showView('profile'):openAccount()">Mi cuenta</button><button class="header-btn primary hidden" id="adminNav" type="button" onclick="showView('admin')">Admin</button></div></div></header>
 <main id="appMain">
-<div class="castle-beta-banner" role="note" aria-label="Aviso de fase beta"><strong>FASE BETA</strong> · Estamos mejorando la tienda contigo.</div>
 <section id="setup" class="hidden"><input id="url"><input id="key"><button onclick="connect()">Conectar</button></section>
 <section id="auth" class="auth-layout auth-showcase-layout">
  <div class="auth-showcase">
@@ -1939,9 +1936,9 @@ body{min-width:0}
    <span class="eyebrow"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> TIENDA EL CASTILLO · MÁS QUE UNA TIENDA</span>
    <h1>Recargas de juegos desde Cuba</h1>
    <p>Conoce los juegos que ofrecemos. Inicia sesión o crea tu cuenta para entrar en la tienda y acceder a todos los paquetes y servicios.</p>
-   <div class="castle-beta-actions">
-    <button class="castle-beta-share" type="button" onclick="shareStore()">Compartir tienda</button>
-    <a class="castle-beta-channel" href="https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X" target="_blank" rel="noopener noreferrer">Seguir novedades en WhatsApp</a>
+   <div class="castle-home-actions">
+    <button class="castle-share-button" type="button" onclick="shareStore()">Compartir tienda</button>
+    <a class="castle-channel-link" href="https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X" target="_blank" rel="noopener noreferrer">Seguir novedades en WhatsApp</a>
    </div>
    <p class="castle-share-status" id="shareStoreMsg" role="status" aria-live="polite"></p>
   </div>
@@ -1992,18 +1989,6 @@ body{min-width:0}
   <p class="subtle auth-security-note">No necesitas compartir la contraseña de tu juego. Para una recarga solo te pediremos los datos necesarios del pedido, como tu ID de jugador.</p>
  </div>
 </section>
- <nav class="public-seo-guides" aria-labelledby="public-seo-guides-title">
-  <h2 id="public-seo-guides-title">Guías públicas para jugadores en Cuba</h2>
-  <p>Consulta cómo funciona la tienda y qué datos necesitas antes de solicitar una recarga.</p>
-  <div class="public-seo-guide-links">
-   <a href="./recargas-juegos-cuba.html">Recargas de juegos en Cuba</a>
-   <a href="./recargar-free-fire-cuba.html">Recargar Free Fire</a>
-   <a href="./recargar-mobile-legends-cuba.html">Recargar Mobile Legends</a>
-   <a href="./recargar-blood-strike-cuba.html">Recargar Blood Strike</a>
-   <a href="./sobre-tienda-el-castillo.html">Conoce Tienda El Castillo</a>
-   <a href="./como-pagar-recargas-juegos-cuba.html">Cómo pagar una recarga</a>
-  </div>
- </nav>
 <section id="store" class="hidden">
  <div class="promo-strip castle-promo-strip"><span><img class="castle-inline-icon promo-crown" src="./assets/el-castillo-icon.webp" alt=""> <strong>EL CASTILLO PARA TI</strong> · Productos, servicios y soluciones</span><span class="promo-live"><i></i> 5 juegos disponibles</span></div>
  <div class="top-search"><div class="search-wrap"><input class="search-input" id="productSearch" type="search" aria-label="Buscar juegos y paquetes" aria-controls="searchProducts" autocomplete="off" placeholder="Busca juegos, paquetes y servicios..." onfocus="showView('search')" oninput="renderSearchProducts()"><button class="search-clear" id="clearProductSearch" type="button" aria-label="Borrar búsqueda" title="Borrar búsqueda" hidden onclick="clearProductSearch()">×</button></div></div>
@@ -2508,6 +2493,18 @@ body{min-width:0}
   <article class="faq-item"><h3>12. Seguridad y uso responsable</h3><p>El cliente debe utilizar sus propios datos de juego y revisar el importe, la región y el método de pago antes de confirmar. No se deben enviar contraseñas ni códigos de acceso. La tienda puede detener una solicitud cuando existan datos incompatibles, evidencia insuficiente, señales de duplicidad o una incidencia que deba revisarse antes de continuar.</p></article>
   <p class="policy-note">Estas condiciones describen el procedimiento operativo actual de la tienda y no sustituyen una revisión jurídica. Ningún estado de «comprobante recibido» equivale a pago confirmado. La tienda no debe solicitar un segundo pago para intentar resolver una incidencia del mismo pedido.</p>
  </div></section>
+ <nav class="public-seo-guides" aria-labelledby="public-seo-guides-title">
+  <h2 id="public-seo-guides-title">Guías públicas para jugadores en Cuba</h2>
+  <p>Consulta cómo funciona la tienda y qué datos necesitas antes de solicitar una recarga.</p>
+  <div class="public-seo-guide-links">
+   <a href="./recargas-juegos-cuba.html">Recargas de juegos en Cuba</a>
+   <a href="./recargar-free-fire-cuba.html">Recargar Free Fire</a>
+   <a href="./recargar-mobile-legends-cuba.html">Recargar Mobile Legends</a>
+   <a href="./recargar-blood-strike-cuba.html">Recargar Blood Strike</a>
+   <a href="./sobre-tienda-el-castillo.html">Conoce Tienda El Castillo</a>
+   <a href="./como-pagar-recargas-juegos-cuba.html">Cómo pagar una recarga</a>
+  </div>
+ </nav>
 <footer class="site-footer"><div class="footer-brand"><img src="./assets/el-castillo-icon.webp" alt="" width="42" height="42"><div><strong>Tienda El Castillo</strong><span>Más que una tienda · Productos, servicios y soluciones</span></div></div><p class="footer-warm-signature"><span><img src="./assets/el-castillo-icon.webp" alt="" width="25" height="25"></span> Gracias por elegirnos. En El Castillo, tu confianza importa.</p><div class="footer-columns"><div><strong>Tu compra</strong><a href="#catalogo" onclick="showView('games');return false">Catálogo de juegos</a><span>Transferencia CUP, saldo móvil y USDT</span><a href="#pedidos" onclick="currentUser?showView('orders'):openAccount();return false">Seguimiento de pedidos</a></div><div><strong>Ayuda e información</strong><a <a href="#guias" onclick="showView('guides');return false">Guías paso a paso</a><a href="#ayuda" onclick="showView('faq');return false">Preguntas frecuentes</a><a href="#soporte" onclick="showView('support');return false">Centro de soporte</a><a href="#legal" onclick="showView('legal');return false">Información legal</a><a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a></div></div><p class="footer-legal">Tienda El Castillo es un servicio independiente. No está afiliada ni respaldada por Garena. Las marcas y juegos pertenecen a sus respectivos propietarios.</p></footer>
 </section>
 </main>
