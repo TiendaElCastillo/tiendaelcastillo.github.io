@@ -19,23 +19,27 @@ function blockBetween(source, start, end) {
   return source.slice(from, to);
 }
 
-test("la web muestra un único aviso discreto de fase beta", () => {
-  const notices = index.match(/class="castle-beta-banner"/g) || [];
-  assert.equal(notices.length, 1, "Debe existir un solo aviso beta compartido");
-  assert.ok(index.includes('<strong>FASE BETA</strong> · Estamos mejorando la tienda contigo.'));
-  assert.doesNotMatch(index, /pedidos pequeños|evita compras grandes/i);
+test("la portada no muestra mensajes de fase beta ni advertencias que desanimen al cliente", () => {
+  assert.doesNotMatch(index, /fase beta|pedidos pequeños|evita compras grandes|no hagas compras/i);
 });
 
-test("el mismo aviso queda visible antes y después de iniciar sesión", () => {
-  const notice = index.indexOf('class="castle-beta-banner"');
-  const auth = index.indexOf('<section id="auth"');
-  const store = index.indexOf('<section id="store"');
-  assert.ok(notice >= 0 && auth > notice && store > notice, "El aviso debe estar antes de las vistas pública y autenticada");
-  assert.doesNotMatch(blockBetween(index, '<section id="auth"', '<section id="store"'), /FASE BETA/i);
-  assert.doesNotMatch(blockBetween(index, '<section id="store"', '</main>'), /FASE BETA/i);
+test("los enlaces SEO a guías están dentro del directorio de ayuda", () => {
+  const directory = blockBetween(index, '<div id="guideList"', '<div id="guideDetail"');
+  assert.match(directory, /class="public-seo-guides"/);
+  for (const href of [
+    "./recargas-juegos-cuba.html",
+    "./recargar-free-fire-cuba.html",
+    "./recargar-mobile-legends-cuba.html",
+    "./recargar-blood-strike-cuba.html",
+    "./recargar-pubg-mobile-cuba.html",
+    "./recargar-arena-breakout-cuba.html",
+    "./sobre-tienda-el-castillo.html",
+    "./como-pagar-recargas-juegos-cuba.html"
+  ]) assert.ok(directory.includes(href), "Falta enlace a " + href);
+  assert.equal((index.match(/class="public-seo-guides"/g) || []).length, 1);
 });
 
-test("el mensaje de compartir promociona el servicio sin repetir el aviso beta", () => {
+test("el mensaje de compartir promociona el servicio sin repetir avisos beta", () => {
   const share = blockBetween(index, "async function shareStore()", "const productSearchSynonyms");
   assert.match(share, /recargas de juegos disponibles en Cuba/i);
   assert.match(share, /sigue tus pedidos desde tu cuenta/i);
@@ -43,20 +47,20 @@ test("el mensaje de compartir promociona el servicio sin repetir el aviso beta",
 });
 
 test("los metadatos mantienen una descripción comercial clara", () => {
-  assert.match(index, /<meta name="description" content="Recargas digitales para Free Fire/i);
-  assert.match(index, /<meta property="og:description" content="Recargas digitales para Free Fire/i);
-  assert.match(index, /<meta name="twitter:description" content="Recargas digitales de juegos en Cuba/i);
+  assert.match(index, /<meta name="description" content="Recargas de Free Fire, Blood Strike, Mobile Legends, PUBG y Arena Breakout en Cuba\. Compra por ID/i);
+  assert.match(index, /<meta property="og:description" content="Recargas de Free Fire, Blood Strike, Mobile Legends, PUBG y Arena Breakout en Cuba\. Compra por ID/i);
+  assert.match(index, /<meta name="twitter:description" content="Recargas digitales de juegos en Cuba\. Compra por ID de jugador/i);
   assert.doesNotMatch(index.match(/<meta name="description" content="([^"]*)"/)?.[1] || "", /fase beta/i);
 });
 
-test("las guías públicas no repiten el aviso beta", () => {
+test("las guías públicas no repiten avisos beta ni lenguaje que desaliente compras", () => {
   for (const guide of guides) {
-    assert.doesNotMatch(guide, /fase beta|pedidos pequeños|evita compras grandes/i);
+    assert.doesNotMatch(guide, /fase beta|pedidos pequeños|evita compras grandes|no hagas compras/i);
   }
 });
 
-test("el acceso conserva las acciones para compartir y seguir novedades", () => {
+test("el acceso conserva los botones de compartir y seguir novedades", () => {
   const auth = blockBetween(index, '<section id="auth"', '<section id="store"');
-  assert.match(auth, /onclick="shareStore()"/);
+  assert.match(auth, /onclick="shareStore\(\)"/);
   assert.match(auth, /whatsapp.com\/channel/);
 });
