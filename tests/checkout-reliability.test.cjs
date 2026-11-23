@@ -652,3 +652,42 @@ test("la base de datos exige el archivo almacenado y los datos completos al entr
   assert.match(checkoutGuardMigrationSource, /payment_method = 'USDT'/);
   assert.match(checkoutGuardMigrationSource, /NEW\.status = 'payment_review'/);
 });
+
+
+test("el envío automático solo admite pedidos de billetera propiedad del cliente autenticado", () => {
+  assert.match(centralOneOrderEdgeSource, /action==="submit_wallet"/);
+  assert.match(centralOneOrderEdgeSource, /customerContext\(req\)/);
+  assert.match(centralOneOrderEdgeSource, /claim_central_one_wallet_order/);
+  assert.match(centralOneOrderEdgeSource, /p_order_id: orderId, p_user_id: walletUserId/);
+  assert.match(centralOneOrderEdgeSource, /async function adminContext/);
+  assert.match(centralOneOrderEdgeSource, /if\(action==="submit"\) return await submitOrder\(orderId,admin.userId\)/);
+  assert.match(centralOneOrderEdgeSource, /async function customerContext/);
+});
+
+test("las compras de billetera conservan los controles de ID, región, stock, beneficio y saldo del proveedor", () => {
+  assert.match(centralOneOrderEdgeSource, /claim_central_one_wallet_order/);
+  assert.match(centralOneOrderEdgeSource, /preflightPriceAndStock\(claim\)/);
+  assert.match(centralOneOrderEdgeSource, /checkProviderAvailableBalance\(wholesale\)/);
+  assert.match(centralOneOrderEdgeSource, /roundedProfitCup <= 0/);
+  assert.match(centralOneOrderEdgeSource, /liveTarget\.zoneKey !== storedTarget\.zoneKey/);
+  assert.match(centralOneOrderEdgeSource, /Idempotency-Key/);
+});
+
+test("la devolución automática se limita a fallos demostrados antes de crear una orden del proveedor", () => {
+  const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
+  assert.match(migration, /central_one_status NOT IN \('retryable','rejected'\)/);
+  assert.match(migration, /central_one_response->>'preflight'/);
+  assert.match(migration, /central_one_response->>'no_provider_order_created'/);
+  assert.match(migration, /wallet_auto_refunded_before_provider/);
+  assert.match(migration, /ON CONFLICT \(order_id\)/);
+  assert.match(centralOneOrderEdgeSource, /refund_wallet_order_before_provider/);
+  assert.match(centralOneOrderEdgeSource, /status:"unknown",errorCode:"network_or_timeout"/);
+});
+
+test("el checkout de billetera inicia el envío automático y solo registra compra completada cuando Central One lo confirma", () => {
+  assert.match(indexHtml, /async function requestWalletOrderAutoSubmit\(orderId\)/);
+  assert.match(indexHtml, /action:"submit_wallet",order_id:orderId/);
+  assert.match(indexHtml, /requestWalletOrderAutoSubmit\(result\.data\.order_id\)/);
+  assert.match(indexHtml, /autoResult\?\.provider_status==="completed"[\s\S]*?capture\?\.\("purchase_completed"/);
+  assert.match(indexHtml, /Estamos comprobando el resultado; no repitas la compra/);
+});
