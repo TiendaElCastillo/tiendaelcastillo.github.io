@@ -4697,8 +4697,34 @@ async function placeOrder(){
    clearWalletRequestIdentity(requestInfo);
    window.castleAnalytics?.capture?.("store_order_submitted",{game:product.game,package:product.name,payment_method:"Saldo de Tienda El Castillo"});
    resetPlayerValidation();
-   $("ordermsg").textContent=result.data.already_processed?"Este pedido ya se había creado. No se descontó saldo otra vez. Pedido "+result.data.order_code+".":"Compra creada correctamente. Pedido "+result.data.order_code+". Se descontaron "+moneyUSD(result.data.price)+" USD de tu wallet.";
-   $("checkoutDoneMessage").textContent="Tu pedido "+result.data.order_code+" fue pagado con el saldo de tu wallet. Puedes consultar su progreso en «Mis pedidos».";
+   if(button){button.disabled=true;button.textContent="Enviando recarga…";}
+   let autoResult=null,autoError=null;
+   try{
+    autoResult=await requestWalletOrderAutoSubmit(result.data.order_id);
+   }catch(sendError){
+    autoError=sendError;
+    autoResult=sendError?.payload||null;
+   }
+   const autoRefund=autoResult?.wallet_refund;
+   if(autoRefund?.refunded===true){
+    $("ordermsg").textContent="No pudimos iniciar esta recarga, pero devolvimos automáticamente "+moneyUSD(autoRefund.credited_amount||result.data.price)+" USD a tu billetera. No tienes que volver a pagar.";
+    $("checkoutDoneMessage").textContent="El pedido "+result.data.order_code+" no se envió y el saldo quedó devuelto. Puedes intentarlo cuando el paquete vuelva a estar disponible.";
+   }else if(autoResult?.provider_status==="completed"){
+    window.castleAnalytics?.capture?.("purchase_completed",{game:product.game,package:product.name,payment_method:"Saldo de Tienda El Castillo"});
+    $("ordermsg").textContent="¡Recarga entregada! Tu compra se procesó automáticamente. Pedido "+result.data.order_code+".";
+    $("checkoutDoneMessage").textContent="La recarga fue entregada automáticamente. Puedes consultar el pedido en «Mis pedidos».";
+   }else if(autoResult?.ok===true){
+    $("ordermsg").textContent="Compra enviada automáticamente. No necesitas esperar una aprobación manual. Pedido "+result.data.order_code+".";
+    $("checkoutDoneMessage").textContent="Tu saldo se descontó y la recarga está en proceso. Te mostraremos la confirmación cuando se complete.";
+   }else{
+    $("ordermsg").textContent="Tu compra quedó registrada y se intentó enviar automáticamente. Estamos comprobando el resultado; no repitas la compra ni vuelvas a pagar.";
+    $("checkoutDoneMessage").textContent=autoError?.message
+     ?"El pedido "+result.data.order_code+" quedó registrado. Estamos comprobando el resultado para proteger tu saldo. No crees otro pedido."
+     :"El pedido "+result.data.order_code+" quedó registrado. Consulta su estado en «Mis pedidos».";
+    if(autoResult?.wallet_refund?.error){
+     $("checkoutDoneMessage").textContent+=" La devolución automática necesita una comprobación del equipo.";
+    }
+   }
    showView("orders");
    try{await loadWalletData();}catch(refreshWalletError){console.warn("El pedido quedó creado; no se pudo actualizar el saldo visual:",refreshWalletError);}
    try{await loadMyOrders();}catch(refreshOrdersError){
@@ -5092,7 +5118,7 @@ let customerOrderEventsCache = new Map();
 function renderCustomerOrderDetailHtml(o, statusEvents) {
  const canRetryDirectProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.payment_confirmed_at&&!o.central_one_order_id&&["Transferencia CUP","Saldo móvil","USDT"].includes(o.payment_method);
  const proofNote=o.payment_source==="wallet"
-  ?'<p class="track-note">El pago se realizó con el saldo de tu wallet.</p>'
+  ?'<p class="track-note">El pago se realizó con tu saldo y la recarga se envía automáticamente.</p>'
   :o.proof_path
    ?'<p class="track-note">Comprobante recibido y guardado de forma privada.</p>'
    :canRetryDirectProof
@@ -5112,6 +5138,8 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
   }else if(["failed","cancelled"].includes(customerProviderStatus)){
    providerInfo='<p class="track-note">No pudimos completar la recarga. El equipo de Tienda El Castillo está revisando tu pedido y la solución correspondiente. No realices otro pago ni crees otro pedido.</p>';
   }
+ }else if(customerProviderError==="wallet_auto_refunded_before_provider"&&customerWalletRefund?.refunded===true){
+  providerInfo='<p class="track-note"><strong>Saldo devuelto automáticamente:</strong> se acreditaron '+moneyUSD(customerWalletRefund.credited_amount||o.price)+' USD a tu billetera porque no fue posible iniciar la recarga. Puedes usarlo en otra compra.</p>';
  }else if(customerProviderError==="admin_cancelled_before_provider"){
   if(customerWalletRefund?.refunded===true){
    providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
@@ -5889,6 +5917,24 @@ async function requestCentralOneOrder(action,orderId){
  });
  const result=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error(result?.message||result?.error||("Error HTTP "+response.status));
+ return result;
+}
+async function requestWalletOrderAutoSubmit(orderId){
+ if(!currentUser||!db||!orderId)throw new Error("No encontramos tu sesión o el pedido.");
+ const {data:sessionData,error:sessionError}=await db.auth.getSession();
+ const accessToken=sessionData?.session?.access_token;
+ if(sessionError||!accessToken)throw new Error("Tu sesión expiró. Vuelve a entrar para consultar el pedido.");
+ const response=await fetch(STORE_SUPABASE_URL+"/functions/v1/central-one-order",{
+  method:"POST",
+  headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken,"apikey":STORE_SUPABASE_KEY},
+  body:JSON.stringify({action:"submit_wallet",order_id:orderId})
+ });
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok){
+  const error=new Error(result?.message||result?.error||("Error HTTP "+response.status));
+  error.payload=result;
+  throw error;
+ }
  return result;
 }
 async function cancelPreflightBlockedOrder(orderId,orderCode){
