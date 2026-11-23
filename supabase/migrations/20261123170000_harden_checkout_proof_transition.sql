@@ -24,7 +24,7 @@ BEGIN
     END IF;
 
     IF OLD.payment_source = 'direct'
-       AND NEW.status = 'payment_review' THEN
+       AND NEW.status IN ('payment_review','processing','completed') THEN
       v_sender_digits := regexp_replace(coalesce(NEW.payment_sender_phone,''), '[^0-9]', '', 'g');
 
       IF NEW.payment_method = 'Transferencia CUP' THEN
