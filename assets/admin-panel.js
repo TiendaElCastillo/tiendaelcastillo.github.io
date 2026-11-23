@@ -2,7 +2,7 @@
 "use strict";
 let activeOrderFilter="pending";
 let orderSearchQuery="";
-const groupLabels={pending:"Pendientes de pago",ready:"Listos para autorizar",provider:"En Central One",history:"Finalizados",all:"Todos"};
+const groupLabels={pending:"Pagos por revisar",incomplete:"Pedidos incompletos",ready:"Listos para autorizar",provider:"En Central One",history:"Finalizados",all:"Todos"};
 function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
 function initAdminLayout(){
  const admin=document.getElementById("admin");if(!admin||admin.dataset.organized==="1")return;
@@ -122,9 +122,12 @@ function classifyOrder(card){
  const status=String(card.dataset.orderStatus||"").toLowerCase();
  const provider=String(card.dataset.providerStatus||"").toLowerCase();
  const providerId=String(card.dataset.providerId||"");
+ const paymentSource=String(card.dataset.paymentSource||"").toLowerCase();
+ const proofPresent=String(card.dataset.proofPresent||"").toLowerCase()==="true";
  if(["completed","failed","rejected","cancelled"].includes(status))return "history";
  if(providerId||["created","confirmed","processing","partially_completed","completed","submitting","unknown"].includes(provider))return "provider";
  if(status==="processing")return "ready";
+ if(status==="pending"&&paymentSource==="direct"&&!proofPresent)return "incomplete";
  if(["pending","payment_review"].includes(status))return "pending";
  const visible=(card.querySelector(".status")?.textContent||"").toLowerCase();
  if(visible.includes("complet")||visible.includes("fallid")||visible.includes("rechaz")||visible.includes("cancel"))return "history";
@@ -136,7 +139,7 @@ function applyOrderFilter(group){
  activeOrderFilter=groupLabels[group]?group:"pending";
  const container=document.getElementById("allorders");if(!container)return;
  const cards=Array.from(container.querySelectorAll(":scope > .order-card"));
- let visible=0;const counts={pending:0,ready:0,provider:0,history:0,all:cards.length};
+ let visible=0;const counts={pending:0,incomplete:0,ready:0,provider:0,history:0,all:cards.length};
  cards.forEach(card=>{const category=classifyOrder(card);counts[category]++;const searchMatch=!orderSearchQuery||card.textContent.toLocaleLowerCase("es").includes(orderSearchQuery);const show=(activeOrderFilter==="all"||category===activeOrderFilter)&&searchMatch;card.classList.toggle("hidden",!show);if(show)visible++;});
  document.querySelectorAll("[data-order-filter]").forEach(b=>{b.classList.toggle("active",b.dataset.orderFilter===activeOrderFilter);const badge=b.querySelector(".admin-filter-count");if(badge)badge.textContent=String(counts[b.dataset.orderFilter]||0);});
  document.querySelectorAll("[data-admin-kpi]").forEach(node=>{node.textContent=String(counts[node.dataset.adminKpi]||0);});
@@ -144,9 +147,9 @@ function applyOrderFilter(group){
 }
 function setupOrderFilters(panel){
  const container=panel.querySelector("#allorders");if(!container)return;
- const intro=el("p","track-note","Los pedidos están separados por etapa. En «Listos para autorizar» encontrarás el botón que envía la recarga a Central One.");
+ const intro=el("p","track-note","Los pedidos están separados por etapa. «Revisar pagos» solo muestra comprobantes recibidos; los pedidos sin captura quedan en «Incompletos».");
  const filters=el("div","admin-order-filters");filters.setAttribute("aria-label","Filtrar pedidos");
- [["pending","Revisar pagos"],["ready","Pago confirmado · autorizar"],["provider","En Central One"],["history","Finalizados"],["all","Todos"]].forEach(([key,label])=>{
+ [["incomplete","Incompletos"],["pending","Revisar pagos"],["ready","Pago confirmado · autorizar"],["provider","En Central One"],["history","Finalizados"],["all","Todos"]].forEach(([key,label])=>{
   const b=el("button","admin-order-filter"+(key==="pending"?" active":""));b.type="button";b.dataset.orderFilter=key;b.append(document.createTextNode(label+" "));b.append(el("span","admin-filter-count","0"));b.addEventListener("click",()=>applyOrderFilter(key));filters.append(b);
  });
  const search=el("input","admin-order-search");search.type="search";search.placeholder="Buscar folio, jugador, paquete o pago…";search.setAttribute("aria-label","Buscar pedidos por folio, jugador, paquete o pago");search.autocomplete="off";search.addEventListener("input",()=>{orderSearchQuery=search.value.trim().toLocaleLowerCase("es");applyOrderFilter(activeOrderFilter);});
@@ -168,6 +171,7 @@ function installViewHook(){
 
 function refreshCheckoutButton(){
  const button=document.getElementById("placeOrderBtn");if(!button)return;
+ const checkoutSubmitting=window.__castleCheckoutSubmitting===true;
  const productId=document.getElementById("product")?.value||"";
  const product=(typeof products!=="undefined"?products:[]).find(p=>String(p.id)===String(productId));
  const player=(document.getElementById("player")?.value||"").trim();
@@ -194,8 +198,8 @@ function refreshCheckoutButton(){
  const walletBalance=typeof walletBalanceUSD!=="undefined"?Number(walletBalanceUSD):0;
  const enoughWallet=!isWallet||walletBalance>=price;
  const ready=Boolean(product&&player.length>=3&&player.length<=64&&verified&&methodReady&&validFile&&(!needsReference||validReference)&&(!needsSender||validSender)&&(!needsReported||validReported)&&enoughWallet&&consent&&price>0);
- button.disabled=!ready;
- button.textContent=ready?(isWallet?"Comprar con saldo de tienda":"Ya transferí · Enviar a revisión"):!verified?"Primero verifica tu ID de jugador":!methodReady?"Este método de pago no está disponible":isWallet&&!enoughWallet?"Saldo USD insuficiente":!validFile?"Adjunta la captura del comprobante":needsReference&&!validReference?(method==="USDT"?"Escribe el TxID completo de 64 caracteres":"Escribe el N.º de transacción completo"):needsSender&&!validSender?"Escribe los 8 dígitos de tu móvil cubano (debe empezar por 5)":needsReported&&!validReported?"Confirma el importe exacto":!consent?"Acepta la política y los términos":"Completa los datos del pedido";
+ button.disabled=checkoutSubmitting||!ready;
+ button.textContent=checkoutSubmitting?"Comprobando pedido…":ready?(isWallet?"Comprar con saldo de tienda":"Ya transferí · Enviar a revisión"):!verified?"Primero verifica tu ID de jugador":!methodReady?"Este método de pago no está disponible":isWallet&&!enoughWallet?"Saldo USD insuficiente":!validFile?"Adjunta la captura del comprobante":needsReference&&!validReference?(method==="USDT"?"Escribe el TxID completo de 64 caracteres":"Escribe el N.º de transacción completo"):needsSender&&!validSender?"Escribe los 8 dígitos de tu móvil cubano (debe empezar por 5)":needsReported&&!validReported?"Confirma el importe exacto":!consent?"Acepta la política y los términos":"Completa los datos del pedido";
 }
 function installCheckoutFlow(){
  // La compra se dispara directamente desde cada tarjeta y su botón; no interceptamos el toque global.
