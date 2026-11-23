@@ -320,6 +320,7 @@ test("el botón se recalcula al cargar el validador aunque el cliente ya haya co
   const ids = ["placeOrderBtn", "product", "player", "playerZone", "payment",
     "paymentProof", "reference", "senderPhone", "reportedAmount", "privacyConsent"];
   const elements = Object.fromEntries(ids.map(id => [id, makeNode(id)]));
+  Object.values(elements).forEach(node => { node.addEventListener = () => {}; });
   elements.placeOrderBtn.disabled = true;
   elements.product.value = "mlbb-mobile";
   elements.player.value = "1348372911";
