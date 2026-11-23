@@ -588,8 +588,8 @@ test("dos toques rápidos no pueden crear dos pedidos desde el mismo checkout", 
 });
 
 test("el helper de checkout y el HTML tienen indicador de progreso y subida con avance real", () => {
-  assert.match(checkoutReliabilitySource, /xhr\\.upload\\.addEventListener\\("progress"/);
-  assert.match(checkoutReliabilitySource, /storage\\/v1\\/object\\/payment-proofs/);
+  assert.match(checkoutReliabilitySource, /xhr\.upload\.addEventListener\("progress"/);
+  assert.match(checkoutReliabilitySource, /storage\/v1\/object\/payment-proofs/);
   assert.match(indexHtml, /id="proofUploadPercent"/);
   assert.match(indexHtml, /castleSetProofUploadProgress/);
 });
