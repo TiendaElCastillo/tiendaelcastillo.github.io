@@ -35,7 +35,7 @@ function makeNode(id = "") {
 
 function runOfflineGuard({ online = false } = {}) {
   const ids = ["checkoutView", "checkoutStagePayment", "checkoutStageDone", "checkoutStepper",
-    "product", "player", "playerZone", "payment", "ordermsg", "checkoutPlayerMsg"];
+    "product", "player", "playerZone", "payment", "ordermsg", "checkoutPlayerMsg", "continueToPaymentBtn", "placeOrderBtn"];
   const elements = Object.fromEntries(ids.map(id => [id, makeNode(id)]));
   elements.checkoutStagePayment.classList.contains = name => name === "hidden";
   elements.checkoutView.querySelector = () => panel;
