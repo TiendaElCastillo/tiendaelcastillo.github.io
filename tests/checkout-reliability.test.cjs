@@ -697,3 +697,19 @@ test("el checkout de billetera inicia el envío automático y solo registra comp
   assert.match(indexHtml, /autoResult\?\.provider_status==="completed"[\s\S]*?capture\?\.\("purchase_completed"/);
   assert.match(indexHtml, /Estamos comprobando el resultado; no repitas la compra/);
 });
+
+
+test("la recarga de billetera se completa en dos pasos y el formulario de pago queda junto a las instrucciones", () => {
+  assert.match(indexHtml, /id="walletDepositStep1"/);
+  assert.match(indexHtml, /id="walletDepositStep2"/);
+  assert.doesNotMatch(indexHtml, /id="walletDepositStep3"/);
+  assert.doesNotMatch(indexHtml, /goWalletDepositStep\(3\)/);
+  assert.match(indexHtml, /data-step="1"[\s\S]*?data-step="2"/);
+  assert.match(indexHtml, /id="walletDepositInstructions"/);
+  assert.match(indexHtml, /id="walletDepositSenderPhone"/);
+  assert.match(indexHtml, /id="walletDepositReference"/);
+  assert.match(indexHtml, /id="walletDepositProof"/);
+  assert.match(indexHtml, /id="walletDepositSubmit"[^>]*onclick="requestWalletDeposit\(\)"/);
+  assert.match(indexHtml, /const target=Math\.max\(1,Math\.min\(2/);
+  assert.match(indexHtml, /uploadWalletDepositProofs\(created\.data\.id/);
+});
