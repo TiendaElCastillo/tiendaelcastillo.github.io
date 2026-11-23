@@ -70,7 +70,7 @@ function runOfflineGuard({ online = false } = {}) {
     placeOrder: async function () { placeOrderCalls++; return { ok: true }; }
   };
   const navigator = { onLine: online };
-  vm.runInNewContext(offlineGuardSource, { document, window, navigator, localStorage });
+  vm.runInNewContext(offlineGuardSource, { document, window, navigator, localStorage, currentUser: { id: "user-1" } });
   for (const listener of listeners.DOMContentLoaded || []) listener.callback();
 
   function click(id) {
