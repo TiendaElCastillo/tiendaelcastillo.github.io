@@ -9,6 +9,7 @@ const offlineGuardSource = fs.readFileSync(path.join(root, "assets/offline-guard
 const adminPanelSource = fs.readFileSync(path.join(root, "assets/admin-panel.js"), "utf8");
 const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
+const checkoutReliabilitySource = fs.readFileSync(path.join(root, "assets/checkout-reliability.js"), "utf8");
 
 function makeNode(id = "") {
   return {
@@ -465,4 +466,130 @@ test("los juegos con un solo ID programan la validación automática al completa
   assert.ok(scheduled);
   scheduled.callback();
   assert.equal(validationCalls, 1);
+});
+
+
+test("los pedidos directos sin captura no se mezclan con los pagos por revisar", () => {
+  assert.match(adminPanelSource, /status==="pending"&&paymentSource==="direct"&&!proofPresent/);
+  assert.match(adminPanelSource, /incomplete:"Pedidos incompletos"/);
+  assert.match(indexHtml, /data-payment-source=/);
+  assert.match(indexHtml, /data-proof-present=/);
+});
+
+function makeReliableCheckoutFixture({ game, method, amount, reference, senderPhone, zoneId = "", playerId = "123456789" }) {
+  const elements = Object.fromEntries([
+    "placeOrderBtn","product","player","playerZone","payment","paymentProof","reference",
+    "senderPhone","reportedAmount","privacyConsent","ordermsg"
+  ].map(id => [id, makeNode(id)]));
+  elements.product.value = "test-product";
+  elements.player.value = playerId;
+  elements.playerZone.value = zoneId;
+  elements.payment.value = method;
+  elements.paymentProof.files = [{ type: "image/jpeg", size: 2048 }];
+  elements.reference.value = reference || "";
+  elements.senderPhone.value = senderPhone || "";
+  elements.reportedAmount.value = amount === undefined ? "" : String(amount);
+  elements.privacyConsent.checked = true;
+  const product = {
+    id: "test-product", game, provider_product_id: "provider-test",
+    provider_validation_supported: true, provider_region: game === "Free Fire" ? "LATAM" : game === "Mobile Legends: Bang Bang" ? "GLOBAL" : "LATAM",
+    price_transfer: 100, price_mobile: 120, price_usdt: 1.25
+  };
+  let placeOrderCalls = 0;
+  let resolveOrder;
+  const window = {
+    __castleCheckoutSubmitting: false,
+    updateCheckoutSubmitState() {},
+    castleSetProofUploadProgress() {},
+    placeOrder() {
+      placeOrderCalls++;
+      return new Promise(resolve => { resolveOrder = resolve; });
+    }
+  };
+  const document = {
+    getElementById(id) { return elements[id] || null; },
+    querySelectorAll() { return []; }
+  };
+  const sandbox = {
+    window, document, XMLHttpRequest: function () {},
+    currentUser: { id: "user-1" }, products: [product],
+    checkoutLockedPaymentMethod: method,
+    paymentMethods: [{ name: method, active: true, instructions: "Instrucciones" }],
+    walletBalanceUSD: 10,
+    currentPlayerTarget(p) { return p.game === "Mobile Legends: Bang Bang" ? elements.player.value + "::" + elements.playerZone.value : elements.player.value; },
+    providerPlayerTargetConfig(p) { return p.game === "Mobile Legends: Bang Bang" ? { ok: true, zoneKey: "zone_id" } : { ok: true, zoneKey: null }; },
+    requiresPlayerValidation() { return true; },
+    isGlobalMobileLegendsProduct(p) { return p.game !== "Mobile Legends: Bang Bang" || p.provider_region === "GLOBAL"; },
+    isPaymentMethodReady() { return true; },
+    priceForMethod(p, m) { return m === "Transferencia CUP" ? p.price_transfer : m === "Saldo móvil" ? p.price_mobile : p.price_usdt; },
+    validateProofFile(file) { return file && file.size > 0 && ["image/jpeg","image/png","image/webp"].includes(file.type) ? "" : "missing"; },
+    cubaMobileNational(value) {
+      let digits = String(value || "").replace(/\\D/g, "");
+      if (digits.length === 10 && digits.startsWith("53")) digits = digits.slice(2);
+      return /^[56][0-9]{7}$/.test(digits) ? digits : "";
+    }
+  };
+  vm.runInNewContext(checkoutReliabilitySource, sandbox);
+  return { elements, window, get placeOrderCalls() { return placeOrderCalls; }, finish() { resolveOrder?.("ok"); } };
+}
+
+test("Free Fire bloquea un comprobante incompleto y acepta Transferencia CUP completa", async () => {
+  const incomplete = makeReliableCheckoutFixture({ game: "Free Fire", method: "Transferencia CUP", reference: "", senderPhone: "55886764" });
+  await incomplete.window.placeOrder();
+  assert.equal(incomplete.placeOrderCalls, 0);
+  assert.match(incomplete.elements.ordermsg.textContent, /transacción bancaria/i);
+
+  const valid = makeReliableCheckoutFixture({ game: "Free Fire", method: "Transferencia CUP", reference: "ABC123", senderPhone: "55886764" });
+  const promise = valid.window.placeOrder();
+  assert.equal(valid.placeOrderCalls, 1);
+  valid.finish();
+  assert.equal(await promise, "ok");
+});
+
+test("Blood Strike exige TxID y cantidad exacta al pagar con USDT", async () => {
+  const incomplete = makeReliableCheckoutFixture({ game: "Blood Strike", method: "USDT", reference: "ABC", amount: 1.25 });
+  await incomplete.window.placeOrder();
+  assert.equal(incomplete.placeOrderCalls, 0);
+  assert.match(incomplete.elements.ordermsg.textContent, /64 caracteres/i);
+
+  const valid = makeReliableCheckoutFixture({ game: "Blood Strike", method: "USDT", reference: "a".repeat(64), amount: 1.25 });
+  const promise = valid.window.placeOrder();
+  assert.equal(valid.placeOrderCalls, 1);
+  valid.finish();
+  assert.equal(await promise, "ok");
+});
+
+test("Mobile Legends exige ID, Zone ID, móvil, importe y captura antes de enviar", async () => {
+  const incomplete = makeReliableCheckoutFixture({ game: "Mobile Legends: Bang Bang", method: "Saldo móvil", amount: "", senderPhone: "55886764", zoneId: "" });
+  await incomplete.window.placeOrder();
+  assert.equal(incomplete.placeOrderCalls, 0);
+  assert.match(incomplete.elements.ordermsg.textContent, /Zone ID/i);
+
+  const missingAmount = makeReliableCheckoutFixture({ game: "Mobile Legends: Bang Bang", method: "Saldo móvil", amount: "", senderPhone: "55886764", zoneId: "5394" });
+  await missingAmount.window.placeOrder();
+  assert.equal(missingAmount.placeOrderCalls, 0);
+  assert.match(missingAmount.elements.ordermsg.textContent, /importe declarado/i);
+
+  const valid = makeReliableCheckoutFixture({ game: "Mobile Legends: Bang Bang", method: "Saldo móvil", amount: 120, senderPhone: "55886764", zoneId: "5394" });
+  const promise = valid.window.placeOrder();
+  assert.equal(valid.placeOrderCalls, 1);
+  valid.finish();
+  assert.equal(await promise, "ok");
+});
+
+test("dos toques rápidos no pueden crear dos pedidos desde el mismo checkout", async () => {
+  const fixture = makeReliableCheckoutFixture({ game: "Free Fire", method: "Transferencia CUP", reference: "ABC123", senderPhone: "55886764" });
+  const first = fixture.window.placeOrder();
+  const second = fixture.window.placeOrder();
+  await second;
+  assert.equal(fixture.placeOrderCalls, 1);
+  fixture.finish();
+  assert.equal(await first, "ok");
+});
+
+test("el helper de checkout y el HTML tienen indicador de progreso y subida con avance real", () => {
+  assert.match(checkoutReliabilitySource, /xhr\\.upload\\.addEventListener\\("progress"/);
+  assert.match(checkoutReliabilitySource, /storage\\/v1\\/object\\/payment-proofs/);
+  assert.match(indexHtml, /id="proofUploadPercent"/);
+  assert.match(indexHtml, /castleSetProofUploadProgress/);
 });
