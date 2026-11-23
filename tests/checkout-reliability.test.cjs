@@ -317,18 +317,9 @@ test("los cuatro métodos de pago permiten enviar cuando todos sus datos son vá
 
 
 test("el botón se recalcula al cargar el validador aunque el cliente ya haya completado el pago", () => {
-  const elements = {
-    placeOrderBtn: makeNode("placeOrderBtn"),
-    product: makeNode("product"),
-    player: makeNode("player"),
-    playerZone: makeNode("playerZone"),
-    payment: makeNode("payment"),
-    paymentProof: makeNode("paymentProof"), size: 1000 }] },
-    reference: makeNode("reference"),
-    senderPhone: makeNode("senderPhone"),
-    reportedAmount: makeNode("reportedAmount"),
-    privacyConsent: { checked: true }
-  };
+  const ids = ["placeOrderBtn", "product", "player", "playerZone", "payment",
+    "paymentProof", "reference", "senderPhone", "reportedAmount", "privacyConsent"];
+  const elements = Object.fromEntries(ids.map(id => [id, makeNode(id)]));
   elements.placeOrderBtn.disabled = true;
   elements.product.value = "mlbb-mobile";
   elements.player.value = "1348372911";
