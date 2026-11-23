@@ -227,7 +227,7 @@
         setMessage("Borrador eliminado. No se había creado ningún pedido.", false);
         return;
       }
-}, true);
+    }, true);
   }
 
   function wrapPlaceOrder() {
