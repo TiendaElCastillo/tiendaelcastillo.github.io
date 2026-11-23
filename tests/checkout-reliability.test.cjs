@@ -652,3 +652,19 @@ test("la base de datos exige el archivo almacenado y los datos completos al entr
   assert.match(checkoutGuardMigrationSource, /payment_method = 'USDT'/);
   assert.match(checkoutGuardMigrationSource, /NEW\.status = 'payment_review'/);
 });
+
+test("la recarga de billetera se completa en dos pasos y el formulario queda junto a las instrucciones", () => {
+  assert.match(indexHtml, /id="walletDepositStep1"/);
+  assert.match(indexHtml, /id="walletDepositStep2"/);
+  assert.doesNotMatch(indexHtml, /id="walletDepositStep3"/);
+  assert.doesNotMatch(indexHtml, /goWalletDepositStep\\(3\\)/);
+  assert.match(indexHtml, /data-step="1"[\\s\\S]*?data-step="2"/);
+  assert.match(indexHtml, /id="walletDepositInstructions"/);
+  assert.match(indexHtml, /id="walletDepositSenderPhone"/);
+  assert.match(indexHtml, /id="walletDepositReference"/);
+  assert.match(indexHtml, /id="walletDepositProof"/);
+  assert.match(indexHtml, /id="walletDepositSubmit"[^>]*onclick="requestWalletDeposit\\(\\)"/);
+  assert.match(indexHtml, /const target=Math\\.max\\(1,Math\\.min\\(2/);
+  assert.match(indexHtml, /uploadWalletDepositProofs\\(createdDepositId/);
+  assert.match(indexHtml, /No repitas el pago/);
+});
