@@ -2,7 +2,7 @@
 "use strict";
 let activeOrderFilter="pending";
 let orderSearchQuery="";
-const groupLabels={pending:"Pendientes de pago",ready:"Listos para autorizar",provider:"En Central One",history:"Finalizados",all:"Todos"};
+const groupLabels={pending:"Pagos por revisar",incomplete:"Pedidos incompletos",ready:"Listos para autorizar",provider:"En Central One",history:"Finalizados",all:"Todos"};
 function el(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
 function initAdminLayout(){
  const admin=document.getElementById("admin");if(!admin||admin.dataset.organized==="1")return;
