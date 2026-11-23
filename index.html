@@ -4085,7 +4085,7 @@ function resetPlayerValidation(){
  if(requiresPlayerValidation(p)&&!target.ok){
   setPlayerValidationDisplay("is-error","!","Los datos de ID y servidor de este paquete todavía no se pueden comprobar. No pagues ni continúes; avisa a la tienda.","Datos de cuenta no compatibles");
  }else if(requiresPlayerValidation(p)&&p?.provider_product_id&&p.provider_validation_supported===true){
-  setPlayerValidationDisplay("","•",target.zoneKey?"La comprobación comenzará cuando completes el ID del jugador y el Zone ID.":"La comprobación comenzará automáticamente cuando salgas del campo del ID.","Esperando ID…");
+  setPlayerValidationDisplay("","•",target.zoneKey?"La comprobación comenzará automáticamente cuando completes el ID del jugador y el Zone ID.":"La comprobación comenzará automáticamente cuando completes el ID.","Esperando ID…");
  }else if(requiresPlayerValidation(p)){
   setPlayerValidationDisplay("is-error","!","Este paquete no tiene una validación de jugador disponible. No realices el pago.","Validación no disponible");
  }else{
