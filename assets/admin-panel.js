@@ -179,7 +179,8 @@ function refreshCheckoutButton(){
  const senderDigits=senderPhone.replace(/\D/g,"");
  const reportedAmount=Number(document.getElementById("reportedAmount")?.value||0);
  const consent=document.getElementById("privacyConsent")?.checked===true;
- const verified=!product?.provider_product_id||(typeof isPlayerValidationCurrent==="function"?isPlayerValidationCurrent(product.id,player):(typeof validatedPlayerCheckout!=="undefined"&&validatedPlayerCheckout&&validatedPlayerCheckout.productId===String(product.id)&&validatedPlayerCheckout.playerId===player));
+  const validationTarget=typeof currentPlayerTarget==="function"?currentPlayerTarget(product):player;
+  const verified=!product?.provider_product_id||(typeof isPlayerValidationCurrent==="function"?isPlayerValidationCurrent(product.id,validationTarget):(typeof validatedPlayerCheckout!=="undefined"&&validatedPlayerCheckout&&validatedPlayerCheckout.productId===String(product.id)&&validatedPlayerCheckout.playerId===validationTarget));
  const validFile=isWallet||(Boolean(proof)&&typeof validateProofFile==="function"&&!validateProofFile(proof));
  const needsReference=method==="Transferencia CUP"||method==="USDT";
  const needsSender=method==="Transferencia CUP"||method==="Saldo móvil";
@@ -198,7 +199,7 @@ function refreshCheckoutButton(){
 }
 function installCheckoutFlow(){
  // La compra se dispara directamente desde cada tarjeta y su botón; no interceptamos el toque global.
- ["player","paymentProof","reference","senderPhone","reportedAmount","payment","privacyConsent"].forEach(id=>{
+ ["player","playerZone","paymentProof","reference","senderPhone","reportedAmount","payment","privacyConsent"].forEach(id=>{
   const node=document.getElementById(id);if(!node||node.dataset.checkoutGate==="1")return;
   node.dataset.checkoutGate="1";
   node.addEventListener("input",refreshCheckoutButton);

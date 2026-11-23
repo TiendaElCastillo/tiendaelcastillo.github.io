@@ -154,7 +154,7 @@
     if (offline) {
       node.className = "notice offline-checkout-notice";
       if (message) message.textContent =
-        "Sin conexión. No se puede comprobar el ID, crear pedidos ni confirmar pagos. Puedes guardar un borrador en este teléfono; no se enviará automáticamente al reconectar.";
+        "El teléfono indica que podría no haber conexión. Los pasos que necesitan el servidor intentarán comprobarla; si no es posible, te mostraremos el error sin crear un pedido. También puedes guardar un borrador manualmente.";
       if (saveButton) saveButton.hidden = false;
       if (restoreButton) restoreButton.hidden = true;
       if (deleteButton) deleteButton.hidden = !ownDraft;
@@ -207,7 +207,7 @@
   function bindActions() {
     document.addEventListener("click", function (event) {
       const target = event.target && event.target.closest
-        ? event.target.closest("#saveOfflineDraftButton, #restoreOfflineDraftButton, #deleteOfflineDraftButton, #continueToPaymentBtn, #placeOrderBtn")
+        ? event.target.closest("#saveOfflineDraftButton, #restoreOfflineDraftButton, #deleteOfflineDraftButton")
         : null;
       if (!target) return;
 
@@ -227,13 +227,6 @@
         setMessage("Borrador eliminado. No se había creado ningún pedido.", false);
         return;
       }
-      if (navigator.onLine === false &&
-          (target.id === "continueToPaymentBtn" || target.id === "placeOrderBtn")) {
-        event.preventDefault();
-        event.stopPropagation();
-        if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
-        saveDraft();
-      }
     }, true);
   }
 
@@ -241,10 +234,8 @@
     if (typeof window.placeOrder !== "function" || window.placeOrder.__offlineGuardWrapped) return;
     const original = window.placeOrder;
     const wrapped = async function () {
-      if (navigator.onLine === false) {
-        saveDraft();
-        return false;
-      }
+      // navigator.onLine is only a device hint; some mobile browsers report
+      // offline even when Supabase is reachable. Let the real request decide.
       const result = await original.apply(this, arguments);
       const done = byId("checkoutStageDone");
       const doneVisible = done && !done.classList.contains("hidden");
