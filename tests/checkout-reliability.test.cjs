@@ -675,7 +675,7 @@ test("las compras de billetera conservan los controles de ID, región, stock, be
 
 test("la devolución automática se limita a fallos demostrados antes de crear una orden del proveedor", () => {
   const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
-  const hardeningMigration = fs.readFileSync(path.join(root, "supabase/migrations/20261123224500_wallet_auto_refund_unsent_claim.sql"), "utf8");
+  const hardeningMigration = fs.readFileSync(path.join(root, "supabase/migrations/20261123222909_wallet_auto_refund_unsent_claim.sql"), "utf8");
   assert.match(migration, /central_one_status NOT IN \('retryable','rejected'\)/);
   assert.match(migration, /central_one_response->>'preflight'/);
   assert.match(migration, /central_one_response->>'no_provider_order_created'/);
