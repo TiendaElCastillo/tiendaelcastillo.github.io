@@ -319,17 +319,25 @@ test("los cuatro métodos de pago permiten enviar cuando todos sus datos son vá
 test("el botón se recalcula al cargar el validador aunque el cliente ya haya completado el pago", () => {
   const elements = {
     placeOrderBtn: makeNode("placeOrderBtn"),
-    product: { value: "mlbb-mobile" },
-    player: { value: "1348372911" },
-    playerZone: { value: "5394" },
-    payment: { value: "Saldo móvil" },
-    paymentProof: { files: [{ type: "image/jpeg", size: 1000 }] },
-    reference: { value: "" },
-    senderPhone: { value: "55886764" },
-    reportedAmount: { value: "250" },
+    product: makeNode("product"),
+    player: makeNode("player"),
+    playerZone: makeNode("playerZone"),
+    payment: makeNode("payment"),
+    paymentProof: makeNode("paymentProof"), size: 1000 }] },
+    reference: makeNode("reference"),
+    senderPhone: makeNode("senderPhone"),
+    reportedAmount: makeNode("reportedAmount"),
     privacyConsent: { checked: true }
   };
   elements.placeOrderBtn.disabled = true;
+  elements.product.value = "mlbb-mobile";
+  elements.player.value = "1348372911";
+  elements.playerZone.value = "5394";
+  elements.payment.value = "Saldo móvil";
+  elements.paymentProof.files = [{ type: "image/jpeg", size: 1000 }];
+  elements.senderPhone.value = "55886764";
+  elements.reportedAmount.value = "250";
+  elements.privacyConsent.checked = true;
   const product = {
     id: "mlbb-mobile",
     game: "Mobile Legends: Bang Bang",
