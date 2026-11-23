@@ -4415,7 +4415,7 @@ function updatePaymentFields(){
  const senderField=$("senderPhone");
  if(senderField&&!senderField.dataset.cubaMobileHandler){
   senderField.dataset.cubaMobileHandler="1";
-  senderField.addEventListener("input",()=>{senderField.value=cubaMobileInputValue(senderField.value);});
+  senderField.addEventListener("input",()=>{senderField.value=cubaMobileInputValue(senderField.value);window.updateCheckoutSubmitState?.();});
  }
  if(senderField){senderField.inputMode="numeric";senderField.placeholder="xxxxxxxx";}
  const method=checkoutLockedPaymentMethod||$("payment")?.value||"";
