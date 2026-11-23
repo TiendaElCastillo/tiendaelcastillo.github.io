@@ -269,3 +269,48 @@ test("Saldo móvil bloquea un teléfono cubano inválido antes de crear el pedid
 test("la normalización del teléfono vuelve a actualizar el estado del botón de pago", () => {
   assert.ok(indexHtml.includes("cubaMobileInputValue(senderField.value);window.updateCheckoutSubmitState?.();"));
 });
+
+
+test("los cuatro métodos de pago permiten enviar cuando todos sus datos son válidos", () => {
+  const cases = [
+    { method: "Transferencia CUP", price: 100, reference: "ABC123", senderPhone: "55886764", amount: "", proof: true, wallet: 0 },
+    { method: "Saldo móvil", price: 250, reference: "", senderPhone: "55886764", amount: "250", proof: true, wallet: 0 },
+    { method: "USDT", price: 10, reference: "a".repeat(64), senderPhone: "", amount: "10", proof: true, wallet: 0 },
+    { method: "Saldo de Tienda El Castillo", price: 10, reference: "", senderPhone: "", amount: "", proof: false, wallet: 20 }
+  ];
+  for (const item of cases) {
+    const elements = {
+      placeOrderBtn: makeNode("placeOrderBtn"),
+      product: { value: "product-" + item.method },
+      player: { value: "123456789" },
+      playerZone: { value: "" },
+      payment: { value: item.method },
+      paymentProof: { files: item.proof ? [{ type: "image/jpeg", size: 1000 }] : [] },
+      reference: { value: item.reference },
+      senderPhone: { value: item.senderPhone },
+      reportedAmount: { value: item.amount },
+      privacyConsent: { checked: true }
+    };
+    const product = { id: "product-" + item.method, game: "Free Fire", price_transfer: 100, price_mobile: 250, price_usdt: 10 };
+    const window = {};
+    const document = { readyState: "loading", getElementById: id => elements[id] || null, addEventListener() {} };
+    const sandbox = {
+      window, document, products: [product], currentUser: { id: "user-1" }, walletBalanceUSD: item.wallet,
+      cubaMobileNational(value) {
+        let digits = String(value || "").replace(/\\D/g, "");
+        if (digits.length === 10 && digits.startsWith("53")) digits = digits.slice(2);
+        return /^5[0-9]{7}$/.test(digits) ? digits : "";
+      },
+      priceForMethod(p, method) {
+        return method === "Transferencia CUP" ? p.price_transfer :
+          method === "Saldo móvil" ? p.price_mobile : p.price_usdt;
+      },
+      isPaymentMethodReady() { return true; },
+      validateProofFile(file) { return file ? "" : "missing"; },
+      paymentMethods: []
+    };
+    vm.runInNewContext(adminPanelSource, sandbox);
+    window.updateCheckoutSubmitState();
+    assert.equal(elements.placeOrderBtn.disabled, false, item.method + " debe habilitarse con los datos correctos");
+  }
+});
