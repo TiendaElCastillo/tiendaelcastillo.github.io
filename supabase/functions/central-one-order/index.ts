@@ -234,6 +234,19 @@ async function adminContext(req: Request) {
   if (profiles?.[0]?.role !== "admin") throw Object.assign(new Error("Solo el administrador puede autorizar recargas."), { status: 403 });
   return { userId: user.id };
 }
+async function customerContext(req: Request) {
+  const match = (req.headers.get("Authorization") || "").match(/^Bearer\s+(.+)$/i);
+  if (!match) throw Object.assign(new Error("Debes iniciar sesión."), { status: 401 });
+  const accessToken = match[1];
+  const userResponse = await fetch(SUPABASE_URL + "/auth/v1/user", {
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: "Bearer " + accessToken },
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!userResponse.ok) throw Object.assign(new Error("La sesión no es válida. Vuelve a entrar."), { status: 401 });
+  const user = await userResponse.json();
+  if (!user?.id) throw Object.assign(new Error("La sesión no es válida."), { status: 401 });
+  return { userId: user.id };
+}
 async function serviceRpc(name: string, body: Record<string, unknown>) {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) throw new Error("La conexión interna de Supabase no está configurada.");
   const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/" + name, {
@@ -431,8 +444,24 @@ async function preflightPriceAndStock(claim: any) {
   };
 }
 
-async function submitOrder(orderId: string, adminId: string) {
-  const claim = await serviceRpc("claim_central_one_order", { p_order_id: orderId, p_admin_id: adminId });
+async function submitOrder(orderId: string, adminId: string, walletUserId: string | null = null) {
+  const claim = walletUserId
+    ? await serviceRpc("claim_central_one_wallet_order", { p_order_id: orderId, p_user_id: walletUserId })
+    : await serviceRpc("claim_central_one_order", { p_order_id: orderId, p_admin_id: adminId });
+  const refundBlockedWallet = async () => {
+    if (!walletUserId) return null;
+    try {
+      return await serviceRpc("refund_wallet_order_before_provider", {
+        p_order_id: orderId,
+        p_user_id: walletUserId,
+      });
+    } catch (error) {
+      return {
+        refunded: false,
+        error: error instanceof Error ? error.message : "No se pudo acreditar la devolución automática.",
+      };
+    }
+  };
   if (claim?.claim_status === "already_submitted") {
     return reply(200, {
       ok: true, already_submitted: true,
@@ -455,7 +484,12 @@ async function submitOrder(orderId: string, adminId: string) {
       errorMessage:"Falta CENTRAL_ONE_API_KEY en los secretos de Supabase.",
       response:{preflight:"blocked",no_provider_order_created:true,blocked_reason:"api_key_missing"},
     });
-    return reply(503, {error:"central_one_not_configured",message:"No se encontró la clave de Central One. No se envió la compra."});
+    const walletRefund = await refundBlockedWallet();
+    return reply(503, {
+      error:"central_one_not_configured",
+      message:"No se encontró la conexión necesaria para iniciar la recarga. No se creó una orden del proveedor.",
+      wallet_refund:walletRefund,
+    });
   }
   const fields = claim.provider_target_fields;
   const schema = claim.provider_target_schema;
@@ -467,7 +501,12 @@ async function submitOrder(orderId: string, adminId: string) {
       errorMessage:"El proveedor cambió los datos obligatorios del producto. La compra fue bloqueada.",
       response:{preflight:"blocked",no_provider_order_created:true,blocked_reason:"unsupported_target_schema"},
     });
-    return reply(409, {error:"unsupported_target_schema",message:"Los datos requeridos del paquete cambiaron. La recarga fue bloqueada para evitar un envío incorrecto."});
+    const walletRefund = await refundBlockedWallet();
+    return reply(409, {
+      error:"unsupported_target_schema",
+      message:"Los datos requeridos del paquete cambiaron. La compra quedó bloqueada para evitar una recarga incorrecta.",
+      wallet_refund:walletRefund,
+    });
   }
   const targetId = String(claim.player_id || "").trim();
   const targetParts = target.zoneKey ? targetId.split("::") : [targetId];
@@ -482,7 +521,12 @@ async function submitOrder(orderId: string, adminId: string) {
       errorMessage:"El ID y el Zone ID no cumplen el formato esperado.",
       response:{preflight:"blocked",no_provider_order_created:true,blocked_reason:"invalid_player_target"},
     });
-    return reply(400, {error:"invalid_player_target",message:"El ID del jugador o el Zone ID no son válidos."});
+    const walletRefund = await refundBlockedWallet();
+    return reply(400, {
+      error:"invalid_player_target",
+      message:"El ID del jugador o el Zone ID no son válidos. No se creó una orden del proveedor.",
+      wallet_refund:walletRefund,
+    });
   }
   const targetPayload: Record<string,string> = { [target.playerKey]: playerId };
   if (target.zoneKey) targetPayload[target.zoneKey] = zoneId;
@@ -507,12 +551,14 @@ async function submitOrder(orderId: string, adminId: string) {
         warning:preflight.warning??null,
       },
     });
+    const walletRefund = await refundBlockedWallet();
     return reply(409, {
       error:preflight.code, message:preflight.message,
       retryable:true, no_provider_order_created:true,
       price_check:preflight.price_check??null,
       balance_check:preflight.balance_check??null,
       warning:preflight.warning??null,
+      wallet_refund:walletRefund,
     });
   }
   const requestBody = {
@@ -724,14 +770,18 @@ Deno.serve(async (req: Request) => {
   if(req.method!=="POST") return reply(405,{error:"method_not_allowed"});
   if(!SUPABASE_URL||!SUPABASE_ANON_KEY||!SUPABASE_SERVICE_ROLE_KEY) return reply(503,{error:"backend_not_configured"});
   try{
-    const context=await adminContext(req);
     const body=await req.json().catch(()=>({}));
     const action=body?.action;
     const orderId=typeof body?.order_id==="string"?body.order_id:"";
     if(!/^[0-9a-f-]{36}$/i.test(orderId)) return reply(400,{error:"invalid_order_id",message:"El identificador del pedido no es válido."});
-    if(action==="submit") return await submitOrder(orderId,context.userId);
+    if(action==="submit_wallet"){
+      const customer=await customerContext(req);
+      return await submitOrder(orderId,customer.userId,customer.userId);
+    }
+    const admin=await adminContext(req);
+    if(action==="submit") return await submitOrder(orderId,admin.userId);
     if(action==="refresh") return await refreshOrder(orderId);
-    return reply(400,{error:"unsupported_action",allowed_actions:["submit","refresh"]});
+    return reply(400,{error:"unsupported_action",allowed_actions:["submit","submit_wallet","refresh"]});
   }catch(error){
     const status=Number((error as any)?.status)||400;
     return reply(status,{error:"central_one_order_failed",message:error instanceof Error?error.message:"No se pudo procesar la solicitud."});
