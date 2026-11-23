@@ -223,3 +223,49 @@ test("la actualización de los bloqueos se descarga también en teléfonos con c
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=20"));
 });
+
+
+test("Saldo móvil bloquea un teléfono cubano inválido antes de crear el pedido y acepta uno válido", () => {
+  function makePaymentFixture(senderPhone) {
+    const elements = {
+      placeOrderBtn: makeNode("placeOrderBtn"),
+      product: { value: "mlbb-mobile" },
+      player: { value: "1348372911" },
+      playerZone: { value: "5394" },
+      payment: { value: "Saldo móvil" },
+      paymentProof: { files: [{ type: "image/jpeg", size: 1000 }] },
+      reference: { value: "" },
+      senderPhone: { value: senderPhone },
+      reportedAmount: { value: "250" },
+      privacyConsent: { checked: true }
+    };
+    const products = [{ id: "mlbb-mobile", game: "Mobile Legends: Bang Bang", price_mobile: 250 }];
+    const window = {};
+    const document = { readyState: "loading", getElementById: id => elements[id] || null, addEventListener() {} };
+    const sandbox = {
+      window, document, products, currentUser: { id: "user-1" }, walletBalanceUSD: 20,
+      cubaMobileNational(value) {
+        let digits = String(value || "").replace(/\\D/g, "");
+        if (digits.length === 10 && digits.startsWith("53")) digits = digits.slice(2);
+        return /^5[0-9]{7}$/.test(digits) ? digits : "";
+      },
+      priceForMethod(product, method) { return method === "Saldo móvil" ? product.price_mobile : 0; },
+      isPaymentMethodReady() { return true; },
+      validateProofFile() { return ""; },
+      paymentMethods: []
+    };
+    vm.runInNewContext(adminPanelSource, sandbox);
+    window.updateCheckoutSubmitState();
+    return { button: elements.placeOrderBtn };
+  }
+  const invalid = makePaymentFixture("12345678");
+  assert.equal(invalid.button.disabled, true);
+  assert.match(invalid.button.textContent, /debe empezar por 5/);
+  const valid = makePaymentFixture("55886764");
+  assert.equal(valid.button.disabled, false);
+  assert.equal(valid.button.textContent, "Ya transferí · Enviar a revisión");
+});
+
+test("la normalización del teléfono vuelve a actualizar el estado del botón de pago", () => {
+  assert.ok(indexHtml.includes("cubaMobileInputValue(senderField.value);window.updateCheckoutSubmitState?.();"));
+});
