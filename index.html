@@ -1916,12 +1916,19 @@ body{min-width:0}
 .castle-share-status:empty{display:none}
 </style>
 <style id="public-seo-guides-v1">
-.public-seo-guides{grid-column:1/-1;width:100%;margin:0 auto 4px;padding:14px 16px;border:1px solid #e9e1f0;border-radius:15px;background:#fff}
-.public-seo-guides h2{margin:0 0 4px;color:#59336f;font-size:14px;line-height:1.3}
-.public-seo-guides p{margin:0 0 10px;color:#6b607b;font-size:12px}
+.public-seo-guides{width:100%;margin:16px 0 4px;padding:14px 16px;border:1px solid #dce8f7;border-radius:15px;background:#fff}
+.public-seo-guides h2{margin:0 0 4px;color:#214f8e;font-size:14px;line-height:1.3}
+.public-seo-guides p{margin:0 0 10px;color:#627895;font-size:12px}
 .public-seo-guide-links{display:flex;flex-wrap:wrap;gap:8px}
-.public-seo-guide-links a{display:inline-flex;align-items:center;min-height:34px;padding:7px 10px;border:1px solid #eadff2;border-radius:10px;background:#faf7fc;color:#6d287f;font-size:11px;font-weight:750;text-decoration:none}
-.public-seo-guide-links a:focus-visible{outline:3px solid rgba(197,43,145,.22);outline-offset:2px}
+.public-seo-guide-links a{display:inline-flex;align-items:center;min-height:36px;padding:8px 11px;border:1px solid #dbe8f7;border-radius:10px;background:#f2f7ff;color:#245fb7;font-size:11px;font-weight:800;text-decoration:none}
+.public-seo-guide-links a:focus-visible,.public-seo-guide-links a:hover{outline:3px solid rgba(39,104,216,.22);outline-offset:2px;background:#eaf3ff}
+</style>
+<style id="contextual-game-guide-button-v1">
+.game-guide-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;max-width:100%;min-height:42px;margin-top:13px;padding:10px 14px;border:1px solid #cfe1f8;border-radius:12px;background:#f3f8ff;color:#205eb9;font-size:12px;font-weight:850;line-height:1.25;text-align:left;box-shadow:0 4px 12px rgba(8,29,60,.12);cursor:pointer}
+.game-guide-cta:hover{background:#fff;border-color:#b8d2f1}
+.game-guide-cta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.game-guide-cta>span:first-child{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:50%;background:#dcecff;color:#1f5fb8;font-size:14px;font-weight:950}
+@media(max-width:760px){.game-guide-cta{min-height:44px;padding:10px 12px;font-size:11px}}
 </style>
 </head>
 <body>
@@ -2363,8 +2370,23 @@ body{min-width:0}
     <button class="guide-game-card" type="button" onclick="showGameGuide('Arena Breakout')"><img src="./assets/games/arena-breakout.webp?v=1" alt="" loading="lazy"><span><strong>Arena Breakout</strong><small>GLOBAL · Bonds, pases y cases</small></span><b>›</b></button>
     <button class="guide-game-card" type="button" onclick="showGameGuide('PUBG Mobile')"><img src="./assets/games/pubg-mobile.webp?v=1" alt="" loading="lazy"><span><strong>PUBG Mobile</strong><small>GLOBAL · UC y ofertas especiales</small></span><b>›</b></button>
    </div>
+   <nav class="public-seo-guides" aria-labelledby="public-seo-guides-title">
+  <h2 id="public-seo-guides-title">Más guías y recursos para jugadores</h2>
+  <p>Consulta cómo funciona la tienda y qué datos necesitas antes de solicitar una recarga.</p>
+  <div class="public-seo-guide-links">
+   <a href="./recargas-juegos-cuba.html">Recargas de juegos en Cuba</a>
+   <a href="./recargar-free-fire-cuba.html">Recargar Free Fire</a>
+   <a href="./recargar-mobile-legends-cuba.html">Recargar Mobile Legends</a>
+   <a href="./recargar-blood-strike-cuba.html">Recargar Blood Strike</a>
+   <a href="./recargar-pubg-mobile-cuba.html">Recargar PUBG Mobile</a>
+   <a href="./recargar-arena-breakout-cuba.html">Recargar Arena Breakout Mobile</a>
+   <a href="./sobre-tienda-el-castillo.html">Conoce Tienda El Castillo</a>
+   <a href="./como-pagar-recargas-juegos-cuba.html">Cómo pagar una recarga</a>
+  </div>
+ </nav>
   </div>
   <div id="guideDetail" class="panel guide-detail-panel hidden"></div>
+  
  </section>
  <section id="supportView" class="store-view hidden">
   <div class="panel customer-info-hero">
@@ -2493,20 +2515,7 @@ body{min-width:0}
   <article class="faq-item"><h3>12. Seguridad y uso responsable</h3><p>El cliente debe utilizar sus propios datos de juego y revisar el importe, la región y el método de pago antes de confirmar. No se deben enviar contraseñas ni códigos de acceso. La tienda puede detener una solicitud cuando existan datos incompatibles, evidencia insuficiente, señales de duplicidad o una incidencia que deba revisarse antes de continuar.</p></article>
   <p class="policy-note">Estas condiciones describen el procedimiento operativo actual de la tienda y no sustituyen una revisión jurídica. Ningún estado de «comprobante recibido» equivale a pago confirmado. La tienda no debe solicitar un segundo pago para intentar resolver una incidencia del mismo pedido.</p>
  </div></section>
- <nav class="public-seo-guides" aria-labelledby="public-seo-guides-title">
-  <h2 id="public-seo-guides-title">Guías públicas para jugadores en Cuba</h2>
-  <p>Consulta cómo funciona la tienda y qué datos necesitas antes de solicitar una recarga.</p>
-  <div class="public-seo-guide-links">
-   <a href="./recargas-juegos-cuba.html">Recargas de juegos en Cuba</a>
-   <a href="./recargar-free-fire-cuba.html">Recargar Free Fire</a>
-   <a href="./recargar-mobile-legends-cuba.html">Recargar Mobile Legends</a>
-   <a href="./recargar-blood-strike-cuba.html">Recargar Blood Strike</a>
-   <a href="./recargar-pubg-mobile-cuba.html">Recargar PUBG Mobile</a>
-   <a href="./recargar-arena-breakout-cuba.html">Recargar Arena Breakout Mobile</a>
-   <a href="./sobre-tienda-el-castillo.html">Conoce Tienda El Castillo</a>
-   <a href="./como-pagar-recargas-juegos-cuba.html">Cómo pagar una recarga</a>
-  </div>
- </nav>
+ 
 <footer class="site-footer"><div class="footer-brand"><img src="./assets/el-castillo-icon.webp" alt="" width="42" height="42"><div><strong>Tienda El Castillo</strong><span>Más que una tienda · Productos, servicios y soluciones</span></div></div><p class="footer-warm-signature"><span><img src="./assets/el-castillo-icon.webp" alt="" width="25" height="25"></span> Gracias por elegirnos. En El Castillo, tu confianza importa.</p><div class="footer-columns"><div><strong>Tu compra</strong><a href="#catalogo" onclick="showView('games');return false">Catálogo de juegos</a><span>Transferencia CUP, saldo móvil y USDT</span><a href="#pedidos" onclick="currentUser?showView('orders'):openAccount();return false">Seguimiento de pedidos</a></div><div><strong>Ayuda e información</strong><a <a href="#guias" onclick="showView('guides');return false">Guías paso a paso</a><a href="#ayuda" onclick="showView('faq');return false">Preguntas frecuentes</a><a href="#soporte" onclick="showView('support');return false">Centro de soporte</a><a href="#legal" onclick="showView('legal');return false">Información legal</a><a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a></div></div><p class="footer-legal">Tienda El Castillo es un servicio independiente. No está afiliada ni respaldada por Garena. Las marcas y juegos pertenecen a sus respectivos propietarios.</p></footer>
 </section>
 </main>
@@ -3322,14 +3331,14 @@ function renderGameDetail(){
  const rows=gameProductsFor(item.name),methods=gameMethodsFor(rows),methodNames=methods.map(x=>x.name);
  if(fold(item.name)==="blood strike"&&!rows.length){
   $("gamePaymentChoices").innerHTML="";
-  $("gameDetailPlans").innerHTML='<section class="blood-strike-status-card"><span class="blood-strike-status-mark" aria-hidden="true">⌛</span><div class="blood-strike-status-copy"><span class="blood-strike-status-kicker">INTEGRACIÓN EN PREPARACIÓN</span><h2>Blood Strike · GLOBAL</h2><p>Ahora mismo no hay ofertas disponibles para este juego. Vuelve a consultar más tarde; no se aceptan pedidos hasta que aparezcan paquetes activos.</p><span class="blood-strike-region-note">Región detectada: GLOBAL · paquetes pendientes de sincronización</span></div></section>';
+  $("gameDetailPlans").innerHTML='<section class="blood-strike-status-card"><span class="blood-strike-status-mark" aria-hidden="true">⌛</span><div class="blood-strike-status-copy"><span class="blood-strike-status-kicker">INTEGRACIÓN EN PREPARACIÓN</span><h2>Blood Strike · GLOBAL</h2><p>Ahora mismo no hay ofertas disponibles para este juego. Vuelve a consultar más tarde; no se aceptan pedidos hasta que aparezcan paquetes activos.</p><span class="blood-strike-region-note">Región detectada: GLOBAL · paquetes pendientes de sincronización</span><button class="game-guide-cta" type="button" onclick="window.showGameGuide(&quot;Blood Strike&quot;)"><span aria-hidden="true">?</span><span>¿No sabes cómo recargar? Ver guía paso a paso</span></button></div></section>';
   $("gamePlansTitle").textContent="Ofertas de Blood Strike";
   $("gamePlansSubtitle").textContent="Los paquetes aparecerán cuando termine la sincronización segura";
   return;
  }
  if(!methodNames.includes(gamePaymentMethod))gamePaymentMethod="";
  const image=item.image?'<img class="game-detail-image" src="'+clean(item.image)+'" alt="'+clean(item.name)+'" loading="eager" fetchpriority="high" decoding="async"'+(item.fallbackImage?' data-fallback="'+clean(item.fallbackImage)+'" onerror="if(this.dataset.fallback){this.onerror=null;this.src=this.dataset.fallback}else{this.remove()}"':' onerror="this.onerror=null;this.remove()"')+'>':'<span>'+item.icon+'</span>';
- $("gameDetailHero").innerHTML='<div class="game-detail-hero"><div class="game-detail-art art-'+item.art+'">'+image+'</div><div class="game-detail-shade" aria-hidden="true"></div><div class="game-detail-copy"><span class="detail-eyebrow">'+clean(item.tag)+'</span><h1>'+clean(item.name)+'</h1><span class="game-recharge-mode"><span aria-hidden="true">↗</span> Recarga por ID</span>'+gameRegionBadge(rows)+'</div></div>';
+ $("gameDetailHero").innerHTML='<div class="game-detail-hero"><div class="game-detail-art art-'+item.art+'">'+image+'</div><div class="game-detail-shade" aria-hidden="true"></div><div class="game-detail-copy"><span class="detail-eyebrow">'+clean(item.tag)+'</span><h1>'+clean(item.name)+'</h1><span class="game-recharge-mode"><span aria-hidden="true">↗</span> Recarga por ID</span>'+gameRegionBadge(rows)+'<button class="game-guide-cta" type="button" onclick="window.showGameGuide(&quot;'+clean(item.name)+'&quot;)"><span aria-hidden="true">?</span><span>¿No sabes cómo recargar? Ver guía paso a paso</span></button></div></div>';
  $("gamePaymentChoices").innerHTML=methods.length?methods.map(method=>gamePaymentButton(method,rows)).join(""):'<p class="empty-note">'+clean(paymentLoadError||"No hay métodos de pago activos para este juego en este momento.")+'</p>';
  if(!gamePaymentMethod){
   $("gamePlansTitle").textContent="Elige primero la forma de pago";
