@@ -4573,13 +4573,22 @@ async function uploadProofForOrder(orderId,method,file,reference,senderPhone,rep
  if(order.payment_source!=="direct"||order.status!=="pending")throw new Error("Este pedido ya no admite comprobantes.");
  if((method==="Saldo móvil"||method==="USDT")&&(!Number.isFinite(Number(reportedAmount))||Number(reportedAmount)<=0||Math.abs(Number(reportedAmount)-Number(order.price))>(method==="USDT"?0.000001:0.01)))throw new Error("El importe debe coincidir exactamente con el precio del paquete: "+money(order.price)+" "+(method==="USDT"?"USDT":"CUP")+".");
  if(method==="Transferencia CUP"&&reportedAmount!==null&&reportedAmount!==undefined&&reportedAmount!=="")throw new Error("No escribas un importe manual para la transferencia bancaria.");
+ window.castleSetProofUploadProgress?.("prepare",0,"Preparando una versión ligera de la captura…");
  const uploadFile=await optimizeProofForUpload(file);
+ let uploadedPercent=0;
+ window.castleSetProofUploadProgress?.("upload",0,"Iniciando la subida segura de la captura…");
  const ext=uploadFile.type==="image/jpeg"?"jpg":uploadFile.type==="image/png"?"png":"webp";
  const token=(typeof crypto!=="undefined"&&crypto.randomUUID)?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==="x"?r:(r&3|8)).toString(16)});
  const path=currentUser.id+"/"+orderId+"/"+token+"."+ext;
- await window.castleUploadProofBinary(path,uploadFile,function(percent){
-  window.castleSetProofUploadProgress?.("upload",percent,"Subiendo la captura al servidor…");
- });
+ try{
+  await window.castleUploadProofBinary(path,uploadFile,function(percent){
+   uploadedPercent=percent;
+   window.castleSetProofUploadProgress?.("upload",percent,"Subiendo la captura al servidor…");
+  });
+ }catch(uploadError){
+  window.castleSetProofUploadProgress?.("error",uploadedPercent,uploadError?.message||"La conexión se interrumpió antes de completar la subida.");
+  throw uploadError;
+ }
  window.castleSetProofUploadProgress?.("verify",100,"La imagen llegó. Comprobando que quede asociada al pedido…");
  const result=await db.rpc("submit_payment_proof",{
   p_order_id:orderId,
