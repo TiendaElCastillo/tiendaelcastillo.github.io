@@ -10,6 +10,9 @@ const adminPanelSource = fs.readFileSync(path.join(root, "assets/admin-panel.js"
 const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 const checkoutReliabilitySource = fs.readFileSync(path.join(root, "assets/checkout-reliability.js"), "utf8");
+const checkoutGuardMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123170000_harden_checkout_proof_transition.sql"), "utf8");
+const playerValidationEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-player-validate/index.ts"), "utf8");
+const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-order/index.ts"), "utf8");
 
 function makeNode(id = "") {
   return {
@@ -476,7 +479,7 @@ test("los pedidos directos sin captura no se mezclan con los pagos por revisar",
   assert.match(indexHtml, /data-proof-present=/);
 });
 
-function makeReliableCheckoutFixture({ game, method, amount, reference, senderPhone, zoneId = "", playerId = "123456789" }) {
+function makeReliableCheckoutFixture({ game, method, amount, reference, senderPhone, zoneId = "", playerId = "123456789", proofFile = true }) {
   const elements = Object.fromEntries([
     "placeOrderBtn","product","player","playerZone","payment","paymentProof","reference",
     "senderPhone","reportedAmount","privacyConsent","ordermsg"
@@ -485,7 +488,7 @@ function makeReliableCheckoutFixture({ game, method, amount, reference, senderPh
   elements.player.value = playerId;
   elements.playerZone.value = zoneId;
   elements.payment.value = method;
-  elements.paymentProof.files = [{ type: "image/jpeg", size: 2048 }];
+  elements.paymentProof.files = proofFile ? [{ type: "image/jpeg", size: 2048 }] : [];
   elements.reference.value = reference || "";
   elements.senderPhone.value = senderPhone || "";
   elements.reportedAmount.value = amount === undefined ? "" : String(amount);
@@ -592,4 +595,60 @@ test("el helper de checkout y el HTML tienen indicador de progreso y subida con 
   assert.match(checkoutReliabilitySource, /storage\/v1\/object\/payment-proofs/);
   assert.match(indexHtml, /id="proofUploadPercent"/);
   assert.match(indexHtml, /castleSetProofUploadProgress/);
+});
+
+
+test("todos los juegos publicados admiten los tres métodos con sus campos correctos", async () => {
+  const games = [
+    "Free Fire",
+    "Blood Strike",
+    "Mobile Legends: Bang Bang",
+    "Arena Breakout",
+    "PUBG Mobile"
+  ];
+  for (const game of games) {
+    for (const method of ["Transferencia CUP", "Saldo móvil", "USDT"]) {
+      const details = game === "Mobile Legends: Bang Bang" ? { zoneId: "5394" } : {};
+      if (method === "Transferencia CUP") {
+        details.reference = "ABC123";
+        details.senderPhone = "55886764";
+      } else if (method === "Saldo móvil") {
+        details.amount = 120;
+        details.senderPhone = "55886764";
+      } else {
+        details.reference = "a".repeat(64);
+        details.amount = 1.25;
+      }
+      const fixture = makeReliableCheckoutFixture({ game, method, ...details });
+      const pending = fixture.window.placeOrder();
+      assert.equal(fixture.placeOrderCalls, 1, game + " / " + method + " debe pasar al envío con datos completos");
+      fixture.finish();
+      assert.equal(await pending, "ok");
+    }
+  }
+});
+
+test("la captura es obligatoria en los métodos de pago externos", async () => {
+  const fixture = makeReliableCheckoutFixture({
+    game: "Free Fire", method: "Transferencia CUP",
+    reference: "ABC123", senderPhone: "55886764", proofFile: false
+  });
+  await fixture.window.placeOrder();
+  assert.equal(fixture.placeOrderCalls, 0);
+  assert.match(fixture.elements.ordermsg.textContent, /captura/i);
+});
+
+test("la validación y la autorización mantienen los campos de ID de todos los proveedores", () => {
+  assert.match(playerValidationEdgeSource, /\["player_id","game_user_id"\]/);
+  assert.match(centralOneOrderEdgeSource, /\["player_id","game_user_id"\]/);
+  assert.match(centralOneOrderEdgeSource, /targetPayload\[target\.playerKey\]/);
+  assert.match(centralOneOrderEdgeSource, /liveTarget\.zoneKey !== storedTarget\.zoneKey/);
+});
+
+test("la base de datos exige el archivo almacenado y los datos completos al entrar en revisión", () => {
+  assert.match(checkoutGuardMigrationSource, /storage\.objects/);
+  assert.match(checkoutGuardMigrationSource, /payment_method = 'Transferencia CUP'/);
+  assert.match(checkoutGuardMigrationSource, /payment_method = 'Saldo móvil'/);
+  assert.match(checkoutGuardMigrationSource, /payment_method = 'USDT'/);
+  assert.match(checkoutGuardMigrationSource, /NEW\.status = 'payment_review'/);
 });
