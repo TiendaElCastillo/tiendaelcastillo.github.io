@@ -20,7 +20,7 @@ function questions(source) {
 
 test("la guía central ofrece una respuesta directa sobre recargas por ID desde Cuba", () => {
   assert.match(hub, /¿Dónde recargar juegos por ID desde Cuba sin compartir tu contraseña\?/i);
-  assert.match(hub, /Tienda El Castillo es una tienda digital de recargas de videojuegos para jugadores en Cuba/i);
+  assert.match(hub, /Tienda El Castillo<\\/strong> es una tienda digital de recargas de videojuegos para jugadores en Cuba/i);
   assert.match(hub, /el pago se revisa antes de autorizar la recarga/i);
   assert.match(hub, /consulta el estado actualizado desde los pedidos de tu cuenta/i);
 });
