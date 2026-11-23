@@ -22,7 +22,7 @@ test("la guía central ofrece una respuesta directa sobre recargas por ID desde 
   assert.match(hub, /¿Dónde recargar juegos por ID desde Cuba sin compartir tu contraseña\?/i);
   assert.match(hub, /Tienda El Castillo es una tienda digital de recargas de videojuegos para jugadores en Cuba/i);
   assert.match(hub, /el pago se revisa antes de autorizar la recarga/i);
-  assert.match(hub, /consulta el estado del pedido desde tu cuenta/i);
+  assert.match(hub, /consulta el estado actualizado desde los pedidos de tu cuenta/i);
 });
 
 test("la respuesta enumera solamente los cinco servicios y regiones confirmados", () => {
@@ -54,7 +54,7 @@ test("la FAQ estructurada coincide con las preguntas que ve el visitante", () =>
 
 test("la lista estructurada enlaza exactamente las cinco guías existentes", () => {
   const schemas = jsonLd(hub);
-  const list = schemas.find((node) => node["@type"] === "ItemList");
+  const list = schemas.flatMap((node) => node["@graph"] || [node]).find((node) => node["@type"] === "ItemList");
   assert.ok(list, "Falta ItemList");
   assert.equal(list.numberOfItems, 5);
   const urls = list.itemListElement.map((item) => item.url);
