@@ -7,6 +7,8 @@ const vm = require("node:vm");
 const root = path.join(__dirname, "..");
 const offlineGuardSource = fs.readFileSync(path.join(root, "assets/offline-guard.js"), "utf8");
 const adminPanelSource = fs.readFileSync(path.join(root, "assets/admin-panel.js"), "utf8");
+const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 
 function makeNode(id = "") {
   return {
@@ -212,4 +214,12 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
     assert.equal(validatedTarget, "123456789", game + " debe validar solo su ID");
     assert.equal(elements.placeOrderBtn.disabled, false, game + " no debe quedar bloqueado");
   }
+});
+
+test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
+  assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
+  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=20"));
+  assert.ok(serviceWorker.includes('shell-v177'));
+  assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
+  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=20"));
 });
