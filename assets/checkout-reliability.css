@@ -1,0 +1,25 @@
+/* Indicador compacto de subida de comprobantes: ligero y legible en móviles. */
+.proof-upload-circuit{margin:10px 0 0;padding:11px 12px;border:1px solid #dfe7f3;border-radius:13px;background:linear-gradient(140deg,#f9fbff,#f1f5fc);color:#31435f}
+.proof-upload-circuit[hidden]{display:none!important}
+.proof-upload-circuit-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.proof-upload-circuit-head strong{font-size:11px;font-weight:850;color:#344b70}
+.proof-upload-circuit-head b{font-size:12px;font-variant-numeric:tabular-nums;color:#285fc4}
+.proof-upload-track{height:5px;position:relative;margin:0 9px 10px;border-radius:20px;background:#dce5f3}
+.proof-upload-fill{display:block;width:0;height:100%;border-radius:20px;background:linear-gradient(90deg,#5c7ff0,#2774ee);transition:width .16s ease}
+.proof-upload-node{position:absolute;top:50%;width:11px;height:11px;border:2px solid #a9bad3;border-radius:50%;background:#fff;transform:translate(-50%,-50%);z-index:1}
+.proof-upload-node-one{left:0}.proof-upload-node-two{left:50%}.proof-upload-node-three{left:100%}
+.proof-upload-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.proof-upload-steps span{font-size:9px;font-weight:750;color:#8492a7;text-align:center;white-space:nowrap}
+.proof-upload-steps span.is-active{color:#285fc4}
+.proof-upload-steps span.is-done{color:#27845c}
+.proof-upload-steps span.is-error{color:#b54343}
+.proof-upload-circuit.is-error{border-color:#f0caca;background:#fff8f8}
+.proof-upload-circuit.is-error .proof-upload-circuit-head strong,.proof-upload-circuit.is-error .proof-upload-message{color:#a13c3c}
+.proof-upload-circuit.is-error .proof-upload-circuit-head b{color:#a13c3c}
+.proof-upload-circuit.is-done{border-color:#cce8d8;background:#f5fbf7}
+.proof-upload-circuit.is-done .proof-upload-circuit-head strong{color:#277c54}
+.proof-upload-circuit.is-done .proof-upload-circuit-head b{color:#277c54}
+.proof-upload-message{margin:7px 0 0;color:#7b8799;font-size:10px;line-height:1.4}
+.proof-upload-circuit.is-done .proof-upload-fill{background:linear-gradient(90deg,#4aaf7f,#279d68)}
+.proof-upload-circuit.is-error .proof-upload-fill{background:#cf6262}
+@media(prefers-reduced-motion:reduce){.proof-upload-fill{transition:none}}
