@@ -445,9 +445,6 @@ async function preflightPriceAndStock(claim: any) {
 }
 
 async function submitOrder(orderId: string, adminId: string, walletUserId: string | null = null) {
-  const claim = walletUserId
-    ? await serviceRpc("claim_central_one_wallet_order", { p_order_id: orderId, p_user_id: walletUserId })
-    : await serviceRpc("claim_central_one_order", { p_order_id: orderId, p_admin_id: adminId });
   const refundBlockedWallet = async () => {
     if (!walletUserId) return null;
     try {
@@ -462,6 +459,22 @@ async function submitOrder(orderId: string, adminId: string, walletUserId: strin
       };
     }
   };
+  let claim: any;
+  try {
+    claim = walletUserId
+      ? await serviceRpc("claim_central_one_wallet_order", { p_order_id: orderId, p_user_id: walletUserId })
+      : await serviceRpc("claim_central_one_order", { p_order_id: orderId, p_admin_id: adminId });
+  } catch (claimError) {
+    const walletRefund = await refundBlockedWallet();
+    if (walletRefund?.refunded === true) {
+      return reply(409, {
+        error:"wallet_auto_preflight_refunded",
+        message:"La comprobación inicial bloqueó el pedido antes de iniciar la recarga. El saldo se devolvió automáticamente.",
+        wallet_refund:walletRefund,
+      });
+    }
+    throw claimError;
+  }
   if (claim?.claim_status === "already_submitted") {
     return reply(200, {
       ok: true, already_submitted: true,
@@ -475,7 +488,19 @@ async function submitOrder(orderId: string, adminId: string, walletUserId: strin
     return reply(409, { error: "submission_in_progress", message: "La solicitud anterior todavía se está procesando. No vuelvas a autorizarla ahora." });
   }
   if (claim?.claim_status !== "claimed") {
-    return reply(409, { error: "order_not_claimed", message: "No se pudo reservar la autorización de este pedido." });
+    const walletRefund = await refundBlockedWallet();
+    if (walletRefund?.refunded === true) {
+      return reply(409, {
+        error:"wallet_auto_preflight_refunded",
+        message:"La comprobación inicial bloqueó el pedido antes de iniciar la recarga. El saldo se devolvió automáticamente.",
+        wallet_refund:walletRefund,
+      });
+    }
+    return reply(409, {
+      error: "order_not_claimed",
+      message: "No se pudo reservar la autorización de este pedido. Si el saldo no aparece actualizado, revisa el historial de tu billetera.",
+      wallet_refund:walletRefund,
+    });
   }
   if (!CENTRAL_ONE_API_KEY) {
     await finishOrder({
