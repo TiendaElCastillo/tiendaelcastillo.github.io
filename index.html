@@ -4274,7 +4274,7 @@ function openCheckout(productId,preferredMethod){
  productField.value=String(p.id);productField.disabled=true;
  if($("playerZone"))$("playerZone").value="";
  $("player").value="";$("playername").value="";$("reference").value="";$("senderPhone").value="";
- $("reportedAmount").value="";$("paymentProof").value="";previewPaymentProof();
+ $("reportedAmount").value="";$("paymentProof").value="";previewPaymentProof();window.castleResetProofUploadProgress?.();
  $("selectedProductText").textContent=p.game+" · "+p.name;$("ordermsg").textContent="";
  updateCheckoutSummary();syncPlayerRegionUI();showView("checkout");
  window.castleAnalytics?.capture?.("store_checkout_opened",{game:p.game,package:p.name,payment_method:method});
