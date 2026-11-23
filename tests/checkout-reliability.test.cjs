@@ -675,12 +675,18 @@ test("las compras de billetera conservan los controles de ID, región, stock, be
 
 test("la devolución automática se limita a fallos demostrados antes de crear una orden del proveedor", () => {
   const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
-  assert.match(migration, /central_one_status NOT IN \('retryable','rejected'\)/);
+  const hardeningMigration = fs.readFileSync(path.join(root, "supabase/migrations/20261123224500_wallet_auto_refund_unsent_claim.sql"), "utf8");
+  assert.match(migration, /central_one_status NOT IN \\('retryable','rejected'\\)/);
   assert.match(migration, /central_one_response->>'preflight'/);
   assert.match(migration, /central_one_response->>'no_provider_order_created'/);
   assert.match(migration, /wallet_auto_refunded_before_provider/);
-  assert.match(migration, /ON CONFLICT \(order_id\)/);
+  assert.match(migration, /ON CONFLICT \\(order_id\\)/);
+  assert.match(hardeningMigration, /central_one_status = 'not_submitted'/);
+  assert.match(hardeningMigration, /central_one_submitted_at IS NULL/);
+  assert.match(hardeningMigration, /central_one_idempotency_key IS NULL/);
+  assert.match(hardeningMigration, /REVOKE ALL ON FUNCTION public\\.refund_wallet_order_before_provider/);
   assert.match(centralOneOrderEdgeSource, /refund_wallet_order_before_provider/);
+  assert.match(centralOneOrderEdgeSource, /catch \\(claimError\\)/);
   assert.match(centralOneOrderEdgeSource, /status:"unknown",errorCode:"network_or_timeout"/);
 });
 
