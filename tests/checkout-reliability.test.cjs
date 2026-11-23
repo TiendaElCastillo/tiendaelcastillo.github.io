@@ -641,7 +641,7 @@ test("la captura es obligatoria en los métodos de pago externos", async () => {
 test("la validación y la autorización mantienen los campos de ID de todos los proveedores", () => {
   assert.match(playerValidationEdgeSource, /\["player_id","game_user_id"\]/);
   assert.match(centralOneOrderEdgeSource, /\["player_id","game_user_id"\]/);
-  assert.match(centralOneOrderEdgeSource, /targetPayload\[target\.playerKey\]/);
+  assert.match(centralOneOrderEdgeSource, /\[\s*target\.playerKey\s*\]\s*:\s*playerId/);
   assert.match(centralOneOrderEdgeSource, /liveTarget\.zoneKey !== storedTarget\.zoneKey/);
 });
 
