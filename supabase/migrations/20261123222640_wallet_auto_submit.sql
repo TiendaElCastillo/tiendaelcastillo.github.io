@@ -151,7 +151,7 @@ BEGIN
     'idempotency_key',v_key
   );
 END;
-$function$
+$function$;
 
 
 REVOKE ALL ON FUNCTION public.claim_central_one_wallet_order(uuid,uuid) FROM PUBLIC, anon, authenticated;
@@ -285,7 +285,7 @@ BEGIN
     'reason',v_reason
   );
 END;
-$function$
+$function$;
 
 
 REVOKE ALL ON FUNCTION public.refund_wallet_order_before_provider(uuid,uuid) FROM PUBLIC, anon, authenticated;
