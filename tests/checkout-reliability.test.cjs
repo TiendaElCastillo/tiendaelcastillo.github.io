@@ -218,10 +218,10 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=20"));
-  assert.ok(serviceWorker.includes('shell-v177'));
+  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=21"));
+  assert.ok(serviceWorker.includes('shell-v178'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=20"));
+  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=21"));
 });
 
 
