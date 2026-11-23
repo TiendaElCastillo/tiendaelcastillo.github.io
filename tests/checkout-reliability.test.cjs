@@ -218,8 +218,99 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=20"));
-  assert.ok(serviceWorker.includes('shell-v177'));
+  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=21"));
+  assert.ok(serviceWorker.includes('shell-v178'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=20"));
+  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=21"));
+});
+
+
+test("Saldo móvil bloquea un teléfono cubano inválido antes de crear el pedido y acepta uno válido", () => {
+  function makePaymentFixture(senderPhone) {
+    const elements = {
+      placeOrderBtn: makeNode("placeOrderBtn"),
+      product: { value: "mlbb-mobile" },
+      player: { value: "1348372911" },
+      playerZone: { value: "5394" },
+      payment: { value: "Saldo móvil" },
+      paymentProof: { files: [{ type: "image/jpeg", size: 1000 }] },
+      reference: { value: "" },
+      senderPhone: { value: senderPhone },
+      reportedAmount: { value: "250" },
+      privacyConsent: { checked: true }
+    };
+    const products = [{ id: "mlbb-mobile", game: "Mobile Legends: Bang Bang", price_mobile: 250 }];
+    const window = {};
+    const document = { readyState: "loading", getElementById: id => elements[id] || null, addEventListener() {} };
+    const sandbox = {
+      window, document, products, currentUser: { id: "user-1" }, walletBalanceUSD: 20,
+      cubaMobileNational(value) {
+        let digits = String(value || "").replace(/\\D/g, "");
+        if (digits.length === 10 && digits.startsWith("53")) digits = digits.slice(2);
+        return /^5[0-9]{7}$/.test(digits) ? digits : "";
+      },
+      priceForMethod(product, method) { return method === "Saldo móvil" ? product.price_mobile : 0; },
+      isPaymentMethodReady() { return true; },
+      validateProofFile() { return ""; },
+      paymentMethods: []
+    };
+    vm.runInNewContext(adminPanelSource, sandbox);
+    window.updateCheckoutSubmitState();
+    return { button: elements.placeOrderBtn };
+  }
+  const invalid = makePaymentFixture("12345678");
+  assert.equal(invalid.button.disabled, true);
+  assert.match(invalid.button.textContent, /debe empezar por 5/);
+  const valid = makePaymentFixture("55886764");
+  assert.equal(valid.button.disabled, false);
+  assert.equal(valid.button.textContent, "Ya transferí · Enviar a revisión");
+});
+
+test("la normalización del teléfono vuelve a actualizar el estado del botón de pago", () => {
+  assert.ok(indexHtml.includes("cubaMobileInputValue(senderField.value);window.updateCheckoutSubmitState?.();"));
+});
+
+
+test("los cuatro métodos de pago permiten enviar cuando todos sus datos son válidos", () => {
+  const cases = [
+    { method: "Transferencia CUP", price: 100, reference: "ABC123", senderPhone: "55886764", amount: "", proof: true, wallet: 0 },
+    { method: "Saldo móvil", price: 250, reference: "", senderPhone: "55886764", amount: "250", proof: true, wallet: 0 },
+    { method: "USDT", price: 10, reference: "a".repeat(64), senderPhone: "", amount: "10", proof: true, wallet: 0 },
+    { method: "Saldo de Tienda El Castillo", price: 10, reference: "", senderPhone: "", amount: "", proof: false, wallet: 20 }
+  ];
+  for (const item of cases) {
+    const elements = {
+      placeOrderBtn: makeNode("placeOrderBtn"),
+      product: { value: "product-" + item.method },
+      player: { value: "123456789" },
+      playerZone: { value: "" },
+      payment: { value: item.method },
+      paymentProof: { files: item.proof ? [{ type: "image/jpeg", size: 1000 }] : [] },
+      reference: { value: item.reference },
+      senderPhone: { value: item.senderPhone },
+      reportedAmount: { value: item.amount },
+      privacyConsent: { checked: true }
+    };
+    const product = { id: "product-" + item.method, game: "Free Fire", price_transfer: 100, price_mobile: 250, price_usdt: 10 };
+    const window = {};
+    const document = { readyState: "loading", getElementById: id => elements[id] || null, addEventListener() {} };
+    const sandbox = {
+      window, document, products: [product], currentUser: { id: "user-1" }, walletBalanceUSD: item.wallet,
+      cubaMobileNational(value) {
+        let digits = String(value || "").replace(/\\D/g, "");
+        if (digits.length === 10 && digits.startsWith("53")) digits = digits.slice(2);
+        return /^5[0-9]{7}$/.test(digits) ? digits : "";
+      },
+      priceForMethod(p, method) {
+        return method === "Transferencia CUP" ? p.price_transfer :
+          method === "Saldo móvil" ? p.price_mobile : p.price_usdt;
+      },
+      isPaymentMethodReady() { return true; },
+      validateProofFile(file) { return file ? "" : "missing"; },
+      paymentMethods: []
+    };
+    vm.runInNewContext(adminPanelSource, sandbox);
+    window.updateCheckoutSubmitState();
+    assert.equal(elements.placeOrderBtn.disabled, false, item.method + " debe habilitarse con los datos correctos");
+  }
 });

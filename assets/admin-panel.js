@@ -186,7 +186,7 @@ function refreshCheckoutButton(){
  const needsSender=method==="Transferencia CUP"||method==="Saldo móvil";
  const needsReported=method==="Saldo móvil"||method==="USDT";
  const validReference=method==="USDT"?/^[a-f0-9]{64}$/i.test(reference):reference.length>=3&&reference.length<=100;
- const validSender=/^\+?[0-9\s().-]+$/.test(senderPhone)&&senderDigits.length>=8&&senderDigits.length<=15;
+ const validSender=typeof cubaMobileNational==="function"?Boolean(cubaMobileNational(senderPhone)):/^\+?[0-9\s().-]+$/.test(senderPhone)&&senderDigits.length>=8&&senderDigits.length<=15;
  const price=typeof priceForMethod==="function"&&product?Number(priceForMethod(product,method)):0;
  const tolerance=method==="USDT"?0.000001:0.01;
  const validReported=Number.isFinite(reportedAmount)&&reportedAmount>0&&Math.abs(reportedAmount-price)<=tolerance;
@@ -195,7 +195,7 @@ function refreshCheckoutButton(){
  const enoughWallet=!isWallet||walletBalance>=price;
  const ready=Boolean(product&&player.length>=3&&player.length<=64&&verified&&methodReady&&validFile&&(!needsReference||validReference)&&(!needsSender||validSender)&&(!needsReported||validReported)&&enoughWallet&&consent&&price>0);
  button.disabled=!ready;
- button.textContent=ready?(isWallet?"Comprar con saldo de tienda":"Ya transferí · Enviar a revisión"):!verified?"Primero verifica tu ID de jugador":!methodReady?"Este método de pago no está disponible":isWallet&&!enoughWallet?"Saldo USD insuficiente":!validFile?"Adjunta la captura del comprobante":needsReference&&!validReference?(method==="USDT"?"Escribe el TxID completo de 64 caracteres":"Escribe el N.º de transacción completo"):needsSender&&!validSender?"Escribe el móvil desde el que pagaste":needsReported&&!validReported?"Confirma el importe exacto":!consent?"Acepta la política y los términos":"Completa los datos del pedido";
+ button.textContent=ready?(isWallet?"Comprar con saldo de tienda":"Ya transferí · Enviar a revisión"):!verified?"Primero verifica tu ID de jugador":!methodReady?"Este método de pago no está disponible":isWallet&&!enoughWallet?"Saldo USD insuficiente":!validFile?"Adjunta la captura del comprobante":needsReference&&!validReference?(method==="USDT"?"Escribe el TxID completo de 64 caracteres":"Escribe el N.º de transacción completo"):needsSender&&!validSender?"Escribe los 8 dígitos de tu móvil cubano (debe empezar por 5)":needsReported&&!validReported?"Confirma el importe exacto":!consent?"Acepta la política y los términos":"Completa los datos del pedido";
 }
 function installCheckoutFlow(){
  // La compra se dispara directamente desde cada tarjeta y su botón; no interceptamos el toque global.
