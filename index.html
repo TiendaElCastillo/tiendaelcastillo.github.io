@@ -1930,6 +1930,149 @@ body{min-width:0}
 .game-guide-cta>span:first-child{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:50%;background:#dcecff;color:#1f5fb8;font-size:14px;font-weight:950}
 @media(max-width:760px){.game-guide-cta{min-height:44px;padding:10px 12px;font-size:11px}}
 </style>
+
+<style id="castle-finish-pass-2026-11-23">
+/* Acabado visual final: azul y blanco, contraste legible y componentes alineados. */
+:root{
+  --bg:#f4f7fc;
+  --surface:#fff;
+  --ink:#182642;
+  --muted:#596b84;
+  --line:#e2e9f3;
+  --blue:#2766d8;
+  --blue2:#1858c7;
+  --shadow:0 12px 30px rgba(16,38,74,.07);
+  --radius:18px;
+  --castle-ink:#182642;
+  --castle-muted:#596b84;
+  --castle-blue:#2766d8;
+  --castle-deep:#10264a;
+  --castle-violet:#2766d8;
+  --castle-border:#e2e9f3;
+  --castle-soft:#f4f7fc;
+}
+#store,#appMain,#appMain main{min-width:0;max-width:100%}
+#store .castle-home-hero{
+  background:
+    radial-gradient(ellipse at 88% 12%,rgba(69,151,255,.20),transparent 36%),
+    radial-gradient(ellipse at 5% 100%,rgba(39,116,221,.24),transparent 43%),
+    linear-gradient(118deg,#10264a 0%,#174b93 53%,#2766d8 100%)!important;
+}
+#homeView .castle-home-hero .hero-buttons .primary-btn{
+  background:linear-gradient(135deg,#3987f5 0%,#2766d8 58%,#1858c7 100%)!important;
+  box-shadow:0 9px 22px rgba(24,88,199,.25),inset 0 1px rgba(255,255,255,.2)!important;
+}
+#homeView .castle-home-hero .hero-buttons .castle-share-link{
+  border-color:rgba(219,235,255,.72)!important;
+  background:linear-gradient(135deg,#347fe9 0%,#225ebd 100%)!important;
+  color:#fff!important;
+  box-shadow:0 7px 18px rgba(8,30,70,.22),inset 0 1px rgba(255,255,255,.25)!important;
+  text-shadow:none!important;
+}
+#homeView .castle-home-hero .hero-buttons .castle-share-link:hover{
+  background:linear-gradient(135deg,#4b91f3 0%,#2766d8 100%)!important;
+}
+#store .castle-share-button{color:#205eb9;border-color:#cfe0f6}
+#store .castle-channel-link{color:#205eb9}
+#store .castle-share-button:focus-visible,
+#store .castle-channel-link:focus-visible{outline-color:#2766d8}
+#auth .auth-submit-btn{
+  background:linear-gradient(135deg,#3987f5,#205fc9)!important;
+  box-shadow:0 8px 18px rgba(39,102,216,.2)!important;
+}
+#checkoutView .checkout-stepper li.active{
+  border-color:#b9d1f2!important;
+  background:#edf4ff!important;
+  color:#205eb9!important;
+}
+#checkoutView .checkout-stepper li.active b{
+  background:linear-gradient(135deg,#3987f5,#205fc9)!important;
+  color:#fff!important;
+}
+#store .section-head{row-gap:6px}
+#store .section-head h2,
+#store .panel h2,
+#store .panel h3{color:#182642;letter-spacing:-.025em}
+#store .section-head p,
+#store .subtle,
+#store .tile-meta,
+#store .catalog-product p,
+#store .gift-info small,
+#store .public-seo-guides p{color:#596b84}
+#store .text-link{color:#205eb9}
+#store .panel,
+#store .auth-panel,
+#store .wallet-panel,
+#store .catalog-product,
+#store .order-card{border-color:#e2e9f3}
+#store .panel,
+#store .auth-panel{box-shadow:0 8px 24px rgba(16,38,74,.055)}
+#store .catalog-grid,
+#store .gift-grid,
+#store .product-grid{align-items:stretch}
+#store .game-tile,
+#store .gift-tile,
+#store .catalog-product{min-width:0;height:100%}
+#store .tile-title{overflow-wrap:anywhere}
+#store .catalog-product{display:flex;flex-direction:column}
+#store .catalog-product .primary-btn{margin-top:auto}
+#store .field input,
+#store .field select,
+#store .search-input{
+  border-color:#d7e1ef;
+  color:#182642;
+}
+#store .field input:focus,
+#store .field select:focus,
+#store .search-input:focus{
+  border-color:#79a9ed;
+  box-shadow:0 0 0 3px rgba(39,102,216,.11);
+}
+#store .primary-btn{background:linear-gradient(135deg,#3987f5,#205fc9)}
+#store .primary-btn:focus-visible,
+#store .secondary-btn:focus-visible,
+#store .header-btn:focus-visible,
+#store .game-guide-cta:focus-visible,
+#store .checkout-method-choice:focus-visible{
+  outline:3px solid rgba(39,102,216,.35);
+  outline-offset:2px;
+}
+#bottomNav .nav-item{color:#596b84}
+#bottomNav .nav-item.active{
+  border-color:#d6e5fb;
+  background:linear-gradient(180deg,#f3f8ff,#e8f1ff);
+  color:#205eb9;
+}
+#store .site-footer{border-color:#e2e9f3}
+#store .footer-columns a,
+#store .footer-columns span{color:#536783}
+@media(hover:hover){
+  #store .game-tile:hover,
+  #store .gift-tile:hover,
+  #store .catalog-product:hover{transform:translateY(-2px)}
+}
+@media(max-width:760px){
+  #store .section{margin:21px 0}
+  #store .section-head{align-items:center}
+  #store .panel{border-radius:17px}
+  #gamesView .game-guide-cta{width:100%;justify-content:flex-start}
+  #checkoutView .checkout-method-choice{min-width:0;overflow-wrap:anywhere}
+  #bottomNav .nav-item{color:#596b84}
+}
+@media(max-width:390px){
+  #siteHeader .brand-name strong{font-size:11px}
+  #siteHeader .header-actions{gap:4px}
+  #siteHeader .header-btn{padding-left:7px;padding-right:7px}
+  #store .castle-home-hero .hero-buttons{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){
+  #store .game-tile,
+  #store .gift-tile,
+  #store .catalog-product,
+  #store button{transition:none!important}
+}
+</style>
+
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-icon.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
