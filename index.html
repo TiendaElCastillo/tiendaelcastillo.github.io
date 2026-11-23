@@ -247,7 +247,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#e8effd 0,transparent 48%),v
  .mlbb-plan-price{font-size:15px}
  .mlbb-plan-buy{font-size:11px;padding:8px}
 }
-.blood-strike-status-card{display:flex;gap:14px;align-items:flex-start;margin:14px 0 22px;padding:20px 18px;border:1px solid #e4dce5;border-radius:18px;background:linear-gradient(135deg,#151c2b 0%,#263448 62%,#4a2430 100%);color:#fff;box-shadow:0 14px 30px rgba(16,28,48,.12)}.blood-strike-status-mark{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.13);font-size:24px}.blood-strike-status-copy{min-width:0}.blood-strike-status-kicker{display:block;margin:1px 0 7px;color:#ffbd9c;font-size:10px;font-weight:900;letter-spacing:.12em}.blood-strike-status-copy h2{margin:0 0 8px;color:#fff;font-size:19px;line-height:1.15}.blood-strike-status-copy p{margin:0;color:#e5eaf2;font-size:13px;line-height:1.55}.blood-strike-region-note{display:inline-flex;margin-top:12px;padding:7px 9px;border:1px solid rgba(255,255,255,.16);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:10px;font-weight:750}</style><link rel="preload" as="image" href="./assets/el-castillo-icon.webp" type="image/webp"><link rel="stylesheet" href="./assets/admin-panel.css?v=33">
+.blood-strike-status-card{display:flex;gap:14px;align-items:flex-start;margin:14px 0 22px;padding:20px 18px;border:1px solid #e4dce5;border-radius:18px;background:linear-gradient(135deg,#151c2b 0%,#263448 62%,#4a2430 100%);color:#fff;box-shadow:0 14px 30px rgba(16,28,48,.12)}.blood-strike-status-mark{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.13);font-size:24px}.blood-strike-status-copy{min-width:0}.blood-strike-status-kicker{display:block;margin:1px 0 7px;color:#ffbd9c;font-size:10px;font-weight:900;letter-spacing:.12em}.blood-strike-status-copy h2{margin:0 0 8px;color:#fff;font-size:19px;line-height:1.15}.blood-strike-status-copy p{margin:0;color:#e5eaf2;font-size:13px;line-height:1.55}.blood-strike-region-note{display:inline-flex;margin-top:12px;padding:7px 9px;border:1px solid rgba(255,255,255,.16);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:10px;font-weight:750}</style><link rel="preload" as="image" href="./assets/el-castillo-icon.webp" type="image/webp"><link rel="stylesheet" href="./assets/admin-panel.css?v=33"><link rel="stylesheet" href="./assets/checkout-reliability.css?v=1">
 <script>
 /* Salvavidas independiente: incluso si falla otro script externo, la pantalla inicial no queda bloqueada. */
 window.addEventListener("DOMContentLoaded",function(){
@@ -2229,7 +2229,15 @@ body{min-width:0}
   <div id="paymentInstructions" class="payment-data-panel" role="status" aria-live="polite"></div>
   <div class="field hidden" id="referenceWrap"><label id="referenceLabel" for="reference">Nro. Transacción (obligatorio)</label><input id="reference" inputmode="text" autocapitalize="characters" autocomplete="off" minlength="3" maxlength="100" placeholder="Ej. AY600UJ716R999" oninput="this.value=this.value.toUpperCase().replace(/\s/g,'')"><small id="referenceHelp" class="field-hint">Copia el código que aparece junto a «Nro. Transacción» en el comprobante del banco. Es único para cada pago.</small></div>
   <div class="field hidden" id="reportedAmountWrap"><label for="reportedAmount">Cantidad exacta de saldo móvil enviada</label><input id="reportedAmount" type="number" inputmode="decimal" min="1" step="0.01" placeholder="Escribe el importe exacto"></div>
-  <div class="field proof-field" id="proofWrap"><label id="proofLabel" for="paymentProof">Captura del comprobante (obligatoria)</label><input class="proof-input" id="paymentProof" type="file" accept="image/jpeg,image/png,image/webp" onchange="previewPaymentProof()"><label class="proof-dropzone" for="paymentProof"><span class="proof-icon" aria-hidden="true">↑</span><span class="proof-copy"><strong id="proofTitle">Añadir comprobante</strong><small id="proofHelp">La captura debe mostrar el importe, la fecha, el destinatario y el Nro. de transacción. JPG, PNG o WEBP; máximo 5 MB.</small><small class="proof-limits">No recortes ni tapes los datos de la operación.</small></span><img id="proofPreview" class="proof-preview hidden" alt="Vista previa del comprobante seleccionado"></label></div>
+  <div class="field proof-field" id="proofWrap"><label id="proofLabel" for="paymentProof">Captura del comprobante (obligatoria)</label><input class="proof-input" id="paymentProof" type="file" accept="image/jpeg,image/png,image/webp" onchange="previewPaymentProof()"><label class="proof-dropzone" for="paymentProof"><span class="proof-icon" aria-hidden="true">↑</span><span class="proof-copy"><strong id="proofTitle">Añadir comprobante</strong><small id="proofHelp">La captura debe mostrar el importe, la fecha, el destinatario y el Nro. de transacción. JPG, PNG o WEBP; máximo 5 MB.</small><small class="proof-limits">No recortes ni tapes los datos de la operación.</small></span><img id="proofPreview" class="proof-preview hidden" alt="Vista previa del comprobante seleccionado"></label><div id="proofUploadCircuit" class="proof-upload-circuit hidden" aria-live="polite" aria-atomic="true">
+   <div class="proof-upload-circuit-head"><strong id="proofUploadStage">Preparando captura</strong><b id="proofUploadPercent">0%</b></div>
+   <div id="proofUploadTrack" class="proof-upload-track" role="progressbar" aria-label="Progreso de subida del comprobante" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <span id="proofUploadFill" class="proof-upload-fill"></span>
+    <i class="proof-upload-node proof-upload-node-one"></i><i class="proof-upload-node proof-upload-node-two"></i><i class="proof-upload-node proof-upload-node-three"></i>
+   </div>
+   <div class="proof-upload-steps"><span data-proof-step="prepare">Preparar</span><span data-proof-step="upload">Subir</span><span data-proof-step="verify">Verificar</span></div>
+   <p id="proofUploadMessage" class="proof-upload-message">Comprobando que todos los datos estén completos.</p>
+  </div></div>
   <div class="privacy-consent"><label for="privacyConsent"><input id="privacyConsent" type="checkbox" value="yes"><span>He leído y acepto la <a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a> y los <a href="#condiciones" onclick="showView('terms');return false">Términos de compra</a>.</span></label></div>
   <div class="notice checkout-safety-note"><strong>Importante:</strong> no tenemos conexión automática con los SMS de tu banco. La captura y los datos son obligatorios; revisaremos el pago manualmente antes de autorizar la recarga. Adjuntar una imagen no confirma que el dinero haya llegado.</div>
   <div class="checkout-stage-actions"><button class="secondary-btn" type="button" onclick="updateCheckoutStage('player')">← Volver a datos</button><button id="placeOrderBtn" class="primary-btn" type="button" onclick="placeOrder()" disabled>Completa los datos de pago</button></div>
@@ -4569,8 +4577,10 @@ async function uploadProofForOrder(orderId,method,file,reference,senderPhone,rep
  const ext=uploadFile.type==="image/jpeg"?"jpg":uploadFile.type==="image/png"?"png":"webp";
  const token=(typeof crypto!=="undefined"&&crypto.randomUUID)?crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==="x"?r:(r&3|8)).toString(16)});
  const path=currentUser.id+"/"+orderId+"/"+token+"."+ext;
- const upload=await db.storage.from("payment-proofs").upload(path,uploadFile,{contentType:uploadFile.type,cacheControl:"3600",upsert:false});
- if(upload.error)throw new Error("No se pudo subir la captura: "+upload.error.message);
+ await window.castleUploadProofBinary(path,uploadFile,function(percent){
+  window.castleSetProofUploadProgress?.("upload",percent,"Subiendo la captura al servidor…");
+ });
+ window.castleSetProofUploadProgress?.("verify",100,"La imagen llegó. Comprobando que quede asociada al pedido…");
  const result=await db.rpc("submit_payment_proof",{
   p_order_id:orderId,
   p_proof_path:path,
@@ -4578,7 +4588,11 @@ async function uploadProofForOrder(orderId,method,file,reference,senderPhone,rep
   p_sender_phone:method==="USDT"?null:phone,
   p_reported_amount:(method==="Saldo móvil"||method==="USDT")?Number(reportedAmount):null
  });
- if(result.error)throw new Error("La imagen se subió, pero no se pudo asociar al pedido: "+result.error.message);
+ if(result.error){
+  window.castleSetProofUploadProgress?.("error",100,"La imagen llegó, pero no se pudo asociar al pedido. Puedes reintentar en el mismo pedido.");
+  throw new Error("La imagen se subió, pero no se pudo asociar al pedido: "+result.error.message);
+ }
+ window.castleSetProofUploadProgress?.("done",100,"Comprobante recibido y asociado correctamente.");
  return result.data;
 }
 function getWalletRequestIdentity(productId,playerId){
@@ -4702,7 +4716,8 @@ async function placeOrder(){
  if((method==="Saldo móvil"||method==="USDT")&&(!Number.isFinite(reportedAmount)||reportedAmount<=0||Math.abs(reportedAmount-Number(price))>(method==="USDT"?0.000001:0.01))){
   $("ordermsg").textContent="El importe debe coincidir exactamente con el precio del paquete: "+money(price)+" "+(method==="USDT"?"USDT":"CUP")+".";return;
  }
- if(button){button.disabled=true;button.textContent="Creando pedido…";}
+ if(button){button.disabled=true;button.textContent="Comprobando datos…";}
+ window.castleSetProofUploadProgress?.("prepare",0,"Comprobando los datos y preparando la captura…");
  $("ordermsg").textContent="";
  try{
   if(!isWallet){
@@ -6492,7 +6507,7 @@ async function loadAllOrders(options={}){
    ?'<details class="admin-notice-compose"><summary>Enviar advertencia privada al cliente</summary><label for="'+noticeId+'">Mensaje de advertencia (3 a 1000 caracteres)</label><textarea id="'+noticeId+'" maxlength="1000" rows="3" placeholder="Te pedimos que detengas el envío de pedidos o comprobantes falsos. Si continúa, podremos restringir tu cuenta."></textarea><button type="button" class="secondary-btn" data-send-user-notice data-order-id="'+clean(o.id)+'" data-user-id="'+clean(o.user_id)+'" data-message-input="'+noticeId+'" data-feedback-id="'+noticeId+'-feedback">Enviar y registrar advertencia</button><p id="'+noticeId+'-feedback" class="msg" role="status"></p></details>'
    :"";
 
-  return '<article class="order-card" data-order-status="'+clean(o.status)+'" data-provider-status="'+clean(providerStatus)+'" data-provider-id="'+clean(o.central_one_order_id||"")+'">'+
+  return '<article class="order-card" data-order-status="'+clean(o.status)+'" data-provider-status="'+clean(providerStatus)+'" data-provider-id="'+clean(o.central_one_order_id||"")+'" data-payment-source="'+clean(o.payment_source||"")+'" data-proof-present="'+(o.proof_path?"true":"false")+'">'+
    '<div class="admin-order-header"><strong class="admin-order-code">'+clean(o.order_code)+'</strong><span class="status">'+statusText(o.status)+'</span></div>'+
    accountSecurityHtml+accountSecurityAction+
    '<div class="admin-order-detail-grid">'+
@@ -6594,7 +6609,8 @@ if(document.readyState==="loading"){
 </script>
 
 <script src="./assets/offline-guard.js?v=3"></script>
-<script src="./assets/admin-panel.js?v=22" async></script>
+<script src="./assets/admin-panel.js?v=23" defer></script>
 <script src="./assets/customer-center.js?v=6" defer></script>
+<script src="./assets/checkout-reliability.js?v=1" defer></script>
 </body>
 </html>
