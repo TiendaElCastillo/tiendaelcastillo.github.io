@@ -219,7 +219,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=22"));
-  assert.ok(serviceWorker.includes('shell-v179'));
+  assert.ok(serviceWorker.includes('shell-v180'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=22"));
 });
@@ -363,4 +363,102 @@ test("el botón se recalcula al cargar el validador aunque el cliente ya haya co
   vm.runInNewContext(adminPanelSource, sandbox);
   assert.equal(elements.placeOrderBtn.disabled, false);
   assert.equal(elements.placeOrderBtn.textContent, "Ya transferí · Enviar a revisión");
+});
+
+function extractFunctionDeclaration(source, name) {
+  const start = source.indexOf("function " + name + "(");
+  assert.notEqual(start, -1, "No se encontró la función " + name);
+  const open = source.indexOf("{", start);
+  let depth = 0;
+  let quote = "";
+  let escaped = false;
+  for (let i = open; i < source.length; i++) {
+    const ch = source[i];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (ch === "\\\\") escaped = true;
+      else if (ch === quote) quote = "";
+      continue;
+    }
+    if (ch === "\"" || ch === "'" || ch === "`") { quote = ch; continue; }
+    if (ch === "{") depth++;
+    if (ch === "}" && --depth === 0) return source.slice(start, i + 1);
+  }
+  throw new Error("No se pudo extraer la función " + name);
+}
+
+test("el teléfono cubano acepta ocho dígitos que comiencen por 5 o por 6", () => {
+  const declaration = extractFunctionDeclaration(indexHtml, "cubaMobileNational");
+  const cubaMobileNational = new Function(declaration + "; return cubaMobileNational;")();
+  assert.equal(cubaMobileNational("51884040"), "51884040");
+  assert.equal(cubaMobileNational("62974802"), "62974802");
+  assert.equal(cubaMobileNational("+5351884040"), "51884040");
+  assert.equal(cubaMobileNational("+5362974802"), "62974802");
+  assert.equal(cubaMobileNational("31884040"), "");
+  assert.equal(cubaMobileNational("6297480"), "");
+  assert.equal(cubaMobileNational("662974802"), "");
+});
+
+test("la entrada de ID activa la validación automática sin tener que salir del campo", () => {
+  assert.ok(indexHtml.includes('oninput="handlePlayerInput()"'));
+  assert.doesNotMatch(indexHtml.match(/id="player"[^>]+/)?.[0] || "", /onblur=/);
+  assert.ok(indexHtml.includes('oninput="handlePlayerInput()"') && indexHtml.match(/id="playerZone"[^>]+/)?.[0]?.includes('oninput="handlePlayerInput()"'));
+  const declaration = extractFunctionDeclaration(indexHtml, "handlePlayerInput");
+  assert.match(declaration, /setTimeout/);
+  assert.match(declaration, /validatePlayerId/);
+});
+
+test("Mobile Legends no inicia la validación hasta que se complete el Zone ID", () => {
+  const declaration = extractFunctionDeclaration(indexHtml, "handlePlayerInput");
+  const fields = { player: { value: "1348372911" }, playerZone: { value: "" }, product: { value: "mlbb" } };
+  let scheduled = null;
+  let validationCalls = 0;
+  let displayed = "";
+  const sandbox = {
+    playerValidationDebounceTimer: null,
+    products: [{ id: "mlbb", game: "Mobile Legends: Bang Bang", provider_product_id: "provider-mlbb", provider_validation_supported: true }],
+    $: id => fields[id],
+    requiresPlayerValidation: () => true,
+    providerPlayerTargetConfig: () => ({ ok: true, zoneKey: "zone_id" }),
+    resetPlayerValidation() {},
+    setPlayerValidationDisplay(_className, _icon, message, label) { displayed = message + "|" + label; },
+    setTimeout(callback, delay) { scheduled = { callback, delay }; return 99; },
+    clearTimeout() {},
+    validatePlayerId() { validationCalls++; }
+  };
+  const handle = new Function("sandbox", "with(sandbox) { return (" + declaration + "); }")(sandbox);
+  handle();
+  assert.equal(scheduled, null);
+  assert.match(displayed, /Zone ID/);
+  fields.playerZone.value = "5394";
+  handle();
+  assert.ok(scheduled);
+  assert.ok(scheduled.delay >= 400 && scheduled.delay <= 900);
+  assert.equal(validationCalls, 0);
+  scheduled.callback();
+  assert.equal(validationCalls, 1);
+});
+
+test("los juegos con un solo ID programan la validación automática al completar el ID", () => {
+  const declaration = extractFunctionDeclaration(indexHtml, "handlePlayerInput");
+  const fields = { player: { value: "123456789" }, playerZone: { value: "" }, product: { value: "ff" } };
+  let scheduled = null;
+  let validationCalls = 0;
+  const sandbox = {
+    playerValidationDebounceTimer: null,
+    products: [{ id: "ff", game: "Free Fire", provider_product_id: "provider-ff", provider_validation_supported: true }],
+    $: id => fields[id],
+    requiresPlayerValidation: () => true,
+    providerPlayerTargetConfig: () => ({ ok: true, zoneKey: null }),
+    resetPlayerValidation() {},
+    setPlayerValidationDisplay() {},
+    setTimeout(callback, delay) { scheduled = { callback, delay }; return 99; },
+    clearTimeout() {},
+    validatePlayerId() { validationCalls++; }
+  };
+  const handle = new Function("sandbox", "with(sandbox) { return (" + declaration + "); }")(sandbox);
+  handle();
+  assert.ok(scheduled);
+  scheduled.callback();
+  assert.equal(validationCalls, 1);
 });
