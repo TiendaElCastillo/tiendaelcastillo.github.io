@@ -218,10 +218,10 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=21"));
-  assert.ok(serviceWorker.includes('shell-v178'));
+  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=22"));
+  assert.ok(serviceWorker.includes('shell-v179'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=21"));
+  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=22"));
 });
 
 
@@ -313,4 +313,54 @@ test("los cuatro métodos de pago permiten enviar cuando todos sus datos son vá
     window.updateCheckoutSubmitState();
     assert.equal(elements.placeOrderBtn.disabled, false, item.method + " debe habilitarse con los datos correctos");
   }
+});
+
+
+test("el botón se recalcula al cargar el validador aunque el cliente ya haya completado el pago", () => {
+  const ids = ["placeOrderBtn", "product", "player", "playerZone", "payment",
+    "paymentProof", "reference", "senderPhone", "reportedAmount", "privacyConsent"];
+  const elements = Object.fromEntries(ids.map(id => [id, makeNode(id)]));
+  Object.values(elements).forEach(node => { node.addEventListener = () => {}; });
+  elements.placeOrderBtn.disabled = true;
+  elements.product.value = "mlbb-mobile";
+  elements.player.value = "1348372911";
+  elements.playerZone.value = "5394";
+  elements.payment.value = "Saldo móvil";
+  elements.paymentProof.files = [{ type: "image/jpeg", size: 1000 }];
+  elements.senderPhone.value = "55886764";
+  elements.reportedAmount.value = "250";
+  elements.privacyConsent.checked = true;
+  const product = {
+    id: "mlbb-mobile",
+    game: "Mobile Legends: Bang Bang",
+    provider_product_id: "provider-mlbb",
+    price_mobile: 250
+  };
+  const window = {};
+  const document = {
+    readyState: "complete",
+    getElementById: id => elements[id] || null,
+    querySelectorAll: () => [],
+    addEventListener() {}
+  };
+  const sandbox = {
+    window, document, products: [product], currentUser: { id: "user-1" },
+    currentPlayerTarget() { return elements.player.value + "::" + elements.playerZone.value; },
+    isPlayerValidationCurrent(productId, target) {
+      return productId === "mlbb-mobile" && target === "1348372911::5394";
+    },
+    cubaMobileNational(value) {
+      let digits = String(value || "").replace(/\\D/g, "");
+      if (digits.length === 10 && digits.startsWith("53")) digits = digits.slice(2);
+      return /^5[0-9]{7}$/.test(digits) ? digits : "";
+    },
+    priceForMethod(p, method) { return method === "Saldo móvil" ? p.price_mobile : 0; },
+    isPaymentMethodReady() { return true; },
+    validateProofFile(file) { return file ? "" : "missing"; },
+    paymentMethods: [],
+    walletBalanceUSD: 0
+  };
+  vm.runInNewContext(adminPanelSource, sandbox);
+  assert.equal(elements.placeOrderBtn.disabled, false);
+  assert.equal(elements.placeOrderBtn.textContent, "Ya transferí · Enviar a revisión");
 });

@@ -227,7 +227,7 @@ function installCheckoutFlow(){
  }
 }
 
-function start(){initAdminLayout();installCheckoutFlow();installOrderRefreshFilter();installWalletDepositRefreshFilter();installViewHook();if(document.getElementById("allorders"))applyOrderFilter(activeOrderFilter);applyWalletDepositFilter("all");}
+function start(){initAdminLayout();installCheckoutFlow();installOrderRefreshFilter();installWalletDepositRefreshFilter();installViewHook();if(document.getElementById("allorders"))applyOrderFilter(activeOrderFilter);applyWalletDepositFilter("all");refreshCheckoutButton();}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
 window.updateCheckoutSubmitState=refreshCheckoutButton;
 window.showAdminSection=showAdminSection;
