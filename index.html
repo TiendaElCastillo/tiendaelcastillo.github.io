@@ -2212,10 +2212,10 @@ body{min-width:0}
    <div class="checkout-product-lock-copy"><small>PAQUETE SELECCIONADO</small><strong id="selectedProductText">El paquete que elijas aparecerá aquí</strong><p>Este paquete queda fijado durante la compra. Para elegir otro, sal de esta pantalla y vuelve al catálogo.</p></div>
   </div>
   <select id="product" class="hidden" disabled aria-hidden="true" tabindex="-1"></select>
-  <div class="field"><label id="playerFieldLabel" for="player">ID del jugador de la cuenta</label><input id="player" inputmode="numeric" autocomplete="off" placeholder="Escribe tu ID" oninput="resetPlayerValidation()" onblur="validatePlayerId()" aria-describedby="playerValidationMsg"></div>
-  <div class="field hidden" id="playerZoneWrap"><label id="playerZoneLabel" for="playerZone">Zone ID / ID del servidor</label><input id="playerZone" inputmode="numeric" autocomplete="off" placeholder="Escribe el Zone ID" oninput="resetPlayerValidation()" onblur="validatePlayerId()" aria-describedby="playerValidationMsg"></div>
+  <div class="field"><label id="playerFieldLabel" for="player">ID del jugador de la cuenta</label><input id="player" inputmode="numeric" autocomplete="off" placeholder="Escribe tu ID" oninput="handlePlayerInput()" aria-describedby="playerValidationMsg"></div>
+  <div class="field hidden" id="playerZoneWrap"><label id="playerZoneLabel" for="playerZone">Zone ID / ID del servidor</label><input id="playerZone" inputmode="numeric" autocomplete="off" placeholder="Escribe el Zone ID" oninput="handlePlayerInput()" aria-describedby="playerValidationMsg"></div>
   <div id="playerRegionNote" class="notice">Selecciona un paquete para ver la región y los datos de cuenta necesarios.</div>
-  <div id="playerValidationWrap" class="player-validation-wrap hidden"><p id="playerValidationMsg" class="player-validation-message" role="status" aria-live="polite">La comprobación comenzará automáticamente al salir del campo del ID.</p></div>
+  <div id="playerValidationWrap" class="player-validation-wrap hidden"><p id="playerValidationMsg" class="player-validation-message" role="status" aria-live="polite">La comprobación comenzará automáticamente al completar el ID.</p></div>
   <div class="field"><label for="playername">Nombre de la cuenta</label><div class="player-name-wrap" id="playerNameWrap"><span class="player-validation-icon" id="playerValidationIcon" aria-hidden="true">•</span><input id="playername" autocomplete="off" placeholder="Se mostrará al verificar el ID" readonly></div></div>
   <p class="track-note">Nunca compartas tu contraseña ni códigos de acceso. El ID se comprueba antes de crear el pedido. Comprueba que el nombre mostrado corresponde a tu cuenta.</p>
   <button id="continueToPaymentBtn" class="primary-btn block-btn" type="button" onclick="continueToPayment()">Continuar al pago →</button>
@@ -2719,7 +2719,7 @@ function loadCastleTurnstile(){
 }
 const STORE_SUPABASE_URL="https://kfllglkfncebpknnugnx.supabase.co";
 const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtmbGxnbGtmbmNlYnBrbm51Z254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3Mjg5MTMsImV4cCI6MjEwOTMwNDkxM30.9lyiZC57tJuSRN6ReLkZZVsedJzl0kVxlhxUX90cE6g";
-let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"",usdt_address:""}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
+let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"",usdt_address:""}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", playerValidationDebounceTimer=null, activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
 
 const $=id=>document.getElementById(id);
 const clean=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -4034,7 +4034,7 @@ function requiresPlayerValidation(product){
 function cubaMobileNational(value){
  let digits=String(value??"").replace(/\D/g,"");
  if(digits.length===10&&digits.startsWith("53"))digits=digits.slice(2);
- return /^5[0-9]{7}$/.test(digits)?digits:"";
+ return /^[56][0-9]{7}$/.test(digits)?digits:"";
 }
 function cubaMobileInputValue(value){
  let digits=String(value??"").replace(/\D/g,"");
@@ -4075,6 +4075,7 @@ function displayPlayerTarget(value){
  return parts.length===2?parts[0]+" · Zone "+parts[1]:String(value||"");
 }
 function resetPlayerValidation(){
+ if(playerValidationDebounceTimer!==null){clearTimeout(playerValidationDebounceTimer);playerValidationDebounceTimer=null;}
  playerValidationRequest++;
  playerValidationInFlightKey="";
  validatedPlayerCheckout=null;
@@ -4090,6 +4091,28 @@ function resetPlayerValidation(){
  }else{
   setPlayerValidationDisplay("","","","");
  }
+}
+function handlePlayerInput(){
+ resetPlayerValidation();
+ const p=products.find(item=>String(item.id)===$("product")?.value);
+ if(!p||!requiresPlayerValidation(p))return;
+ const target=providerPlayerTargetConfig(p);
+ if(!target.ok||!p.provider_product_id||p.provider_validation_supported!==true)return;
+ const playerId=$("player")?.value.trim()||"";
+ const zoneId=target.zoneKey?($("playerZone")?.value.trim()||""):"";
+ if(playerId.length<3||playerId.length>64){
+  if(playerId.length)setPlayerValidationDisplay("is-invalid","×","ID de jugador incompleto. Revísalo.","ID incompleto");
+  return;
+ }
+ if(target.zoneKey&&(!zoneId||zoneId.length>24)){
+  setPlayerValidationDisplay(zoneId?"is-invalid":"","•",zoneId?"El Zone ID debe tener entre 1 y 24 caracteres. Revísalo.":"ID del jugador listo. Completa el Zone ID; comprobaremos ambos datos automáticamente.",zoneId?"Zone ID incorrecto":"Esperando Zone ID…");
+  return;
+ }
+ setPlayerValidationDisplay("is-loading","…",target.zoneKey?"Comprobaremos el ID y el Zone ID automáticamente en cuanto termines de escribir.":"Comprobaremos tu ID automáticamente en cuanto termines de escribir.","Preparando comprobación…");
+ playerValidationDebounceTimer=setTimeout(()=>{
+  playerValidationDebounceTimer=null;
+  void validatePlayerId();
+ },600);
 }
 function syncPlayerRegionUI(){
  const p=products.find(item=>String(item.id)===$("product")?.value);
@@ -4129,6 +4152,7 @@ function isPlayerValidationCurrent(productId,playerId){
  return Date.now()<expiry-20000;
 }
 async function validatePlayerId(){
+ if(playerValidationDebounceTimer!==null){clearTimeout(playerValidationDebounceTimer);playerValidationDebounceTimer=null;}
  const playerField=$("player"),zoneField=$("playerZone"),nameField=$("playername");
  if(!playerField||!nameField)return;
  const p=products.find(item=>String(item.id)===$("product")?.value);
@@ -4158,7 +4182,7 @@ async function validatePlayerId(){
   return;
  }
  if(playerId.length<3||playerId.length>64){
-  setPlayerValidationDisplay(playerId.length?"is-invalid":"",playerId.length?"×":"•",playerId.length?"ID de jugador incompleto. Revísalo.":"Escribe tu ID y sal del campo para comprobarlo.",playerId.length?"ID incompleto":"Esperando ID…");
+  setPlayerValidationDisplay(playerId.length?"is-invalid":"",playerId.length?"×":"•",playerId.length?"ID de jugador incompleto. Revísalo.":"Escribe un ID válido para iniciar la comprobación automática.",playerId.length?"ID incompleto":"Esperando ID…");
   validatedPlayerCheckout=null;return;
  }
  if(target.zoneKey&&(!zoneId||zoneId.length>24)){
