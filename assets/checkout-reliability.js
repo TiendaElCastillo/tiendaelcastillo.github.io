@@ -30,6 +30,23 @@
   });
  }
  window.castleSetProofUploadProgress=progress;
+ window.castleResetProofUploadProgress=function(){
+  const panel=$("proofUploadCircuit");
+  if(!panel)return;
+  panel.classList.add("hidden");
+  panel.classList.remove("is-error","is-done");
+  const fill=$("proofUploadFill");
+  const track=$("proofUploadTrack");
+  const percent=$("proofUploadPercent");
+  const stage=$("proofUploadStage");
+  const message=$("proofUploadMessage");
+  if(fill)fill.style.width="0%";
+  if(track)track.setAttribute("aria-valuenow","0");
+  if(percent)percent.textContent="0%";
+  if(stage)stage.textContent="Preparando captura";
+  if(message)message.textContent="Comprobando que todos los datos estén completos.";
+  panel.querySelectorAll("[data-proof-step]").forEach(node=>node.classList.remove("is-active","is-done","is-error"));
+ };
 
  async function uploadProofBinary(path,file,onProgress){
   if(typeof db==="undefined"||!db||typeof XMLHttpRequest==="undefined")throw new Error("No se pudo iniciar la subida segura de la captura.");
