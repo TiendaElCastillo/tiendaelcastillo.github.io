@@ -314,3 +314,53 @@ test("los cuatro métodos de pago permiten enviar cuando todos sus datos son vá
     assert.equal(elements.placeOrderBtn.disabled, false, item.method + " debe habilitarse con los datos correctos");
   }
 });
+
+
+test("el botón se recalcula al cargar el validador aunque el cliente ya haya completado el pago", () => {
+  const elements = {
+    placeOrderBtn: makeNode("placeOrderBtn"),
+    product: { value: "mlbb-mobile" },
+    player: { value: "1348372911" },
+    playerZone: { value: "5394" },
+    payment: { value: "Saldo móvil" },
+    paymentProof: { files: [{ type: "image/jpeg", size: 1000 }] },
+    reference: { value: "" },
+    senderPhone: { value: "55886764" },
+    reportedAmount: { value: "250" },
+    privacyConsent: { checked: true }
+  };
+  elements.placeOrderBtn.disabled = true;
+  const product = {
+    id: "mlbb-mobile",
+    game: "Mobile Legends: Bang Bang",
+    provider_product_id: "provider-mlbb",
+    price_mobile: 250
+  };
+  const window = {};
+  const document = {
+    readyState: "complete",
+    getElementById: id => elements[id] || null,
+    querySelectorAll: () => [],
+    addEventListener() {}
+  };
+  const sandbox = {
+    window, document, products: [product], currentUser: { id: "user-1" },
+    currentPlayerTarget() { return elements.player.value + "::" + elements.playerZone.value; },
+    isPlayerValidationCurrent(productId, target) {
+      return productId === "mlbb-mobile" && target === "1348372911::5394";
+    },
+    cubaMobileNational(value) {
+      let digits = String(value || "").replace(/\\D/g, "");
+      if (digits.length === 10 && digits.startsWith("53")) digits = digits.slice(2);
+      return /^5[0-9]{7}$/.test(digits) ? digits : "";
+    },
+    priceForMethod(p, method) { return method === "Saldo móvil" ? p.price_mobile : 0; },
+    isPaymentMethodReady() { return true; },
+    validateProofFile(file) { return file ? "" : "missing"; },
+    paymentMethods: [],
+    walletBalanceUSD: 0
+  };
+  vm.runInNewContext(adminPanelSource, sandbox);
+  assert.equal(elements.placeOrderBtn.disabled, false);
+  assert.equal(elements.placeOrderBtn.textContent, "Ya transferí · Enviar a revisión");
+});
