@@ -748,7 +748,7 @@ function extractNamedFunction(source, name) {
     const char = source[i];
     if (quote) {
       if (escaped) escaped = false;
-      else if (char === "\\\\") escaped = true;
+      else if (char === "\\") escaped = true;
       else if (char === quote) quote = "";
       continue;
     }
@@ -822,7 +822,7 @@ test("cambiar entre CUP, saldo móvil y USDT conserva el método elegido y adapt
     assert.equal(elements.walletDepositAmountLabel.textContent, expectedLabel);
     assert.equal(elements.walletDepositStep1Title.textContent, expectedTitle);
     assert.match(elements.walletDepositStep2Title.textContent, new RegExp(method === "Saldo móvil" ? "saldo móvil" : method));
-    assert.equal(elements.walletDepositFormIntroHelp.textContent.includes("banco"), method === "Transferencia CUP");
+    assert.equal(elements.walletDepositFormIntroHelp.textContent.includes("bancaria"), method === "Transferencia CUP");
   }
 });
 
