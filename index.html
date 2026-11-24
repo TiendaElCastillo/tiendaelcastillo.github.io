@@ -2412,7 +2412,7 @@ body{min-width:0}
    <div class="wallet-referral-head"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"><div><span class="wallet-referral-kicker">INVITA Y GANA</span><h3 id="walletReferralTitle">Comparte Coronas del Castillo</h3><p>Tu amigo recibe un 3 % extra en toda su primera recarga aprobada, sin límite. Tú ganas un 5 % del valor de cada paquete que compre y que Central One confirme como entregado.</p></div></div>
    <div class="wallet-referral-rewards"><div><small>Comisión por cada paquete entregado</small><strong>5 %</strong></div><div><small>Bono de primera recarga</small><strong>3 % sin límite</strong></div></div>
    <div class="wallet-referral-code-row"><div><small>Tu código de invitación</small><strong id="walletReferralCodeValue">Cargando…</strong></div><button class="secondary-btn" type="button" onclick="shareWalletReferral()">Compartir enlace</button></div>
-   <div class="wallet-referral-stats"><span id="walletReferralCount">0 amigos invitados</span><span id="walletReferralEarned">0,00 COR ganadas</span></div>
+   <div class="wallet-referral-stats"><span id="walletReferralCount">0 amigos invitados</span><span id="walletReferralEarned">0,00 Coronas ganadas</span></div>
    <div id="walletReferralInviteStatus" class="wallet-referral-status" role="status" aria-live="polite"></div>
    <div id="walletReferralApplyBox" class="wallet-referral-apply">
     <label for="walletReferralCodeInput">¿Tienes un código de un amigo?</label>
@@ -4391,7 +4391,7 @@ function updateCheckoutSummary(){
  }
  checkoutPaymentMethodPrevious=method;
  renderCheckoutPaymentMethods();
- const unit=isWallet?"Coronas":method==="USDT"?"USDT":"CUP";
+ const unit=isWallet?(Math.abs(Number(raw)-1)<0.000001?"Corona":"Coronas"):method==="USDT"?"USDT":"CUP";
  const amount=Number(raw)>0?(isWallet?coronasValue(raw):money(raw)):"—";
  const regionLine=p.provider_region?'<small>Región de recarga '+clean(p.provider_region)+(requiresPlayerValidation(p)?' · Comprobación de ID obligatoria':'')+'</small>':'<small>Precio final según el método de pago</small>';
  $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'<small class="checkout-locked-method">Forma de pago elegida: '+clean(method)+'</small></div><div class="checkout-total"><strong>'+amount+'</strong><small>'+unit+'</small></div>';
