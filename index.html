@@ -5422,43 +5422,94 @@ async function loadWalletData(){
  previewWalletDeposit();
  updateCheckoutSummary();
 }
+function walletMobileUnitsPerCorona(){
+ const referenceUnits=Number(walletSettings.mobile_credit_units||0);
+ const referenceCup=Number(walletSettings.mobile_cost_cup||0);
+ const cupPerCorona=Number(walletSettings.cup_per_usd||0);
+ if(!Number.isFinite(referenceUnits)||referenceUnits<=0||!Number.isFinite(referenceCup)||referenceCup<=0||!Number.isFinite(cupPerCorona)||cupPerCorona<=0)return 0;
+ return referenceUnits*cupPerCorona/referenceCup;
+}
+function walletDepositMethodItem(name){
+ return paymentMethods.find(item=>item.name===name&&item.active===true&&String(item.instructions||"").trim())||null;
+}
+function walletDepositMethodIsReady(name){
+ const item=walletDepositMethodItem(name);
+ if(!item)return false;
+ const raw=String(item.instructions||"").replace(/\\s+/g," ");
+ if(name==="Transferencia CUP"){
+  const card=raw.match(/tarjeta\\s*:?\\s*([0-9][0-9\\s-]{8,})/i)?.[1]||"";
+  const confirm=raw.match(/m[oó]vil\\s+a\\s+confirmar[^+0-9]*([+]?[0-9][0-9\\s-]{7,})/i)?.[1]||"";
+  return Boolean(card&&cubaMobileNational(confirm));
+ }
+ if(name==="Saldo móvil"){
+  const phone=raw.match(/n[uú]mero\\s*:?\\s*([+]?[0-9][0-9\\s-]{7,})/i)?.[1]||"";
+  return phone.replace(/\\D/g,"").length>=8&&walletMobileUnitsPerCorona()>0;
+ }
+ if(name==="USDT")return isWalletUsdtConfigured();
+ return false;
+}
+function walletDepositAvailableMethods(){
+ return ["Transferencia CUP","Saldo móvil","USDT"].filter(name=>walletDepositMethodIsReady(name));
+}
 function previewWalletDeposit(){
- const amount=Number($("walletDepositAmount")?.value||0),box=$("walletDepositPreview");
+ const amount=Number($( "walletDepositAmount")?.value||0),box=$("walletDepositPreview");
  if(!box)return;
+ const method=$("walletDepositMethod")?.value||walletDepositMethodPrevious;
+ const minimum=method==="Transferencia CUP"?Math.ceil(Number(walletSettings.cup_per_usd||0))
+  :method==="USDT"?1
+  :method==="Saldo móvil"?Math.ceil(walletMobileUnitsPerCorona()):1;
  if(!Number.isFinite(amount)||amount<=0){
-  box.innerHTML="<small>Coronas que recibirás después de revisar el pago</small><strong>— Coronas</strong><small>Escribe el importe que vas a transferir.</small>";
+  box.innerHTML='<small>Coronas estimadas después de aprobar tu pago</small><strong>— Coronas</strong><small>Escribe el importe para calcular cuánto recibirás.</small>';
   updateWalletDepositInstructions();
   return;
  }
- const rate=Number(walletSettings.cup_per_usd||1160);
- const credit=Math.floor((amount/rate)*100)/100;
- box.innerHTML='<small>Coronas estimadas después de aprobar</small><strong>'+moneyUSD(credit)+' Coronas</strong><small>1 Corona = 1 USD. El importe final se confirmará al revisar la transferencia.</small>';
+ let credited=0,unit="";
+ if(method==="Transferencia CUP"){credited=Math.floor((amount/Number(walletSettings.cup_per_usd||1))*100)/100;unit="CUP";}
+ else if(method==="USDT"){credited=Math.floor(amount*100)/100;unit="USDT";}
+ else if(method==="Saldo móvil"){credited=Math.floor((amount/Math.max(walletMobileUnitsPerCorona(),0.000001))*100)/100;unit="unidades de saldo móvil";}
+ const valid=Number.isFinite(credited)&&credited>=1&&amount>=minimum;
+ box.innerHTML='<small>Coronas que recibirás '+(valid?"al aprobar tu pago":"si cumples el mínimo")+'</small><strong>'+moneyUSD(Math.max(0,credited))+' Coronas</strong><small>Importe: '+money(amount)+' '+unit+'. Mínimo: '+money(minimum)+' '+unit+'. 1 Corona = 1 USD. El saldo solo se acredita después de tu aprobación.</small>';
  updateWalletDepositInstructions();
 }
-function updateWalletDepositMethod(){
- const walletSender=$("walletDepositSenderPhone");
- if(walletSender&&!walletSender.dataset.cubaMobileHandler){
-  walletSender.dataset.cubaMobileHandler="1";
-  walletSender.addEventListener("input",()=>{walletSender.value=cubaMobileInputValue(walletSender.value);});
- }
- if(walletSender){walletSender.inputMode="numeric";walletSender.placeholder="xxxxxxxx";}
- if(walletDepositMethodPrevious!=="Transferencia CUP"){
-  walletDepositMethodPrevious="Transferencia CUP";
-  ["walletDepositAmount","walletDepositSenderPhone","walletDepositReference"].forEach(id=>{const field=$(id);if(field)field.value="";});
+function updateWalletDepositMethod(resetFields=false){
+ const select=$("walletDepositMethod");
+ if(!select)return;
+ const previous=walletDepositMethodPrevious||select.value||"Transferencia CUP";
+ const methods=walletDepositAvailableMethods();
+ select.innerHTML=methods.length?methods.map(name=>'<option value="'+clean(name)+'">'+clean(name)+'</option>').join(""):'<option value="">No hay métodos configurados</option>';
+ select.disabled=methods.length===0;
+ const selected=methods.includes(previous)?previous:(methods[0]||"");
+ if(selected)select.value=selected;
+ walletDepositMethodPrevious=selected;
+ if(resetFields){
+  ["walletDepositAmount","walletDepositSenderPhone","walletDepositReference","walletDepositTxid"].forEach(id=>{const field=$(id);if(field)field.value="";});
   const proof=$("walletDepositProof");if(proof)proof.value="";
   previewWalletDepositProof();
  }
+ const cup=selected==="Transferencia CUP",mobile=selected==="Saldo móvil",usdt=selected==="USDT";
  const amount=$("walletDepositAmount");
- if(!amount)return;
- const minimum=Math.ceil(Number(walletSettings.cup_per_usd||1160));
- $("walletDepositAmountLabel").textContent="Cantidad exacta que enviarás (CUP)";
- $("walletDepositAmountHint").textContent="Mínimo actual: "+money(minimum)+" CUP.";
- amount.min=String(minimum);
- amount.step="1";
- amount.placeholder="Ej. 2000";
- $("walletDepositSenderPhoneWrap")?.classList.remove("hidden");
- $("walletDepositReferenceWrap")?.classList.remove("hidden");
- $("walletDepositTxidWrap")?.classList.add("hidden");
+ if(amount){
+  const minimum=cup?Math.ceil(Number(walletSettings.cup_per_usd||1)):usdt?1:mobile?Math.ceil(walletMobileUnitsPerCorona()):1;
+  amount.type="number";
+  amount.inputMode=usdt?"decimal":"numeric";
+  amount.min=String(minimum);
+  amount.step=usdt?"0.000001":"1";
+  amount.placeholder=cup?"Ej. 2000":usdt?"Ej. 5.00":"Ej. 369";
+  $("walletDepositAmountLabel").textContent=cup?"Cantidad exacta que transferirás (CUP)":usdt?"Cantidad de USDT que enviarás":"Unidades de saldo móvil que enviarás";
+  $("walletDepositAmountHint").textContent="Mínimo: "+money(minimum)+" "+(cup?"CUP":usdt?"USDT":"unidades de saldo móvil")+", equivalente a 1 Corona.";
+ }
+ $("walletDepositSenderPhoneWrap")?.classList.toggle("hidden",!(cup||mobile));
+ $("walletDepositReferenceWrap")?.classList.toggle("hidden",!(cup||mobile));
+ $("walletDepositTxidWrap")?.classList.toggle("hidden",!usdt);
+ $("walletDepositProofHelp")?.replaceChildren(document.createTextNode(cup?"Adjunta la confirmación bancaria completa, con importe, fecha, referencia y destinatario.":mobile?"Adjunta el SMS de ETECSA que confirma el envío de saldo, con importe, fecha y número de destino.":"Adjunta el comprobante de la transferencia USDT, con importe, fecha y estado."));
+ const phoneLabel=$("walletDepositSenderPhoneWrap")?.querySelector("label");
+ if(phoneLabel)phoneLabel.textContent=cup?"Teléfono desde el que hiciste la transferencia":"Teléfono desde el que enviaste el saldo móvil";
+ const referenceLabel=$("walletDepositReferenceLabel");
+ if(referenceLabel)referenceLabel.textContent=cup?"Número de transacción bancaria":"Referencia o identificador del SMS";
+ $("walletDepositMethodHint").textContent=methods.length?"La recarga queda pendiente y solo se acredita después de que el administrador compruebe el pago.":"Los métodos de recarga todavía no están configurados. No envíes dinero.";
+ const submit=$("walletDepositSubmit");
+ if(submit)submit.disabled=methods.length===0;
+ updateWalletDepositInstructions();
  previewWalletDeposit();
 }
 function updateWalletDepositInstructions(){
@@ -5468,24 +5519,41 @@ function updateWalletDepositInstructions(){
   box.dataset.copyHandler="1";
   box.addEventListener("click",event=>{const button=event.target.closest("[data-copy]");if(button)copyPaymentButton(button);});
  }
- const item=paymentMethods.find(m=>m.name==="Transferencia CUP"&&m.active&&m.instructions);
- if(!item){
-  box.innerHTML="<strong>Datos bancarios no disponibles.</strong> No realices ninguna transferencia hasta que la tienda configure el método.";
+ const method=$("walletDepositMethod")?.value||walletDepositMethodPrevious;
+ const item=walletDepositMethodItem(method);
+ const amount=Number($("walletDepositAmount")?.value||0);
+ if(!item||!walletDepositMethodIsReady(method)){
+  box.innerHTML='<div class="wallet-warning"><strong>Método no disponible.</strong> No realices ningún pago hasta que la tienda configure y habilite sus datos.</div>';
   return;
  }
- const raw=String(item.instructions||"").replace(/\s+/g," ");
- const card=raw.match(/tarjeta\s*:?\s*([0-9][0-9\s-]{8,})/i)?.[1]?.trim()||"";
- const confirm=raw.match(/m[oó]vil\s+a\s+confirmar[^+0-9]*([+]?[0-9][0-9\s-]{7,})/i)?.[1]?.trim().replace(/[.\s]+$/, "")||"";
- const amount=money($("walletDepositAmount")?.value||0);
- const warning=(!card||!cubaMobileNational(confirm))?'<div class="wallet-warning">Los datos de transferencia están incompletos. No envíes dinero hasta que se actualicen.</div>':"";
- const rows=paymentCopyCard("Tarjeta bancaria para transferir",card,"payment-card-number")
-  +paymentCopyCard("Importe exacto que debes enviar",amount+" CUP","payment-card-amount")
-  +paymentCopyCubaPhoneCard("Móvil a confirmar en Transfermóvil",confirm,"payment-card-confirm","Pega solo los 8 dígitos, sin +53.");
- box.innerHTML='<strong>Datos para realizar la transferencia</strong>'+warning+'<div class="payment-copy-grid">'+rows+'</div><p class="wallet-field-hint">Envía exactamente este importe. Cuando hayas terminado, completa el formulario de abajo.</p>';
+ const raw=String(item.instructions||"").replace(/\\s+/g," ").trim();
+ if(method==="Transferencia CUP"){
+  const card=raw.match(/tarjeta\\s*:?\\s*([0-9][0-9\\s-]{8,})/i)?.[1]?.trim()||"";
+  const confirm=raw.match(/m[oó]vil\\s+a\\s+confirmar[^+0-9]*([+]?[0-9][0-9\\s-]{7,})/i)?.[1]?.trim().replace(/[.\\s]+$/,"")||"";
+  const warning=(!card||!cubaMobileNational(confirm))?'<div class="wallet-warning">Los datos bancarios están incompletos. No envíes dinero.</div>':"";
+  const rows=paymentCopyCard("Tarjeta bancaria para transferir",card,"payment-card-number")
+   +paymentCopyCard("Importe exacto",money(amount)+" CUP","payment-card-amount")
+   +paymentCopyCubaPhoneCard("Móvil a confirmar en Transfermóvil",confirm,"payment-card-confirm","Pega solo los 8 dígitos, sin +53.");
+  box.innerHTML='<strong>Datos para realizar la transferencia</strong>'+warning+'<div class="payment-copy-grid">'+rows+'</div><p class="wallet-field-hint">Después del pago, completa el formulario y adjunta el comprobante. La acreditación será manual.</p>';
+  return;
+ }
+ if(method==="Saldo móvil"){
+  const phone=raw.match(/n[uú]mero\\s*:?\\s*([+]?[0-9][0-9\\s-]{7,})/i)?.[1]?.trim()||"";
+  const number=phone.replace(/\\D/g,"");
+  const warning=number.length<8?'<div class="wallet-warning">El número receptor no está configurado correctamente. No envíes saldo.</div>':"";
+  const rows=paymentCopyCubaPhoneCard("Número al que enviarás el saldo móvil",phone,"payment-card-confirm","Envía exactamente las unidades indicadas y conserva el SMS de confirmación.");
+  box.innerHTML='<strong>Instrucciones para enviar saldo móvil</strong>'+warning+'<p>'+clean(raw)+'</p><div class="payment-copy-grid">'+rows+paymentCopyCard("Cantidad exacta",money(amount)+" unidades","payment-card-amount")+'</div><p class="wallet-field-hint">Debes adjuntar el SMS de ETECSA. La tienda comprobará la recepción antes de acreditar tus Coronas.</p>';
+  return;
+ }
+ const address=String(walletSettings.usdt_address||"").trim(),network=String(walletSettings.usdt_network||"BNB Smart Chain (BEP20)");
+ box.innerHTML='<strong>Datos para enviar USDT</strong><p>Envía exclusivamente por la red '+clean(network)+'. Comprueba cuidadosamente la dirección y el importe antes de confirmar.</p><div class="payment-copy-grid">'+paymentCopyCard("Dirección receptora",address,"payment-card-number")+paymentCopyCard("Importe exacto",moneyUSD(amount)+" USDT","payment-card-amount")+paymentCopyCard("Red","BNB Smart Chain (BEP20)","payment-card-confirm")+'</div><p class="wallet-field-hint">Después del envío, pega el TxID completo y adjunta el comprobante. La tienda verificará la llegada real antes de acreditar Coronas.</p>';
 }
 async function uploadWalletDepositProofs(depositId,method,files,reference,senderPhone,txid){
- const nationalPhone=method==="Transferencia CUP"?cubaMobileNational(senderPhone):"";
- if(method==="Transferencia CUP"&&!nationalPhone)throw new Error("Escribe los 8 dígitos válidos de tu móvil cubano.");
+ const needsPhone=method==="Transferencia CUP"||method==="Saldo móvil";
+ const nationalPhone=needsPhone?cubaMobileNational(senderPhone):"";
+ if(needsPhone&&!nationalPhone)throw new Error("Escribe los 8 dígitos válidos del teléfono desde el que hiciste el pago.");
+ if(method==="USDT"&&(!/^[a-f0-9]{64}$/i.test(String(txid||"").trim())))throw new Error("El TxID debe tener 64 caracteres hexadecimales.");
+ if(needsPhone&&(String(reference||"").trim().length<3||String(reference||"").trim().length>100))throw new Error("Escribe la referencia de la operación o del SMS.");
  if(!Array.isArray(files)||files.length<1||files.length>2)throw new Error("Cada solicitud admite entre 1 y 2 imágenes de comprobante.");
  const paths=[];
  for(const file of files){
@@ -5500,8 +5568,8 @@ async function uploadWalletDepositProofs(depositId,method,files,reference,sender
  }
  const result=await db.rpc("submit_wallet_deposit_proofs",{
   p_deposit_id:depositId,p_proof_paths:paths,
-  p_reference:method==="Transferencia CUP"?String(reference||"").trim():null,
-  p_sender_phone:method==="Transferencia CUP"?"+53"+nationalPhone:null,
+  p_reference:needsPhone?String(reference||"").trim():null,
+  p_sender_phone:needsPhone?"+53"+nationalPhone:null,
   p_txid:method==="USDT"?String(txid||"").trim().toLowerCase():null,
   p_network:method==="USDT"?"BNB Smart Chain (BEP20)":null
  });
