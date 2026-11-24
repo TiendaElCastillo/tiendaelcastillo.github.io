@@ -5587,19 +5587,45 @@ function previewWalletDepositProof(){
  status.textContent=files.map(file=>file.name).join(" · ");
  return true;
 }
+function walletDepositMinimum(method){
+ if(method==="Transferencia CUP")return Math.ceil(Number(walletSettings.cup_per_usd||0));
+ if(method==="USDT")return 1;
+ if(method==="Saldo móvil")return Math.ceil(walletMobileUnitsPerCorona());
+ return Number.POSITIVE_INFINITY;
+}
+function walletDepositCurrency(method){
+ return method==="Transferencia CUP"?"CUP":method==="USDT"?"USDT":method==="Saldo móvil"?"MOBILE":"";
+}
+function walletDepositCreditedAmount(method,amount){
+ if(method==="Transferencia CUP")return Math.floor((amount/Number(walletSettings.cup_per_usd||1))*100)/100;
+ if(method==="USDT")return Math.floor(amount*100)/100;
+ if(method==="Saldo móvil")return Math.floor((amount/Math.max(walletMobileUnitsPerCorona(),0.000001))*100)/100;
+ return 0;
+}
 function goWalletDepositStep(step){
+ if(!currentUser){openAccount();return;}
  const target=Math.max(1,Math.min(2,Number(step)||1));
+ const method=$("walletDepositMethod")?.value||"";
  const amount=Number($("walletDepositAmount")?.value||0);
- const minimum=Math.ceil(Number(walletSettings.cup_per_usd||1160));
+ const minimum=walletDepositMinimum(method);
  const msg=$("walletDepositMsg");
  if(target===2){
-  if(!Number.isFinite(amount)||!Number.isInteger(amount)||amount<minimum){
-   if(msg)msg.textContent="Escribe un importe entero de al menos "+money(minimum)+" CUP.";
+  if(!walletDepositMethodIsReady(method)){
+   if(msg)msg.textContent="Este método no está disponible en este momento. No realices ningún pago.";
+   return;
+  }
+  if(!Number.isFinite(amount)||amount<minimum||
+     (method!=="USDT"&&!Number.isInteger(amount))){
+   if(msg)msg.textContent="El mínimo es "+money(minimum)+" "+(method==="Transferencia CUP"?"CUP":method==="USDT"?"USDT":"unidades de saldo móvil")+", equivalente a 1 Corona.";
    $("walletDepositAmount")?.focus();
    return;
   }
-  if(!paymentMethods.some(m=>m.name==="Transferencia CUP"&&m.active&&m.instructions)){
-   if(msg)msg.textContent="La transferencia CUP no está configurada. No realices el pago.";
+  if(walletDepositCreditedAmount(method,amount)<1){
+   if(msg)msg.textContent="El importe no llega al mínimo de 1 Corona. Aumenta la cantidad.";
+   return;
+  }
+  if(method==="USDT"&&!isWalletUsdtConfigured()){
+   if(msg)msg.textContent="USDT no está configurado. No envíes fondos.";
    return;
   }
  }
@@ -5617,12 +5643,16 @@ function goWalletDepositStep(step){
 }
 async function requestWalletDeposit(){
  if(!currentUser){openAccount();return;}
- const amount=Number($("walletDepositAmount").value);
- const files=Array.from($("walletDepositProof").files||[]);
- const senderPhoneNational=cubaMobileNational($("walletDepositSenderPhone").value.trim());
+ const method=$("walletDepositMethod")?.value||"";
+ const amount=Number($("walletDepositAmount")?.value);
+ const files=Array.from($("walletDepositProof")?.files||[]);
+ const needsPhone=method==="Transferencia CUP"||method==="Saldo móvil";
+ const senderPhoneNational=needsPhone?cubaMobileNational($("walletDepositSenderPhone")?.value.trim()||""):"";
  const senderPhone=senderPhoneNational?"+53"+senderPhoneNational:"";
- const reference=$("walletDepositReference").value.trim();
- const minimum=Math.ceil(Number(walletSettings.cup_per_usd||1160));
+ const reference=$("walletDepositReference")?.value.trim()||"";
+ const txid=$("walletDepositTxid")?.value.trim().toLowerCase()||"";
+ const minimum=walletDepositMinimum(method);
+ const credited=walletDepositCreditedAmount(method,amount);
  const button=$("walletDepositSubmit");
  const message=$("walletDepositMsg");
  const showError=(text,fieldId)=>{
@@ -5631,29 +5661,37 @@ async function requestWalletDeposit(){
   if(field){field.focus();field.scrollIntoView({behavior:"smooth",block:"center"});}
   else message?.scrollIntoView({behavior:"smooth",block:"center"});
  };
- if(!Number.isFinite(amount)||!Number.isInteger(amount)||amount<minimum){
-  showError("Escribe un importe entero de al menos "+money(minimum)+" CUP.","walletDepositAmount");
+ if(!walletDepositMethodIsReady(method)){
+  showError("Este método de recarga no está configurado o disponible. No envíes dinero.");
   return;
  }
- if(!senderPhoneNational){
-  showError("Escribe los 8 dígitos válidos del móvil cubano desde el que hiciste la transferencia.","walletDepositSenderPhone");
+ if(!Number.isFinite(amount)||amount<minimum||(method!=="USDT"&&!Number.isInteger(amount))){
+  showError("El mínimo para este método es "+money(minimum)+" "+(method==="Transferencia CUP"?"CUP":method==="USDT"?"USDT":"unidades de saldo móvil")+", equivalente a 1 Corona.","walletDepositAmount");
   return;
  }
- if(reference.length<3||reference.length>100){
-  showError("Escribe el número de transacción que aparece en la confirmación del banco.","walletDepositReference");
+ if(!Number.isFinite(credited)||credited<1){
+  showError("El importe debe equivaler al menos a 1 Corona.","walletDepositAmount");
+  return;
+ }
+ if(needsPhone&&!senderPhoneNational){
+  showError("Escribe los 8 dígitos válidos del teléfono desde el que hiciste el pago.","walletDepositSenderPhone");
+  return;
+ }
+ if(needsPhone&&(reference.length<3||reference.length>100)){
+  showError("Escribe la referencia bancaria o el identificador que aparece en el mensaje de confirmación.","walletDepositReference");
+  return;
+ }
+ if(method==="USDT"&&!/^[a-f0-9]{64}$/.test(txid)){
+  showError("Pega el TxID completo de 64 caracteres de tu transferencia USDT.","walletDepositTxid");
   return;
  }
  if(files.length<1||files.length>2){
-  showError("Adjunta entre 1 y 2 capturas del mensaje de confirmación.","walletDepositProof");
+  showError("Adjunta entre 1 y 2 capturas del comprobante.","walletDepositProof");
   return;
  }
  for(const file of files){
   const invalid=validateProofFile(file);
   if(invalid){showError(invalid,"walletDepositProof");return;}
- }
- if(!paymentMethods.some(m=>m.name==="Transferencia CUP"&&m.active&&m.instructions)){
-  showError("La transferencia CUP no está configurada. No realices el pago.");
-  return;
  }
  if(button?.disabled)return;
  if(button){button.disabled=true;button.textContent="Comprobando solicitud…";}
@@ -5662,58 +5700,58 @@ async function requestWalletDeposit(){
  try{
   let pendingCheck;
   try{
-   pendingCheck=await db.from("wallet_deposits").select("id,amount,created_at")
+   pendingCheck=await db.from("wallet_deposits").select("id,amount,currency,payment_method,created_at")
     .eq("user_id",currentUser.id).eq("status","pending").is("proof_path",null)
     .order("created_at",{ascending:false}).limit(1).maybeSingle();
   }catch(connectionError){
-   showError("No pudimos comprobar la conexión. No vuelvas a enviar el pago ni crees otra solicitud; revisa primero el Historial de depósitos.");
+   showError("No pudimos comprobar la conexión. No repitas el pago ni crees otra solicitud; revisa primero tu Historial de recargas.");
    return;
   }
   if(pendingCheck.error){
-   showError("No pudimos comprobar si ya tienes una solicitud pendiente. Revisa tu Historial de depósitos antes de intentarlo de nuevo.");
+   showError("No pudimos comprobar si ya tienes una solicitud pendiente. Revisa el Historial de recargas antes de intentarlo de nuevo.");
    return;
   }
   if(pendingCheck.data){
-   showError("Ya tienes una solicitud ("+pendingCheck.data.id.slice(0,8)+") pendiente de comprobante por "+money(pendingCheck.data.amount)+" CUP. Completa esa misma solicitud desde el Historial de depósitos; no crees otra.");
+   showError("Ya tienes una solicitud pendiente ("+pendingCheck.data.id.slice(0,8)+"). Completa esa misma solicitud desde el Historial; no crees otra.");
    await loadMyWalletDeposits().catch(refreshError=>console.warn("No se pudo actualizar el historial de depósitos:",refreshError));
    $("walletDepositsMine")?.scrollIntoView({behavior:"smooth",block:"start"});
    return;
   }
   if(button)button.textContent="Creando solicitud…";
   const created=await db.from("wallet_deposits").insert({
-   user_id:currentUser.id,amount,currency:"CUP",payment_method:"Transferencia CUP",status:"pending"
+   user_id:currentUser.id,amount,currency:walletDepositCurrency(method),payment_method:method,status:"pending"
   }).select("id").single();
   if(created.error)throw new Error(created.error.message);
   createdDepositId=created.data.id;
   if(button)button.textContent="Subiendo comprobante…";
   try{
-   await uploadWalletDepositProofs(createdDepositId,"Transferencia CUP",files,reference,senderPhone,"");
+   await uploadWalletDepositProofs(createdDepositId,method,files,reference,senderPhone,txid);
    proofSubmitted=true;
   }catch(uploadError){
-   showError("La solicitud "+createdDepositId.slice(0,8)+" ya quedó creada, pero no pudimos confirmar la subida del comprobante: "+(uploadError.message||"error de conexión")+". No crees otra solicitud. Revisa el Historial de depósitos y completa esa misma solicitud.");
+   showError("La solicitud "+createdDepositId.slice(0,8)+" ya quedó creada, pero no pudimos confirmar el comprobante: "+(uploadError.message||"error de conexión")+". No crees otra. Completa esa misma solicitud desde el Historial.");
    await loadMyWalletDeposits().catch(refreshError=>console.warn("No se pudo actualizar el historial de depósitos:",refreshError));
    return;
   }
   $("walletDepositAmount").value="";
   $("walletDepositSenderPhone").value="";
   $("walletDepositReference").value="";
+  $("walletDepositTxid").value="";
   $("walletDepositProof").value="";
   previewWalletDepositProof();
   previewWalletDeposit();
   goWalletDepositStep(1);
-  if(message)message.textContent="Solicitud "+createdDepositId.slice(0,8)+" enviada correctamente. El saldo se añadirá cuando confirmemos el pago.";
+  if(message)message.textContent="Solicitud "+createdDepositId.slice(0,8)+" enviada. Recibiremos y revisaremos tu pago; las "+moneyUSD(credited)+" Coronas se acreditarán solo después de que la aprobemos.";
   await loadMyWalletDeposits().catch(refreshError=>{
    console.warn("La solicitud fue enviada; no se pudo actualizar el historial:",refreshError);
-   if(message)message.textContent="La solicitud "+createdDepositId.slice(0,8)+" quedó enviada y pendiente de revisión. No repitas el pago. El historial no se pudo actualizar ahora.";
+   if(message)message.textContent="La solicitud "+createdDepositId.slice(0,8)+" quedó enviada y pendiente de revisión. No repitas el pago.";
   });
  }catch(error){
   if(proofSubmitted){
-   showError("La solicitud "+(createdDepositId?createdDepositId.slice(0,8):"")+
-    " ya fue enviada. No repitas el pago. Comprueba el estado en el Historial de depósitos.");
+   showError("La solicitud "+(createdDepositId?createdDepositId.slice(0,8):"")+" ya fue enviada. No repitas el pago. Comprueba el estado en el Historial.");
   }else if(createdDepositId){
-   showError("La solicitud "+createdDepositId.slice(0,8)+" quedó creada, pero no pudimos confirmar todos los pasos. No crees otra; comprueba el Historial de depósitos.");
+   showError("La solicitud "+createdDepositId.slice(0,8)+" quedó creada, pero no pudimos confirmar todos los pasos. No crees otra; comprueba el Historial.");
   }else{
-   showError("No pudimos confirmar la creación de la solicitud: "+(error.message||"error de conexión")+". Antes de repetir, revisa el Historial de depósitos por si ya se hubiera guardado.");
+   showError("No pudimos confirmar la creación de la solicitud: "+(error.message||"error de conexión")+". Antes de repetir, revisa el Historial por si ya se guardó.");
   }
  }finally{
   if(button){button.disabled=false;button.textContent="Enviar solicitud para revisión";}
