@@ -1,4 +1,4 @@
--- Devuelve Coronas solo cuando se puede demostrar que el proveedor no recibió la orden.
+-- Refunds a wallet purchase only if the provider order was never created.
 
 CREATE OR REPLACE FUNCTION public.refund_wallet_order_before_provider(p_order_id uuid, p_user_id uuid)
  RETURNS jsonb
@@ -142,8 +142,7 @@ BEGIN
     'reason',v_reason
   );
 END;
-$function$
-
+$function$;
 
 REVOKE ALL ON FUNCTION public.refund_wallet_order_before_provider(uuid,uuid) FROM PUBLIC, anon, authenticated;
 
