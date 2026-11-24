@@ -5279,6 +5279,89 @@ async function loadMyOrders(){
  }
 }
 
+
+let walletReferralSummary=null;
+async function loadWalletPromotions(){
+ if(!currentUser||!db)return;
+ const codeBox=$("walletReferralCode"),stats=$("walletReferralStats"),applyBox=$("walletReferralApplyBox"),msg=$("walletReferralMsg");
+ const result=await db.rpc("get_wallet_referral_summary");
+ if(result.error){
+  if(codeBox)codeBox.textContent="Código no disponible";
+  if(msg)msg.textContent="No pudimos cargar ahora las invitaciones. Tus Coronas siguen disponibles.";
+  return;
+ }
+ const data=result.data||{};
+ walletReferralSummary=data;
+ if(codeBox)codeBox.textContent=String(data.code||"—");
+ if(stats)stats.innerHTML='<article><small>Amigos invitados</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Coronas ganadas</small><strong>'+moneyUSD(data.earned_usd||0)+'</strong></article>';
+ const linked=Boolean(data.invite_linked);
+ if(applyBox)applyBox.classList.toggle("hidden",linked);
+ if(linked&&msg)msg.textContent="Tu cuenta ya está vinculada al código "+String(data.applied_referral_code||"")+".";
+ const incoming=new URLSearchParams(window.location.search).get("ref");
+ const input=$("walletReferralInput");
+ if(input&&incoming&&!linked&&!input.value)input.value=incoming.toUpperCase().replace(/[^A-F0-9]/g,"").slice(0,8);
+}
+function walletReferralUrl(){
+ const code=String(walletReferralSummary?.code||"").trim();
+ if(!code)return "";
+ const url=new URL(window.location.href);
+ url.search="";url.hash="";
+ url.searchParams.set("ref",code);
+ return url.toString();
+}
+async function copyWalletReferralLink(){
+ const url=walletReferralUrl(),msg=$("walletReferralMsg");
+ if(!url){if(msg)msg.textContent="Todavía no tenemos tu código de invitación.";return;}
+ try{
+  if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(url);
+  else{
+   const field=document.createElement("textarea");
+   field.value=url;field.setAttribute("readonly","");field.style.position="fixed";field.style.opacity="0";
+   document.body.appendChild(field);field.select();
+   const copied=document.execCommand("copy");field.remove();
+   if(!copied)throw new Error("copia no disponible");
+  }
+  if(msg)msg.textContent="Enlace copiado. Compártelo con tu amigo.";
+ }catch(error){if(msg)msg.textContent="No se pudo copiar automáticamente. Enlace: "+url;}
+}
+async function shareWalletReferralLink(){
+ const url=walletReferralUrl(),msg=$("walletReferralMsg");
+ if(!url){if(msg)msg.textContent="Todavía no tenemos tu código de invitación.";return;}
+ const data={title:"Tienda El Castillo",text:"Regístrate en Tienda El Castillo con mi invitación. Cuando completes tu primera compra, yo recibiré una recompensa del 5 %.",url};
+ try{
+  if(navigator.share)await navigator.share(data);
+  else await copyWalletReferralLink();
+  if(msg&&navigator.share)msg.textContent="Invitación lista para compartir.";
+ }catch(error){if(error?.name!=="AbortError"&&msg)msg.textContent="No se pudo abrir el menú para compartir. Usa «Copiar enlace».";}
+}
+async function applyWalletReferralCode(){
+ if(!currentUser||!db)return;
+ const input=$("walletReferralInput"),button=$("walletReferralApplyBtn"),msg=$("walletReferralMsg");
+ const code=String(input?.value||"").trim().toUpperCase();
+ if(!/^[A-F0-9]{8}$/.test(code)){if(msg)msg.textContent="Escribe un código válido de 8 letras o números.";input?.focus();return;}
+ if(button){button.disabled=true;button.textContent="Vinculando…";}
+ if(msg)msg.textContent="";
+ try{
+  const result=await db.rpc("apply_wallet_referral_code",{p_code:code});
+  if(result.error)throw new Error(result.error.message);
+  if(msg)msg.textContent=result.data?.message||"Invitación vinculada correctamente.";
+  await loadWalletPromotions();
+ }catch(error){if(msg)msg.textContent=error.message||"No se pudo vincular el código.";}
+ finally{if(button){button.disabled=false;button.textContent="Vincular código";}}
+}
+async function loadWalletReferralAdmin(){
+ if(currentProfile?.role!=="admin"||!db)return;
+ const list=$("walletReferralAdminList"),summary=$("walletReferralAdminSummary");
+ if(list)list.innerHTML='<p class="empty-note">Cargando invitaciones…</p>';
+ const result=await db.rpc("get_wallet_referral_admin_summary");
+ if(result.error){if(list)list.innerHTML='<p class="empty-note">El resumen administrativo todavía no está habilitado en esta base de pruebas.</p>';return;}
+ const data=result.data||{},rows=Array.isArray(data.referrals)?data.referrals:[];
+ if(summary)summary.innerHTML='<article><small>Invitaciones</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Coronas entregadas</small><strong>'+moneyUSD(data.earned_usd||0)+'</strong></article>';
+ if(!list)return;
+ if(!rows.length){list.innerHTML='<p class="empty-note">Todavía no hay invitaciones registradas.</p>';return;}
+ list.innerHTML=rows.map(row=>'<article class="wallet-admin-card"><strong>'+clean(row.inviter_name||row.inviter_email||"Cuenta invitadora")+' → '+clean(row.invited_name||row.invited_email||"Cuenta invitada")+'</strong><p class="wallet-admin-summary">Código: '+clean(row.referral_code||"—")+'<br>Vinculada: '+(row.linked_at?new Date(row.linked_at).toLocaleString("es-CU"):"—")+'<br>Primera compra: '+clean(row.order_code||"Pendiente")+'<br>Recompensa: '+(Number(row.reward_amount_usd||0)>0?moneyUSD(row.reward_amount_usd)+" Coronas":"Pendiente")+'<br>Estado: '+clean(row.reward_status||"Sin recompensa")+'</p></article>').join("");
+}
+
 async function loadWalletSettings(){
  if(!db)return;
  const result=await db.from("wallet_settings").select("cup_per_usd,usdt_network,usdt_address,updated_at").eq("id",1).maybeSingle();
