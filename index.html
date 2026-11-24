@@ -5921,7 +5921,7 @@ async function refundWalletPreflightOrder(orderId,orderCode){
  const button=document.querySelector('[data-refund-wallet-preflight][data-order-id="'+CSS.escape(orderId)+'"]');
  const accepted=window.confirm(
   "REVISAR Y ACREDITAR EN CARTERA\n\nPedido "+(orderCode||orderId)+
-  "\n\nAntes de aprobar, abre y verifica el comprobante de pago cuando sea un pago directo. La base de datos también comprobará que el débito de cartera o el pago confirmado corresponde al pedido y que Central One no creó ninguna orden.\n\nSi todo es correcto, se cancelará el pedido y se acreditará una sola vez el equivalente en USD a la cartera de Tienda El Castillo. No se permite para pedidos con resultado incierto ni para órdenes ya creadas en el proveedor.\n\n¿Confirmas la revisión y el abono?"
+  "\n\nAntes de aprobar, abre y verifica el comprobante de pago cuando sea un pago directo. La base de datos también comprobará que el débito de cartera o el pago confirmado corresponde al pedido y que Central One no creó ninguna orden.\n\nSi todo es correcto, se cancelará el pedido y se acreditará una sola vez el equivalente en Coronas al wallet de Tienda El Castillo. No se permite para pedidos con resultado incierto ni para órdenes ya creadas en el proveedor.\n\n¿Confirmas la revisión y el abono?"
  );
  if(!accepted)return;
  if(button){button.disabled=true;button.textContent="Revisando y acreditando…";}
