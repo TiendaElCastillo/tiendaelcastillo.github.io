@@ -275,7 +275,52 @@ window.addEventListener("DOMContentLoaded",function(){
 .wallet-hero h2{font-size:17px;margin:6px 0 8px;color:#fff}
 .wallet-balance{font-size:clamp(27px,6vw,39px);font-weight:950;letter-spacing:-.04em;line-height:1.1;color:#fff}
 .wallet-hero small{display:block;color:#d5e5ff;font-size:11px;margin-top:8px;max-width:390px}
-.wallet-coin{width:62px;height:62px;border-radius:20px;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);font-size:29px;z-index:1}
+.wallet-coin{width:88px;height:88px;border-radius:24px;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);z-index:1}
+
+.wallet-coin img{width:82px;height:82px;object-fit:contain;filter:drop-shadow(0 5px 10px rgba(6,21,50,.24))}
+.checkout-method-icon img{display:block;width:27px;height:27px;object-fit:contain}
+.profile-action-icon img{display:block;width:30px;height:30px;object-fit:contain}
+#bottomNav .nav-icon img{display:block;width:24px;height:24px;object-fit:contain}
+.wallet-referral-panel{display:grid;gap:13px}
+.wallet-referral-head{display:flex;gap:12px;align-items:flex-start}
+.wallet-referral-head>img{flex:0 0 48px}
+.wallet-referral-head h3{margin:0 0 5px}
+.wallet-referral-head p{margin:0;color:#5c6d85;font-size:12px;line-height:1.55}
+.wallet-referral-kicker,.home-promotions-kicker{display:block;font-size:9px;font-weight:900;letter-spacing:.13em;color:#2868cf}
+.wallet-referral-rewards{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.wallet-referral-rewards>div{padding:11px;border:1px solid #dbe7f6;border-radius:13px;background:#f3f7fd}
+.wallet-referral-rewards small{display:block;color:#667991;font-size:10px}
+.wallet-referral-rewards strong{display:block;color:#1d5db9;font-size:20px;margin-top:4px}
+.wallet-referral-code-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border:1px dashed #b5cbe8;border-radius:13px;background:#f8fbff}
+.wallet-referral-code-row small{display:block;color:#6b7c93;font-size:10px}
+.wallet-referral-code-row strong{display:block;font:800 17px ui-monospace,monospace;letter-spacing:.12em;color:#183b75;margin-top:3px}
+.wallet-referral-code-row button{width:auto;margin:0;white-space:nowrap}
+.wallet-referral-stats{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:#49627f;font-size:11px;font-weight:750}
+.wallet-referral-status{font-size:11px;color:#2767bd;line-height:1.5}
+.wallet-referral-apply{display:grid;gap:7px;padding-top:12px;border-top:1px solid #e6edf6}
+.wallet-referral-apply label{font-size:12px;font-weight:800;color:#2b3e5a}
+.wallet-referral-apply-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.wallet-referral-apply-row input{min-width:0;border:1px solid #d8e2ef;border-radius:11px;padding:10px 12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.wallet-referral-apply-row button{width:auto;margin:0;white-space:nowrap}
+.wallet-referral-apply>small{font-size:10px;line-height:1.5;color:#6d7e94}
+.home-promotions{display:grid;gap:12px;margin:20px 0}
+.home-promotions-heading{display:flex;align-items:end;justify-content:space-between;gap:12px}
+.home-promotions-heading h2{margin:3px 0 0;font-size:19px;color:#182642;letter-spacing:-.03em}
+.home-promotions-heading>span{font-size:10px;color:#718098;text-align:right}
+.home-promotions-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.home-promo-card{display:flex;align-items:flex-start;gap:12px;min-width:0;padding:14px;text-align:left;border:1px solid #dce7f5;border-radius:18px;background:linear-gradient(145deg,#fff,#f2f7ff);color:#1d3558;box-shadow:0 8px 20px rgba(16,38,74,.055);cursor:pointer}
+.home-promo-card:focus-visible{outline:3px solid rgba(39,102,216,.28);outline-offset:2px}
+.home-promo-icon{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border-radius:15px;background:#e8f1ff;overflow:hidden}
+.home-promo-icon img{max-width:100%;max-height:100%;object-fit:contain}
+.home-promo-copy{display:grid;gap:5px;min-width:0}
+.home-promo-copy small{font-size:9px;font-weight:900;letter-spacing:.08em;color:#50709b}
+.home-promo-copy strong{font-size:22px;line-height:1.1;color:#174e9d}
+.home-promo-copy>span{font-size:11px;line-height:1.45;color:#566a86}
+.home-promo-copy b{font-size:11px;color:#1d60bf}
+.home-promotions-footnote{margin:0;color:#73829a;font-size:10px;line-height:1.45}
+@media(max-width:760px){.home-promotions-grid{display:flex;gap:9px;overflow-x:auto;padding:2px 1px 8px;scroll-snap-type:x mandatory;scrollbar-width:thin}.home-promo-card{flex:0 0 min(88vw,390px);scroll-snap-align:start;min-height:120px}.home-promotions-heading h2{font-size:17px}}
+@media(max-width:390px){.home-promo-card{padding:12px;gap:10px}.home-promo-icon{flex-basis:48px;width:48px;height:48px}.home-promo-copy strong{font-size:20px}.wallet-referral-apply-row{grid-template-columns:1fr}.wallet-referral-apply-row button{width:100%}.wallet-referral-code-row{align-items:flex-start;flex-direction:column}.wallet-referral-code-row button{width:100%}}
+
 .wallet-content-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
 .wallet-panel{padding:17px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 6px 18px rgba(20,45,90,.045);min-width:0}
 .wallet-panel h3{font-size:16px;margin:0 0 5px}
@@ -303,7 +348,7 @@ window.addEventListener("DOMContentLoaded",function(){
 .wallet-rate-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:end}
 .wallet-rate-row .field{margin:8px 0}
 .wallet-rate-row button{width:auto;margin-bottom:8px;white-space:nowrap}
-@media(max-width:680px){.wallet-content-grid{grid-template-columns:1fr}.wallet-hero{padding:18px}.wallet-hero:after{width:112px;height:112px;right:46px;opacity:.10}.wallet-coin{width:52px;height:52px;border-radius:17px}.wallet-admin-actions{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.wallet-content-grid{grid-template-columns:1fr}.wallet-hero{padding:18px}.wallet-hero:after{width:112px;height:112px;right:46px;opacity:.10}.wallet-coin{width:62px;height:62px;border-radius:17px}.wallet-coin img{width:58px;height:58px}.wallet-admin-actions{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){.wallet-rate-row{grid-template-columns:1fr}.wallet-rate-row button{width:100%;margin:0}}
 
 /* Acreditación de saldo en dos pasos, compacta y adaptable a móvil */
@@ -2154,6 +2199,15 @@ body{min-width:0}
   <span class="home-intro-signature"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> Tu próxima partida empieza aquí</span>
  </div>
  <div id="homeAnnouncementBanner" class="home-announcement-banner hidden" aria-live="polite"></div>
+ <section class="home-promotions" aria-label="Promociones activas de Tienda El Castillo">
+  <div class="home-promotions-heading"><div><span class="home-promotions-kicker">BENEFICIOS DE LA TIENDA</span><h2>Promociones activas</h2></div><span>Para clientes de El Castillo</span></div>
+  <div class="home-promotions-grid">
+   <button class="home-promo-card home-promo-welcome" type="button" onclick="showView('wallet')"><span class="home-promo-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"></span><span class="home-promo-copy"><small>PRIMERA RECARGA DE CORONAS</small><strong>3 % extra</strong><span>En tu primera recarga aprobada. Bono sobre los primeros 10 USD: hasta 30 COR.</span><b>Recargar Coronas →</b></span></button>
+   <button class="home-promo-card home-promo-referral" type="button" onclick="goWalletReferralPanel()"><span class="home-promo-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"></span><span class="home-promo-copy"><small>INVITA Y GANA</small><strong>0,7 % para ti</strong><span>Por la primera recarga aprobada de tu amigo. Base máxima 10 USD: hasta 7 COR.</span><b>Compartir invitación →</b></span></button>
+   <button class="home-promo-card home-promo-freefire" type="button" onclick="chooseGame('Free Fire')"><span class="home-promo-icon"><img src="./assets/games/free-fire-tienda.webp?v=2" alt="" width="58" height="58" loading="lazy"></span><span class="home-promo-copy"><small>FREE FIRE · PAQUETES SELECCIONADOS</small><strong>10 % más diamantes</strong><span>El extra ya está incluido en los paquetes participantes. Consulta el catálogo.</span><b>Ver Free Fire →</b></span></button>
+  </div>
+  <p class="home-promotions-footnote">Los bonos de primera recarga se acreditan solo después de que el administrador confirme el depósito. Una promoción por cuenta.</p>
+ </section>
  <section class="store-delivery-card" aria-label="Total de recargas entregadas">
   <div class="store-delivery-topline">
    <span class="store-delivery-live"><i></i> HISTORIAL REAL DE ENTREGAS</span>
@@ -2303,7 +2357,7 @@ body{min-width:0}
  <div class="panel">
   <div class="section-head"><div><h2>Accesos rápidos</h2><p>Entra directamente a lo que necesitas.</p></div></div>
   <div class="profile-action-grid">
-   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><svg class="wallet-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 6.5h13.5A2.5 2.5 0 0 1 21 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h12"/><path d="M3 8h14.5A2.5 2.5 0 0 1 20 10.5V12h-4.2a2.3 2.3 0 0 0 0 4.6H21"/><circle cx="16" cy="14.8" r=".65" fill="currentColor" stroke="none"/></svg></span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Saldo: 0,00 USD</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="30" height="30" loading="lazy"></span><strong>Coronas del Castillo</strong><small id="profileWalletQuickBalance">Saldo: 0,00 COR</small></button>
    <button class="profile-action-card" type="button" onclick="showView('orders')"><span class="profile-action-icon">▤</span><strong>Mis pedidos</strong><small>Consulta entregas y estados</small></button>
    <button class="profile-action-card" type="button" onclick="showView('notifications')"><span class="profile-action-icon"><svg class="messages-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.25 11.25a7.25 7.25 0 0 1-7.25 7.25H7l-3.25 2V11.25A7.25 7.25 0 0 1 11 4h2a7.25 7.25 0 0 1 7.25 7.25Z"/><path d="M8.5 10h7M8.5 13.75h4.75"/></svg></span><strong>Mensajes y avisos</strong><small id="profileUnreadNotifications">Revisa las novedades de tu cuenta</small></button>
    <button class="profile-action-card" type="button" onclick="showView('help')"><span class="profile-action-icon">?</span><strong>Centro de ayuda</strong><small>Guías, pagos, pedidos y soporte</small></button>
@@ -2346,24 +2400,26 @@ body{min-width:0}
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
    <img class="wallet-watermark" src="./assets/el-castillo-icon.webp" alt="" aria-hidden="true" width="180" height="180" loading="lazy" decoding="async">
-   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando saldo…</div><small>Este es tu saldo para pagar paquetes. Los reembolsos de pedidos fallidos que correspondan también se acreditarán aquí.</small></div>
-   <div class="wallet-coin wallet-coin-art" aria-hidden="true">
-    <svg viewBox="0 0 180 150" role="img" focusable="false">
-     <defs><linearGradient id="walletShell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dceaff"/></linearGradient><linearGradient id="walletCard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#75b4ff"/><stop offset="1" stop-color="#2868df"/></linearGradient></defs>
-     <path d="M30 45 118 20q9-3 13 6l18 65-94 26q-9 2-12-7L24 57q-3-9 6-12Z" fill="url(#walletCard)" opacity=".95"/>
-     <path d="M34 54 127 29q8-2 10 6l16 66q2 8-7 11l-88 24q-9 2-11-7L28 64q-2-8 6-10Z" fill="url(#walletShell)" stroke="#fff" stroke-width="3"/>
-     <path d="m38 65 98-26 9 34-98 26Z" fill="#edf5ff"/>
-     <path d="m44 83 93-25 11 40-93 25q-7 2-9-6Z" fill="#245fca"/>
-     <rect x="83" y="83" width="44" height="22" rx="7" fill="#fff" opacity=".96"/>
-     <circle cx="96" cy="94" r="4" fill="#347df0"/><path d="m104 94 14-4" stroke="#347df0" stroke-width="3" stroke-linecap="round"/>
-     <path d="m52 44 49-13" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
-    </svg>
-   </div>
+   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/coronas-del-castillo.svg" alt=""> MONEDA INTERNA DE LA TIENDA</span><h2 id="walletTitle">Cartera del Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Usa tus Coronas para pagar recargas. 100 COR equivalen a 1 USD de saldo interno. No son criptomonedas, no se retiran ni se transfieren a otras cuentas.</small></div>
+   <div class="wallet-coin wallet-coin-art" aria-hidden="true"><img src="./assets/coronas-del-castillo.svg" alt="" width="86" height="86" decoding="async"></div>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
-   <h3 id="walletInformationTitle">Tu saldo de tienda</h3>
-   <p>Usa tu wallet para pagar paquetes dentro de Tienda El Castillo. Si un pedido pagado no se puede completar y corresponde una devolución, el reembolso se acreditará aquí.</p>
-   <p>Para añadir saldo, realiza una transferencia CUP y envía el comprobante. El dinero estará disponible cuando confirmemos el pago.</p>
+   <h3 id="walletInformationTitle">Tu moneda: Coronas del Castillo (COR)</h3>
+   <p>Las Coronas son el saldo interno de Tienda El Castillo. 100 COR = 1 USD de saldo. Puedes usarlas para pagar recargas y recibir aquí las devoluciones que correspondan.</p>
+   <p>No son una criptomoneda, no se pueden retirar en efectivo ni enviar a otras cuentas. Para conseguir más Coronas, realiza una transferencia CUP y espera la aprobación de tu depósito.</p>
+  </section>
+  <section id="walletReferralPanel" class="wallet-panel wallet-referral-panel" aria-labelledby="walletReferralTitle">
+   <div class="wallet-referral-head"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"><div><span class="wallet-referral-kicker">INVITA Y GANA</span><h3 id="walletReferralTitle">Comparte Coronas del Castillo</h3><p>Tu amigo recibe un 3 % extra en su primera recarga aprobada (base máxima 10 USD). Tú ganas un 0,7 % de esa primera recarga, también sobre un máximo de 10 USD.</p></div></div>
+   <div class="wallet-referral-rewards"><div><small>Tu recompensa máxima</small><strong>7 COR</strong></div><div><small>Bono de bienvenida máximo</small><strong>30 COR</strong></div></div>
+   <div class="wallet-referral-code-row"><div><small>Tu código de invitación</small><strong id="walletReferralCodeValue">Cargando…</strong></div><button class="secondary-btn" type="button" onclick="shareWalletReferral()">Compartir enlace</button></div>
+   <div class="wallet-referral-stats"><span id="walletReferralCount">0 amigos invitados</span><span id="walletReferralEarned">0,00 COR ganadas</span></div>
+   <div id="walletReferralInviteStatus" class="wallet-referral-status" role="status" aria-live="polite"></div>
+   <div id="walletReferralApplyBox" class="wallet-referral-apply">
+    <label for="walletReferralCodeInput">¿Tienes un código de un amigo?</label>
+    <div class="wallet-referral-apply-row"><input id="walletReferralCodeInput" type="text" maxlength="8" autocomplete="off" placeholder="Ej. A1B2C3D4"><button class="secondary-btn" type="button" onclick="applyWalletReferralCode()">Aplicar código</button></div>
+    <small>Debes vincularlo durante los primeros 7 días de tu cuenta y antes de solicitar tu primer depósito de saldo.</small>
+   </div>
+   <p id="walletReferralMsg" class="msg" role="status" aria-live="polite"></p>
   </section>
   <div class="wallet-content-grid">
    <section class="wallet-panel wallet-deposit-wizard">
@@ -2400,14 +2456,14 @@ body{min-width:0}
     <p id="walletDepositMsg" class="msg" role="status" aria-live="polite"></p>
    </section>
    <section class="wallet-panel">
-    <h3>Movimientos de tu wallet</h3>
+    <h3>Movimientos de tus Coronas</h3>
     <p>Consulta tus compras, depósitos y reembolsos, con sus fechas e importes.</p>
     <div id="walletTransactions"><p class="empty-note">Cargando movimientos…</p></div>
    </section>
   </div>
   <section class="wallet-panel">
-   <h3>Historial de depósitos</h3>
-   <p>Consulta el estado de tus depósitos y el importe que se añadió a tu saldo.</p>
+   <h3>Historial de recargas de Coronas</h3>
+   <p>Consulta el estado de tus depósitos, los bonos recibidos y el saldo añadido.</p>
    <div id="walletDepositsMine"><p class="empty-note">Cargando depósitos…</p></div>
   </section>
  </div>
@@ -2667,7 +2723,7 @@ body{min-width:0}
 <footer class="site-footer"><div class="footer-brand"><img src="./assets/el-castillo-icon.webp" alt="" width="42" height="42"><div><strong>Tienda El Castillo</strong><span>Más que una tienda · Productos, servicios y soluciones</span></div></div><p class="footer-warm-signature"><span><img src="./assets/el-castillo-icon.webp" alt="" width="25" height="25"></span> Gracias por elegirnos. En El Castillo, tu confianza importa.</p><div class="footer-columns"><div><strong>Tu compra</strong><a href="#catalogo" onclick="showView('games');return false">Catálogo de juegos</a><span>Transferencia CUP, saldo móvil y USDT</span><a href="#pedidos" onclick="currentUser?showView('orders'):openAccount();return false">Seguimiento de pedidos</a></div><div><strong>Ayuda e información</strong><a <a href="#guias" onclick="showView('guides');return false">Guías paso a paso</a><a href="#ayuda" onclick="showView('faq');return false">Preguntas frecuentes</a><a href="#soporte" onclick="showView('support');return false">Centro de soporte</a><a href="#legal" onclick="showView('legal');return false">Información legal</a><a href="#privacidad" onclick="showView('privacy');return false">Política de privacidad</a></div></div><p class="footer-legal">Tienda El Castillo es un servicio independiente. No está afiliada ni respaldada por Garena. Las marcas y juegos pertenecen a sus respectivos propietarios.</p></footer>
 </section>
 </main>
-<nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="wallet" onclick="showView('wallet')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 14h2"/></svg></span>Wallet</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
+<nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="wallet" onclick="showView('wallet')"><span class="nav-icon" aria-hidden="true"><img src="./assets/coronas-del-castillo.svg" alt="" width="25" height="25" loading="lazy"></span>Coronas</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
 <script src="./assets/customer-orders-view.js?v=1"></script>
 <script>
 window.onCastleCaptchaSuccess=function(token){window.castleCaptchaToken=token;const m=document.getElementById("authmsg");if(m&&m.textContent.includes("CAPTCHA"))m.textContent="";};
@@ -3117,7 +3173,7 @@ const gamePaymentCatalog=[
  {name:"Transferencia CUP",short:"Transferencia",icon:"🏦",unit:"CUP"},
  {name:"Saldo móvil",short:"Saldo móvil",icon:"📱",unit:"saldo móvil"},
  {name:"USDT",short:"USDT",icon:"₮",unit:"USDT"},
- {name:"Saldo de Tienda El Castillo",short:"Saldo de tienda",icon:"💳",unit:"USD"}
+ {name:"Saldo de Tienda El Castillo",short:"Coronas del Castillo",icon:"coronas",unit:"COR"}
 ];
 function gameFor(name){return gameCatalog.find(item=>fold(item.name)===fold(name))||gameCatalog.find(item=>(item.match||[]).some(word=>fold(name).includes(fold(word))||fold(word).includes(fold(name))))}
 function isLevelUpPackage(p){return /paquete\s+de\s+(?:mejora|subida)\s+de\s+nivel|level\s*up/i.test(fold(String(p.name||"")));}
@@ -3976,7 +4032,8 @@ function renderCheckoutPaymentMethods(){
  const box=$("checkoutPaymentMethods"),method=String(checkoutLockedPaymentMethod||"");if(!box)return;
  if(!method){box.innerHTML='<p class="empty-note">Selecciona la forma de pago en el catálogo antes de continuar.</p>';return;}
  const item=gamePaymentCatalog.find(entry=>entry.name===method);
- box.innerHTML='<div class="checkout-method-choice active checkout-method-locked" role="status" aria-label="Forma de pago elegida y bloqueada"><span class="checkout-method-icon">'+clean(item?.icon||"✓")+'</span><span><strong>'+clean(item?.short||method)+'</strong><small>Elegida antes de abrir el formulario</small></span><span class="checkout-method-lock" aria-hidden="true">🔒</span></div>';
+ const iconHtml=item?.icon==="coronas"?'<img src="./assets/coronas-del-castillo.svg" alt="" width="28" height="28">':clean(item?.icon||"✓");
+ box.innerHTML='<div class="checkout-method-choice active checkout-method-locked" role="status" aria-label="Forma de pago elegida y bloqueada"><span class="checkout-method-icon">'+iconHtml+'</span><span><strong>'+clean(item?.short||method)+'</strong><small>Tu saldo interno para pagar recargas</small></span><span class="checkout-method-lock" aria-hidden="true">🔒</span></div>';
 }
 function chooseCheckoutPaymentMethod(name){
  return String(name||"")===String(checkoutLockedPaymentMethod||"");
