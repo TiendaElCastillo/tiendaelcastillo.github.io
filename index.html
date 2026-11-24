@@ -5447,29 +5447,16 @@ async function loadWalletReferralAdmin(){
 
 async function loadWalletSettings(){
  if(!db)return;
- const result=await db.from("wallet_settings").select("cup_per_usd,usdt_network,usdt_address,updated_at").eq("id",1).maybeSingle();
- if(result.error)throw new Error(result.error.message);
- if(!result.data)throw new Error("No encontramos la configuración de Coronas en Supabase.");
- const nextSettings={...result.data,mobile_credit_units:360,mobile_cost_cup:1200};
- // Production stores the mobile conversion in pricing_settings; the isolated
- // test project stores it on wallet_settings. Support both without querying
- // columns that do not exist in one of the environments.
- try{
-  const pricing=await db.from("pricing_settings").select("mobile_credit_units,mobile_cost_cup").eq("id",1).maybeSingle();
-  if(!pricing.error&&pricing.data){
-   nextSettings.mobile_credit_units=Number(pricing.data.mobile_credit_units||360);
-   nextSettings.mobile_cost_cup=Number(pricing.data.mobile_cost_cup||1200);
-  }else{
-   const fallback=await db.from("wallet_settings").select("mobile_credit_units,mobile_cost_cup").eq("id",1).maybeSingle();
-   if(!fallback.error&&fallback.data){
-    nextSettings.mobile_credit_units=Number(fallback.data.mobile_credit_units||360);
-    nextSettings.mobile_cost_cup=Number(fallback.data.mobile_cost_cup||1200);
-   }
-  }
- }catch(settingsCompatibilityError){
-  console.warn("No se pudo leer la conversión móvil; se mantienen los valores de referencia:",settingsCompatibilityError);
- }
- walletSettings=nextSettings;
+ const result=await db.rpc("get_wallet_deposit_settings");
+ if(result.error)throw new Error("No se pudo cargar la configuración segura de recargas: "+result.error.message);
+ if(!result.data||typeof result.data!=="object")throw new Error("No encontramos la configuración de Coronas en Supabase.");
+ walletSettings={
+  cup_per_usd:Number(result.data.cup_per_usd||0),
+  usdt_network:String(result.data.usdt_network||""),
+  usdt_address:String(result.data.usdt_address||""),
+  mobile_credit_units:Number(result.data.mobile_credit_units||360),
+  mobile_cost_cup:Number(result.data.mobile_cost_cup||1200)
+ };
  if(currentProfile?.role==="admin"){
   if($("walletCupRate"))$("walletCupRate").value=walletSettings.cup_per_usd;
   if($("walletMobileCreditUnits"))$("walletMobileCreditUnits").value=walletSettings.mobile_credit_units;
