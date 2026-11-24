@@ -8,6 +8,9 @@ const root = path.join(__dirname, "..");
 const offlineGuardSource = fs.readFileSync(path.join(root, "assets/offline-guard.js"), "utf8");
 const adminPanelSource = fs.readFileSync(path.join(root, "assets/admin-panel.js"), "utf8");
 const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const paymentGuideHtml = fs.readFileSync(path.join(root, "como-pagar-recargas-juegos-cuba.html"), "utf8");
+const storefrontPolishSource = fs.readFileSync(path.join(root, "assets/storefront-polish.css"), "utf8");
+const coronasPromoCssSource = fs.readFileSync(path.join(root, "assets/coronas-promotions.css"), "utf8");
 const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 const checkoutReliabilitySource = fs.readFileSync(path.join(root, "assets/checkout-reliability.js"), "utf8");
 const checkoutGuardMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123170000_harden_checkout_proof_transition.sql"), "utf8");
@@ -226,7 +229,8 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=23"));
-  assert.ok(serviceWorker.includes('shell-v182'));
+  assert.ok(serviceWorker.includes('shell-v183'));
+  assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=2'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=23"));
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
@@ -730,4 +734,119 @@ test("la tasa inicial de Coronas coincide con la configuración productiva actua
   assert.match(indexHtml, /walletCupRate[^>]+value="1230"/);
   assert.match(indexHtml, /pricingUsdtRate[^>]+value="1230"/);
   assert.doesNotMatch(indexHtml, /1\.160 CUP por Corona|1160 CUP, equivalente a 1 Corona/);
+});
+
+
+function extractNamedFunction(source, name) {
+  const start = source.indexOf("function " + name + "(");
+  assert.notEqual(start, -1, "No se encontró la función " + name);
+  const open = source.indexOf("{", start);
+  let depth = 0;
+  let quote = "";
+  let escaped = false;
+  for (let i = open; i < source.length; i++) {
+    const char = source[i];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === quote) quote = "";
+      continue;
+    }
+    if (char === "'" || char === '"' || char === "`") {
+      quote = char;
+      continue;
+    }
+    if (char === "{") depth++;
+    else if (char === "}") {
+      depth--;
+      if (depth === 0) return source.slice(start, i + 1);
+    }
+  }
+  throw new Error("La función " + name + " no tiene un cierre válido.");
+}
+
+test("cambiar entre CUP, saldo móvil y USDT conserva el método elegido y adapta ambos pasos", () => {
+  const source = extractNamedFunction(indexHtml, "updateWalletDepositMethod");
+  const cases = [
+    ["Transferencia CUP", "Cantidad exacta que transferirás (CUP)", "1. ¿Cuánto vas a transferir?"],
+    ["Saldo móvil", "Unidades de saldo móvil que enviarás", "1. ¿Cuánto saldo móvil enviarás?"],
+    ["USDT", "Cantidad de USDT que enviarás", "1. ¿Cuánto USDT enviarás?"]
+  ];
+
+  for (const [method, expectedLabel, expectedTitle] of cases) {
+    const label = () => ({ textContent: "", value: "" });
+    const elements = {
+      walletDepositMethod: { value: method, innerHTML: "", disabled: false },
+      walletDepositAmount: { value: "22", type: "number", inputMode: "", min: "1", step: "1", placeholder: "" },
+      walletDepositAmountLabel: label(),
+      walletDepositAmountHint: label(),
+      walletDepositMethodHint: label(),
+      walletDepositStep1Title: label(),
+      walletDepositStep1Help: label(),
+      walletDepositStep2Title: label(),
+      walletDepositStep2Help: label(),
+      walletDepositFormIntroTitle: label(),
+      walletDepositFormIntroHelp: label(),
+      walletDepositSenderPhoneWrap: {
+        classList: { states: {}, toggle(name, value) { this.states[name] = value; } },
+        querySelector() { return phoneLabel; }
+      },
+      walletDepositReferenceWrap: { classList: { states: {}, toggle(name, value) { this.states[name] = value; } } },
+      walletDepositTxidWrap: { classList: { states: {}, toggle(name, value) { this.states[name] = value; } } },
+      walletDepositProofHelp: { replaceChildren(node) { this.textContent = node.textContent; } },
+      walletDepositReferenceLabel: label(),
+      walletDepositSubmit: { disabled: false },
+      walletDepositProof: { value: "proof" },
+      walletDepositSenderPhone: { value: "55886764" },
+      walletDepositReference: { value: "ABC123" },
+      walletDepositTxid: { value: "0xabc" }
+    };
+    const phoneLabel = label();
+    const sandbox = {
+      $: id => elements[id] || null,
+      clean: value => String(value ?? ""),
+      money: value => String(value),
+      walletDepositMethodPrevious: "Transferencia CUP",
+      walletDepositAvailableMethods: () => ["Transferencia CUP", "Saldo móvil", "USDT"],
+      walletSettings: { cup_per_usd: 1230 },
+      walletMobileUnitsPerCorona: () => 369,
+      previewWalletDepositProof() {},
+      updateWalletDepositInstructions() {},
+      previewWalletDeposit() {},
+      document: { createTextNode: textContent => ({ textContent }) }
+    };
+    vm.runInNewContext(source, sandbox);
+    sandbox.updateWalletDepositMethod(true);
+
+    assert.equal(elements.walletDepositMethod.value, method, method + " debe mantenerse seleccionado");
+    assert.equal(elements.walletDepositAmountLabel.textContent, expectedLabel);
+    assert.equal(elements.walletDepositStep1Title.textContent, expectedTitle);
+    assert.match(elements.walletDepositStep2Title.textContent, new RegExp(method === "Saldo móvil" ? "saldo móvil" : method));
+    assert.equal(elements.walletDepositFormIntroHelp.textContent.includes("bancaria"), method === "Transferencia CUP");
+  }
+});
+
+test("el panel de Coronas usa un icono propio y no superpone la marca de agua", () => {
+  assert.match(indexHtml, /assets\/corona-coin\.svg/);
+  assert.doesNotMatch(indexHtml, /class="wallet-watermark"/);
+  assert.match(storefrontPolishSource, /\.wallet-hero:after,\.wallet-watermark\{display:none!important/);
+  assert.match(storefrontPolishSource, /\.wallet-coin-art img/);
+  assert.match(indexHtml, /Cada Corona equivale a 1 USD para calcular tus compras dentro de la tienda/);
+  assert.doesNotMatch(indexHtml, /1:1: 1 Corona = 1 USD/);
+});
+
+test("las tres promociones usan arte propio de la tienda y el carrusel evita fondos morados dominantes", () => {
+  assert.match(indexHtml, /promo-first-coronas\.svg/);
+  assert.match(indexHtml, /promo-invite-coronas\.svg/);
+  assert.match(indexHtml, /promo-shop-coronas\.svg/);
+  assert.match(coronasPromoCssSource, /#10284f/);
+  assert.match(coronasPromoCssSource, /#2868c7/);
+  assert.doesNotMatch(coronasPromoCssSource, /#4c1b83|#762ca5|#a34bce/);
+});
+
+test("la guía de pagos explica Coronas y ya no muestra el nombre anterior del saldo", () => {
+  assert.match(paymentGuideHtml, /<h3>Coronas<\/h3>/);
+  assert.match(paymentGuideHtml, /Cartera tenga saldo suficiente/);
+  assert.doesNotMatch(paymentGuideHtml, /Saldo de Tienda El Castillo|saldo interno de Tienda El Castillo/);
+  assert.match(paymentGuideHtml, /\"dateModified\":\"2026-11-24\"/);
 });

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 280" role="img" aria-labelledby="t d">
+<title id="t">Compra paquetes con Coronas</title><desc id="d">Un teléfono con tarjetas de juegos, un mando y una moneda Corona.</desc>
+<defs>
+ <linearGradient id="phone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#244f88"/><stop offset="1" stop-color="#10284f"/></linearGradient>
+ <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#78bcff"/><stop offset="1" stop-color="#2c6fc5"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3c7"/><stop offset=".55" stop-color="#edc05b"/><stop offset="1" stop-color="#b57a28"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="6"/><feOffset dy="8"/><feComponentTransfer><feFuncA type="linear" slope=".2"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<ellipse cx="177" cy="242" rx="116" ry="15" fill="#1b416b" opacity=".12"/>
+<g filter="url(#shadow)">
+ <g transform="rotate(-7 154 130)">
+  <rect x="93" y="32" width="122" height="192" rx="22" fill="url(#phone)" stroke="#fff" stroke-width="5"/>
+  <rect x="104" y="49" width="100" height="156" rx="12" fill="#eef5ff"/>
+  <rect x="139" y="39" width="32" height="4" rx="2" fill="#a9c6e9"/>
+  <rect x="116" y="65" width="76" height="34" rx="8" fill="url(#blue)"/>
+  <path d="m126 89 10-12 8 7 9-11 17 16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="116" y="108" width="35" height="38" rx="7" fill="#d5e7fb"/>
+  <rect x="157" y="108" width="35" height="38" rx="7" fill="#dce9f8"/>
+  <circle cx="133" cy="127" r="9" fill="#2c6fc5"/>
+  <path d="m169 119 9 0 0 17-9 0Z" fill="#e5b34c"/><path d="m165 126 4-7 4 7 4-7 4 7" fill="none" stroke="#fff" stroke-width="2.5"/>
+  <rect x="116" y="155" width="76" height="34" rx="8" fill="#fff" stroke="#d6e2f1"/>
+  <path d="m126 172 8 7 9-11 8 8 9-12 13 12" fill="none" stroke="#3c80cb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+ </g>
+ <g transform="translate(226 184) rotate(9)">
+  <path d="M-46-3Q-43-26-25-24L25-24Q43-26 46-3L53 20Q55 35 41 36Q31 36 20 20H-20Q-31 36-41 36Q-55 35-53 20Z" fill="url(#blue)" stroke="#fff" stroke-width="4"/>
+  <path d="M-26 -3h18M-17 -12v18" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="24" cy="-5" r="4" fill="#ffe6a1"/><circle cx="34" cy="6" r="4" fill="#ffe6a1"/>
+ </g>
+ <g transform="translate(259 75)">
+  <circle r="36" fill="url(#gold)" stroke="#fff4cf" stroke-width="4"/>
+  <circle r="28" fill="#174b91" stroke="#e7c274" stroke-width="2"/>
+  <path d="m-17 -7 8 6 7-14 9 14 8-13 6 7-4 19h-30Z" fill="#fff0b6"/>
+ </g>
+ <circle cx="290" cy="145" r="18" fill="#e5f7ed" stroke="#fff" stroke-width="3"/>
+ <path d="m282 145 6 6 11-13" fill="none" stroke="#2c9a69" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

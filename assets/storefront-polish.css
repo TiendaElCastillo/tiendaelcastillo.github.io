@@ -1993,3 +1993,44 @@ button:active:not(:disabled){
   opacity:.42!important;
  }
 }
+
+
+/* Ajustes de Coronas: sin marcas de agua superpuestas y con contraste limpio. */
+.wallet-hero{
+ background:radial-gradient(circle at 88% 25%,rgba(125,182,255,.2),transparent 32%),
+ linear-gradient(125deg,#10284f 0%,#174b91 58%,#2868c7 100%)!important;
+}
+.wallet-hero:after,.wallet-watermark{display:none!important;content:none!important}
+.wallet-hero:before{
+ width:190px!important;height:190px!important;right:-54px!important;top:50%!important;bottom:auto!important;
+ transform:translateY(-50%)!important;border:1px solid rgba(255,255,255,.13)!important;
+ border-radius:50%!important;box-shadow:0 0 0 18px rgba(255,255,255,.035),0 0 0 40px rgba(255,255,255,.025)!important;
+ pointer-events:none;
+}
+.wallet-hero>div:first-of-type,.wallet-hero .wallet-coin{position:relative!important;z-index:2!important}
+.wallet-kicker{color:#dceaff!important}
+.wallet-hero small{color:#e4efff!important;line-height:1.55!important}
+.wallet-coin-art{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ transform:none!important;overflow:visible!important;
+}
+.wallet-coin-art img{display:block;width:100%;height:100%;padding:0;object-fit:contain;filter:drop-shadow(0 9px 14px rgba(3,20,48,.28))}
+.wallet-preview{border-color:#d7e5f5!important;background:linear-gradient(130deg,#f8fbff,#edf4fd)!important}
+.wallet-preview strong{color:#215b9c!important}
+.wallet-preview small{color:#5e718b!important}
+.wallet-instructions{border-color:#dce7f3!important;background:#f7faff!important;color:#405873!important}
+.wallet-status{background:#edf4ff!important;color:#285e9c!important}
+.wallet-proof-links a{color:#285e9c!important;background:#edf4ff!important}
+.coronas-promo-card{border-color:#dce6f2!important;background:linear-gradient(135deg,#fff,#f5f8fc)!important}
+.coronas-promo-tag{background:#eaf2fc!important;color:#275b97!important}
+.coronas-promo-card strong{color:#1e4779!important}
+.coronas-promo-card p{color:#617188!important}
+.coronas-referral-panel{border-color:#dce6f2!important;background:linear-gradient(145deg,#fff,#f7faff)!important}
+.coronas-referral-code{border-color:#a9c5e8!important;background:#f5f9ff!important;color:#214f87!important}
+.coronas-referral-stats article{border-color:#e0e9f3!important;background:#fbfdff!important}
+.coronas-referral-stats strong{color:#24588f!important}
+.coronas-referral-note{color:#667990!important}
+@media(max-width:680px){
+ .wallet-hero:before{right:-80px!important;width:170px!important;height:170px!important}
+ .wallet-coin-art{width:82px!important;height:82px!important;border-radius:0!important}
+}

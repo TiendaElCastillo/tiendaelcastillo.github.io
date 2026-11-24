@@ -1840,8 +1840,8 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=23">
-<link rel="stylesheet" href="./assets/coronas-promotions.css?v=1">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=24">
+<link rel="stylesheet" href="./assets/coronas-promotions.css?v=2">
 <script src="./assets/posthog.js?v=3" defer></script>
 
 <!-- Google Analytics 4: medición básica de visitas de la tienda -->
@@ -2173,15 +2173,15 @@ body{min-width:0}
  <section id="coronasPromoCarousel" class="coronas-promo-carousel" aria-label="Promociones de Tienda El Castillo">
   <div class="coronas-promo-slides">
    <article class="coronas-promo-slide coronas-promo-slide--first is-active" data-coronas-slide="0" aria-hidden="false">
-    <div class="coronas-promo-art" aria-hidden="true"><img src="./assets/el-castillo-logo.webp" alt="" width="96" height="96" loading="eager" decoding="async"><span class="coronas-promo-art-tag">3 %</span></div>
+    <div class="coronas-promo-art" aria-hidden="true"><img src="./assets/promo-first-coronas.svg" alt="" width="180" height="140" loading="eager" decoding="async"><span class="coronas-promo-art-tag">3 %</span></div>
     <div class="coronas-promo-copy"><span class="coronas-promo-kicker">PRIMERA RECARGA DE CORONAS</span><h2>Recarga Coronas y recibe un 3 % extra</h2><p>En tu primera recarga aprobada recibes un 3 % adicional, sin límite de importe. CUP, USDT o saldo móvil.</p><button class="coronas-promo-cta" type="button" onclick="showView('wallet')">Recargar Coronas <span aria-hidden="true">›</span></button></div>
    </article>
    <article class="coronas-promo-slide coronas-promo-slide--invite" data-coronas-slide="1" aria-hidden="true">
-    <div class="coronas-promo-art" aria-hidden="true"><img src="./assets/diamond-chest.svg" alt="" width="118" height="118" loading="lazy" decoding="async"><span class="coronas-promo-art-tag">5 %</span></div>
+    <div class="coronas-promo-art" aria-hidden="true"><img src="./assets/promo-invite-coronas.svg" alt="" width="180" height="140" loading="lazy" decoding="async"><span class="coronas-promo-art-tag">5 %</span></div>
     <div class="coronas-promo-copy"><span class="coronas-promo-kicker">INVITA Y GANA CORONAS</span><h2>Comparte tu enlace y gana un 5 %</h2><p>Recibe el 5 % de la primera compra de cada amigo cuando su pedido se complete correctamente.</p><button class="coronas-promo-cta" type="button" onclick="showView('wallet')">Ver mi invitación <span aria-hidden="true">›</span></button></div>
    </article>
    <article class="coronas-promo-slide coronas-promo-slide--auto" data-coronas-slide="2" aria-hidden="true">
-    <div class="coronas-promo-art" aria-hidden="true"><img src="./assets/diamond-pile.svg" alt="" width="118" height="118" loading="lazy" decoding="async"><span class="coronas-promo-art-tag">AUTO</span></div>
+    <div class="coronas-promo-art" aria-hidden="true"><img src="./assets/promo-shop-coronas.svg" alt="" width="180" height="140" loading="lazy" decoding="async"><span class="coronas-promo-art-tag">AUTO</span></div>
     <div class="coronas-promo-copy"><span class="coronas-promo-kicker">PAGA CON CORONAS</span><h2>Compra tus paquetes sin esperar aprobación manual</h2><p>Elige el paquete, verifica tu cuenta y confirma la compra. El pedido se envía automáticamente para su recarga.</p><button class="coronas-promo-cta" type="button" onclick="showView('games')">Ver juegos y paquetes <span aria-hidden="true">›</span></button></div>
    </article>
   </div>
@@ -2390,21 +2390,9 @@ body{min-width:0}
 <section id="walletView" class="store-view hidden">
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
-   <img class="wallet-watermark" src="./assets/el-castillo-logo.webp" alt="" aria-hidden="true" width="180" height="180" loading="lazy" decoding="async">
-   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/el-castillo-logo.webp" alt=""> MONEDA INTERNA</span><h2 id="walletTitle">Coronas</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Las Coronas son el saldo de Tienda El Castillo y se acreditan 1:1: 1 Corona = 1 USD.</small></div>
+   <div><span class="wallet-kicker">MONEDA DE LA TIENDA</span><h2 id="walletTitle">Coronas</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Cada Corona equivale a 1 USD para calcular tus compras dentro de la tienda. No es efectivo ni se puede retirar.</small></div>
    <div class="wallet-coin wallet-coin-art coronas-coin-mark" aria-hidden="true">
-    <svg viewBox="0 0 120 120" role="img" focusable="false">
-     <defs>
-      <linearGradient id="coronasCoinFace" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8d9ff"/><stop offset=".48" stop-color="#c45be0"/><stop offset="1" stop-color="#70218f"/></linearGradient>
-      <linearGradient id="coronasCoinEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#e8b9f7"/></linearGradient>
-     </defs>
-     <circle cx="60" cy="60" r="51" fill="url(#coronasCoinEdge)" opacity=".95"/>
-     <circle cx="60" cy="57" r="45" fill="url(#coronasCoinFace)" stroke="#fff" stroke-width="3"/>
-     <circle cx="60" cy="57" r="37" fill="none" stroke="#fff" stroke-width="1.5" opacity=".65"/>
-     <path d="m31 48 12 9 9-20 9 18 13-21 6 20 11-8-5 28H36Z" fill="#fff"/>
-     <path d="M42 81h36" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-     <path d="M47 88h26" stroke="#f2c9ff" stroke-width="3" stroke-linecap="round"/>
-    </svg>
+    <img src="./assets/corona-coin.svg" alt="" width="180" height="180" decoding="async">
    </div>
   </section>
   <section class="wallet-panel coronas-promotions" aria-labelledby="coronasPromotionsTitle">
@@ -2438,16 +2426,16 @@ body{min-width:0}
      <li data-step="2"><b>2</b><span>Pagar y enviar datos</span></li>
     </ol>
     <div id="walletDepositStep1" class="wallet-deposit-stage">
-     <div class="checkout-stage-title"><strong>1. ¿Cuánto vas a transferir?</strong><small>Indica la cantidad que vas a transferir en CUP. Podrás revisar el importe antes de enviarnos la solicitud.</small></div>
+     <div class="checkout-stage-title"><strong id="walletDepositStep1Title">1. ¿Cuánto vas a transferir?</strong><small id="walletDepositStep1Help">Indica el importe exacto que enviarás. La unidad y el mínimo cambian según el método seleccionado.</small></div>
      <div class="field"><label for="walletDepositMethod">Método para recargar Coronas</label><select id="walletDepositMethod" onchange="updateWalletDepositMethod(true)"><option value="">Comprobando métodos disponibles…</option></select><small id="walletDepositMethodHint" class="wallet-field-hint">El saldo no se acredita automáticamente: la tienda revisará y aprobará cada recarga.</small></div>
      <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad que vas a transferir (CUP)</label><input id="walletDepositAmount" type="number" inputmode="decimal" min="1" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1230 CUP, equivalente a 1 Corona.</small></div>
      <div id="walletDepositPreview" class="wallet-preview"><small>Coronas base estimadas antes del posible bono</small><strong>0,00 Coronas</strong><small>Si esta es tu primera recarga aprobada, recibirás un 3 % adicional sin límite de importe. Las Coronas solo se acreditan después de la revisión y aprobación del administrador.</small></div>
      <div class="checkout-stage-actions"><span></span><button class="primary-btn" type="button" onclick="goWalletDepositStep(2)">Continuar →</button></div>
     </div>
     <div id="walletDepositStep2" class="wallet-deposit-stage hidden">
-     <div class="checkout-stage-title"><strong>2. Realiza el pago y completa el formulario</strong><small>Primero transfiere el importe exacto. Después, rellena los datos de la operación y adjunta el mensaje de confirmación del banco.</small></div>
+     <div class="checkout-stage-title"><strong id="walletDepositStep2Title">2. Realiza el pago y completa el formulario</strong><small id="walletDepositStep2Help">Revisa las instrucciones del método elegido, envía el importe exacto y después completa los datos solicitados.</small></div>
      <div id="walletDepositInstructions" class="wallet-instructions">Cargando las instrucciones de pago…</div>
-     <div class="wallet-deposit-form-intro"><strong>Cuando hayas realizado la transferencia</strong><small>Completa estos datos tal como aparecen en la confirmación de tu banco. El saldo se añadirá después de que revisemos el pago.</small></div>
+     <div class="wallet-deposit-form-intro"><strong id="walletDepositFormIntroTitle">Cuando hayas realizado el pago</strong><small id="walletDepositFormIntroHelp">Completa los datos y adjunta el comprobante correspondiente. Las Coronas se acreditan después de verificar el pago.</small></div>
      <div class="field" id="walletDepositSenderPhoneWrap"><label for="walletDepositSenderPhone">Teléfono desde el que hiciste la transferencia</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="walletDepositSenderPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="20" placeholder="xxxxxxxx" aria-label="Ocho dígitos del móvil cubano desde el que pagaste"></div><small class="wallet-field-hint">Escribe solo los 8 dígitos de tu línea de origen; el +53 ya aparece separado.</small></div>
      <div class="field" id="walletDepositReferenceWrap"><label id="walletDepositReferenceLabel" for="walletDepositReference">Número de transacción bancaria</label><input id="walletDepositReference" inputmode="text" maxlength="100" placeholder="Copia la referencia de la operación"></div>
      <div class="field hidden" id="walletDepositTxidWrap"><label for="walletDepositTxid">TxID de la transferencia USDT (64 caracteres)</label><input id="walletDepositTxid" inputmode="text" maxlength="64" autocapitalize="none" spellcheck="false" placeholder="Pega el hash/TxID completo"></div>
@@ -2699,7 +2687,7 @@ body{min-width:0}
   <article class="faq-item"><h3>¿Dónde se publican las novedades de la tienda?</h3><p>En el canal oficial de WhatsApp compartiremos anuncios, cambios de la tienda y novedades para la comunidad. Es un canal informativo; no sustituye el seguimiento de pedidos ni el soporte personal.</p></article>
   <article class="faq-item"><h3>¿Dónde veo mis pedidos?</h3><p>Inicia sesión y abre «Pedidos» en la navegación inferior. Allí verás el folio, el estado y el avance de cada solicitud.</p></article>
   <article class="faq-item"><h3>¿Qué hago si hice el mismo pago dos veces?</h3><p>No crees un segundo pedido para justificar el pago duplicado. Guarda el folio y los dos comprobantes o referencias de transacción y contacta con soporte. La tienda debe comprobar ambas operaciones antes de registrar una devolución o compensación.</p></article>
-  <article class="faq-item"><h3>¿Qué son las Coronas?</h3><p>Las Coronas son la moneda interna de Tienda El Castillo. 1 Corona = 1 USD y solo se pueden usar para comprar dentro de la tienda; no son una cuenta bancaria ni se retiran en efectivo. Las recargas se revisan manualmente y las Coronas solo están disponibles después de confirmar el pago. La tasa vigente en CUP se muestra en el formulario de recarga antes de que envíes el pago y puede actualizarse desde administración.</p></article>
+  <article class="faq-item"><h3>¿Qué son las Coronas?</h3><p>Las Coronas son el saldo interno de Tienda El Castillo. Cada Corona equivale a 1 USD como referencia para calcular los precios; solo sirven para pagar dentro de la tienda y no se pueden retirar en efectivo. Las recargas se revisan manualmente y las Coronas solo están disponibles después de confirmar el pago. La tasa vigente en CUP se muestra en el formulario de recarga antes de que envíes el pago y puede actualizarse desde administración.</p></article>
   <article class="faq-item"><h3>¿Cómo funcionan las promociones de Coronas?</h3><p>En tu primera recarga aprobada recibes un 3 % extra, acreditado automáticamente. También puedes compartir tu código: ganas el 5 % del valor de la primera compra de cada amigo cuando el pedido se completa correctamente y se confirma la entrega.</p></article>
    <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con Coronas falla?</h3><p>Si el servicio no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el débito original a tus Coronas. Si ya se creó una orden, el saldo se devuelve cuando se confirma la devolución del proveedor. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de Coronas.</p></article>
   <article class="faq-item"><h3>¿Qué información debo enviar al reclamar?</h3><p>Indica el folio del pedido, el método de pago, la referencia de la operación cuando exista y una captura legible del comprobante. No envíes contraseñas del juego, códigos de acceso, claves bancarias ni frases de recuperación de billeteras.</p></article>
@@ -4451,7 +4439,7 @@ function updatePaymentInstructions(){
  const isWallet=name==="Saldo de Tienda El Castillo";
  if(isWallet){
   box.classList.remove("hidden");
-  box.innerHTML='<div class="payment-panel-head"><span class="payment-panel-icon">✓</span><div><strong>Pago con Coronas</strong><small>No necesitas hacer una transferencia para esta compra.</small></div></div><p>Se descontarán <strong>'+moneyUSD(product?.price_usdt||0)+' Coronas</strong> de tu saldo interno. El pedido se creará únicamente si tienes fondos suficientes y el ID del jugador está verificado.</p>';
+  box.innerHTML='<div class="payment-panel-head"><span class="payment-panel-icon">✓</span><div><strong>Pago con Coronas</strong><small>No necesitas hacer una transferencia para esta compra.</small></div></div><p>Se descontarán <strong>'+moneyUSD(product?.price_usdt||0)+' Coronas</strong> de tu Cartera. El pedido se creará únicamente si tienes fondos suficientes y el ID del jugador está verificado.</p>';
   return;
  }
  const method=paymentMethods.find(item=>item.name===name&&item.active),raw=method?.instructions||"";
@@ -5590,11 +5578,14 @@ function previewWalletDeposit(){
 function updateWalletDepositMethod(resetFields=false){
  const select=$("walletDepositMethod");
  if(!select)return;
- const previous=walletDepositMethodPrevious||select.value||"Transferencia CUP";
+ const current=String(select.value||"").trim();
  const methods=walletDepositAvailableMethods();
+ const requested=resetFields&&methods.includes(current)
+  ?current
+  :(methods.includes(walletDepositMethodPrevious)?walletDepositMethodPrevious:current);
  select.innerHTML=methods.length?methods.map(name=>'<option value="'+clean(name)+'">'+clean(name)+'</option>').join(""):'<option value="">No hay métodos configurados</option>';
  select.disabled=methods.length===0;
- const selected=methods.includes(previous)?previous:(methods[0]||"");
+ const selected=methods.includes(requested)?requested:(methods[0]||"");
  if(selected)select.value=selected;
  walletDepositMethodPrevious=selected;
  if(resetFields){
@@ -5603,6 +5594,19 @@ function updateWalletDepositMethod(resetFields=false){
   previewWalletDepositProof();
  }
  const cup=selected==="Transferencia CUP",mobile=selected==="Saldo móvil",usdt=selected==="USDT";
+ const methodTitle=cup?"Transferencia CUP":mobile?"saldo móvil":"USDT";
+ const stepOneTitle=$("walletDepositStep1Title");
+ if(stepOneTitle)stepOneTitle.textContent=cup?"1. ¿Cuánto vas a transferir?":mobile?"1. ¿Cuánto saldo móvil enviarás?":"1. ¿Cuánto USDT enviarás?";
+ const stepOneHelp=$("walletDepositStep1Help");
+ if(stepOneHelp)stepOneHelp.textContent=cup?"Indica el importe exacto en CUP que transferirás.":mobile?"Indica las unidades exactas de saldo móvil que enviarás.":"Indica la cantidad exacta de USDT que enviarás por la red indicada.";
+ const stepTwoTitle=$("walletDepositStep2Title");
+ if(stepTwoTitle)stepTwoTitle.textContent="2. Realiza el pago con "+methodTitle+" y completa el formulario";
+ const stepTwoHelp=$("walletDepositStep2Help");
+ if(stepTwoHelp)stepTwoHelp.textContent=cup?"Revisa los datos bancarios, transfiere el importe exacto y después adjunta la confirmación de la operación.":mobile?"Revisa el número receptor, envía las unidades indicadas y después adjunta el SMS de confirmación de ETECSA.":"Revisa la dirección y la red BEP20, envía el importe exacto y después pega el TxID y adjunta el comprobante.";
+ const introTitle=$("walletDepositFormIntroTitle");
+ if(introTitle)introTitle.textContent=cup?"Cuando hayas realizado la transferencia":mobile?"Cuando hayas enviado el saldo móvil":"Cuando hayas enviado los USDT";
+ const introHelp=$("walletDepositFormIntroHelp");
+ if(introHelp)introHelp.textContent=cup?"Completa los datos tal como aparecen en la confirmación bancaria. Las Coronas se acreditan después de verificar el pago.":mobile?"Escribe el número de origen y adjunta el SMS que confirma la recepción. Las Coronas se acreditan después de verificar el pago.":"Pega el TxID completo y adjunta el comprobante. Las Coronas se acreditan después de verificar la transferencia.";
  const amount=$("walletDepositAmount");
  if(amount){
   const minimum=cup?Math.ceil(Number(walletSettings.cup_per_usd||1)):usdt?1:mobile?Math.ceil(walletMobileUnitsPerCorona()):1;
