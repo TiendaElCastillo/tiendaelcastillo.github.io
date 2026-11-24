@@ -4521,10 +4521,33 @@ async function savePaymentMethod(){
  if(currentProfile?.role!=="admin")return;
  const name=$("payMethodName").value,instructions=$("payInstructions").value.trim();
  if(!instructions){$("paymentAdminMsg").textContent="Escribe las instrucciones para este método.";return}
+ let usdtAddress="";
+ if(name==="USDT"){
+  usdtAddress=instructions.match(/0x[a-f0-9]{40}/i)?.[0]||"";
+  if(!usdtAddress){
+   $("paymentAdminMsg").textContent="Las instrucciones USDT deben incluir una dirección BEP20 válida (0x y 40 caracteres hexadecimales).";
+   return;
+  }
+  if(!/(BEP20|BNB Smart Chain)/i.test(instructions)){
+   $("paymentAdminMsg").textContent="Indica expresamente que la red es BNB Smart Chain (BEP20).";
+   return;
+  }
+ }
  const existing=paymentMethods.find(item=>item.name===name);
  const result=existing?await db.from("payment_methods").update({instructions,active:true}).eq("id",existing.id):await db.from("payment_methods").insert({name,instructions,active:true});
  if(result.error){$("paymentAdminMsg").textContent="No se pudieron guardar: "+result.error.message;return}
- $("paymentAdminMsg").textContent="Instrucciones guardadas para "+name+".";$("payInstructions").value="";await loadPaymentMethods();
+ if(name==="USDT"){
+  const sync=await db.from("wallet_settings").update({usdt_address:usdtAddress,usdt_network:"BNB Smart Chain (BEP20)",updated_at:new Date().toISOString(),updated_by:currentUser.id}).eq("id",1);
+  if(sync.error){
+   $("paymentAdminMsg").textContent="Las instrucciones generales USDT se guardaron, pero no se pudo sincronizar la dirección de recarga de Coronas: "+sync.error.message+". No uses USDT para recargar Coronas hasta corregirlo.";
+   await loadPaymentMethods();
+   return;
+  }
+  await loadWalletSettings();
+ }
+ $("paymentAdminMsg").textContent="Instrucciones guardadas para "+name+(name==="USDT"?". La dirección BEP20 también quedó sincronizada con las recargas de Coronas.":".");
+ $("payInstructions").value="";
+ await loadPaymentMethods();
 }
 async function togglePaymentMethod(id,active){
  if(currentProfile?.role!=="admin")return;
