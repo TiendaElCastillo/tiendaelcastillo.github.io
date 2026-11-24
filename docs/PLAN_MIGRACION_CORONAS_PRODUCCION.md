@@ -7,7 +7,7 @@
 
 ## Estado
 
-La rama de liberación ya está preparada para conectarse a producción, pero **no se ha unido a `main`, no se han aplicado migraciones y no se ha desplegado ninguna función en producción**. La web pública y sus saldos siguen intactos.
+La rama de liberación ya está conectada a la base de datos de producción, pero **todavía no se ha unido a `main` ni se ha publicado la nueva interfaz en la web pública**. Las dos migraciones productivas ya se aplicaron y verificaron. La función `central-one-order` está activa en versión 25 con `verify_jwt=true`. No se ha hecho ninguna recarga ni compra real.
 
 La rama de pruebas conserva su URL, clave y simuladores propios. La rama de liberación usa la URL y la clave pública `anon` que ya emplea `main`, y llama directamente a las funciones reales `central-one-player-validate`, `central-one-order` y `central-one-read`. Los nombres de funciones simuladas y sus carpetas no se incluyen en esta rama.
 
@@ -18,7 +18,7 @@ Ya aplicadas en producción y registradas en el historial de Supabase, en este o
 1. `20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql` — aplicada.
 2. `20261124222200_coronas_wallet_policy_index_cleanup.sql` — aplicada.
 
-Las versiones `20261123222640`, `20261123222909`, `20261124005127` y `20261124005315` ya aparecen registradas en el historial de producción. Solo quedan pendientes las dos migraciones indicadas. Las migraciones sintéticas están aisladas en la rama de pruebas; no copiarlas ni ejecutarlas en producción.
+Las versiones anteriores `20261123222640`, `20261123222909`, `20261124005127` y `20261124005315` ya estaban registradas. Las dos migraciones nuevas también figuran ahora aplicadas. Las migraciones sintéticas permanecen aisladas en la rama de pruebas; no copiarlas ni ejecutarlas en producción.
 
 ## Cambios de comportamiento previstos
 
@@ -31,12 +31,12 @@ Las versiones `20261123222640`, `20261123222909`, `20261124005127` y `2026112400
 
 ## Secuencia de liberación
 
-1. Aplicar la primera migración y verificar la tabla privada de recompensas, las funciones y los permisos.
-2. Aplicar la migración de limpieza/índice.
-3. Desplegar `supabase/functions/central-one-order/index.ts` a producción con `verify_jwt=true`, conservando los secretos actuales del proveedor. La versión incluye los estados `rejected` y la comprobación de reembolso confirmado.
-4. Revisar que la URL y la clave públicas de la rama sigan apuntando al proyecto productivo.
-5. Unir la solicitud de cambios; GitHub Pages publicará el código de la rama `main`.
-6. Hacer una prueba real de cliente: una recarga pequeña, aprobación desde administración, comprobación del 3 % y una compra de paquete. Verificar pedido único, estado final del proveedor e historial de Coronas.
+1. Las dos migraciones ya están aplicadas y verificadas en producción.
+2. La Edge Function `central-one-order` ya está desplegada en versión 25, con `verify_jwt=true` y los secretos existentes del proveedor intactos. La versión incluye el estado `rejected` y la comprobación de reembolso confirmado.
+3. La rama de liberación usa la URL y clave pública que ya utilizaba `main`, y dirige las llamadas directamente a las funciones reales.
+4. Unir la solicitud de cambios; GitHub Pages publicará la nueva interfaz en `main`.
+5. El usuario revisará la web pública visualmente y comunicará cualquier defecto.
+6. Cuando la revisión visual esté correcta, el usuario hará una recarga pequeña, comprobará el 3 % tras la aprobación administrativa y realizará una compra de paquete.
 
 ## Verificaciones ya realizadas
 
