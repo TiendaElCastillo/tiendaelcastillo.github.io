@@ -717,9 +717,9 @@ test("la función de proveedor conserva rechazos y solo devuelve Coronas cuando 
 
 test("la rama de liberación usa producción y enruta las funciones reales; los simuladores quedan aislados a pruebas", () => {
   assert.match(indexHtml, /const STORE_SUPABASE_URL="https:\/\/kfllglkfncebpknnugnx\.supabase\.co"/);
-  assert.match(indexHtml, /const isStaging=STORE_SUPABASE_URL\.includes\("kmotmgpzmeooznyymcxl"\)/);
-  assert.match(indexHtml, /"central-one-order":"coronas-staging-wallet-order"/);
-  assert.ok(indexHtml.includes('"/functions/v1/"'));
+  assert.ok(indexHtml.includes('function storeFunctionUrl(name){\n return STORE_SUPABASE_URL+"/functions/v1/"+name;\n}'));
+  assert.ok(indexHtml.includes('"central-one-order"'));
+  assert.ok(!indexHtml.includes("coronas-staging-"));
   assert.match(indexHtml, /Coronas/i);
   assert.match(indexHtml, /coronas-promotions\.js\?v=1/);
 });
