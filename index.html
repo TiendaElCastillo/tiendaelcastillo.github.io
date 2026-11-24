@@ -4321,7 +4321,7 @@ function updateCheckoutSummary(){
  }
  checkoutPaymentMethodPrevious=method;
  renderCheckoutPaymentMethods();
- const unit=isWallet?"Coronas":method==="USDT"?"USDT":"CUP";
+ const unit=isWallet?(Math.abs(Number(raw)-1)<0.000001?"Corona":"Coronas"):method==="USDT"?"USDT":"CUP";
  const amount=Number(raw)>0?(isWallet?moneyUSD(raw):money(raw)):"—";
  const regionLine=p.provider_region?'<small>Región de recarga '+clean(p.provider_region)+(requiresPlayerValidation(p)?' · Comprobación de ID obligatoria':'')+'</small>':'<small>Precio final según el método de pago</small>';
  $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'<small class="checkout-locked-method">Forma de pago elegida: '+clean(paymentMethodLabel(method))+'</small></div><div class="checkout-total"><strong>'+amount+'</strong><small>'+unit+'</small></div>';
@@ -5235,8 +5235,9 @@ async function loadMyOrders(){
  list.innerHTML=groups.length?groups.map(group=>
   '<section class="order-day-group"><header class="order-day-group-header"><strong>'+clean(group.label)+'</strong><span class="order-day-count">'+group.count+' '+(group.count===1?"pedido":"pedidos")+'</span></header><div class="order-day-items">'+
   group.orders.map(order=>{
-   const amountCurrency=order.payment_source==="wallet"?"Coronas":order.payment_method==="USDT"?"USDT":"CUP";
-   return view.renderSummary(order,{statusLabel:view.shortStatusLabel(order.status),amountLabel:money(order.price)+" "+amountCurrency});
+   const amountCurrency=order.payment_method==="USDT"?"USDT":"CUP";
+   const amountLabel=order.payment_source==="wallet"?moneyCoronas(order.price):money(order.price)+" "+amountCurrency;
+   return view.renderSummary(order,{statusLabel:view.shortStatusLabel(order.status),amountLabel});
   }).join("")+'</div></section>'
  ).join(""):'<div class="customer-empty-state"><span class="customer-empty-crown"><img src="./assets/el-castillo-icon.webp" alt="" width="46" height="46"></span><strong>Tu próxima recarga puede empezar aquí</strong><p>Aún no tienes pedidos. Explora los juegos y encuentra tu próximo paquete favorito.</p><button type="button" class="primary-btn" onclick="showView(&quot;home&quot;)">Explorar juegos</button></div>';
  if(selectedCustomerOrderId&&customerOrdersCache.some(order=>String(order.id)===selectedCustomerOrderId)){
