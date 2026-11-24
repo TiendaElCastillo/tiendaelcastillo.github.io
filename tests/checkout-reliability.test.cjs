@@ -741,3 +741,34 @@ test("el programa de invitaciones vincula el código solo a una cuenta nueva ant
   assert.match(indexHtml, /get_wallet_referral_summary/);
   assert.match(indexHtml, /shareWalletReferral\(\)/);
 });
+
+
+test("el enlace de invitación se vincula antes de que se cree la primera solicitud de depósito", () => {
+  const start = indexHtml.indexOf("async function requestWalletDeposit()");
+  const end = indexHtml.indexOf("async function attachWalletDepositProof", start);
+  assert.ok(start >= 0 && end > start, "Debe existir el formulario de depósito");
+  const submit = indexHtml.slice(start, end);
+  const referralGate = submit.indexOf("const referralReady=await applyPendingWalletReferralCode()");
+  const depositInsert = submit.indexOf('db.from("wallet_deposits").insert');
+  assert.ok(referralGate >= 0 && depositInsert > referralGate, "El código debe vincularse antes del primer depósito");
+  assert.match(submit, /if\(referralReady===false\)[\s\S]*?return;/);
+  assert.match(indexHtml, /let walletReferralApplyPromise=null/);
+});
+
+test("la primera recarga solo genera un bono y la invitación se acredita después de la aprobación administrativa", () => {
+  const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261124005127_coronas_wallet_referrals_first_deposit.sql"), "utf8");
+  const approval = migration.slice(migration.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit"));
+  assert.match(approval, /IF NOT v_has_previous_deposit THEN[\s\S]*?least\(v_deposit\.credited_amount,10\) \* 0\.03/);
+  assert.match(approval, /wallet_referral_bonus :=/); // optional guard against future accidental renaming
+  assert.match(approval, /v_referral_bonus := private\.reward_wallet_referrer/);
+  assert.match(approval, /status = 'approved'/);
+  assert.match(approval, /wallet_referral_bonus|welcome_bonus_amount/);
+});
+
+test("las promociones del inicio corresponden a las tres condiciones publicadas y no suman otro 10 % a Free Fire", () => {
+  assert.match(indexHtml, /Primera recarga de Coronas/);
+  assert.match(indexHtml, /0,7 % para ti/);
+  assert.match(indexHtml, /10 % más diamantes/);
+  assert.match(indexHtml, /extra ya está incluido en los paquetes participantes/);
+  assert.match(indexHtml, /No se suma otro regalo/);
+});
