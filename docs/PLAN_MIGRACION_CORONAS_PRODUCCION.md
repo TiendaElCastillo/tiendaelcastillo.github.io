@@ -9,7 +9,7 @@
 
 La rama de liberación ya está preparada para conectarse a producción, pero **no se ha unido a `main`, no se han aplicado migraciones y no se ha desplegado ninguna función en producción**. La web pública y sus saldos siguen intactos.
 
-La rama de pruebas conserva su URL y clave propias. La rama de liberación usa el endpoint y la clave pública `anon` que ya emplea `main`; el enrutador conserva los simuladores solo cuando detecta el proyecto de pruebas y, con producción, apunta a las funciones reales `central-one-player-validate`, `central-one-order` y `central-one-read`.
+La rama de pruebas conserva su URL, clave y simuladores propios. La rama de liberación usa la URL y la clave pública `anon` que ya emplea `main`, y llama directamente a las funciones reales `central-one-player-validate`, `central-one-order` y `central-one-read`. Los nombres de funciones simuladas y sus carpetas no se incluyen en esta rama.
 
 ## Migraciones que faltan en producción
 
@@ -18,7 +18,7 @@ Aplicar exclusivamente, y en este orden:
 1. `20261124170000_coronas_production_wallet_and_first_purchase_rewards.sql`
 2. `20261124171000_coronas_wallet_policy_index_cleanup.sql`
 
-Las versiones `20261123222640` y `20261123222909` ya aparecen registradas en el historial de producción. Las migraciones sintéticas que están en `supabase/staging-migrations/` no se deben ejecutar en producción.
+Las versiones `20261123222640`, `20261123222909`, `20261124005127` y `20261124005315` ya aparecen registradas en el historial de producción. Solo quedan pendientes las dos migraciones indicadas. Las migraciones sintéticas están aisladas en la rama de pruebas; no copiarlas ni ejecutarlas en producción.
 
 ## Cambios de comportamiento previstos
 
