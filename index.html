@@ -5480,7 +5480,7 @@ async function loadWalletData(){
  }
  walletBalanceUSD=rows.reduce((sum,row)=>sum+(["deposit","refund","adjustment"].includes(row.kind)?1:-1)*Number(row.amount||0),0);
  if($("walletBalance"))$("walletBalance").textContent=coronas(walletBalanceUSD);
- if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Saldo: "+coronas(walletBalanceUSD);
+ if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Coronas: "+coronas(walletBalanceUSD);
  if($("walletTransactions"))$("walletTransactions").innerHTML=rows.length?rows.map(row=>{
   const label=row.kind==="purchase"?"Compra":row.kind==="deposit"?"Depósito aprobado":row.kind==="refund"?"Reembolso":"Ajuste";
   return '<article class="wallet-history-card"><strong>'+clean(label)+'</strong><div class="order-detail">'+coronas(row.amount)+' · '+clean(row.description||"Movimiento")+'<br>'+new Date(row.created_at).toLocaleString("es-CU")+'</div></article>';
@@ -6131,7 +6131,7 @@ async function refundWalletPreflightOrder(orderId,orderCode){
  const button=document.querySelector('[data-refund-wallet-preflight][data-order-id="'+CSS.escape(orderId)+'"]');
  const accepted=window.confirm(
   "REVISAR Y ACREDITAR EN CARTERA\n\nPedido "+(orderCode||orderId)+
-  "\n\nAntes de aprobar, abre y verifica el comprobante de pago cuando sea un pago directo. La base de datos también comprobará que el débito de cartera o el pago confirmado corresponde al pedido y que Central One no creó ninguna orden.\n\nSi todo es correcto, se cancelará el pedido y se acreditará una sola vez el equivalente en USD a la cartera de Tienda El Castillo. No se permite para pedidos con resultado incierto ni para órdenes ya creadas en el proveedor.\n\n¿Confirmas la revisión y el abono?"
+  "\n\nAntes de aprobar, abre y verifica el comprobante de pago cuando sea un pago directo. La base de datos también comprobará que el débito de cartera o el pago confirmado corresponde al pedido y que Central One no creó ninguna orden.\n\nSi todo es correcto, se cancelará el pedido y se acreditará una sola vez el equivalente en Coronas al wallet de Tienda El Castillo. No se permite para pedidos con resultado incierto ni para órdenes ya creadas en el proveedor.\n\n¿Confirmas la revisión y el abono?"
  );
  if(!accepted)return;
  if(button){button.disabled=true;button.textContent="Revisando y acreditando…";}
@@ -6140,7 +6140,7 @@ async function refundWalletPreflightOrder(orderId,orderCode){
   const {data,error}=await db.rpc("admin_cancel_preflight_blocked_order",{p_order_id:orderId});
   if(error)throw error;
   if(data?.automatic_refund!==true||data?.refunded!==true)throw new Error("Supabase no confirmó el abono a la cartera.");
-  $("orderadminmsg").textContent="Pedido "+(data?.order_code||orderCode||"")+" cancelado. Se acreditaron "+moneyUSD(data.credited_amount)+" USD a la cartera del cliente.";
+  $("orderadminmsg").textContent="Pedido "+(data?.order_code||orderCode||"")+" cancelado. Se acreditaron "+coronas(data.credited_amount)+" a la wallet del cliente.";
   await Promise.all([loadAllOrders(),loadMyOrders()]);
  }catch(error){
   $("orderadminmsg").textContent="No se pudo completar la devolución: "+(error?.message||"error desconocido");
@@ -6720,7 +6720,7 @@ async function loadAllOrders(options={}){
   const canRefundDirectToWallet=o.status==="processing"&&directPaymentVerified&&!o.central_one_order_id&&!o.central_one_reference_code&&!o.central_one_request_id&&(directStockPreflightBlocked||directStockDisabledBySync);
   const refundWalletAmount=o.payment_source==="wallet"?Number(o.price||0):Number(o.wallet_refund_amount||0);
   const showWalletRefundAction=canRefundWalletNoProvider||canRefundDirectToWallet;
-  const walletRefundAction=showWalletRefundAction?'<div class="order-actions order-safe-cancel"><button type="button" data-refund-wallet-preflight data-payment-source="'+clean(o.payment_source)+'" data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Revisar y devolver a cartera</button><small>'+(canRefundDirectToWallet?'Pago directo confirmado. Abre y verifica el comprobante antes de aprobar el abono de '+moneyUSD(refundWalletAmount)+' USD a la cartera.':'No existe una orden del proveedor. Se devolverá '+moneyUSD(refundWalletAmount)+' USD a la cartera una sola vez.')+'</small></div>':"";
+  const walletRefundAction=showWalletRefundAction?'<div class="order-actions order-safe-cancel"><button type="button" data-refund-wallet-preflight data-payment-source="'+clean(o.payment_source)+'" data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Revisar y devolver a cartera</button><small>'+(canRefundDirectToWallet?'Pago directo confirmado. Abre y verifica el comprobante antes de aprobar el abono de '+coronas(refundWalletAmount)+' a la wallet.':'No existe una orden del proveedor. Se devolverán '+coronas(refundWalletAmount)+' a la wallet una sola vez.')+'</small></div>':"";
   const providerAction=canAuthorize
    ?'<div class="order-actions"><button type="button" data-provider-submit data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">'+(providerStatus==="not_submitted"?"Autorizar recarga (usa saldo real)":"Reintentar con la misma clave segura")+'</button></div>'
    :canRefresh
