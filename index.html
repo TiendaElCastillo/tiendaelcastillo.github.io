@@ -5556,13 +5556,13 @@ function updateWalletDepositMethod(resetFields=false){
   $("walletDepositAmountHint").textContent="Mínimo: "+money(minimum)+" "+(cup?"CUP":usdt?"USDT":"unidades de saldo móvil")+", equivalente a 1 Corona.";
  }
  $("walletDepositSenderPhoneWrap")?.classList.toggle("hidden",!(cup||mobile));
- $("walletDepositReferenceWrap")?.classList.toggle("hidden",!(cup||mobile));
+ $("walletDepositReferenceWrap")?.classList.toggle("hidden",!cup);
  $("walletDepositTxidWrap")?.classList.toggle("hidden",!usdt);
  $("walletDepositProofHelp")?.replaceChildren(document.createTextNode(cup?"Adjunta la confirmación bancaria completa, con importe, fecha, referencia y destinatario.":mobile?"Adjunta el SMS de ETECSA que confirma el envío de saldo, con importe, fecha y número de destino.":"Adjunta el comprobante de la transferencia USDT, con importe, fecha y estado."));
  const phoneLabel=$("walletDepositSenderPhoneWrap")?.querySelector("label");
  if(phoneLabel)phoneLabel.textContent=cup?"Teléfono desde el que hiciste la transferencia":"Teléfono desde el que enviaste el saldo móvil";
  const referenceLabel=$("walletDepositReferenceLabel");
- if(referenceLabel)referenceLabel.textContent=cup?"Número de transacción bancaria":"Referencia o identificador del SMS";
+ if(referenceLabel)referenceLabel.textContent="Número de transacción bancaria";
  $("walletDepositMethodHint").textContent=methods.length?"La recarga queda pendiente y solo se acredita después de que el administrador compruebe el pago.":"Los métodos de recarga todavía no están configurados. No envíes dinero.";
  const submit=$("walletDepositSubmit");
  if(submit)submit.disabled=methods.length===0;
@@ -5610,7 +5610,7 @@ async function uploadWalletDepositProofs(depositId,method,files,reference,sender
  const nationalPhone=needsPhone?cubaMobileNational(senderPhone):"";
  if(needsPhone&&!nationalPhone)throw new Error("Escribe los 8 dígitos válidos del teléfono desde el que hiciste el pago.");
  if(method==="USDT"&&(!/^[a-f0-9]{64}$/i.test(String(txid||"").trim())))throw new Error("El TxID debe tener 64 caracteres hexadecimales.");
- if(needsPhone&&(String(reference||"").trim().length<3||String(reference||"").trim().length>100))throw new Error("Escribe la referencia de la operación o del SMS.");
+ if(method==="Transferencia CUP"&&(String(reference||"").trim().length<3||String(reference||"").trim().length>100))throw new Error("Escribe la referencia de la transferencia bancaria.");
  if(!Array.isArray(files)||files.length<1||files.length>2)throw new Error("Cada solicitud admite entre 1 y 2 imágenes de comprobante.");
  const paths=[];
  for(const file of files){
@@ -5625,7 +5625,7 @@ async function uploadWalletDepositProofs(depositId,method,files,reference,sender
  }
  const result=await db.rpc("submit_wallet_deposit_proofs",{
   p_deposit_id:depositId,p_proof_paths:paths,
-  p_reference:needsPhone?String(reference||"").trim():null,
+  p_reference:method==="Transferencia CUP"?String(reference||"").trim():null,
   p_sender_phone:needsPhone?"+53"+nationalPhone:null,
   p_txid:method==="USDT"?String(txid||"").trim().toLowerCase():null,
   p_network:method==="USDT"?"BNB Smart Chain (BEP20)":null
@@ -5734,8 +5734,8 @@ async function requestWalletDeposit(){
   showError("Escribe los 8 dígitos válidos del teléfono desde el que hiciste el pago.","walletDepositSenderPhone");
   return;
  }
- if(needsPhone&&(reference.length<3||reference.length>100)){
-  showError("Escribe la referencia bancaria o el identificador que aparece en el mensaje de confirmación.","walletDepositReference");
+ if(method==="Transferencia CUP"&&(reference.length<3||reference.length>100)){
+  showError("Escribe el número de transacción bancaria.","walletDepositReference");
   return;
  }
  if(method==="USDT"&&!/^[a-f0-9]{64}$/.test(txid)){
