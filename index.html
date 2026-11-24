@@ -2422,7 +2422,7 @@ body{min-width:0}
     <div class="coronas-referral-actions"><button class="secondary-btn" type="button" onclick="shareWalletReferralLink()">Compartir invitación</button><button class="secondary-btn" type="button" onclick="copyWalletReferralLink()">Copiar enlace</button></div>
    </div>
    <div id="walletReferralStats" class="coronas-referral-stats"><article><small>Amigos invitados</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas ganadas</small><strong>—</strong></article></div>
-   <div id="walletReferralApplyBox"><p class="coronas-referral-note">¿Tienes un código? Puedes vincularlo durante los primeros 7 días de tu cuenta y antes de tu primera recarga.</p><div class="field"><label for="walletReferralInput">Código de invitación</label><input id="walletReferralInput" type="text" maxlength="8" autocapitalize="characters" placeholder="Ej. A1B2C3D4"></div><button id="walletReferralApplyBtn" class="primary-btn" type="button" onclick="applyWalletReferralCode()">Vincular código</button><p id="walletReferralMsg" class="msg" role="status" aria-live="polite"></p></div>
+   <div id="walletReferralApplyBox"><p class="coronas-referral-note">¿Tienes un código? Puedes vincularlo durante los primeros 7 días de tu cuenta y antes de tu primera compra completada.</p><div class="field"><label for="walletReferralInput">Código de invitación</label><input id="walletReferralInput" type="text" maxlength="8" autocapitalize="characters" placeholder="Ej. A1B2C3D4"></div><button id="walletReferralApplyBtn" class="primary-btn" type="button" onclick="applyWalletReferralCode()">Vincular código</button><p id="walletReferralMsg" class="msg" role="status" aria-live="polite"></p></div>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
    <h3 id="walletInformationTitle">Cómo funciona tu saldo</h3>
@@ -5568,7 +5568,7 @@ function previewWalletDeposit(){
  }
  let credited=0,unit="";
  if(method==="Transferencia CUP"){credited=Math.floor((amount/Number(walletSettings.cup_per_usd||1))*100)/100;unit="CUP";}
- else if(method==="USDT"){credited=Math.floor(amount*100)/100;unit="USDT";}
+ else if(method==="USDT"){credited=Math.floor(amount*10000)/10000;unit="USDT";}
  else if(method==="Saldo móvil"){credited=Math.floor((amount/Math.max(walletMobileUnitsPerCorona(),0.000001))*100)/100;unit="unidades de saldo móvil";}
  const valid=Number.isFinite(credited)&&credited>=1&&amount>=minimum;
  box.innerHTML='<small>Coronas que recibirás '+(valid?"al aprobar tu pago":"si cumples el mínimo")+'</small><strong>'+moneyUSD(Math.max(0,credited))+' Coronas</strong><small>Importe: '+money(amount)+' '+unit+'. Mínimo: '+money(minimum)+' '+unit+'. 1 Corona = 1 USD. El saldo solo se acredita después de tu aprobación.</small>';
