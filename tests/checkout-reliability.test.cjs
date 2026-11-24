@@ -9,6 +9,8 @@ const offlineGuardSource = fs.readFileSync(path.join(root, "assets/offline-guard
 const adminPanelSource = fs.readFileSync(path.join(root, "assets/admin-panel.js"), "utf8");
 const indexHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const paymentGuideHtml = fs.readFileSync(path.join(root, "como-pagar-recargas-juegos-cuba.html"), "utf8");
+const gamesGuideHtml = fs.readFileSync(path.join(root, "recargas-juegos-cuba.html"), "utf8");
+const aboutGuideHtml = fs.readFileSync(path.join(root, "sobre-tienda-el-castillo.html"), "utf8");
 const storefrontPolishSource = fs.readFileSync(path.join(root, "assets/storefront-polish.css"), "utf8");
 const coronasPromoCssSource = fs.readFileSync(path.join(root, "assets/coronas-promotions.css"), "utf8");
 const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
@@ -849,4 +851,23 @@ test("la guía de pagos explica Coronas y ya no muestra el nombre anterior del s
   assert.match(paymentGuideHtml, /Cartera tenga saldo suficiente/);
   assert.doesNotMatch(paymentGuideHtml, /Saldo de Tienda El Castillo|saldo interno de Tienda El Castillo/);
   assert.match(paymentGuideHtml, /\"dateModified\":\"2026-11-24\"/);
+});
+
+
+test("todas las guías públicas usan Coronas y explican la Cartera", () => {
+  for (const [name, source] of [["pagos", paymentGuideHtml], ["recargas de juegos", gamesGuideHtml], ["sobre la tienda", aboutGuideHtml]]) {
+    assert.doesNotMatch(source, /saldo interno de Tienda El Castillo|Saldo de Tienda El Castillo/, name + " no debe mostrar la etiqueta anterior");
+  }
+  assert.match(gamesGuideHtml, /Coronas de Tienda El Castillo/);
+  assert.match(aboutGuideHtml, /Coronas de Tienda El Castillo/);
+  assert.match(paymentGuideHtml, /Cartera tenga saldo suficiente/);
+});
+
+test("los mensajes visibles del historial y perfil hablan de Coronas y Cartera, manteniendo la clave interna compatible", () => {
+  assert.match(indexHtml, /No se pudo cargar tu Cartera[\s\S]*pagar con Coronas/);
+  assert.match(indexHtml, /Pago realizado con Coronas/);
+  assert.match(indexHtml, /Cartera actualizada con la devolución/);
+  assert.match(indexHtml, /Devolución de Coronas en revisión/);
+  assert.match(indexHtml, /<option value="Saldo de Tienda El Castillo">Coronas<\/option>/);
+  assert.match(indexHtml, /name:"Saldo de Tienda El Castillo",short:"Coronas"/);
 });
