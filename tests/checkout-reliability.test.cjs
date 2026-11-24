@@ -668,3 +668,76 @@ test("la recarga de billetera se completa en dos pasos y el formulario queda jun
   assert.match(indexHtml, /uploadWalletDepositProofs\(createdDepositId/);
   assert.match(indexHtml, /No repitas el pago/);
 });
+
+test("el envío automático solo admite pedidos de billetera propiedad del cliente autenticado", () => {
+  assert.match(centralOneOrderEdgeSource, /action==="submit_wallet"/);
+  assert.match(centralOneOrderEdgeSource, /customerContext\(req\)/);
+  assert.match(centralOneOrderEdgeSource, /claim_central_one_wallet_order/);
+  assert.match(centralOneOrderEdgeSource, /p_order_id: orderId, p_user_id: walletUserId/);
+  assert.match(centralOneOrderEdgeSource, /async function adminContext/);
+  assert.match(centralOneOrderEdgeSource, /if\(action==="submit"\) return await submitOrder\(orderId,admin.userId\)/);
+  assert.match(centralOneOrderEdgeSource, /async function customerContext/);
+});
+
+test("las compras de billetera conservan los controles de ID, región, stock, beneficio y saldo del proveedor", () => {
+  assert.match(centralOneOrderEdgeSource, /claim_central_one_wallet_order/);
+  assert.match(centralOneOrderEdgeSource, /preflightPriceAndStock\(claim\)/);
+  assert.match(centralOneOrderEdgeSource, /checkProviderAvailableBalance\(wholesale\)/);
+  assert.match(centralOneOrderEdgeSource, /roundedProfitCup <= 0/);
+  assert.match(centralOneOrderEdgeSource, /liveTarget\.zoneKey !== storedTarget\.zoneKey/);
+  assert.match(centralOneOrderEdgeSource, /Idempotency-Key/);
+});
+
+test("la devolución automática se limita a fallos demostrados antes de crear una orden del proveedor", () => {
+  const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
+  const hardeningMigration = fs.readFileSync(path.join(root, "supabase/migrations/20261123222909_wallet_auto_refund_unsent_claim.sql"), "utf8");
+  assert.match(migration, /central_one_status NOT IN \('retryable','rejected'\)/);
+  assert.match(migration, /central_one_response->>'preflight'/);
+  assert.match(migration, /central_one_response->>'no_provider_order_created'/);
+  assert.match(migration, /wallet_auto_refunded_before_provider/);
+  assert.match(migration, /ON CONFLICT \(order_id\)/);
+  assert.match(hardeningMigration, /central_one_status = 'not_submitted'/);
+  assert.match(hardeningMigration, /central_one_submitted_at IS NULL/);
+  assert.match(hardeningMigration, /central_one_idempotency_key IS NULL/);
+  assert.match(hardeningMigration, /REVOKE ALL ON FUNCTION public\.refund_wallet_order_before_provider/);
+  assert.match(centralOneOrderEdgeSource, /refund_wallet_order_before_provider/);
+  assert.match(centralOneOrderEdgeSource, /catch \(claimError\)/);
+  assert.match(centralOneOrderEdgeSource, /status:"unknown",errorCode:"network_or_timeout"/);
+});
+
+test("el checkout de billetera inicia el envío automático y solo registra compra completada cuando Central One lo confirma", () => {
+  assert.match(indexHtml, /async function requestWalletOrderAutoSubmit\(orderId\)/);
+  assert.match(indexHtml, /action:"submit_wallet",order_id:orderId/);
+  assert.match(indexHtml, /requestWalletOrderAutoSubmit\(result\.data\.order_id\)/);
+  assert.match(indexHtml, /autoResult\?\.provider_status==="completed"[\s\S]*?capture\?\.\("purchase_completed"/);
+  assert.match(indexHtml, /Estamos comprobando el resultado; no repitas la compra/);
+});
+
+
+
+test("Coronas convierte el saldo interno a 100 monedas por cada USD sin sustituir el método interno de pago", () => {
+  assert.match(indexHtml, /const coronasValue=usd=>\(Number\(usd\|\|0\)\*100\)/);
+  assert.match(indexHtml, /Coronas del Castillo/);
+  assert.match(indexHtml, /name:"Saldo de Tienda El Castillo",short:"Coronas del Castillo"/);
+  assert.match(indexHtml, /const unit=isWallet\?"COR"/);
+  assert.match(indexHtml, /No son criptomonedas/);
+});
+
+test("las promociones de bienvenida e invitación respetan sus límites y la precisión del libro de Coronas", () => {
+  const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261124005127_coronas_wallet_referrals_first_deposit.sql"), "utf8");
+  assert.match(migration, /ALTER COLUMN amount TYPE numeric\(18,4\)/);
+  assert.match(migration, /least\(v_deposit\.credited_amount,10\) \* 0\.03/);
+  assert.match(migration, /least\(greatest\(coalesce\(p_deposit_amount,0\),0\),10\) \* 0\.007/);
+  assert.match(migration, /invitee_user_id uuid NOT NULL UNIQUE/);
+  assert.match(migration, /v_created_at < now\(\) - interval '7 days'/);
+  assert.match(indexHtml, /hasta 30 COR/);
+  assert.match(indexHtml, /hasta 7 COR/);
+});
+
+test("el programa de invitaciones vincula el código solo a una cuenta nueva antes de su primer depósito", () => {
+  assert.match(indexHtml, /captureWalletReferralParameter\(\)/);
+  assert.match(indexHtml, /applyPendingWalletReferralCode\(\)/);
+  assert.match(indexHtml, /apply_wallet_referral_code/);
+  assert.match(indexHtml, /get_wallet_referral_summary/);
+  assert.match(indexHtml, /shareWalletReferral\(\)/);
+});
