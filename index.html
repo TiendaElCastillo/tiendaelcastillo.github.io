@@ -2345,7 +2345,7 @@ body{min-width:0}
   </button>
   <button class="customer-hub-row" type="button" onclick="showView('faq')">
    <span class="customer-hub-icon" aria-hidden="true">?</span>
-   <span class="customer-hub-copy"><strong>Preguntas frecuentes</strong><small>Pagos, validación, pedidos y Wallet.</small></span><span class="customer-hub-arrow" aria-hidden="true">›</span>
+   <span class="customer-hub-copy"><strong>Preguntas frecuentes</strong><small>Pagos, validación, pedidos y Coronas.</small></span><span class="customer-hub-arrow" aria-hidden="true">›</span>
   </button>
   <button class="customer-hub-row" type="button" onclick="showView('legal')">
    <span class="customer-hub-icon" aria-hidden="true">⚖</span>
@@ -2404,7 +2404,7 @@ body{min-width:0}
    <section class="wallet-panel wallet-deposit-wizard">
     <h3>Recargar Coronas</h3>
     <p>Realiza una transferencia CUP. Tus Coronas estarán disponibles después de comprobar el pago.</p>
-    <ol id="walletDepositStepper" class="wallet-deposit-stepper" aria-label="Pasos para acreditar saldo">
+    <ol id="walletDepositStepper" class="wallet-deposit-stepper" aria-label="Pasos para acreditar Coronas">
      <li class="active" data-step="1"><b>1</b><span>Importe</span></li>
      <li data-step="2"><b>2</b><span>Pagar y enviar datos</span></li>
     </ol>
@@ -2454,7 +2454,7 @@ body{min-width:0}
  <div class="panel"><h2>Administrar productos</h2><div class="field"><label>Juego o plataforma</label><input id="game" placeholder="Ej. Free Fire"></div><div class="field"><label>Nombre del paquete</label><input id="pname" placeholder="Ej. 110 diamantes"></div><div class="field"><label>Descripción</label><input id="description" placeholder="Opcional"></div><div class="field-row"><div class="field"><label>Cantidad</label><input id="amount" type="number" placeholder="110"></div></div><div class="field-row"><div class="field"><label>Transferencia CUP</label><input id="transfer" type="number" placeholder="0"></div><div class="field"><label>Saldo móvil</label><input id="mobile" type="number" placeholder="0"></div></div><div class="field"><label>Precio USDT</label><input id="usdt" type="number" step="0.01" placeholder="0"></div><button id="adminProductSubmit" class="primary-btn block-btn" type="button" onclick="addProduct()">Guardar producto</button><button id="cancelProductEdit" class="secondary-btn block-btn hidden" type="button" onclick="cancelProductEdit()">Cancelar edición</button><p id="adminmsg" class="msg" role="status"></p><div id="adminProducts"></div></div>
  <div class="panel"><h2>Instrucciones de pago</h2><p class="subtle">Configura los datos que verá el cliente según el método elegido. Deja desactivado un método que todavía no puedas recibir.</p><div class="field"><label for="payMethodName">Método</label><select id="payMethodName"><option>Transferencia CUP</option><option>Saldo móvil</option><option>USDT</option></select></div><div class="field"><label for="payInstructions">Instrucciones para el cliente</label><textarea id="payInstructions" rows="4" placeholder="Ej. Datos para transferir, número de teléfono o dirección de billetera. Nunca incluyas claves privadas."></textarea></div><button class="primary-btn block-btn" type="button" onclick="savePaymentMethod()">Guardar instrucciones</button><p id="paymentAdminMsg" class="msg" role="status"></p><div id="paymentAdminList"></div></div>
 <div class="panel wallet-admin-panel">
- <div class="wallet-admin-heading"><span class="admin-kicker">CORONAS DE CLIENTES</span><h2>Gestión de Coronas</h2><p class="subtle">Revisa recargas, verifica su recepción y consulta las recompensas de la comunidad.</p></div>
+ <div class="wallet-admin-heading"><span class="admin-kicker">CORONAS DE CLIENTES</span><h2>Gestión de Coronas</h2><p class="subtle">Revisa recargas de Coronas, verifica su recepción y consulta las recompensas de la comunidad.</p></div>
  <div class="wallet-admin-kpi-grid" aria-label="Resumen de depósitos">
   <article><span>Pendiente de comprobante</span><strong id="walletCountPending">0</strong></article>
   <article><span>En revisión</span><strong id="walletCountReview">0</strong></article>
@@ -2470,7 +2470,7 @@ body{min-width:0}
  </section>
  <section id="walletReferralAdminPanel" class="wallet-panel wallet-admin-settings"><h3>Invitaciones y recompensas</h3><p>Revisa cada código vinculado, la primera compra entregada y las Coronas acreditadas por el 5 %.</p><div id="walletReferralAdminSummary" class="coronas-referral-stats"><article><small>Invitaciones</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas entregadas</small><strong>—</strong></article></div><div id="walletReferralAdminList"><p class="empty-note">Cargando invitaciones…</p></div><button class="secondary-btn" type="button" onclick="loadWalletReferralAdmin()">Actualizar invitaciones</button></section>
  <section class="wallet-panel wallet-admin-deposits">
-  <div class="order-toolbar"><h3>Solicitudes de recarga de wallet</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin()">Actualizar solicitudes</button></div>
+  <div class="order-toolbar"><h3>Solicitudes de recarga de Coronas</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin()">Actualizar solicitudes</button></div>
   <p class="subtle">Comprueba la recepción real en la tarjeta bancaria o en la red BNB Smart Chain antes de aprobar. Una captura por sí sola no demuestra que el dinero llegó. Al aprobar, el sistema acredita el importe una sola vez.</p>
   <p id="walletAdminMsg" class="msg" role="status"></p>
   <div id="walletDepositsAdmin">Cargando depósitos…</div>
@@ -2508,7 +2508,7 @@ body{min-width:0}
    <div class="section-head"><div><h2>¿Qué necesitas?</h2><p>Ve directamente a la información que buscas.</p></div></div>
    <div class="help-shortcut-grid">
     <button type="button" onclick="showView('guides')"><span aria-hidden="true">▤</span><strong>Guías de los juegos</strong><small>Cómo encontrar tu ID y recargar.</small></button>
-    <button type="button" onclick="showView('faq')"><span aria-hidden="true">?</span><strong>Preguntas frecuentes</strong><small>Pagos, comprobantes y Wallet.</small></button>
+    <button type="button" onclick="showView('faq')"><span aria-hidden="true">?</span><strong>Preguntas frecuentes</strong><small>Pagos, comprobantes y Coronas.</small></button>
     <button type="button" onclick="showView('support')"><span aria-hidden="true">◌</span><strong>Soporte personal</strong><small>Solo para incidencias que requieren revisión.</small></button>
     <button type="button" onclick="showView('legal')"><span aria-hidden="true">⚖</span><strong>Información legal</strong><small>Condiciones, privacidad y reembolsos.</small></button>
    </div>
@@ -2527,7 +2527,7 @@ body{min-width:0}
    <article><strong>Transferencia CUP</strong><p>Envía exactamente el importe del resumen. Ten a mano el número de transacción, el teléfono desde el que pagaste y la captura solicitada.</p></article>
    <article><strong>Saldo móvil</strong><p>Envía exactamente el saldo indicado. Se solicita el teléfono de origen y la captura del SMS; este método no utiliza número de transacción bancaria.</p></article>
    <article><strong>USDT</strong><p>Comprueba la red y la dirección que muestra el checkout. El importe debe coincidir; tendrás que indicar el TxID de la operación y adjuntar el comprobante.</p></article>
-   <article><strong>Saldo de Tienda El Castillo</strong><p>Solo puedes comprar con saldo que ya esté disponible en tu Wallet. Un depósito pendiente de revisión todavía no se puede gastar.</p></article>
+   <article><strong>Coronas del Castillo</strong><p>Solo puedes comprar con Coronas que ya estén disponibles. Una recarga pendiente de revisión todavía no se puede gastar.</p></article>
    <p class="help-warning"><strong>Importante:</strong> nunca compartas contraseñas, códigos SMS, PIN bancarios, frases de recuperación ni acceso remoto a tu teléfono.</p>
   </div>
   <div class="panel help-community-panel">
@@ -2594,8 +2594,8 @@ body{min-width:0}
      <option value="duplicate">Hice dos pagos para una misma compra</option>
      <option value="rejected">El pedido fue rechazado, pero el pago sí se realizó</option>
      <option value="delivered">El pedido figura entregado, pero no recibí el contenido</option>
-     <option value="wallet_pending">Mi depósito de Wallet lleva demasiado tiempo pendiente</option>
-     <option value="wallet">Mi depósito fue aprobado o un movimiento de Wallet es incorrecto</option>
+     <option value="wallet_pending">Mi recarga de Coronas lleva demasiado tiempo pendiente</option>
+     <option value="wallet">Mi recarga fue aprobada o un movimiento de Coronas es incorrecto</option>
     </select>
    </div>
    <div class="field" id="supportSubjectWrap" hidden>
@@ -2667,7 +2667,7 @@ body{min-width:0}
   <article class="faq-item"><h3>¿Qué hago si hice el mismo pago dos veces?</h3><p>No crees un segundo pedido para justificar el pago duplicado. Guarda el folio y los dos comprobantes o referencias de transacción y contacta con soporte. La tienda debe comprobar ambas operaciones antes de registrar una devolución o compensación.</p></article>
   <article class="faq-item"><h3>¿Qué son las Coronas del Castillo?</h3><p>Las Coronas son la moneda interna de Tienda El Castillo. 1 Corona = 1 USD y solo se pueden usar para comprar dentro de la tienda; no son una cuenta bancaria ni se retiran en efectivo. Las recargas se revisan manualmente y las Coronas solo están disponibles después de confirmar el pago. A la tasa de 1.160 CUP por Corona, 1.160 CUP equivalen a 1 Corona.</p></article>
   <article class="faq-item"><h3>¿Cómo funcionan las promociones de Coronas?</h3><p>En tu primera recarga aprobada recibes un 3 % extra, acreditado automáticamente. También puedes compartir tu código: ganas el 5 % del valor de la primera compra de cada amigo cuando el pedido se completa correctamente y se confirma la entrega.</p></article>
-   <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con la wallet falla?</h3><p>Si el servicio no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el débito original a tu wallet. Si ya se creó una orden, el saldo se devuelve cuando se confirma la devolución del proveedor. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de la wallet.</p></article>
+   <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con Coronas falla?</h3><p>Si el servicio no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el débito original a tus Coronas. Si ya se creó una orden, el saldo se devuelve cuando se confirma la devolución del proveedor. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de la wallet.</p></article>
   <article class="faq-item"><h3>¿Qué información debo enviar al reclamar?</h3><p>Indica el folio del pedido, el método de pago, la referencia de la operación cuando exista y una captura legible del comprobante. No envíes contraseñas del juego, códigos de acceso, claves bancarias ni frases de recuperación de billeteras.</p></article>
  </div></section>
  <section id="privacyView" class="store-view hidden"><div class="panel policy-panel">
@@ -2694,7 +2694,7 @@ body{min-width:0}
   <article class="faq-item"><h3>6. Comprobantes</h3><p>La captura debe ser legible y corresponder al pago realizado. La tienda puede rechazar comprobantes incompletos, alterados, repetidos o que no coincidan con los datos de la solicitud.</p></article>
   <article class="faq-item"><h3>7. Pedidos no entregados y pagos duplicados</h3><p>Si el pago se confirma pero la recarga no llega, no debes volver a pagar por el mismo pedido. La tienda revisará el comprobante y el estado de la operación para encontrar una solución. Primero intentaremos completar o corregir la entrega cuando sea técnicamente posible. Si no se puede completar, la administración comunicará la solución disponible y, cuando corresponda, coordinará la devolución por el medio original. Un abono a la wallet solo se utilizará como alternativa con la aceptación del cliente. Los pagos duplicados requieren comprobar las dos operaciones y no se acreditan automáticamente.</p></article>
   <article class="faq-item"><h3>8. Recargas entregadas y datos del jugador</h3><p>Antes de pagar, el cliente debe comprobar que el nombre mostrado al validar el ID corresponde a la cuenta correcta. Si el nombre no coincide, no continúes y solicita ayuda. Una recarga digital confirmada como entregada a la cuenta indicada normalmente no puede revertirse; no se aceptan cambios por arrepentimiento después de la entrega. Los errores atribuibles al proceso de la tienda o a la entrega serán revisados con el folio y las pruebas del caso.</p></article>
-  <article class="faq-item"><h3>9. Wallet y depósitos</h3><p>La wallet contiene saldo interno para comprar productos dentro de Tienda El Castillo y no funciona como una cuenta bancaria ni como un servicio de retiro de efectivo. Los depósitos se revisan manualmente y no forman parte del saldo disponible hasta que la administración los apruebe. Revisa siempre el importe, la moneda, la red y los datos de destino que muestra tu cuenta antes de enviar fondos.</p></article>
+  <article class="faq-item"><h3>9. Coronas y recargas</h3><p>Las Coronas son la moneda interna para comprar productos dentro de Tienda El Castillo y no funciona como una cuenta bancaria ni como un servicio de retiro de efectivo. Los depósitos se revisan manualmente y no forman parte del saldo disponible hasta que la administración los apruebe. Revisa siempre el importe, la moneda, la red y los datos de destino que muestra tu cuenta antes de enviar fondos.</p></article>
   <article class="faq-item"><h3>10. Cómo solicitar una revisión</h3><p>Para solicitar ayuda, utiliza el Centro de soporte de tu perfil, selecciona el motivo y facilita el folio o la referencia correspondiente. La solicitud se registra dentro de la tienda y el equipo responde en la conversación asociada al folio, en «Mis solicitudes» del Centro de soporte. Los estados pendientes, en revisión o en proceso se consultan desde «Órdenes» y «Mensajes y avisos». Nunca envíes contraseñas, códigos de acceso, claves bancarias ni frases de recuperación.</p></article>
   <article class="faq-item"><h3>11. Información y novedades de la comunidad</h3><p>La tienda puede publicar anuncios sobre cambios, servicios y actividades en su canal comunitario de WhatsApp. Unirse es voluntario y no condiciona el acceso a la tienda, la compra ni la atención de un pedido. Las comunicaciones privadas sobre una compra se mantienen en la cuenta del cliente y los canales de soporte habilitados.</p></article>
   <article class="faq-item"><h3>12. Seguridad y uso responsable</h3><p>El cliente debe utilizar sus propios datos de juego y revisar el importe, la región y el método de pago antes de confirmar. No se deben enviar contraseñas ni códigos de acceso. La tienda puede detener una solicitud cuando existan datos incompatibles, evidencia insuficiente, señales de duplicidad o una incidencia que deba revisarse antes de continuar.</p></article>
