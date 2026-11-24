@@ -4392,6 +4392,7 @@ async function loadPaymentMethods(options={}){
   throw new Error(message);
  }
  paymentMethods=(result.data||[]).filter(item=>item.active===true&&(!currentUser||String(item.instructions||"").trim().length>0) || currentProfile?.role==="admin").map(item=>currentUser?item:{...item,instructions:"",publicConfigured:true});paymentLoadError=null;
+ if($("walletDepositMethod"))updateWalletDepositMethod();
  if(currentProfile?.role==="admin")renderPaymentMethodAdmin();
  if(options.render!==false){
   try{updateCheckoutSummary();renderProductCatalogs();}
