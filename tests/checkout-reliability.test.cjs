@@ -711,7 +711,7 @@ test("el checkout de billetera inicia el envío automático y solo registra comp
   assert.match(indexHtml, /requestWalletOrderAutoSubmit\(result\.data\.order_id\)/);
   assert.match(indexHtml, /autoResult\?\.provider_status==="completed"[\s\S]*?capture\?\.\("purchase_completed"/);
   assert.match(indexHtml, /Estamos comprobando el resultado; no repitas la compra/);
-  assert.match(indexHtml, /\["failed","cancelled"\]\.includes\(autoResult\?\.provider_status\)/);
+  assert.match(indexHtml, /\["failed","cancelled","rejected"\]\.includes\(autoResult\?\.provider_status\)/);
 });
 
 
