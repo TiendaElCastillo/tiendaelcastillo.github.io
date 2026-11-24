@@ -713,6 +713,7 @@ test("las invitaciones quedan guardadas en el enlace y se vinculan sin pegar có
   assert.match(indexHtml, /history\.replaceState/);
   assert.match(indexHtml, /const referralCode=pendingWalletReferralCode\(null\)/);
   assert.match(indexHtml, /signupMetadata\.referral_code=referralCode/);
+  assert.match(indexHtml, /return metadata\|\|stored\|\|query/);
   assert.match(indexHtml, /async function tryAutoLinkWalletReferral\(summary\)/);
   assert.match(indexHtml, /db\.rpc\("apply_wallet_referral_code",\{p_code:code\}\)/);
   assert.match(indexHtml, /walletReferralAuthNotice/);
