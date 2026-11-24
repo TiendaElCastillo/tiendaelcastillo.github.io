@@ -124,7 +124,7 @@
   if(!Number.isFinite(price)||price<=0)return fail("El paquete no tiene un precio válido para este método de pago.","payment");
   if(isWallet){
    const balance=typeof walletBalanceUSD!=="undefined"?Number(walletBalanceUSD):0;
-   if(!Number.isFinite(balance)||balance<price)return fail("Tu saldo de Tienda El Castillo no cubre este paquete.","payment");
+   if(!Number.isFinite(balance)||balance<price)return fail("Tus Coronas no cubren este paquete.","payment");
    return null;
   }
   const file=$("paymentProof")?.files?.[0]||null;
