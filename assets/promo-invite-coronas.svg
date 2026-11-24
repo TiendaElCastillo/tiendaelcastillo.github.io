@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 280" role="img" aria-labelledby="t d">
+<title id="t">Invita y gana Coronas</title><desc id="d">Dos jugadores conectados por una invitación y una moneda Corona dorada.</desc>
+<defs>
+ <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#75b6ff"/><stop offset="1" stop-color="#1c559c"/></linearGradient>
+ <linearGradient id="navy" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#244f88"/><stop offset="1" stop-color="#102b53"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3c7"/><stop offset=".55" stop-color="#edc05b"/><stop offset="1" stop-color="#b57a28"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="6"/><feOffset dy="7"/><feComponentTransfer><feFuncA type="linear" slope=".18"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<ellipse cx="178" cy="240" rx="122" ry="15" fill="#1b416b" opacity=".12"/>
+<g filter="url(#shadow)">
+ <path d="M82 105Q130 54 177 105M183 105Q232 54 278 105" fill="none" stroke="#8bbcf4" stroke-width="8" stroke-linecap="round"/>
+ <circle cx="105" cy="106" r="38" fill="url(#blue)" stroke="#fff" stroke-width="5"/>
+ <circle cx="255" cy="106" r="38" fill="url(#navy)" stroke="#fff" stroke-width="5"/>
+ <circle cx="105" cy="97" r="13" fill="#ffe5b2"/>
+ <path d="M76 133Q79 112 105 112Q131 112 134 133" fill="#e9f3ff" opacity=".95"/>
+ <circle cx="255" cy="97" r="13" fill="#ffe5b2"/>
+ <path d="M226 133Q229 112 255 112Q281 112 284 133" fill="#e9f3ff" opacity=".95"/>
+ <path d="M138 157Q179 124 222 157" fill="none" stroke="#3678c8" stroke-width="8" stroke-linecap="round" stroke-dasharray="4 12"/>
+ <path d="m210 145 18 12-18 12" fill="none" stroke="#3678c8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+ <g transform="translate(180 184)">
+  <circle r="47" fill="url(#gold)" stroke="#fff4cf" stroke-width="5"/>
+  <circle r="37" fill="#174b91" stroke="#f5d58b" stroke-width="2"/>
+  <path d="m-22 -8 10 7 8-17 12 18 12-17 8 9-5 25h-40Z" fill="#fff0b6"/>
+  <path d="M-15 24h30" stroke="#f3cb73" stroke-width="4" stroke-linecap="round"/>
+ </g>
+ <path d="m180 25 5 12 12 5-12 5-5 12-5-12-12-5 12-5Z" fill="#e8bd60"/>
+ <circle cx="61" cy="177" r="7" fill="#77aeea"/><circle cx="300" cy="174" r="8" fill="#77aeea"/>
+</g>
+</svg>
