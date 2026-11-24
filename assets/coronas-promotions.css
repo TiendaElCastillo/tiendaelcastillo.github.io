@@ -55,7 +55,7 @@
 }
 .coronas-promo-slide--invite .coronas-promo-cta,
 .coronas-promo-slide--auto .coronas-promo-cta{background:#612c97;color:#fff}
-.coronas-promo-cta:focus-visible,.coronas-promo-control:focus-visible,.coronas-promo-dot:focus-visible{outline:3px solid #f5c95b;outline-offset:3px}
+.coronas-promo-cta:focus-visible,.coronas-promo-control:focus-visible,.coronas-promo-dot:focus-visible{outline:3px solid #d9b1ff;outline-offset:3px}
 .coronas-promo-bottom{
  display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:42px;padding:7px 14px;
  border-top:1px solid rgba(91,62,137,.12);background:rgba(255,255,255,.76);
