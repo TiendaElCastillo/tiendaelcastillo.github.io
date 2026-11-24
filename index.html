@@ -2796,6 +2796,17 @@ function loadCastleTurnstile(){
 // Rama de pruebas: nunca debe apuntar a la base de datos de producción.
 const STORE_SUPABASE_URL="https://kmotmgpzmeooznyymcxl.supabase.co";
 const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttb3RtZ3B6bWVvb3pueXltY3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzOTA5NzksImV4cCI6MjExMDk2Njk3OX0.57qf5Fy9cOR0txQ2Mevs41jht1BqnDFTmY5TiGqxYrA";
+
+function storeFunctionUrl(name){
+ const isStaging=STORE_SUPABASE_URL.includes("kmotmgpzmeooznyymcxl");
+ const stagingFunctions={
+  "central-one-player-validate":"coronas-staging-player-validate",
+  "central-one-order":"coronas-staging-wallet-order",
+  "central-one-read":"coronas-staging-read"
+ };
+ const functionName=isStaging?(stagingFunctions[name]||name):name;
+ return STORE_SUPABASE_URL+"/functions/v1/"+functionName;
+}
 let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"BNB Smart Chain (BEP20)",usdt_address:"",mobile_credit_units:360,mobile_cost_cup:1200}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", playerValidationDebounceTimer=null, activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
 
 const $=id=>document.getElementById(id);
@@ -4286,7 +4297,7 @@ async function validatePlayerId(){
   const accessToken=sessionData?.session?.access_token;
   if(sessionError||!accessToken)throw new Error("La sesión caducó. Vuelve a entrar en tu cuenta.");
   if(!isCurrent())return;
-  response=await fetch(STORE_SUPABASE_URL+"/functions/v1/central-one-player-validate",{
+  response=await fetch(storeFunctionUrl("central-one-player-validate"),{
    method:"POST",
    headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken,"apikey":STORE_SUPABASE_KEY},
    body:JSON.stringify({product_id:p.id,player_id:playerId,zone_id:zoneId||null})
@@ -6239,7 +6250,7 @@ async function requestWalletAutoOrder(orderId){
  const {data:sessionData,error:sessionError}=await db.auth.getSession();
  const accessToken=sessionData?.session?.access_token;
  if(sessionError||!accessToken)throw new Error("No encontramos una sesión activa. Vuelve a iniciar sesión antes de consultar el envío.");
- const response=await fetch(STORE_SUPABASE_URL+"/functions/v1/central-one-order",{
+ const response=await fetch(storeFunctionUrl("central-one-order"),{
   method:"POST",
   headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken,"apikey":STORE_SUPABASE_KEY},
   body:JSON.stringify({action:"submit_wallet",order_id:orderId})
@@ -6258,7 +6269,7 @@ async function requestCentralOneOrder(action,orderId){
  const {data:sessionData,error:sessionError}=await db.auth.getSession();
  const accessToken=sessionData?.session?.access_token;
  if(sessionError||!accessToken)throw new Error("No encontramos una sesión activa. Cierra sesión y vuelve a entrar.");
- const response=await fetch(STORE_SUPABASE_URL+"/functions/v1/central-one-order",{
+ const response=await fetch(storeFunctionUrl("central-one-order"),{
   method:"POST",
   headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken,"apikey":STORE_SUPABASE_KEY},
   body:JSON.stringify({action,order_id:orderId})
@@ -6361,7 +6372,7 @@ async function requestCentralOneRead(action){
  const {data:sessionData,error:sessionError}=await db.auth.getSession();
  const accessToken=sessionData?.session?.access_token;
  if(sessionError||!accessToken)throw new Error("No encontramos una sesión activa. Cierra sesión y vuelve a entrar.");
- const response=await fetch(STORE_SUPABASE_URL+"/functions/v1/central-one-read",{
+ const response=await fetch(storeFunctionUrl("central-one-read"),{
   method:"POST",
   headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken,"apikey":STORE_SUPABASE_KEY},
   body:JSON.stringify({action})
@@ -6553,7 +6564,7 @@ async function testCentralOneConnection(){
   const {data:sessionData,error:sessionError}=await db.auth.getSession();
   const accessToken=sessionData?.session?.access_token;
   if(sessionError||!accessToken)throw new Error("No encontramos una sesión activa. Cierra sesión y vuelve a entrar.");
-  const response=await fetch(STORE_SUPABASE_URL+"/functions/v1/central-one-read",{
+  const response=await fetch(storeFunctionUrl("central-one-read"),{
    method:"POST",
    headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken,"apikey":STORE_SUPABASE_KEY},
    body:JSON.stringify({action:"ping"})
