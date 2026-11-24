@@ -29,7 +29,7 @@ function initAdminLayout(){
  });
  overview.append(metrics);
  const shortcuts=el("div","admin-shortcuts");
- const cards=[["orders","Pedidos","Revisa pagos y autoriza recargas"],["wallet","Wallet","Revisa depósitos y acredita saldo de clientes"],["products","Productos","Crea, edita y activa paquetes"],["payments","Pagos","Configura métodos e instrucciones de cobro"],["pricing","Precios y capital","Actualiza tasas y calcula precios"],["central","Central One","Consulta catálogo y saldo mayorista"],["support","Soporte","Lee y responde las incidencias de clientes"]];
+ const cards=[["orders","Pedidos","Revisa pagos y autoriza recargas"],["wallet","Wallet","Revisa recargas y acredita Coronas de clientes"],["products","Productos","Crea, edita y activa paquetes"],["payments","Pagos","Configura métodos e instrucciones de cobro"],["pricing","Precios y capital","Actualiza tasas y calcula precios"],["central","Central One","Consulta catálogo y saldo mayorista"],["support","Soporte","Lee y responde las incidencias de clientes"]];
  cards.forEach(([key,title,desc])=>{const b=el("button","admin-shortcut");b.type="button";b.append(el("strong","",title),el("span","",desc));b.addEventListener("click",()=>showAdminSection(key));shortcuts.append(b);});
  overview.append(shortcuts,el("p","track-note","Flujo seguro: primero verifica que el dinero llegó. Después autoriza la recarga. Antes del envío, el sistema vuelve a comprobar el coste real de Central One y bloquea cualquier operación que produzca pérdidas. Confirmar el pago no envía diamantes; la entrega solo termina cuando Central One confirma el resultado."));
  const sectionForPanel=["central","central","pricing","products","payments","wallet","orders","support"];
@@ -89,7 +89,7 @@ function setupWalletDepositFilters(panel){
  const container=panel.querySelector("#walletDepositsAdmin");if(!container||container.dataset.filtersReady==="1")return;
  container.dataset.filtersReady="1";
  const filters=el("div","wallet-deposit-filters");
- filters.setAttribute("aria-label","Filtrar solicitudes de wallet");
+ filters.setAttribute("aria-label","Filtrar recargas de Coronas");
  [["all","Todas"],["pending","Pendientes"],["review","En revisión"],["approved","Aprobadas"],["rejected","Rechazadas"]].forEach(([key,label])=>{
   const button=el("button","wallet-deposit-filter"+(key==="all"?" active":""));
   button.type="button";button.dataset.walletDepositFilter=key;
@@ -100,7 +100,7 @@ function setupWalletDepositFilters(panel){
  });
  const search=el("input","wallet-deposit-search");
  search.type="search";search.placeholder="Buscar cliente, importe, referencia o TxID…";
- search.setAttribute("aria-label","Buscar depósitos de wallet");search.autocomplete="off";
+ search.setAttribute("aria-label","Buscar recargas de Coronas");search.autocomplete="off";
  search.addEventListener("input",()=>{walletDepositSearchQuery=search.value.trim().toLocaleLowerCase("es");applyWalletDepositFilter(activeWalletDepositFilter);});
  const empty=el("div","wallet-deposit-filter-empty","No hay solicitudes en este estado.");empty.id="walletDepositFilterEmpty";
  container.parentNode.insertBefore(search,container);
@@ -199,7 +199,7 @@ function refreshCheckoutButton(){
  const enoughWallet=!isWallet||walletBalance>=price;
  const ready=Boolean(product&&player.length>=3&&player.length<=64&&verified&&methodReady&&validFile&&(!needsReference||validReference)&&(!needsSender||validSender)&&(!needsReported||validReported)&&enoughWallet&&consent&&price>0);
  button.disabled=checkoutSubmitting||!ready;
- button.textContent=checkoutSubmitting?"Comprobando pedido…":ready?(isWallet?"Comprar con saldo de tienda":"Ya transferí · Enviar a revisión"):!verified?"Primero verifica tu ID de jugador":!methodReady?"Este método de pago no está disponible":isWallet&&!enoughWallet?"Saldo USD insuficiente":!validFile?"Adjunta la captura del comprobante":needsReference&&!validReference?(method==="USDT"?"Escribe el TxID completo de 64 caracteres":"Escribe el N.º de transacción completo"):needsSender&&!validSender?"Escribe los 8 dígitos de tu móvil cubano (debe empezar por 5)":needsReported&&!validReported?"Confirma el importe exacto":!consent?"Acepta la política y los términos":"Completa los datos del pedido";
+ button.textContent=checkoutSubmitting?"Comprobando pedido…":ready?(isWallet?"Comprar con Coronas":"Ya transferí · Enviar a revisión"):!verified?"Primero verifica tu ID de jugador":!methodReady?"Este método de pago no está disponible":isWallet&&!enoughWallet?"Saldo USD insuficiente":!validFile?"Adjunta la captura del comprobante":needsReference&&!validReference?(method==="USDT"?"Escribe el TxID completo de 64 caracteres":"Escribe el N.º de transacción completo"):needsSender&&!validSender?"Escribe los 8 dígitos de tu móvil cubano (debe empezar por 5)":needsReported&&!validReported?"Confirma el importe exacto":!consent?"Acepta la política y los términos":"Completa los datos del pedido";
 }
 function installCheckoutFlow(){
  // La compra se dispara directamente desde cada tarjeta y su botón; no interceptamos el toque global.
