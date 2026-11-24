@@ -717,11 +717,11 @@ test("el checkout de billetera inicia el envío automático y solo registra comp
 
 
 test("Coronas equivale a 1 USD y conserva la clave interna del método de pago", () => {
-  assert.match(indexHtml, /const coronasValue=usd=>Number\\(usd\\|\\|0\\)\\.toLocaleString/);
+  assert.match(indexHtml, /const coronasValue=usd=>Number\(usd\|\|0\)\.toLocaleString/);
   assert.match(indexHtml, /1 Corona = 1 USD/);
   assert.match(indexHtml, /Coronas del Castillo/);
   assert.match(indexHtml, /name:"Saldo de Tienda El Castillo",short:"Coronas del Castillo"/);
-  assert.match(indexHtml, /const unit=isWallet\\?"Coronas"/);
+  assert.match(indexHtml, /const unit=isWallet\?"Coronas"/);
   assert.match(indexHtml, /No son criptomonedas/);
 });
 
