@@ -33,7 +33,7 @@
 - El proyecto Supabase de pruebas no tiene el esquema completo de wallet, depósitos, comprobantes y referidos. No está listo para validar esta migración.
 - La revisión de asesores no encontró alertas de salud. Queda pendiente activar en el panel Auth la protección contra contraseñas filtradas. Los índices marcados como no utilizados no se borrarán automáticamente.
 - El entorno disponible no tiene Supabase CLI. No existe todavía una migración nueva formal creada mediante `supabase migration new`; el SQL actualizado continúa siendo un borrador revisable, no una migración aplicada.
-- GitHub Actions tuvo una ejecución correcta antes de los últimos cambios de rechazo. Falta confirmar el resultado posterior al último commit de la rama.
+- [x] GitHub Actions, ejecución 31 (commit de código `6f2cec31b85d1d6fd2a1984243a7c5f1bd4fc6c8`): **39 pruebas aprobadas, 0 fallidas**. El fallo de la ejecución 30 fue una expectativa obsoleta de una prueba y quedó corregido.
 - El icono SVG actual es provisional; falta recibir el PNG original de Canva y hacer revisión visual móvil.
 
 ## Pendientes obligatorios antes de publicar
