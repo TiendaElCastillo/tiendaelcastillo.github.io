@@ -97,3 +97,10 @@ No hacer compras reales de prueba ni consumir saldo de Central One para verifica
 - PR #40: https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/pull/40
 - Borrador SQL: https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/blob/feat/coronas-wallet-referrals/docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql
 - Plan operativo: https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/blob/feat/coronas-wallet-referrals/docs/PLAN_CORONAS_RECOMPENSAS_PARA_MANANA.md
+
+
+## Registro adicional de validación — 24 de noviembre de 2026
+
+- La corrección del estado `rejected`, el reembolso condicionado a confirmación del proveedor, la reversión de comisiones y sus pruebas quedó en el commit de código `6f2cec31b85d1d6fd2a1984243a7c5f1bd4fc6c8`.
+- GitHub Actions, ejecución **31** (`45316625583`), terminó correctamente: **39 pruebas aprobadas, 0 fallidas**. La ejecución anterior falló únicamente porque una prueba antigua seguía esperando la lista de estados sin `rejected`; esa expectativa se actualizó y la nueva ejecución pasó.
+- El PR continúa en borrador. El código probado todavía no está unido a `main` ni desplegado en producción.
