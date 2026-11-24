@@ -7,7 +7,7 @@
 
 ## Estado
 
-La rama de liberación ya está conectada a la base de datos de producción, pero **todavía no se ha unido a `main` ni se ha publicado la nueva interfaz en la web pública**. Las dos migraciones productivas ya se aplicaron y verificaron. La función `central-one-order` está activa en versión 25 con `verify_jwt=true`. No se ha hecho ninguna recarga ni compra real.
+La integración quedó fusionada en `main` mediante la solicitud #41 el 24 de noviembre de 2026. El archivo principal contiene la interfaz de Coronas, el carrusel promocional y la conexión al proyecto productivo. Las dos migraciones productivas están aplicadas y verificadas; la función `central-one-order` está activa en versión 25 con `verify_jwt=true`. No se ha hecho ninguna recarga ni compra real.
 
 La rama de pruebas conserva su URL, clave y simuladores propios. La rama de liberación usa la URL y la clave pública `anon` que ya emplea `main`, y llama directamente a las funciones reales `central-one-player-validate`, `central-one-order` y `central-one-read`. Los nombres de funciones simuladas y sus carpetas no se incluyen en esta rama.
 
