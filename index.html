@@ -2497,9 +2497,24 @@ body{min-width:0}
   <p id="walletAdminMsg" class="msg" role="status"></p>
   <div id="walletDepositsAdmin">Cargando depósitos…</div>
  </section>
+ <section class="wallet-panel wallet-admin-purchases">
+  <div class="order-toolbar">
+   <div><h3>Compras pagadas con Coronas</h3><p class="subtle">Registro de cada débito y de la recarga enviada a la cuenta del juego. Estas compras no esperan aprobación manual de pago.</p></div>
+   <button id="walletPurchasesAdminRefresh" class="secondary-btn" type="button" onclick="loadWalletPurchasesAdmin()">Actualizar compras</button>
+  </div>
+  <div id="walletPurchaseAdminStats" class="coronas-referral-stats" aria-label="Resumen de compras con Coronas">
+   <article><small>Compras registradas</small><strong id="walletPurchaseAdminCount">—</strong></article>
+   <article><small>Coronas descontadas</small><strong id="walletPurchaseAdminTotal">—</strong></article>
+   <article><small>Registros para revisar</small><strong id="walletPurchaseAdminIssues">—</strong></article>
+  </div>
+  <div class="field"><label for="walletPurchasesAdminSearch">Buscar por cliente, folio, juego o jugador</label><input id="walletPurchasesAdminSearch" class="wallet-deposit-search" type="search" autocomplete="off" placeholder="Escribe un nombre, folio o juego…"></div>
+  <p id="walletPurchasesAdminMsg" class="msg" role="status" aria-live="polite">Las compras pagadas con Coronas aparecerán aquí.</p>
+  <div id="walletPurchasesAdmin"><p class="empty-note">Pulsa «Actualizar compras» para consultar el historial.</p></div>
+  <p id="walletPurchasesAdminEmpty" class="empty-note hidden">No se encontraron compras con esa búsqueda.</p>
+ </section>
 </div>
 
-<div class="panel"><div class="order-toolbar"><h2>Pedidos de clientes</h2><div class="field-row"><button class="secondary-btn" type="button" onclick="loadAllOrders()">Actualizar</button><button class="secondary-btn" type="button" onclick="enablePaymentNotifications()">Activar avisos</button></div></div><p id="paymentNotifyStatus" class="track-note">Activa los avisos de este teléfono y mantén la tienda abierta para recibir alertas automáticas.</p><p class="track-note">Flujo de recarga: primero revisa y confirma el pago del cliente. Después aparecerá el botón <strong>«Autorizar recarga y reservar saldo»</strong>; ese segundo botón envía el pedido a Central One y es el único que usa saldo del proveedor. La solicitud queda protegida contra duplicados y podrás consultar aquí el estado real de la entrega. No marques la recarga como completada hasta que Central One informe «completed».</p><p id="orderadminmsg" class="msg" role="status"></p><div id="allorders">Cargando...</div></div>
+<div class="panel"><div class="order-toolbar"><h2>Pedidos de clientes</div></h2><div class="field-row"><button class="secondary-btn" type="button" onclick="loadAllOrders()">Actualizar</button><button class="secondary-btn" type="button" onclick="enablePaymentNotifications()">Activar avisos</button></div></div><p id="paymentNotifyStatus" class="track-note">Activa los avisos de este teléfono y mantén la tienda abierta para recibir alertas automáticas.</p><p class="track-note">Flujo de recarga: primero revisa y confirma el pago del cliente. Después aparecerá el botón <strong>«Autorizar recarga y reservar saldo»</strong>; ese segundo botón envía el pedido a Central One y es el único que usa saldo del proveedor. La solicitud queda protegida contra duplicados y podrás consultar aquí el estado real de la entrega. No marques la recarga como completada hasta que Central One informe «completed».</p><p id="orderadminmsg" class="msg" role="status"></p><div id="allorders">Cargando...</div></div>
 
  <div class="panel admin-support-panel">
   <div class="order-toolbar"><div><h2>Solicitudes de soporte</h2><p class="subtle">Mensajes recibidos desde el Centro de soporte de la tienda.</p></div><button class="secondary-btn" type="button" onclick="loadAdminSupportTickets()">Actualizar</button></div>
@@ -5968,6 +5983,111 @@ async function loadWalletDepositsAdmin(){
  }
  list.innerHTML=cards.join("");
 }
+function applyWalletPurchasesAdminSearch(){
+ const list=$("walletPurchasesAdmin");
+ const search=$("walletPurchasesAdminSearch");
+ const empty=$("walletPurchasesAdminEmpty");
+ if(!list)return;
+ const query=String(search?.value||"").trim().toLocaleLowerCase("es");
+ const cards=Array.from(list.querySelectorAll(":scope > [data-wallet-purchase-card]"));
+ let visible=0;
+ cards.forEach(card=>{
+  const matches=!query||card.textContent.toLocaleLowerCase("es").includes(query);
+  card.classList.toggle("hidden",!matches);
+  if(matches)visible++;
+ });
+ if(empty){
+  empty.classList.toggle("hidden",cards.length===0||visible>0);
+  empty.textContent=query?"No se encontraron compras con esa búsqueda.":"No hay compras pagadas con Coronas.";
+ }
+}
+async function loadWalletPurchasesAdmin(){
+ if(currentProfile?.role!=="admin")return;
+ const list=$("walletPurchasesAdmin");
+ if(!list)return;
+ const refreshButton=$("walletPurchasesAdminRefresh");
+ const message=$("walletPurchasesAdminMsg");
+ if(refreshButton){refreshButton.disabled=true;refreshButton.textContent="Actualizando…";}
+ list.textContent="Cargando compras pagadas con Coronas…";
+ try{
+  const purchases=[];
+  for(let from=0;;from+=1000){
+   const result=await db.from("wallet_transactions")
+    .select("id,user_id,order_id,amount,currency,description,created_at")
+    .eq("kind","purchase")
+    .eq("currency","USD")
+    .order("created_at",{ascending:false})
+    .range(from,from+999);
+   if(result.error)throw new Error("No se pudo leer el registro de débitos: "+result.error.message);
+   purchases.push(...(result.data||[]));
+   if(!result.data||result.data.length<1000)break;
+  }
+  const orderIds=[...new Set(purchases.map(row=>row.order_id).filter(Boolean))];
+  const userIds=[...new Set(purchases.map(row=>row.user_id).filter(Boolean))];
+  const orderMap=new Map(),profileMap=new Map();
+  for(let i=0;i<orderIds.length;i+=100){
+   const result=await db.from("orders")
+    .select("id,order_code,user_id,game,package_name,player_id,player_name,status,payment_source,central_one_status,created_at,price")
+    .in("id",orderIds.slice(i,i+100));
+   if(result.error)throw new Error("No se pudieron comprobar los pedidos vinculados: "+result.error.message);
+   (result.data||[]).forEach(order=>orderMap.set(order.id,order));
+  }
+  for(let i=0;i<userIds.length;i+=100){
+   const result=await db.from("profiles")
+    .select("id,full_name,email")
+    .in("id",userIds.slice(i,i+100));
+   if(result.error)throw new Error("No se pudieron identificar los clientes de las compras: "+result.error.message);
+   (result.data||[]).forEach(profile=>profileMap.set(profile.id,profile));
+  }
+  let total=0,issues=0;
+  const cards=purchases.map(transaction=>{
+   const order=transaction.order_id?orderMap.get(transaction.order_id):null;
+   const profile=profileMap.get(transaction.user_id);
+   const amount=Number(transaction.amount||0);
+   total+=Number.isFinite(amount)?amount:0;
+   const mismatch=!order||order.payment_source!=="wallet"||order.user_id!==transaction.user_id||Math.abs(Number(order.price||0)-amount)>0.0001;
+   if(mismatch)issues++;
+   const orderStatus=String(order?.status||"").toLowerCase();
+   const providerStatus=String(order?.central_one_status||"").toLowerCase();
+   let statusLabel="En proceso";
+   if(mismatch)statusLabel="Revisar registro";
+   else if(orderStatus==="completed"&&providerStatus==="completed")statusLabel="Entregado";
+   else if(["failed","cancelled","rejected"].includes(orderStatus)||["failed","cancelled","rejected"].includes(providerStatus))statusLabel="Requiere revisión";
+   else if(["unknown","retryable","submitting"].includes(providerStatus))statusLabel="Verificando entrega";
+   const statusClass=statusLabel==="Entregado"?"approved":statusLabel==="Requiere revisión"||statusLabel==="Revisar registro"?"rejected":"";
+   const customer=clean(profile?.full_name||profile?.email||("Cuenta "+String(transaction.user_id||"").slice(0,8)));
+   const email=profile?.full_name&&profile?.email?'<br>Correo: '+clean(profile.email):"";
+   const game=clean(order?.game||"Pedido no encontrado");
+   const packageName=clean(order?.package_name||"");
+   const player=clean(order?.player_id||"No disponible");
+   const playerName=clean(order?.player_name||"");
+   const folio=clean(order?.order_code||("Movimiento "+String(transaction.id||"").slice(0,8)));
+   const date=transaction.created_at?new Date(transaction.created_at).toLocaleString("es-CU"):"Fecha no disponible";
+   const integrityNote=mismatch?'<p class="wallet-warning"><strong>Comprobación:</strong> el débito no coincide con un pedido de Coronas válido. Revisa este movimiento antes de darlo por entregado.</p>':"";
+   return '<article class="wallet-admin-card wallet-purchase-admin-card" data-wallet-purchase-card><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>'+customer+'</strong><span class="wallet-status '+statusClass+'">'+statusLabel+'</span></div><div class="wallet-admin-summary"><strong>'+game+(packageName?" · "+packageName:"")+'</strong><br>Folio: <strong>'+folio+'</strong><br>Jugador: '+player+(playerName?" · "+playerName:"")+'<br>Coste descontado: <strong>'+moneyUSD(amount)+' Coronas</strong><br>Fecha de compra: '+date+email+'</div>'+integrityNote+'</article>';
+  });
+  const count=$("walletPurchaseAdminCount"),spent=$("walletPurchaseAdminTotal"),issueCount=$("walletPurchaseAdminIssues");
+  if(count)count.textContent=String(purchases.length);
+  if(spent)spent.textContent=moneyUSD(total)+" Coronas";
+  if(issueCount)issueCount.textContent=String(issues);
+  list.innerHTML=cards.length?cards.join(""):'<p class="empty-note">Todavía no hay compras pagadas con Coronas.</p>';
+  if(message)message.textContent=purchases.length
+   ?"Se cargaron "+purchases.length+" compra(s). Las incidencias de vínculo o importe quedan señaladas para revisión."
+   :"Todavía no hay compras pagadas con Coronas.";
+  const search=$("walletPurchasesAdminSearch");
+  if(search&&search.dataset.walletPurchaseSearch!=="1"){
+   search.dataset.walletPurchaseSearch="1";
+   search.addEventListener("input",applyWalletPurchasesAdminSearch);
+  }
+  applyWalletPurchasesAdminSearch();
+ }catch(error){
+  list.textContent=error?.message||"No se pudo cargar el historial de compras con Coronas.";
+  if(message)message.textContent="El historial no está disponible. Actualiza el apartado antes de verificar una compra.";
+  ["walletPurchaseAdminCount","walletPurchaseAdminTotal","walletPurchaseAdminIssues"].forEach(id=>{const node=$(id);if(node)node.textContent="—";});
+ }finally{
+  if(refreshButton){refreshButton.disabled=false;refreshButton.textContent="Actualizar compras";}
+ }
+}
 async function reviewWalletDeposit(id,approve){
  if(currentProfile?.role!=="admin")return;
  const depositResult=await db.from("wallet_deposits").select("payment_method,amount,currency,credited_amount,payment_reference,sender_phone,txid,network,recipient_address").eq("id",id).maybeSingle();
@@ -7003,7 +7123,7 @@ if(document.readyState==="loading"){
 </script>
 
 <script src="./assets/offline-guard.js?v=3"></script>
-<script src="./assets/admin-panel.js?v=23" defer></script>
+<script src="./assets/admin-panel.js?v=24" defer></script>
 <script src="./assets/customer-center.js?v=6" defer></script>
 <script src="./assets/checkout-reliability.js?v=1" defer></script>
 <script src="./assets/coronas-promotions.js?v=1" defer></script>
