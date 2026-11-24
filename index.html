@@ -2226,7 +2226,7 @@ body{min-width:0}
  </div>
  <div id="checkoutStagePayment" class="checkout-stage-panel hidden">
   <div class="checkout-stage-title"><strong>Completa los datos de pago</strong><small>Envía la cantidad exacta y conserva el comprobante original.</small></div>
-  <div class="field"><label>Selecciona el método de pago</label><div id="checkoutPaymentMethods" class="checkout-payment-methods" role="group" aria-label="Método de pago"></div><select id="payment" class="hidden" aria-hidden="true" tabindex="-1" onchange="updateCheckoutSummary()"><option value="Transferencia CUP">Transferencia CUP</option><option value="Saldo móvil">Saldo móvil</option><option value="USDT">USDT</option><option value="Saldo de Tienda El Castillo">Saldo de Tienda El Castillo</option></select></div>
+  <div class="field"><label>Selecciona el método de pago</label><div id="checkoutPaymentMethods" class="checkout-payment-methods" role="group" aria-label="Método de pago"></div><select id="payment" class="hidden" aria-hidden="true" tabindex="-1" onchange="updateCheckoutSummary()"><option value="Transferencia CUP">Transferencia CUP</option><option value="Saldo móvil">Saldo móvil</option><option value="USDT">USDT</option><option value="Saldo de Tienda El Castillo">Corona</option></select></div>
   <div id="checkoutSummary" class="checkout-summary" aria-live="polite"></div><p id="walletCheckoutNote" class="track-note" aria-live="polite"></p>
   <div class="field hidden" id="senderPhoneWrap"><label id="senderPhoneLabel" for="senderPhone">¿Desde qué número haces el pago? (obligatorio)</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="senderPhone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="xxxxxxxx" maxlength="20" aria-label="Ocho dígitos del móvil cubano desde el que pagaste"></div><small class="field-hint" id="senderPhoneHelp">Escribe los 8 dígitos de la línea desde la que realizaste el pago.</small></div>
   <div id="paymentInstructions" class="payment-data-panel" role="status" aria-live="polite"></div>
@@ -2303,7 +2303,7 @@ body{min-width:0}
  <div class="panel">
   <div class="section-head"><div><h2>Accesos rápidos</h2><p>Entra directamente a lo que necesitas.</p></div></div>
   <div class="profile-action-grid">
-   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><svg class="wallet-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 6.5h13.5A2.5 2.5 0 0 1 21 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h12"/><path d="M3 8h14.5A2.5 2.5 0 0 1 20 10.5V12h-4.2a2.3 2.3 0 0 0 0 4.6H21"/><circle cx="16" cy="14.8" r=".65" fill="currentColor" stroke="none"/></svg></span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Saldo: 0,00 USD</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><svg class="wallet-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 6.5h13.5A2.5 2.5 0 0 1 21 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h12"/><path d="M3 8h14.5A2.5 2.5 0 0 1 20 10.5V12h-4.2a2.3 2.3 0 0 0 0 4.6H21"/><circle cx="16" cy="14.8" r=".65" fill="currentColor" stroke="none"/></svg></span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Coronas: 0,00</small></button>
    <button class="profile-action-card" type="button" onclick="showView('orders')"><span class="profile-action-icon">▤</span><strong>Mis pedidos</strong><small>Consulta entregas y estados</small></button>
    <button class="profile-action-card" type="button" onclick="showView('notifications')"><span class="profile-action-icon"><svg class="messages-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.25 11.25a7.25 7.25 0 0 1-7.25 7.25H7l-3.25 2V11.25A7.25 7.25 0 0 1 11 4h2a7.25 7.25 0 0 1 7.25 7.25Z"/><path d="M8.5 10h7M8.5 13.75h4.75"/></svg></span><strong>Mensajes y avisos</strong><small id="profileUnreadNotifications">Revisa las novedades de tu cuenta</small></button>
    <button class="profile-action-card" type="button" onclick="showView('help')"><span class="profile-action-icon">?</span><strong>Centro de ayuda</strong><small>Guías, pagos, pedidos y soporte</small></button>
@@ -2346,7 +2346,7 @@ body{min-width:0}
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
    <img class="wallet-watermark" src="./assets/el-castillo-icon.webp" alt="" aria-hidden="true" width="180" height="180" loading="lazy" decoding="async">
-   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando saldo…</div><small>Este es tu saldo para pagar paquetes. Los reembolsos de pedidos fallidos que correspondan también se acreditarán aquí.</small></div>
+   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Tus Coronas sirven para pagar paquetes. 1 Corona = 1 USD. Las devoluciones que correspondan también se acreditan aquí.</small></div>
    <div class="wallet-coin wallet-coin-art" aria-hidden="true">
     <svg viewBox="0 0 180 150" role="img" focusable="false">
      <defs><linearGradient id="walletShell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dceaff"/></linearGradient><linearGradient id="walletCard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#75b4ff"/><stop offset="1" stop-color="#2868df"/></linearGradient></defs>
@@ -2361,29 +2361,29 @@ body{min-width:0}
    </div>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
-   <h3 id="walletInformationTitle">Tu saldo de tienda</h3>
-   <p>Usa tu wallet para pagar paquetes dentro de Tienda El Castillo. Si un pedido pagado no se puede completar y corresponde una devolución, el reembolso se acreditará aquí.</p>
-   <p>Para añadir saldo, realiza una transferencia CUP y envía el comprobante. El dinero estará disponible cuando confirmemos el pago.</p>
+   <h3 id="walletInformationTitle">Tus Coronas</h3>
+   <p>Las Coronas son la moneda interna de Tienda El Castillo. <strong>1 Corona equivale exactamente a 1 USD</strong> y puedes usarlas para pagar paquetes dentro de la tienda. Si una compra debe devolverse, las Coronas correspondientes volverán a tu wallet.</p>
+   <p>Para añadir Coronas, realiza una transferencia CUP y envía el comprobante. Las Coronas estarán disponibles solo después de que confirmemos el pago.</p>
   </section>
   <div class="wallet-content-grid">
    <section class="wallet-panel wallet-deposit-wizard">
-    <h3>Agregar saldo</h3>
+    <h3>Añadir Coronas</h3>
     <p>Realiza una transferencia CUP. Tu saldo estará disponible después de comprobar el pago.</p>
     <ol id="walletDepositStepper" class="wallet-deposit-stepper" aria-label="Pasos para acreditar saldo">
      <li class="active" data-step="1"><b>1</b><span>Importe</span></li>
      <li data-step="2"><b>2</b><span>Pagar y enviar datos</span></li>
     </ol>
     <div id="walletDepositStep1" class="wallet-deposit-stage">
-     <div class="checkout-stage-title"><strong>1. ¿Cuánto saldo quieres añadir?</strong><small>Indica la cantidad que vas a transferir en CUP. Podrás revisar el importe antes de enviarnos la solicitud.</small></div>
+     <div class="checkout-stage-title"><strong>1. ¿Cuánto quieres añadir?</strong><small>Indica la cantidad que vas a transferir en CUP. Podrás revisar el importe antes de enviarnos la solicitud.</small></div>
      <div class="wallet-method-note"><span>Único método disponible</span><strong>Transferencia CUP</strong></div>
-     <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad que vas a transferir (CUP)</label><input id="walletDepositAmount" type="number" inputmode="numeric" min="1160" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1160 CUP, equivalente a 1 USD.</small></div>
-     <div id="walletDepositPreview" class="wallet-preview"><small>Saldo estimado que recibirás después de la revisión</small><strong>0,00 USD</strong><small>El importe final se calcula y verifica en el servidor antes de acreditarse.</small></div>
+     <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad que vas a transferir (CUP)</label><input id="walletDepositAmount" type="number" inputmode="numeric" min="1160" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1160 CUP, equivalente a 1 Corona (1 USD).</small></div>
+     <div id="walletDepositPreview" class="wallet-preview"><small>Coronas estimadas que recibirás después de la revisión</small><strong>0,00 Coronas</strong><small>El importe final se calcula y verifica en el servidor antes de acreditarse.</small></div>
      <div class="checkout-stage-actions"><span></span><button class="primary-btn" type="button" onclick="goWalletDepositStep(2)">Continuar →</button></div>
     </div>
     <div id="walletDepositStep2" class="wallet-deposit-stage hidden">
      <div class="checkout-stage-title"><strong>2. Realiza el pago y completa el formulario</strong><small>Primero transfiere el importe exacto. Después, rellena los datos de la operación y adjunta el mensaje de confirmación del banco.</small></div>
      <div id="walletDepositInstructions" class="wallet-instructions">Cargando las instrucciones de pago…</div>
-     <div class="wallet-deposit-form-intro"><strong>Cuando hayas realizado la transferencia</strong><small>Completa estos datos tal como aparecen en la confirmación de tu banco. El saldo se añadirá después de que revisemos el pago.</small></div>
+     <div class="wallet-deposit-form-intro"><strong>Cuando hayas realizado la transferencia</strong><small>Completa estos datos tal como aparecen en la confirmación de tu banco. Las Coronas se acreditarán después de que revisemos el pago.</small></div>
      <div class="field" id="walletDepositSenderPhoneWrap"><label for="walletDepositSenderPhone">Teléfono desde el que hiciste la transferencia</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="walletDepositSenderPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="20" placeholder="xxxxxxxx" aria-label="Ocho dígitos del móvil cubano desde el que pagaste"></div><small class="wallet-field-hint">Escribe solo los 8 dígitos de tu línea de origen; el +53 ya aparece separado.</small></div>
      <div class="field" id="walletDepositReferenceWrap"><label for="walletDepositReference">Número de transacción bancaria</label><input id="walletDepositReference" inputmode="text" maxlength="100" placeholder="Copia el Nro. de Transacción"></div>
      <div class="field proof-field wallet-proof-field" id="walletDepositProofWrap">
@@ -2400,14 +2400,14 @@ body{min-width:0}
     <p id="walletDepositMsg" class="msg" role="status" aria-live="polite"></p>
    </section>
    <section class="wallet-panel">
-    <h3>Movimientos de tu wallet</h3>
+    <h3>Movimientos de Coronas</h3>
     <p>Consulta tus compras, depósitos y reembolsos, con sus fechas e importes.</p>
     <div id="walletTransactions"><p class="empty-note">Cargando movimientos…</p></div>
    </section>
   </div>
   <section class="wallet-panel">
-   <h3>Historial de depósitos</h3>
-   <p>Consulta el estado de tus depósitos y el importe que se añadió a tu saldo.</p>
+   <h3>Historial de recargas de Coronas</h3>
+   <p>Consulta el estado de tus recargas y la cantidad de Coronas acreditada.</p>
    <div id="walletDepositsMine"><p class="empty-note">Cargando depósitos…</p></div>
   </section>
  </div>
@@ -2419,7 +2419,7 @@ body{min-width:0}
  <div class="panel"><h2>Administrar productos</h2><div class="field"><label>Juego o plataforma</label><input id="game" placeholder="Ej. Free Fire"></div><div class="field"><label>Nombre del paquete</label><input id="pname" placeholder="Ej. 110 diamantes"></div><div class="field"><label>Descripción</label><input id="description" placeholder="Opcional"></div><div class="field-row"><div class="field"><label>Cantidad</label><input id="amount" type="number" placeholder="110"></div></div><div class="field-row"><div class="field"><label>Transferencia CUP</label><input id="transfer" type="number" placeholder="0"></div><div class="field"><label>Saldo móvil</label><input id="mobile" type="number" placeholder="0"></div></div><div class="field"><label>Precio USDT</label><input id="usdt" type="number" step="0.01" placeholder="0"></div><button id="adminProductSubmit" class="primary-btn block-btn" type="button" onclick="addProduct()">Guardar producto</button><button id="cancelProductEdit" class="secondary-btn block-btn hidden" type="button" onclick="cancelProductEdit()">Cancelar edición</button><p id="adminmsg" class="msg" role="status"></p><div id="adminProducts"></div></div>
  <div class="panel"><h2>Instrucciones de pago</h2><p class="subtle">Configura los datos que verá el cliente según el método elegido. Deja desactivado un método que todavía no puedas recibir.</p><div class="field"><label for="payMethodName">Método</label><select id="payMethodName"><option>Transferencia CUP</option><option>Saldo móvil</option><option>USDT</option></select></div><div class="field"><label for="payInstructions">Instrucciones para el cliente</label><textarea id="payInstructions" rows="4" placeholder="Ej. Datos para transferir, número de teléfono o dirección de billetera. Nunca incluyas claves privadas."></textarea></div><button class="primary-btn block-btn" type="button" onclick="savePaymentMethod()">Guardar instrucciones</button><p id="paymentAdminMsg" class="msg" role="status"></p><div id="paymentAdminList"></div></div>
 <div class="panel wallet-admin-panel">
- <div class="wallet-admin-heading"><span class="admin-kicker">SALDO DE CLIENTES</span><h2>Gestión de wallet</h2><p class="subtle">Revisa depósitos, comprueba la recepción real y acredita el saldo cuando corresponda.</p></div>
+ <div class="wallet-admin-heading"><span class="admin-kicker">CORONAS DE CLIENTES</span><h2>Gestión de Coronas</h2><p class="subtle">Revisa las recargas, comprueba la recepción real y acredita las Coronas cuando corresponda.</p></div>
  <div class="wallet-admin-kpi-grid" aria-label="Resumen de depósitos">
   <article><span>Pendiente de comprobante</span><strong id="walletCountPending">0</strong></article>
   <article><span>En revisión</span><strong id="walletCountReview">0</strong></article>
@@ -2428,13 +2428,13 @@ body{min-width:0}
  </div>
  <section class="wallet-panel wallet-admin-settings">
   <h3>Configuración de la wallet</h3>
-  <p>Esta tasa convierte los depósitos por Transferencia CUP a USD. Los cambios se aplican solo a las nuevas solicitudes; cada depósito anterior conserva la tasa con la que fue creado.</p>
-  <div class="wallet-rate-row"><div class="field"><label for="walletCupRate">CUP por cada 1 USD de saldo</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1160"></div><button class="primary-btn" type="button" onclick="saveWalletSettings()">Guardar tasa</button></div>
+  <p>Esta tasa convierte las transferencias CUP a Coronas. 1 Corona equivale a 1 USD. Los cambios se aplican solo a las nuevas solicitudes; cada recarga anterior conserva la tasa con la que fue creada.</p>
+  <div class="wallet-rate-row"><div class="field"><label for="walletCupRate">CUP por cada 1 Corona</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1160"></div><button class="primary-btn" type="button" onclick="saveWalletSettings()">Guardar tasa</button></div>
   <p id="walletSettingsMsg" class="msg" role="status"></p>
-  <p class="wallet-field-hint">El sistema redondea hacia abajo a dos decimales. El mínimo de cada depósito es 1 USD equivalente.</p>
+  <p class="wallet-field-hint">El sistema redondea hacia abajo a dos decimales. El mínimo de cada recarga es 1 Corona (equivale a 1 USD).</p>
  </section>
  <section class="wallet-panel wallet-admin-deposits">
-  <div class="order-toolbar"><h3>Solicitudes de recarga de wallet</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin()">Actualizar solicitudes</button></div>
+  <div class="order-toolbar"><h3>Solicitudes de recarga de Coronas</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin()">Actualizar solicitudes</button></div>
   <p class="subtle">Comprueba la recepción real en la tarjeta bancaria o en la red BNB Smart Chain antes de aprobar. Una captura por sí sola no demuestra que el dinero llegó. Al aprobar, el sistema acredita el importe una sola vez.</p>
   <p id="walletAdminMsg" class="msg" role="status"></p>
   <div id="walletDepositsAdmin">Cargando depósitos…</div>
@@ -2491,7 +2491,7 @@ body{min-width:0}
    <article><strong>Transferencia CUP</strong><p>Envía exactamente el importe del resumen. Ten a mano el número de transacción, el teléfono desde el que pagaste y la captura solicitada.</p></article>
    <article><strong>Saldo móvil</strong><p>Envía exactamente el saldo indicado. Se solicita el teléfono de origen y la captura del SMS; este método no utiliza número de transacción bancaria.</p></article>
    <article><strong>USDT</strong><p>Comprueba la red y la dirección que muestra el checkout. El importe debe coincidir; tendrás que indicar el TxID de la operación y adjuntar el comprobante.</p></article>
-   <article><strong>Saldo de Tienda El Castillo</strong><p>Solo puedes comprar con saldo que ya esté disponible en tu Wallet. Un depósito pendiente de revisión todavía no se puede gastar.</p></article>
+   <article><strong>Corona</strong><p>Puedes pagar con las Coronas que ya estén disponibles en tu Wallet. 1 Corona equivale a 1 USD. Las recargas pendientes de revisión todavía no se pueden gastar.</p></article>
    <p class="help-warning"><strong>Importante:</strong> nunca compartas contraseñas, códigos SMS, PIN bancarios, frases de recuperación ni acceso remoto a tu teléfono.</p>
   </div>
   <div class="panel help-community-panel">
@@ -2629,8 +2629,8 @@ body{min-width:0}
   <article class="faq-item"><h3>¿Dónde se publican las novedades de la tienda?</h3><p>En el canal oficial de WhatsApp compartiremos anuncios, cambios de la tienda y novedades para la comunidad. Es un canal informativo; no sustituye el seguimiento de pedidos ni el soporte personal.</p></article>
   <article class="faq-item"><h3>¿Dónde veo mis pedidos?</h3><p>Inicia sesión y abre «Pedidos» en la navegación inferior. Allí verás el folio, el estado y el avance de cada solicitud.</p></article>
   <article class="faq-item"><h3>¿Qué hago si hice el mismo pago dos veces?</h3><p>No crees un segundo pedido para justificar el pago duplicado. Guarda el folio y los dos comprobantes o referencias de transacción y contacta con soporte. La tienda debe comprobar ambas operaciones antes de registrar una devolución o compensación.</p></article>
-  <article class="faq-item"><h3>¿Cómo funciona la wallet?</h3><p>La wallet es saldo interno para comprar dentro de Tienda El Castillo; no es una cuenta bancaria ni un servicio de retiro de efectivo. Los depósitos se revisan manualmente y el saldo solo está disponible después de que la administración confirme el pago. Un depósito pendiente no puede utilizarse para comprar. El importe se acredita en USD usando la tasa que se muestra al crear la solicitud; por ejemplo, a 1.160 CUP/USD, 1.160 CUP equivalen a 1,00 USD.</p></article>
-  <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con la wallet falla?</h3><p>Si el servicio no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el débito original a tu wallet. Si ya se creó una orden, el saldo se devuelve cuando se confirma la devolución del proveedor. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de la wallet.</p></article>
+  <article class="faq-item"><h3>¿Qué son las Coronas?</h3><p>Las Coronas son la moneda interna de Tienda El Castillo para pagar paquetes y servicios. <strong>1 Corona equivale exactamente a 1 USD.</strong> Puedes añadir Coronas mediante transferencia CUP al cambio que se muestra al crear la solicitud. Cada recarga se revisa manualmente y solo queda disponible después de que la administración confirme el pago. Las Coronas son para compras dentro de la tienda; no son efectivo ni se pueden retirar.</p></article>
+  <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con la wallet falla?</h3><p>Si el servicio no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el importe original en Coronas a tu wallet. Si ya se creó una orden, las Coronas se devuelven cuando se confirma la devolución del proveedor. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de la wallet.</p></article>
   <article class="faq-item"><h3>¿Qué información debo enviar al reclamar?</h3><p>Indica el folio del pedido, el método de pago, la referencia de la operación cuando exista y una captura legible del comprobante. No envíes contraseñas del juego, códigos de acceso, claves bancarias ni frases de recuperación de billeteras.</p></article>
  </div></section>
  <section id="privacyView" class="store-view hidden"><div class="panel policy-panel">
@@ -2657,7 +2657,7 @@ body{min-width:0}
   <article class="faq-item"><h3>6. Comprobantes</h3><p>La captura debe ser legible y corresponder al pago realizado. La tienda puede rechazar comprobantes incompletos, alterados, repetidos o que no coincidan con los datos de la solicitud.</p></article>
   <article class="faq-item"><h3>7. Pedidos no entregados y pagos duplicados</h3><p>Si el pago se confirma pero la recarga no llega, no debes volver a pagar por el mismo pedido. La tienda revisará el comprobante y el estado de la operación para encontrar una solución. Primero intentaremos completar o corregir la entrega cuando sea técnicamente posible. Si no se puede completar, la administración comunicará la solución disponible y, cuando corresponda, coordinará la devolución por el medio original. Un abono a la wallet solo se utilizará como alternativa con la aceptación del cliente. Los pagos duplicados requieren comprobar las dos operaciones y no se acreditan automáticamente.</p></article>
   <article class="faq-item"><h3>8. Recargas entregadas y datos del jugador</h3><p>Antes de pagar, el cliente debe comprobar que el nombre mostrado al validar el ID corresponde a la cuenta correcta. Si el nombre no coincide, no continúes y solicita ayuda. Una recarga digital confirmada como entregada a la cuenta indicada normalmente no puede revertirse; no se aceptan cambios por arrepentimiento después de la entrega. Los errores atribuibles al proceso de la tienda o a la entrega serán revisados con el folio y las pruebas del caso.</p></article>
-  <article class="faq-item"><h3>9. Wallet y depósitos</h3><p>La wallet contiene saldo interno para comprar productos dentro de Tienda El Castillo y no funciona como una cuenta bancaria ni como un servicio de retiro de efectivo. Los depósitos se revisan manualmente y no forman parte del saldo disponible hasta que la administración los apruebe. Revisa siempre el importe, la moneda, la red y los datos de destino que muestra tu cuenta antes de enviar fondos.</p></article>
+  <article class="faq-item"><h3>9. Coronas y recargas</h3><p>Las Coronas son la moneda interna para comprar productos dentro de Tienda El Castillo: 1 Corona equivale exactamente a 1 USD. Las recargas se revisan manualmente y no forman parte del importe disponible hasta que la administración las apruebe. Revisa siempre el importe y los datos de destino que muestra tu cuenta antes de enviar fondos. Las Coronas no son efectivo ni se pueden retirar.</p></article>
   <article class="faq-item"><h3>10. Cómo solicitar una revisión</h3><p>Para solicitar ayuda, utiliza el Centro de soporte de tu perfil, selecciona el motivo y facilita el folio o la referencia correspondiente. La solicitud se registra dentro de la tienda y el equipo responde en la conversación asociada al folio, en «Mis solicitudes» del Centro de soporte. Los estados pendientes, en revisión o en proceso se consultan desde «Órdenes» y «Mensajes y avisos». Nunca envíes contraseñas, códigos de acceso, claves bancarias ni frases de recuperación.</p></article>
   <article class="faq-item"><h3>11. Información y novedades de la comunidad</h3><p>La tienda puede publicar anuncios sobre cambios, servicios y actividades en su canal comunitario de WhatsApp. Unirse es voluntario y no condiciona el acceso a la tienda, la compra ni la atención de un pedido. Las comunicaciones privadas sobre una compra se mantienen en la cuenta del cliente y los canales de soporte habilitados.</p></article>
   <article class="faq-item"><h3>12. Seguridad y uso responsable</h3><p>El cliente debe utilizar sus propios datos de juego y revisar el importe, la región y el método de pago antes de confirmar. No se deben enviar contraseñas ni códigos de acceso. La tienda puede detener una solicitud cuando existan datos incompatibles, evidencia insuficiente, señales de duplicidad o una incidencia que deba revisarse antes de continuar.</p></article>
@@ -2730,6 +2730,9 @@ const $=id=>document.getElementById(id);
 const clean=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=v=>Number(v||0).toLocaleString("es-ES");
 const moneyUSD=v=>Number(v||0).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:6});
+// El libro contable sigue en USD; 1 Corona equivale exactamente a 1 USD.
+const moneyCoronas=v=>moneyUSD(v)+" "+(Math.abs(Number(v||0)-1)<0.000001?"Corona":"Coronas");
+const paymentMethodLabel=v=>String(v||"")==="Saldo de Tienda El Castillo"?"Corona":String(v||"");
 
 let castleSupabaseSdkPromise=null;
 function loadCastleSupabaseSdk(){
@@ -3117,7 +3120,7 @@ const gamePaymentCatalog=[
  {name:"Transferencia CUP",short:"Transferencia",icon:"🏦",unit:"CUP"},
  {name:"Saldo móvil",short:"Saldo móvil",icon:"📱",unit:"saldo móvil"},
  {name:"USDT",short:"USDT",icon:"₮",unit:"USDT"},
- {name:"Saldo de Tienda El Castillo",short:"Saldo de tienda",icon:"💳",unit:"USD"}
+ {name:"Saldo de Tienda El Castillo",short:"Corona",icon:"💳",unit:"Coronas"}
 ];
 function gameFor(name){return gameCatalog.find(item=>fold(item.name)===fold(name))||gameCatalog.find(item=>(item.match||[]).some(word=>fold(name).includes(fold(word))||fold(word).includes(fold(name))))}
 function isLevelUpPackage(p){return /paquete\s+de\s+(?:mejora|subida)\s+de\s+nivel|level\s*up/i.test(fold(String(p.name||"")));}
@@ -4307,7 +4310,7 @@ function updateCheckoutSummary(){
  select.disabled=true;
  const raw=priceForMethod(p,method),isWallet=method==="Saldo de Tienda El Castillo";
  if(Number(raw)<=0||!isPaymentMethodReady(method)){
-  $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong><small>Forma de pago elegida: '+clean(method)+'</small></div><div class="checkout-total"><strong>No disponible</strong></div>';
+  $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong><small>Forma de pago elegida: '+clean(paymentMethodLabel(method))+'</small></div><div class="checkout-total"><strong>No disponible</strong></div>';
   $("paymentInstructions").innerHTML='<div class="payment-unavailable"><strong>La forma de pago elegida ya no está disponible</strong><span>Vuelve al catálogo para elegir otra. No se ha creado ningún pedido.</span></div>';
   $("walletCheckoutNote").textContent="";
   renderCheckoutPaymentMethods();updatePaymentFields();window.updateCheckoutSubmitState?.();return;
@@ -4318,13 +4321,13 @@ function updateCheckoutSummary(){
  }
  checkoutPaymentMethodPrevious=method;
  renderCheckoutPaymentMethods();
- const unit=isWallet?"USD":method==="USDT"?"USDT":"CUP";
+ const unit=isWallet?"Coronas":method==="USDT"?"USDT":"CUP";
  const amount=Number(raw)>0?(isWallet?moneyUSD(raw):money(raw)):"—";
  const regionLine=p.provider_region?'<small>Región de recarga '+clean(p.provider_region)+(requiresPlayerValidation(p)?' · Comprobación de ID obligatoria':'')+'</small>':'<small>Precio final según el método de pago</small>';
- $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'<small class="checkout-locked-method">Forma de pago elegida: '+clean(method)+'</small></div><div class="checkout-total"><strong>'+amount+'</strong><small>'+unit+'</small></div>';
+ $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'<small class="checkout-locked-method">Forma de pago elegida: '+clean(paymentMethodLabel(method))+'</small></div><div class="checkout-total"><strong>'+amount+'</strong><small>'+unit+'</small></div>';
  syncPlayerRegionUI();
  const walletNote=$("walletCheckoutNote");
- if(walletNote)walletNote.textContent=isWallet?"Tu wallet dispone de "+moneyUSD(walletBalanceUSD)+" USD. "+(walletBalanceUSD>=Number(raw)?"Tienes saldo suficiente. El importe se descontará solo cuando confirmes esta compra.":"Te faltan "+moneyUSD(Number(raw)-walletBalanceUSD)+" USD. No se creará el pedido hasta que tengas saldo suficiente."):"";
+ if(walletNote)walletNote.textContent=isWallet?"Tienes "+moneyCoronas(walletBalanceUSD)+" disponibles. 1 Corona = 1 USD. "+(walletBalanceUSD>=Number(raw)?"Te alcanza para esta compra; el importe se descontará solo cuando la confirmes.":"Te faltan "+moneyCoronas(Number(raw)-walletBalanceUSD)+". No se creará el pedido hasta que tengas suficientes Coronas."):"";
  updatePaymentInstructions();updatePaymentFields();window.updateCheckoutSubmitState?.();
 }
 async function loadPaymentMethods(options={}){
@@ -4379,7 +4382,7 @@ function updatePaymentInstructions(){
  const isWallet=name==="Saldo de Tienda El Castillo";
  if(isWallet){
   box.classList.remove("hidden");
-  box.innerHTML='<div class="payment-panel-head"><span class="payment-panel-icon">✓</span><div><strong>Pago con saldo de tu wallet</strong><small>No necesitas hacer una transferencia para esta compra.</small></div></div><p>Se descontarán <strong>'+moneyUSD(product?.price_usdt||0)+' USD</strong> de tu saldo interno. El pedido se creará únicamente si tienes fondos suficientes y el ID del jugador está verificado.</p>';
+  box.innerHTML='<div class="payment-panel-head"><span class="payment-panel-icon">✓</span><div><strong>Pago con Coronas</strong><small>No necesitas hacer otra transferencia para esta compra.</small></div></div><p>Se descontarán <strong>'+moneyCoronas(product?.price_usdt||0)+'</strong> de tu wallet. <strong>1 Corona = 1 USD.</strong> El pedido se creará únicamente si tienes Coronas suficientes y el ID del jugador está verificado.</p>';
   return;
  }
  const method=paymentMethods.find(item=>item.name===name&&item.active),raw=method?.instructions||"";
@@ -4676,8 +4679,8 @@ async function placeOrder(){
  if(!(Number(price)>0)){$("ordermsg").textContent="Este producto no tiene precio para ese método de pago.";return;}
  const button=$("placeOrderBtn");
  if(isWallet){
-  if(walletBalanceUSD<Number(price)){$("ordermsg").textContent="Saldo insuficiente. Tu wallet tiene "+moneyUSD(walletBalanceUSD)+" USD y este paquete cuesta "+moneyUSD(price)+" USD. Deposita fondos y espera su aprobación antes de comprar.";return;}
-  if(button){button.disabled=true;button.textContent="Descontando saldo…";}
+  if(walletBalanceUSD<Number(price)){$("ordermsg").textContent="Coronas insuficientes. Tienes "+moneyCoronas(walletBalanceUSD)+" y este paquete cuesta "+moneyCoronas(price)+". Añade Coronas y espera a que se apruebe la recarga antes de comprar.";return;}
+  if(button){button.disabled=true;button.textContent="Descontando Coronas…";}
   $("ordermsg").textContent="";
   const requestInfo=getWalletRequestIdentity(product.id,player);
   try{
@@ -4692,10 +4695,10 @@ async function placeOrder(){
    // The RPC response confirms the charge and order are committed. A later UI refresh
    // must never turn a successful purchase into a failure message.
    clearWalletRequestIdentity(requestInfo);
-   window.castleAnalytics?.capture?.("store_order_submitted",{game:product.game,package:product.name,payment_method:"Saldo de Tienda El Castillo"});
+   window.castleAnalytics?.capture?.("store_order_submitted",{game:product.game,package:product.name,payment_method:"Corona"});
    resetPlayerValidation();
-   $("ordermsg").textContent=result.data.already_processed?"Este pedido ya se había creado. No se descontó saldo otra vez. Pedido "+result.data.order_code+".":"Compra creada correctamente. Pedido "+result.data.order_code+". Se descontaron "+moneyUSD(result.data.price)+" USD de tu wallet.";
-   $("checkoutDoneMessage").textContent="Tu pedido "+result.data.order_code+" fue pagado con el saldo de tu wallet. Puedes consultar su progreso en «Mis pedidos».";
+   $("ordermsg").textContent=result.data.already_processed?"Este pedido ya se había creado. No se descontó saldo otra vez. Pedido "+result.data.order_code+".":"Compra creada correctamente. Pedido "+result.data.order_code+". Se descontaron "+moneyCoronas(result.data.price)+" de tu wallet.";
+   $("checkoutDoneMessage").textContent="Tu pedido "+result.data.order_code+" fue pagado con Coronas. Puedes consultar su progreso en «Mis pedidos».";
    showView("orders");
    try{await loadWalletData();}catch(refreshWalletError){console.warn("El pedido quedó creado; no se pudo actualizar el saldo visual:",refreshWalletError);}
    try{await loadMyOrders();}catch(refreshOrdersError){
@@ -5089,7 +5092,7 @@ let customerOrderEventsCache = new Map();
 function renderCustomerOrderDetailHtml(o, statusEvents) {
  const canRetryDirectProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.payment_confirmed_at&&!o.central_one_order_id&&["Transferencia CUP","Saldo móvil","USDT"].includes(o.payment_method);
  const proofNote=o.payment_source==="wallet"
-  ?'<p class="track-note">El pago se realizó con el saldo de tu wallet.</p>'
+  ?'<p class="track-note">El pago se realizó con Coronas de tu wallet.</p>'
   :o.proof_path
    ?'<p class="track-note">Comprobante recibido y guardado de forma privada.</p>'
    :canRetryDirectProof
@@ -5116,7 +5119,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
    providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
   }
  }else if(customerProviderError==="provider_product_unavailable"){
-  providerInfo='<p class="track-note"><strong>Paquete agotado temporalmente.</strong> No se llegó a crear la recarga. La administración está revisando tu pago para acreditar, si corresponde, el equivalente en USD a tu cartera de Tienda El Castillo. No vuelvas a pagar ni crees otro pedido.</p>';
+  providerInfo='<p class="track-note"><strong>Paquete agotado temporalmente.</strong> No se llegó a crear la recarga. La administración está revisando tu pago para acreditar, si corresponde, el equivalente en Coronas a tu wallet de Tienda El Castillo. No vuelvas a pagar ni crees otro pedido.</p>';
  }else if(customerProviderError){
   providerInfo='<p class="track-note"><strong>Tu pago está registrado.</strong> Existe una demora técnica antes de iniciar la recarga. Tu pedido sigue guardado y el equipo de Tienda El Castillo lo revisará. No vuelvas a pagar ni crees otro pedido.</p>';
  }else if(customerProviderStatus==="unknown"){
@@ -5140,7 +5143,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
   '<strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong>'+
   (o.provider_region?'<span class="order-region-pill">🌐 Región de recarga · '+clean(o.provider_region)+'</span>':"")+
   '<div class="order-player-box"><span>Cuenta destinataria</span><strong>'+clean(o.player_name||"Nombre no disponible")+'</strong><small>ID de jugador: '+clean(o.player_id||"No disponible")+'</small></div>'+
-  '<div class="order-detail">'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
+  '<div class="order-detail">'+(o.payment_source==="wallet"?moneyCoronas(o.price):money(o.price)+' '+clean(paymentMethodLabel(o.payment_method)))+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
   '<span class="status">'+statusText(o.status)+'</span>'+progress+proofNote+providerInfo+rejectionInfo+retryProofBlock+cancelBlock+'</article>';
 }
 
@@ -5232,7 +5235,7 @@ async function loadMyOrders(){
  list.innerHTML=groups.length?groups.map(group=>
   '<section class="order-day-group"><header class="order-day-group-header"><strong>'+clean(group.label)+'</strong><span class="order-day-count">'+group.count+' '+(group.count===1?"pedido":"pedidos")+'</span></header><div class="order-day-items">'+
   group.orders.map(order=>{
-   const amountCurrency=order.payment_source==="wallet"?"USD":order.payment_method==="USDT"?"USDT":"CUP";
+   const amountCurrency=order.payment_source==="wallet"?"Coronas":order.payment_method==="USDT"?"USDT":"CUP";
    return view.renderSummary(order,{statusLabel:view.shortStatusLabel(order.status),amountLabel:money(order.price)+" "+amountCurrency});
   }).join("")+'</div></section>'
  ).join(""):'<div class="customer-empty-state"><span class="customer-empty-crown"><img src="./assets/el-castillo-icon.webp" alt="" width="46" height="46"></span><strong>Tu próxima recarga puede empezar aquí</strong><p>Aún no tienes pedidos. Explora los juegos y encuentra tu próximo paquete favorito.</p><button type="button" class="primary-btn" onclick="showView(&quot;home&quot;)">Explorar juegos</button></div>';
@@ -5288,16 +5291,16 @@ async function loadWalletData(){
  let rows=[];
  for(let from=0;;from+=1000){
   const result=await db.from("wallet_transactions").select("kind,amount,currency,description,created_at,order_id,deposit_id").eq("user_id",currentUser.id).eq("currency","USD").order("created_at",{ascending:false}).range(from,from+999);
-  if(result.error){walletBalanceUSD=0;if($("walletBalance"))$("walletBalance").textContent="No disponible";if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Saldo no disponible";if($("walletTransactions"))$("walletTransactions").textContent="No se pudo cargar la billetera. Actualiza el perfil antes de comprar con saldo.";updateCheckoutSummary();return;}
+  if(result.error){walletBalanceUSD=0;if($("walletBalance"))$("walletBalance").textContent="No disponible";if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Coronas no disponibles";if($("walletTransactions"))$("walletTransactions").textContent="No se pudieron cargar tus Coronas. Actualiza el perfil antes de comprar.";updateCheckoutSummary();return;}
   rows=rows.concat(result.data||[]);
   if(!result.data||result.data.length<1000)break;
  }
  walletBalanceUSD=rows.reduce((sum,row)=>sum+(["deposit","refund","adjustment"].includes(row.kind)?1:-1)*Number(row.amount||0),0);
- if($("walletBalance"))$("walletBalance").textContent=moneyUSD(walletBalanceUSD)+" USD";
- if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Saldo: "+moneyUSD(walletBalanceUSD)+" USD";
+ if($("walletBalance"))$("walletBalance").textContent=moneyCoronas(walletBalanceUSD);
+ if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Coronas: "+moneyCoronas(walletBalanceUSD);
  if($("walletTransactions"))$("walletTransactions").innerHTML=rows.length?rows.map(row=>{
   const label=row.kind==="purchase"?"Compra":row.kind==="deposit"?"Depósito aprobado":row.kind==="refund"?"Reembolso":"Ajuste";
-  return '<article class="wallet-history-card"><strong>'+clean(label)+'</strong><div class="order-detail">'+moneyUSD(row.amount)+' USD · '+clean(row.description||"Movimiento")+'<br>'+new Date(row.created_at).toLocaleString("es-CU")+'</div></article>';
+  return '<article class="wallet-history-card"><strong>'+clean(label)+'</strong><div class="order-detail">'+moneyCoronas(row.amount)+' · '+clean(row.description||"Movimiento")+'<br>'+new Date(row.created_at).toLocaleString("es-CU")+'</div></article>';
  }).join(""):'<p class="empty-note">Todavía no tienes movimientos.</p>';
  previewWalletDeposit();
  updateCheckoutSummary();
@@ -5306,13 +5309,13 @@ function previewWalletDeposit(){
  const amount=Number($("walletDepositAmount")?.value||0),box=$("walletDepositPreview");
  if(!box)return;
  if(!Number.isFinite(amount)||amount<=0){
-  box.innerHTML="<small>Saldo que recibirás después de revisar el pago</small><strong>— USD</strong><small>Escribe el importe que vas a transferir.</small>";
+  box.innerHTML="<small>Coronas que recibirás después de revisar el pago</small><strong>— Coronas</strong><small>Escribe el importe que vas a transferir.</small>";
   updateWalletDepositInstructions();
   return;
  }
  const rate=Number(walletSettings.cup_per_usd||1160);
  const credit=Math.floor((amount/rate)*100)/100;
- box.innerHTML='<small>Saldo estimado después de aprobar</small><strong>'+moneyUSD(credit)+' USD</strong><small>El importe final se confirmará al revisar la transferencia.</small>';
+ box.innerHTML='<small>Coronas estimadas después de aprobar</small><strong>'+moneyCoronas(credit)+'</strong><small>El importe final se confirmará al revisar la transferencia.</small>';
  updateWalletDepositInstructions();
 }
 function updateWalletDepositMethod(){
@@ -5574,8 +5577,8 @@ async function loadMyWalletDeposits(){
    '<div class="field"><label for="wallet-retry-txid-'+clean(d.id)+'">TxID</label><input id="wallet-retry-txid-'+clean(d.id)+'" maxlength="64" value="'+clean(d.txid||"")+'"></div>')+
    '<button id="wallet-retry-button-'+clean(d.id)+'" class="secondary-btn" type="button" onclick="attachWalletDepositProof(\''+clean(d.id)+'\',\''+clean(d.payment_method)+'\')">Enviar comprobantes</button><p id="wallet-retry-msg-'+clean(d.id)+'" class="msg" role="status"></p>':'';
   const links=await createSignedWalletProofLinks(proofRows);
-  const credited=d.credited_amount==null?"Pendiente de cálculo":moneyUSD(d.credited_amount)+" USD";
-  cards.push('<article class="wallet-history-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>Depósito · '+money(d.amount)+' '+currency+'</strong><span class="wallet-status '+statusClass+'">'+status+'</span></div><div class="order-detail">'+clean(d.payment_method)+'<br>Saldo previsto: '+credited+(d.status==="approved"?"<br>Saldo acreditado: "+moneyUSD(d.credited_amount)+" USD":"")+'<br>Fecha: '+new Date(d.created_at).toLocaleString("es-CU")+(d.exchange_rate?"<br>Tasa aplicada: "+money(d.exchange_rate)+" CUP/USD":"")+(d.network?"<br>Red: "+clean(d.network):"")+(d.payment_reference?"<br>Referencia: "+clean(d.payment_reference):"")+'</div>'+links+(d.admin_notes?'<p class="wallet-warning"><strong>Motivo del rechazo:</strong> '+clean(d.admin_notes)+'</p>':'')+retry+'</article>');
+  const credited=d.credited_amount==null?"Pendiente de cálculo":moneyCoronas(d.credited_amount);
+  cards.push('<article class="wallet-history-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>Depósito · '+money(d.amount)+' '+currency+'</strong><span class="wallet-status '+statusClass+'">'+status+'</span></div><div class="order-detail">'+clean(d.payment_method)+'<br>Coronas previstas: '+credited+(d.status==="approved"?"<br>Coronas acreditadas: "+moneyCoronas(d.credited_amount):"")+'<br>Fecha: '+new Date(d.created_at).toLocaleString("es-CU")+(d.exchange_rate?"<br>Tasa aplicada: "+money(d.exchange_rate)+" CUP/USD":"")+(d.network?"<br>Red: "+clean(d.network):"")+(d.payment_reference?"<br>Referencia: "+clean(d.payment_reference):"")+'</div>'+links+(d.admin_notes?'<p class="wallet-warning"><strong>Motivo del rechazo:</strong> '+clean(d.admin_notes)+'</p>':'')+retry+'</article>');
  }
  list.innerHTML=proofLoadWarning+cards.join("");
 }
@@ -5608,10 +5611,10 @@ async function loadWalletDepositsAdmin(){
   const proofWarning=d.status==="payment_review"&&!proofsAccessible?'<p class="wallet-warning"><strong>Revisión bloqueada:</strong> no se pudieron abrir todos los comprobantes. Actualiza el panel y comprueba el acceso a las capturas antes de decidir.</p>':"";
   const explorer=d.txid&&/^[a-f0-9]{64}$/i.test(d.txid)?'<p class="wallet-admin-summary">TxID: <code>'+clean(d.txid)+'</code><br><a href="https://bscscan.com/tx/'+encodeURIComponent(d.txid)+'" target="_blank" rel="noopener noreferrer">Abrir transacción en BscScan ↗</a></p>':"";
   const methodDetails=cup
-   ?'Enviado: <strong>'+money(d.amount)+' CUP</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia bancaria: '+clean(d.payment_reference||"No indicada")+'<br>Tasa guardada: '+money(d.exchange_rate||0)+' CUP/USD'
+   ?'Enviado: <strong>'+money(d.amount)+' CUP</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia bancaria: '+clean(d.payment_reference||"No indicada")+'<br>Tasa guardada: '+money(d.exchange_rate||0)+' CUP/Corona'
    :'Enviado: <strong>'+moneyUSD(d.amount)+' USDT</strong><br>Red: '+clean(d.network||"BNB Smart Chain (BEP20)")+'<br>Dirección receptora: '+clean(d.recipient_address||walletSettings.usdt_address);
   const actions=canReview?'<div class="wallet-admin-actions"><button class="primary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\',true)">Aprobar y acreditar</button><button class="secondary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\',false)">Rechazar</button></div>':'';
-  cards.push('<article class="wallet-admin-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>'+clean(profile?.full_name||profile?.email||d.user_id)+'</strong><span class="wallet-status '+(d.status==="approved"?"approved":d.status==="rejected"?"rejected":"")+'">'+clean(d.status==="payment_review"?"En revisión":d.status==="approved"?"Aprobado":d.status==="rejected"?"Rechazado":"Pendiente")+'</span></div><div class="wallet-admin-summary">'+clean(d.payment_method)+' · '+new Date(d.created_at).toLocaleString("es-CU")+'<br>'+methodDetails+'<br>Crédito calculado: <strong>'+moneyUSD(d.credited_amount)+' USD</strong><br>Comprobantes: '+(proofsByDeposit.get(d.id)||[]).length+ '</div>'+explorer+proofs+proofWarning+(d.admin_notes?'<p class="wallet-warning">Motivo: '+clean(d.admin_notes)+'</p>':'')+actions+'</article>');
+  cards.push('<article class="wallet-admin-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>'+clean(profile?.full_name||profile?.email||d.user_id)+'</strong><span class="wallet-status '+(d.status==="approved"?"approved":d.status==="rejected"?"rejected":"")+'">'+clean(d.status==="payment_review"?"En revisión":d.status==="approved"?"Aprobado":d.status==="rejected"?"Rechazado":"Pendiente")+'</span></div><div class="wallet-admin-summary">'+clean(d.payment_method)+' · '+new Date(d.created_at).toLocaleString("es-CU")+'<br>'+methodDetails+'<br>Coronas calculadas: <strong>'+moneyCoronas(d.credited_amount)+'</strong><br>Comprobantes: '+(proofsByDeposit.get(d.id)||[]).length+ '</div>'+explorer+proofs+proofWarning+(d.admin_notes?'<p class="wallet-warning">Motivo: '+clean(d.admin_notes)+'</p>':'')+actions+'</article>');
  }
  list.innerHTML=cards.join("");
 }
@@ -5626,7 +5629,7 @@ async function reviewWalletDeposit(id,approve){
   if(note.trim().length<5){window.alert("El motivo debe tener al menos 5 caracteres.");return;}
  }
  const result=await db.rpc("admin_review_wallet_deposit",{p_deposit_id:id,p_approve:approve,p_note:note});
- $("walletAdminMsg").textContent=result.error?"No se pudo procesar: "+result.error.message:(approve?"Depósito aprobado. Se acreditaron "+moneyUSD(result.data?.credited_amount)+" USD.":"Depósito rechazado. El motivo quedó guardado para el cliente.");
+ $("walletAdminMsg").textContent=result.error?"No se pudo procesar: "+result.error.message:(approve?"Recarga aprobada. Se acreditaron "+moneyCoronas(result.data?.credited_amount)+".":"Depósito rechazado. El motivo quedó guardado para el cliente.");
  if(!result.error){await loadWalletDepositsAdmin();await loadWalletData();await loadMyWalletDeposits();}
 }
 
@@ -5927,7 +5930,7 @@ async function refundWalletPreflightOrder(orderId,orderCode){
   const {data,error}=await db.rpc("admin_cancel_preflight_blocked_order",{p_order_id:orderId});
   if(error)throw error;
   if(data?.automatic_refund!==true||data?.refunded!==true)throw new Error("Supabase no confirmó el abono a la cartera.");
-  $("orderadminmsg").textContent="Pedido "+(data?.order_code||orderCode||"")+" cancelado. Se acreditaron "+moneyUSD(data.credited_amount)+" USD a la cartera del cliente.";
+  $("orderadminmsg").textContent="Pedido "+(data?.order_code||orderCode||"")+" cancelado. Se acreditaron "+moneyCoronas(data.credited_amount)+" al wallet del cliente.";
   await Promise.all([loadAllOrders(),loadMyOrders()]);
  }catch(error){
   $("orderadminmsg").textContent="No se pudo completar la devolución: "+(error?.message||"error desconocido");
@@ -6484,7 +6487,7 @@ async function loadAllOrders(options={}){
   }else if(providerErrorCode==="admin_cancelled_before_provider"){
    const walletRefundedBeforeProvider=o.central_one_response?.wallet_refund?.refunded===true;
    providerInfo=walletRefundedBeforeProvider
-    ?'<p class="track-note"><strong>Cancelado antes del proveedor:</strong> Central One no creó la orden. Se devolvieron '+moneyUSD(o.central_one_response.wallet_refund.credited_amount)+' USD a la billetera del cliente.</p>'
+    ?'<p class="track-note"><strong>Cancelado antes del proveedor:</strong> Central One no creó la orden. Se devolvieron '+moneyCoronas(o.central_one_response.wallet_refund.credited_amount)+' a la billetera del cliente.</p>'
     :'<p class="track-note"><strong>Cancelado antes del proveedor:</strong> no se creó una orden de Central One. No hubo devolución automática al cliente.</p>';
   }else if(o.central_one_error_message){
    providerInfo='<p class="track-note"><strong>Central One:</strong> '+centralOneStatusText(providerStatus)+' · '+clean(o.central_one_error_message)+'</p>';
@@ -6507,7 +6510,7 @@ async function loadAllOrders(options={}){
   const canRefundDirectToWallet=o.status==="processing"&&directPaymentVerified&&!o.central_one_order_id&&!o.central_one_reference_code&&!o.central_one_request_id&&(directStockPreflightBlocked||directStockDisabledBySync);
   const refundWalletAmount=o.payment_source==="wallet"?Number(o.price||0):Number(o.wallet_refund_amount||0);
   const showWalletRefundAction=canRefundWalletNoProvider||canRefundDirectToWallet;
-  const walletRefundAction=showWalletRefundAction?'<div class="order-actions order-safe-cancel"><button type="button" data-refund-wallet-preflight data-payment-source="'+clean(o.payment_source)+'" data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Revisar y devolver a cartera</button><small>'+(canRefundDirectToWallet?'Pago directo confirmado. Abre y verifica el comprobante antes de aprobar el abono de '+moneyUSD(refundWalletAmount)+' USD a la cartera.':'No existe una orden del proveedor. Se devolverá '+moneyUSD(refundWalletAmount)+' USD a la cartera una sola vez.')+'</small></div>':"";
+  const walletRefundAction=showWalletRefundAction?'<div class="order-actions order-safe-cancel"><button type="button" data-refund-wallet-preflight data-payment-source="'+clean(o.payment_source)+'" data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Revisar y devolver a cartera</button><small>'+(canRefundDirectToWallet?'Pago directo confirmado. Abre y verifica el comprobante antes de aprobar el abono de '+moneyCoronas(refundWalletAmount)+' a la cartera.':'No existe una orden del proveedor. Se devolverán '+moneyCoronas(refundWalletAmount)+' a la cartera una sola vez.')+'</small></div>':"";
   const providerAction=canAuthorize
    ?'<div class="order-actions"><button type="button" data-provider-submit data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">'+(providerStatus==="not_submitted"?"Autorizar recarga (usa saldo real)":"Reintentar con la misma clave segura")+'</button></div>'
    :canRefresh
@@ -6524,7 +6527,7 @@ async function loadAllOrders(options={}){
    '<div class="admin-order-detail-grid">'+
     '<div class="admin-order-field"><span>Juego y paquete</span><strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong></div>'+
     '<div class="admin-order-field"><span>Jugador</span><strong>'+clean(o.player_id)+' '+(o.player_name?"("+clean(o.player_name)+")":"")+'</strong></div>'+
-    '<div class="admin-order-field"><span>Precio cobrado</span><strong>'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'</strong></div>'+
+    '<div class="admin-order-field"><span>Precio cobrado</span><strong>'+(o.payment_source==="wallet"?moneyCoronas(o.price):money(o.price)+' '+clean(paymentMethodLabel(o.payment_method)))+'</strong></div>'+
     '<div class="admin-order-field"><span>'+(o.payment_method==="Saldo móvil"?"Remitente del SMS":"Móvil de origen")+'</span><strong>'+clean(o.payment_sender_phone||"No indicado")+'</strong></div>'+
     (o.payment_method==="Saldo móvil"?'<div class="admin-order-field"><span>Importe enviado (CUP)</span><strong>'+money(o.payment_reported_amount)+' CUP</strong></div><div class="admin-order-field"><span>Compara con el SMS que recibes</span><strong>Usted ha recibido '+money(o.payment_reported_amount)+' CUP del numero '+clean(String(o.payment_sender_phone||"").replace(/^\+?53/,""))+'</strong></div>':"")+
     ((o.payment_method==="Transferencia CUP"||o.payment_method==="USDT")?'<div class="admin-order-field"><span>'+(o.payment_method==="USDT"?"Hash / TxID":"N.º transacción")+'</span><strong>'+clean(o.payment_reference||"No indicado")+'</strong></div>':"")+
