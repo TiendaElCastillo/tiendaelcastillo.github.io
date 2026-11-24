@@ -1,0 +1,47 @@
+name: Pruebas de fiabilidad de la tienda
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "index.html"
+      - "sw.js"
+      - "tests/**"
+      - "assets/checkout-reliability.js"
+      - "assets/coronas-promotions.js"
+      - "assets/coronas-promotions.css"
+      - "supabase/functions/central-one-order/**"
+      - "supabase/functions/central-one-player-validate/**"
+      - "supabase/migrations/**"
+  push:
+    branches:
+      - main
+      - release/coronas-wallet-cutover
+    paths:
+      - ".github/workflows/**"
+      - "index.html"
+      - "sw.js"
+      - "tests/**"
+      - "assets/checkout-reliability.js"
+      - "assets/coronas-promotions.js"
+      - "assets/coronas-promotions.css"
+      - "supabase/functions/central-one-order/**"
+      - "supabase/functions/central-one-player-validate/**"
+      - "supabase/migrations/**"
+
+permissions:
+  contents: read
+
+jobs:
+  checkout-reliability:
+    name: Ejecutar pruebas de checkout y promociones
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obtener el código
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Ejecutar pruebas automatizadas
+        run: node --test tests/checkout-reliability.test.cjs
