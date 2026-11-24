@@ -2798,14 +2798,7 @@ const STORE_SUPABASE_URL="https://kfllglkfncebpknnugnx.supabase.co";
 const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtmbGxnbGtmbmNlYnBrbm51Z254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3Mjg5MTMsImV4cCI6MjEwOTMwNDkxM30.9lyiZC57tJuSRN6ReLkZZVsedJzl0kVxlhxUX90cE6g";
 
 function storeFunctionUrl(name){
- const isStaging=STORE_SUPABASE_URL.includes("kmotmgpzmeooznyymcxl");
- const stagingFunctions={
-  "central-one-player-validate":"coronas-staging-player-validate",
-  "central-one-order":"coronas-staging-wallet-order",
-  "central-one-read":"coronas-staging-read"
- };
- const functionName=isStaging?(stagingFunctions[name]||name):name;
- return STORE_SUPABASE_URL+"/functions/v1/"+functionName;
+ return STORE_SUPABASE_URL+"/functions/v1/"+name;
 }
 let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"BNB Smart Chain (BEP20)",usdt_address:"",mobile_credit_units:360,mobile_cost_cup:1200}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", playerValidationDebounceTimer=null, activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
 
