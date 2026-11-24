@@ -20,6 +20,7 @@ const playerValidationEdgeSource = fs.readFileSync(path.join(root, "supabase/fun
 const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-order/index.ts"), "utf8");
 const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
 const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
+const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
 
 
@@ -232,10 +233,11 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes('shell-v185'));
+  assert.ok(serviceWorker.includes('shell-v186'));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=3'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
+  assert.ok(serviceWorker.includes("shell-v186"));
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
   assert.ok(indexHtml.includes('id="proofUploadCircuit"'));
   assert.ok(serviceWorker.includes("./assets/checkout-reliability.js?v=1"));
@@ -685,6 +687,9 @@ test("la primera recarga aprobada acredita un 3 % adicional sin tope y solo una 
   assert.match(coronasProductionMigrationSource, /if p_approve then[\s\S]*?v_welcome_bonus := round/);
   assert.match(coronasProductionMigrationSource, /'Primera recarga USDT BEP20 aprobada \+ bono del 3 % sin límite'/);
   assert.match(coronasProductionMigrationSource, /welcome_bonus_amount = v_welcome_bonus/);
+  assert.match(coronasProductionMigrationSource, /kind = 'deposit'[\s\S]*?currency = 'USD'/);
+  assert.match(coronasProductionMigrationSource, /castle-wallet-first-deposit:/);
+  assert.match(coronasProductionMigrationSource, /if v_deposit\.status <> 'payment_review' then/);
 });
 
 test("la recompensa de invitación es el 5 % de la primera compra completada, no de las siguientes", () => {
@@ -700,6 +705,30 @@ test("las recompensas de invitación están protegidas contra duplicados y autor
   assert.match(coronasProductionMigrationSource, /wallet_transaction_id uuid not null unique/);
   assert.match(coronasProductionMigrationSource, /v_referrer = v_order\.user_id/);
   assert.match(coronasPolicyCleanupSource, /create unique index if not exists wallet_referral_order_rewards_invitee_active_uidx/);
+});
+
+test("las invitaciones quedan guardadas en el enlace y se vinculan sin pegar códigos", () => {
+  assert.match(indexHtml, /function captureWalletReferralFromUrl\(\)/);
+  assert.match(indexHtml, /walletReferralPendingStorageKey/);
+  assert.match(indexHtml, /history\.replaceState/);
+  assert.match(indexHtml, /const referralCode=pendingWalletReferralCode\(null\)/);
+  assert.match(indexHtml, /signupMetadata\.referral_code=referralCode/);
+  assert.match(indexHtml, /return metadata\|\|stored\|\|query/);
+  assert.match(indexHtml, /async function tryAutoLinkWalletReferral\(summary\)/);
+  assert.match(indexHtml, /db\.rpc\("apply_wallet_referral_code",\{p_code:code\}\)/);
+  assert.match(indexHtml, /walletReferralAuthNotice/);
+  assert.match(indexHtml, /searchParams\.set\("ref",code\.toUpperCase\(\)\)/);
+  assert.doesNotMatch(indexHtml, /walletReferralInput|walletReferralApplyBtn|Vincular código/);
+  assert.match(indexHtml, /sin pegar códigos/i);
+});
+
+test("la recompensa de invitación solo usa compras creadas después de vincularse y una vez por referido", () => {
+  assert.match(referralAutoLinkMigrationSource, /v_order\.created_at < v_linked_at/);
+  assert.match(referralAutoLinkMigrationSource, /o\.created_at >= v_linked_at/);
+  assert.match(referralAutoLinkMigrationSource, /wallet_referral_order_rewards_invitee_once_uidx/);
+  assert.match(referralAutoLinkMigrationSource, /where invitee_user_id = v_order\.user_id/);
+  assert.doesNotMatch(referralAutoLinkMigrationSource, /where reversed_at is null/);
+  assert.match(referralAutoLinkMigrationSource, /v_reward := round\(v_order\.wallet_refund_amount \* 0\.05,4\)/);
 });
 
 test("la comisión de invitación se revierte ante fallo, rechazo o cancelación después de una entrega", () => {

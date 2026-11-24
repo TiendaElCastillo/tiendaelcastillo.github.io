@@ -2136,6 +2136,7 @@ body{min-width:0}
   </div>
  </div>
  <div class="auth-panel auth-login-panel">
+  <div id="walletReferralAuthNotice" class="notice hidden" role="status" aria-live="polite"></div>
   <div class="auth-login-heading"><span class="auth-login-kicker">TU CUENTA, TU TIENDA</span><h2 id="authTitle">Accede a tu cuenta</h2><p class="subtle" id="authSubtitle">Inicia sesión para acceder a todos los servicios, consultar tus pedidos y gestionar tu cuenta.</p></div>
   <div class="auth-tabs" id="authTabs"><button id="registerTab" type="button" onclick="setAuthMode('register')">Crear cuenta</button><button id="loginTab" type="button" class="active" onclick="setAuthMode('login')">Iniciar sesión</button></div>
   <div class="field hidden" id="fullnameWrap"><label for="fullname">Tu nombre</label><input id="fullname" autocomplete="name" placeholder="Cómo te llamas"></div>
@@ -2405,12 +2406,12 @@ body{min-width:0}
   </section>
   <section class="wallet-panel coronas-referral-panel" aria-labelledby="coronasReferralTitle">
    <h3 id="coronasReferralTitle">Invita a tus amigos</h3>
-   <p>Comparte tu enlace personal. La recompensa se acredita una sola vez por amigo, cuando su primera compra se entregue correctamente.</p>
-   <div class="coronas-referral-code-row"><div id="walletReferralCode" class="coronas-referral-code" aria-live="polite">Preparando código…</div>
+   <p>Comparte tu enlace personal. Tu amigo debe abrirlo durante los primeros 7 días de su cuenta y antes de completar su primera compra. La invitación queda guardada automáticamente; nadie tiene que copiar ni pegar códigos. Tú recibirás el 5 % del valor de su primera compra posterior, solo cuando el proveedor confirme la entrega.</p>
+   <div class="coronas-referral-code-row"><div id="walletReferralCode" class="coronas-referral-code" aria-live="polite">Tu enlace personal incluye la invitación. No hace falta pegar códigos.</div>
     <div class="coronas-referral-actions"><button class="secondary-btn" type="button" onclick="shareWalletReferralLink()">Compartir invitación</button><button class="secondary-btn" type="button" onclick="copyWalletReferralLink()">Copiar enlace</button></div>
    </div>
    <div id="walletReferralStats" class="coronas-referral-stats"><article><small>Amigos invitados</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas ganadas</small><strong>—</strong></article></div>
-   <div id="walletReferralApplyBox"><p class="coronas-referral-note">¿Tienes un código? Puedes vincularlo durante los primeros 7 días de tu cuenta y antes de tu primera compra completada.</p><div class="field"><label for="walletReferralInput">Código de invitación</label><input id="walletReferralInput" type="text" maxlength="8" autocapitalize="characters" placeholder="Ej. A1B2C3D4"></div><button id="walletReferralApplyBtn" class="primary-btn" type="button" onclick="applyWalletReferralCode()">Vincular código</button><p id="walletReferralMsg" class="msg" role="status" aria-live="polite"></p></div>
+   <p id="walletReferralMsg" class="msg coronas-referral-note" role="status" aria-live="polite"></p>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
    <h3 id="walletInformationTitle">Cómo funciona tu saldo</h3>
@@ -2900,7 +2901,10 @@ async function register(){
  }
  const submit=$("authSubmit");submit.disabled=true;submit.textContent="Creando cuenta…";
  try{
-  const {data,error}=await db.auth.signUp({email,password,options:{captchaToken,data:{full_name:name},emailRedirectTo:location.origin+location.pathname}});
+  const signupMetadata={full_name:name};
+  const referralCode=pendingWalletReferralCode(null);
+  if(referralCode)signupMetadata.referral_code=referralCode;
+  const {data,error}=await db.auth.signUp({email,password,options:{captchaToken,data:signupMetadata,emailRedirectTo:location.origin+location.pathname}});
   if(error){$("authmsg").textContent=error.message;return}
   if(data.session){
    await openStore(data.user);
@@ -5379,38 +5383,135 @@ async function loadMyOrders(){
 }
 
 
+const walletReferralPendingStorageKey="tec_wallet_referral_pending_v1";
 let walletReferralSummary=null;
+let walletReferralAutoLinkPromise=null;
+function normalizeWalletReferralCode(value){
+ const code=String(value||"").trim().toUpperCase();
+ return /^[A-F0-9]{8}$/.test(code)?code:"";
+}
+function pendingWalletReferralCode(user=currentUser){
+ const metadata=normalizeWalletReferralCode(user?.user_metadata?.referral_code);
+ let stored="";
+ try{stored=normalizeWalletReferralCode(localStorage.getItem(walletReferralPendingStorageKey));}catch(storageError){}
+ const query=normalizeWalletReferralCode(new URLSearchParams(window.location.search).get("ref"));
+ return metadata||stored||query;
+}
+function clearWalletReferralPendingStorage(){
+ try{localStorage.removeItem(walletReferralPendingStorageKey);}catch(storageError){}
+ refreshWalletReferralAuthNotice();
+}
+function refreshWalletReferralAuthNotice(){
+ const notice=$("walletReferralAuthNotice");
+ if(!notice)return;
+ const hasPending=Boolean(pendingWalletReferralCode(currentUser));
+ if(!hasPending||currentUser){notice.classList.add("hidden");return;}
+ notice.classList.remove("hidden");
+ notice.textContent="Llegaste mediante una invitación de Tienda El Castillo. Para que sea válida, debes crear una cuenta nueva, abrir el enlace durante sus primeros 7 días y antes de completar tu primera compra. La invitación quedará vinculada automáticamente; no tienes que copiar ni pegar ningún código. Quien te invitó recibirá el 5 % cuando tu primera compra posterior sea entregada.";
+}
+function captureWalletReferralFromUrl(){
+ const url=new URL(window.location.href);
+ const raw=url.searchParams.get("ref");
+ const incoming=normalizeWalletReferralCode(raw);
+ let persisted=false;
+ if(incoming){
+  try{
+   const existing=normalizeWalletReferralCode(localStorage.getItem(walletReferralPendingStorageKey));
+   if(!existing)localStorage.setItem(walletReferralPendingStorageKey,incoming);
+   persisted=Boolean(normalizeWalletReferralCode(localStorage.getItem(walletReferralPendingStorageKey)));
+  }catch(storageError){}
+ }
+ if(url.searchParams.has("ref")&&persisted){
+  url.searchParams.delete("ref");
+  const next=url.pathname+(url.search?url.search:"")+url.hash;
+  window.history.replaceState(window.history.state,"",next);
+ }
+ refreshWalletReferralAuthNotice();
+ return incoming||pendingWalletReferralCode(null);
+}
+function discardWalletReferralAttribution(){
+ clearWalletReferralPendingStorage();
+ if(currentUser?.user_metadata&&Object.prototype.hasOwnProperty.call(currentUser.user_metadata,"referral_code")){
+  db.auth.updateUser({data:{referral_code:null}}).then(({data,error})=>{
+   if(error){console.warn("No se pudo limpiar el dato temporal de invitación:",error);return;}
+   if(data?.user)currentUser=data.user;
+  }).catch(error=>console.warn("No se pudo limpiar el dato temporal de invitación:",error));
+ }
+}
+function isPermanentWalletReferralError(message){
+ return /formato válido|no existe|no puedes usar tu propio|primeros 7 días|antes de completar la primera compra|solo las cuentas de cliente|no puede recibir una invitación/i.test(String(message||"").toLowerCase());
+}
+async function tryAutoLinkWalletReferral(summary){
+ if(walletReferralAutoLinkPromise)return walletReferralAutoLinkPromise;
+ const code=pendingWalletReferralCode(currentUser);
+ if(!code)return null;
+ if(summary?.invite_linked){
+  discardWalletReferralAttribution();
+  return {alreadyLinked:true,summary};
+ }
+ if(summary?.code&&code===String(summary.code).toUpperCase()){
+  discardWalletReferralAttribution();
+  return {error:"No puedes usar tu propio enlace de invitación.",permanent:true};
+ }
+ walletReferralAutoLinkPromise=(async()=>{
+  const applied=await db.rpc("apply_wallet_referral_code",{p_code:code});
+  if(applied.error){
+   const detail=String(applied.error.message||"No se pudo vincular la invitación.");
+   if(/ya tiene una invitación vinculada/i.test(detail)){
+    discardWalletReferralAttribution();
+    const refreshed=await db.rpc("get_wallet_referral_summary");
+    return {alreadyLinked:true,summary:refreshed.data||summary};
+   }
+   const permanent=isPermanentWalletReferralError(detail);
+   if(permanent)discardWalletReferralAttribution();
+   return {error:detail,permanent};
+  }
+  discardWalletReferralAttribution();
+  const refreshed=await db.rpc("get_wallet_referral_summary");
+  return {linked:true,message:applied.data?.message||"Invitación vinculada automáticamente.",summary:refreshed.data||summary};
+ })();
+ try{return await walletReferralAutoLinkPromise;}
+ finally{walletReferralAutoLinkPromise=null;}
+}
 async function loadWalletPromotions(){
  if(!currentUser||!db)return;
- const codeBox=$("walletReferralCode"),stats=$("walletReferralStats"),applyBox=$("walletReferralApplyBox"),msg=$("walletReferralMsg");
+ const codeBox=$("walletReferralCode"),stats=$("walletReferralStats"),msg=$("walletReferralMsg");
  const result=await db.rpc("get_wallet_referral_summary");
  if(result.error){
-  if(codeBox)codeBox.textContent="Código no disponible";
-  if(msg)msg.textContent="No pudimos cargar ahora las invitaciones. Tus Coronas siguen disponibles.";
+  if(codeBox)codeBox.textContent="Tu enlace personal se está preparando.";
+  if(msg)msg.textContent="No pudimos comprobar ahora tus invitaciones. No repitas ninguna operación; volveremos a intentarlo cuando haya conexión.";
   return;
  }
- const data=result.data||{};
+ let data=result.data||{};
+ let autoLink=null;
+ if(!data.invite_linked&&pendingWalletReferralCode(currentUser)){
+  try{autoLink=await tryAutoLinkWalletReferral(data);}catch(error){
+   autoLink={error:error?.message||"No se pudo comprobar la invitación.",permanent:false};
+  }
+  if(autoLink?.summary)data=autoLink.summary;
+ }
+ if(data.invite_linked)discardWalletReferralAttribution();
  walletReferralSummary=data;
- if(codeBox)codeBox.textContent=String(data.code||"—");
+ if(codeBox)codeBox.textContent="La invitación viaja dentro de tu enlace personal. No hace falta pegar códigos.";
  if(stats)stats.innerHTML='<article><small>Amigos invitados</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Coronas ganadas</small><strong>'+moneyUSD(data.earned_usd||0)+'</strong></article>';
- const linked=Boolean(data.invite_linked);
- if(applyBox)applyBox.classList.toggle("hidden",linked);
- if(linked&&msg)msg.textContent="Tu cuenta ya está vinculada al código "+String(data.applied_referral_code||"")+".";
- const incoming=new URLSearchParams(window.location.search).get("ref");
- const input=$("walletReferralInput");
- if(input&&incoming&&!linked&&!input.value)input.value=incoming.toUpperCase().replace(/[^A-F0-9]/g,"").slice(0,8);
+ if(msg){
+  if(autoLink?.linked)msg.textContent="Invitación vinculada automáticamente. La recompensa del 5 % se acreditará a quien te invitó solo cuando tu primera compra posterior a la vinculación figure como entregada.";
+  else if(autoLink?.error)msg.textContent=autoLink.permanent?"No se pudo vincular la invitación: "+autoLink.error:"La invitación quedó guardada, pero no pudimos vincularla por la conexión. Al volver a entrar lo intentaremos de nuevo.";
+  else if(data.invite_linked)msg.textContent="Tu cuenta ya tiene una invitación vinculada. No necesitas introducir ni pegar ningún código.";
+  else msg.textContent="Comparte tu enlace personal. El amigo debe abrirlo dentro de los primeros 7 días de su cuenta y antes de su primera compra; quedará vinculado automáticamente, sin pegar códigos.";
+ }
+ refreshWalletReferralAuthNotice();
 }
 function walletReferralUrl(){
  const code=String(walletReferralSummary?.code||"").trim();
- if(!code)return "";
- const url=new URL(window.location.href);
- url.search="";url.hash="";
- url.searchParams.set("ref",code);
+ if(!/^[A-F0-9]{8}$/i.test(code))return "";
+ const url=new URL(window.location.origin+window.location.pathname);
+ url.searchParams.set("ref",code.toUpperCase());
  return url.toString();
 }
 async function copyWalletReferralLink(){
  const url=walletReferralUrl(),msg=$("walletReferralMsg");
- if(!url){if(msg)msg.textContent="Todavía no tenemos tu código de invitación.";return;}
+ if(!url){if(msg)msg.textContent="Todavía no tenemos tu enlace personal. Actualiza la Cartera cuando haya conexión.";return;}
  try{
   if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(url);
   else{
@@ -5420,33 +5521,18 @@ async function copyWalletReferralLink(){
    const copied=document.execCommand("copy");field.remove();
    if(!copied)throw new Error("copia no disponible");
   }
-  if(msg)msg.textContent="Enlace copiado. Compártelo con tu amigo.";
- }catch(error){if(msg)msg.textContent="No se pudo copiar automáticamente. Enlace: "+url;}
+  if(msg)msg.textContent="Enlace copiado. Al abrirlo, la invitación queda guardada automáticamente; no hay que pegar códigos.";
+ }catch(error){if(msg)msg.textContent="No se pudo copiar automáticamente. Comparte este enlace: "+url;}
 }
 async function shareWalletReferralLink(){
  const url=walletReferralUrl(),msg=$("walletReferralMsg");
- if(!url){if(msg)msg.textContent="Todavía no tenemos tu código de invitación.";return;}
- const data={title:"Tienda El Castillo",text:"Regístrate en Tienda El Castillo con mi invitación. Cuando completes tu primera compra, yo recibiré una recompensa del 5 %.",url};
+ if(!url){if(msg)msg.textContent="Todavía no tenemos tu enlace personal. Actualiza la Cartera cuando haya conexión.";return;}
+ const data={title:"Tienda El Castillo",text:"Te invito a Tienda El Castillo. Abre este enlace durante los primeros 7 días de tu cuenta y antes de completar tu primera compra. La invitación se vincula automáticamente, sin pegar códigos. Cuando se entregue tu primera compra posterior, recibiré el 5 % de su valor en Coronas.",url};
  try{
   if(navigator.share)await navigator.share(data);
   else await copyWalletReferralLink();
-  if(msg&&navigator.share)msg.textContent="Invitación lista para compartir.";
+  if(msg&&navigator.share)msg.textContent="Invitación lista para compartir. El enlace ya contiene todo lo necesario.";
  }catch(error){if(error?.name!=="AbortError"&&msg)msg.textContent="No se pudo abrir el menú para compartir. Usa «Copiar enlace».";}
-}
-async function applyWalletReferralCode(){
- if(!currentUser||!db)return;
- const input=$("walletReferralInput"),button=$("walletReferralApplyBtn"),msg=$("walletReferralMsg");
- const code=String(input?.value||"").trim().toUpperCase();
- if(!/^[A-F0-9]{8}$/.test(code)){if(msg)msg.textContent="Escribe un código válido de 8 letras o números.";input?.focus();return;}
- if(button){button.disabled=true;button.textContent="Vinculando…";}
- if(msg)msg.textContent="";
- try{
-  const result=await db.rpc("apply_wallet_referral_code",{p_code:code});
-  if(result.error)throw new Error(result.error.message);
-  if(msg)msg.textContent=result.data?.message||"Invitación vinculada correctamente.";
-  await loadWalletPromotions();
- }catch(error){if(msg)msg.textContent=error.message||"No se pudo vincular el código.";}
- finally{if(button){button.disabled=false;button.textContent="Vincular código";}}
 }
 async function loadWalletReferralAdmin(){
  if(currentProfile?.role!=="admin"||!db)return;
@@ -7097,6 +7183,7 @@ async function logout(){
  $("siteHeader").classList.add("hidden");$("store").classList.add("hidden");$("bottomNav").classList.add("hidden");$("adminNav").classList.add("hidden");$("notificationsButton")?.classList.add("hidden");$("notificationBadge")?.classList.add("hidden");
  $("auth").classList.remove("hidden");setAuthMode("login");window.scrollTo({top:0,behavior:"smooth"});
 }
+captureWalletReferralFromUrl();
 const launchCastleStore=()=>{
  // Mostrar la interfaz de inmediato: la descarga de Supabase ocurre en segundo plano.
  $("brandLoader")?.classList.add("done");
