@@ -1,0 +1,3 @@
+-- This migration version was registered before the final referral safeguards were
+-- composed. It intentionally contains no schema changes; the audited implementation
+-- is applied in 20261124235603_referral_auto_link_and_one_first_completion_reward.sql.
