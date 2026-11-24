@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 280" role="img" aria-labelledby="t d">
+<title id="t">Primera recarga de Coronas</title><desc id="d">Un cofre azul y dorado abierto, monedas de la tienda y destellos.</desc>
+<defs>
+ <linearGradient id="chest" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4088e9"/><stop offset="1" stop-color="#123c79"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff2bc"/><stop offset=".5" stop-color="#e8b44e"/><stop offset="1" stop-color="#a86c23"/></linearGradient>
+ <linearGradient id="lid" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#75b6ff"/><stop offset="1" stop-color="#245bab"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="9"/><feComponentTransfer><feFuncA type="linear" slope=".22"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<ellipse cx="180" cy="239" rx="117" ry="17" fill="#1b416b" opacity=".12"/>
+<g filter="url(#shadow)">
+ <path d="M92 126Q79 68 126 45Q179 18 230 48Q272 73 257 126Z" fill="url(#lid)" stroke="#e6c16b" stroke-width="7"/>
+ <path d="M113 113Q110 69 143 57Q181 42 215 61Q244 78 237 113" fill="none" stroke="#a6d1ff" stroke-width="5" opacity=".65"/>
+ <path d="M78 126h204v92H78Z" fill="url(#chest)" stroke="#d9a74c" stroke-width="8" stroke-linejoin="round"/>
+ <path d="M93 145h174M93 198h174" stroke="#ffd982" stroke-width="5" opacity=".7"/>
+ <path d="M169 126h24v92h-24Z" fill="url(#gold)" stroke="#fff0bd" stroke-width="2"/>
+ <path d="M150 160h62v42h-62Z" rx="8" fill="url(#gold)" stroke="#fff0bd" stroke-width="3"/>
+ <path d="m164 170 9 7 8-13 8 13 9-7-4 19h-27Z" fill="#fff9e6"/>
+ <circle cx="181" cy="191" r="4" fill="#a46d23"/>
+ <g transform="translate(180 50) rotate(-9)">
+  <circle r="34" fill="url(#gold)" stroke="#fff5cb" stroke-width="4"/>
+  <circle r="27" fill="#174b91" stroke="#d9b15a" stroke-width="2"/>
+  <path d="m-19 -5 8 6 7-14 8 15 8-13 7 6-4 23h-30Z" fill="#ffe9a4" stroke="#fff4d1" stroke-width="1.5"/>
+  <path d="M-12 24h24" stroke="#eac15e" stroke-width="3" stroke-linecap="round"/>
+ </g>
+ <path d="M80 48 70 29M270 60l18-15M57 104l-20-3M295 117l20-7" stroke="#edbd55" stroke-width="5" stroke-linecap="round"/>
+ <path d="m58 29 4 10 10 4-10 4-4 10-4-10-10-4 10-4Z" fill="#f7d982"/>
+ <path d="m294 27 4 9 9 4-9 4-4 9-4-9-9-4 9-4Z" fill="#f7d982"/>
+</g>
+</svg>
