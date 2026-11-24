@@ -782,12 +782,12 @@ test("la primera recarga aprobada suma el 3 % completo y no paga comisión de in
   const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261124005127_coronas_wallet_referrals_first_deposit.sql"), "utf8");
   const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
   const approval = rewardsDraft.slice(rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit"));
-  assert.match(approval, /IF NOT v_has_previous_deposit THEN[\\s\\S]*?round\\(v_deposit\\.credited_amount \\* 0\\.03,4\\)/);
+  assert.match(approval, /IF NOT v_has_previous_deposit THEN[\s\S]*?round\(v_deposit\.credited_amount \* 0\.03,4\)/);
   assert.match(approval, /v_welcome_bonus :=/);
   assert.doesNotMatch(approval, /reward_wallet_referrer|referral_bonus_amount/);
   assert.match(approval, /status = 'approved'/);
   assert.match(approval, /welcome_bonus_amount/);
-  assert.match(rewardsDraft, /round\\(v_order\\.wallet_refund_amount \\* 0\\.05,4\\)/);
+  assert.match(rewardsDraft, /round\(v_order\.wallet_refund_amount \* 0\.05,4\)/);
   assert.match(migration, /wallet_referrals_not_self/);
 });
 test("las promociones del inicio corresponden a las tres condiciones publicadas y no suman otro 10 % a Free Fire", () => {
