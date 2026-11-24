@@ -8,6 +8,7 @@ const APP_SHELL = [
   "./index.html",
   "./manifest.webmanifest",
   "./castle-icon.svg",
+  "./como-pagar-recargas-juegos-cuba.html",
   "./recargar-free-fire-cuba.html",
   "./recargas-juegos-cuba.html",
   "./recargar-mobile-legends-cuba.html",
