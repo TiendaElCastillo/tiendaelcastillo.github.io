@@ -2398,20 +2398,20 @@ body{min-width:0}
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
    <h3 id="walletInformationTitle">Cómo funciona tu saldo</h3>
    <p>Usa tus Coronas para pagar paquetes dentro de la tienda. Las devoluciones que correspondan también se acreditarán aquí.</p>
-   <p>Para conseguir Coronas, realiza una transferencia CUP y envía el comprobante. Estarán disponibles cuando confirmemos el pago.</p>
+   <p>Recarga con transferencia CUP, USDT o saldo móvil. En todos los casos revisaremos tu pago y solo acreditaremos las Coronas cuando tú lo apruebes. La recarga mínima es de 1 Corona (1 USD).</p>
   </section>
   <div class="wallet-content-grid">
    <section class="wallet-panel wallet-deposit-wizard">
     <h3>Recargar Coronas</h3>
-    <p>Realiza una transferencia CUP. Tus Coronas estarán disponibles después de comprobar el pago.</p>
+    <p>Elige cómo pagar. Tu solicitud quedará pendiente hasta que revises y apruebes la recepción real del pago.</p>
     <ol id="walletDepositStepper" class="wallet-deposit-stepper" aria-label="Pasos para acreditar Coronas">
      <li class="active" data-step="1"><b>1</b><span>Importe</span></li>
      <li data-step="2"><b>2</b><span>Pagar y enviar datos</span></li>
     </ol>
     <div id="walletDepositStep1" class="wallet-deposit-stage">
      <div class="checkout-stage-title"><strong>1. ¿Cuánto vas a transferir?</strong><small>Indica la cantidad que vas a transferir en CUP. Podrás revisar el importe antes de enviarnos la solicitud.</small></div>
-     <div class="wallet-method-note"><span>Único método disponible</span><strong>Transferencia CUP</strong></div>
-     <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad que vas a transferir (CUP)</label><input id="walletDepositAmount" type="number" inputmode="numeric" min="1160" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1160 CUP, equivalente a 1 Corona.</small></div>
+     <div class="field"><label for="walletDepositMethod">Método para recargar Coronas</label><select id="walletDepositMethod" onchange="updateWalletDepositMethod(true)"><option value="">Comprobando métodos disponibles…</option></select><small id="walletDepositMethodHint" class="wallet-field-hint">El saldo no se acredita automáticamente: la tienda revisará y aprobará cada recarga.</small></div>
+     <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad que vas a transferir (CUP)</label><input id="walletDepositAmount" type="number" inputmode="decimal" min="1" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1160 CUP, equivalente a 1 Corona.</small></div>
      <div id="walletDepositPreview" class="wallet-preview"><small>Coronas que recibirás después de la revisión</small><strong>0,00 Coronas</strong><small>El importe final se calcula y verifica en el servidor antes de acreditarse.</small></div>
      <div class="checkout-stage-actions"><span></span><button class="primary-btn" type="button" onclick="goWalletDepositStep(2)">Continuar →</button></div>
     </div>
@@ -2420,13 +2420,14 @@ body{min-width:0}
      <div id="walletDepositInstructions" class="wallet-instructions">Cargando las instrucciones de pago…</div>
      <div class="wallet-deposit-form-intro"><strong>Cuando hayas realizado la transferencia</strong><small>Completa estos datos tal como aparecen en la confirmación de tu banco. El saldo se añadirá después de que revisemos el pago.</small></div>
      <div class="field" id="walletDepositSenderPhoneWrap"><label for="walletDepositSenderPhone">Teléfono desde el que hiciste la transferencia</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="walletDepositSenderPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="20" placeholder="xxxxxxxx" aria-label="Ocho dígitos del móvil cubano desde el que pagaste"></div><small class="wallet-field-hint">Escribe solo los 8 dígitos de tu línea de origen; el +53 ya aparece separado.</small></div>
-     <div class="field" id="walletDepositReferenceWrap"><label for="walletDepositReference">Número de transacción bancaria</label><input id="walletDepositReference" inputmode="text" maxlength="100" placeholder="Copia el Nro. de Transacción"></div>
+     <div class="field" id="walletDepositReferenceWrap"><label id="walletDepositReferenceLabel" for="walletDepositReference">Número de transacción bancaria</label><input id="walletDepositReference" inputmode="text" maxlength="100" placeholder="Copia la referencia de la operación"></div>
+     <div class="field hidden" id="walletDepositTxidWrap"><label for="walletDepositTxid">TxID de la transferencia USDT (64 caracteres)</label><input id="walletDepositTxid" inputmode="text" maxlength="64" autocapitalize="none" spellcheck="false" placeholder="Pega el hash/TxID completo"></div>
      <div class="field proof-field wallet-proof-field" id="walletDepositProofWrap">
       <label for="walletDepositProof">Captura del mensaje de confirmación (obligatorio)</label>
       <input class="proof-input" id="walletDepositProof" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="walletDepositProofHelp walletDepositProofSelection" onchange="previewWalletDepositProof()">
       <label class="proof-dropzone" for="walletDepositProof">
        <span class="proof-icon" aria-hidden="true">↑</span>
-       <span class="proof-copy"><strong id="walletDepositProofTitle">Adjunta la captura de confirmación</strong><small id="walletDepositProofHelp">Debe mostrar el mensaje completo del banco, el importe, la fecha, el destinatario y el estado de la operación. Adjunta de 1 a 2 imágenes JPG, PNG o WEBP, de hasta 5 MB cada una.</small></span>
+       <span class="proof-copy"><strong id="walletDepositProofTitle">Adjunta la captura de confirmación</strong><small id="walletDepositProofHelp">Debe mostrar la confirmación del pago, el importe, la fecha y el destinatario. Adjunta de 1 a 2 imágenes JPG, PNG o WEBP, de hasta 5 MB cada una.</small></span>
       </label>
       <small id="walletDepositProofSelection" class="wallet-proof-selection" role="status" aria-live="polite">Todavía no has adjuntado la captura del mensaje de confirmación.</small>
      </div>
@@ -2464,7 +2465,10 @@ body{min-width:0}
  <section class="wallet-panel wallet-admin-settings">
   <h3>Configuración de las Coronas</h3>
   <p>Esta tasa convierte las transferencias CUP a Coronas. 1 Corona = 1 USD. Los cambios se aplican solo a las nuevas solicitudes; cada recarga anterior conserva su tasa.</p>
-  <div class="wallet-rate-row"><div class="field"><label for="walletCupRate">CUP por cada 1 Corona</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1160"></div><button class="primary-btn" type="button" onclick="saveWalletSettings()">Guardar tasa</button></div>
+  <div class="field-row"><div class="field"><label for="walletCupRate">CUP por cada 1 Corona</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1160"></div><div class="field"><label for="walletUsdtAddress">Dirección receptora USDT (BEP20)</label><input id="walletUsdtAddress" type="text" inputmode="text" autocapitalize="none" spellcheck="false" maxlength="42" placeholder="0x…"></div></div>
+  <div class="field-row"><div class="field"><label for="walletMobileCreditUnits">Unidades de saldo móvil de referencia</label><input id="walletMobileCreditUnits" type="number" min="1" step="1" value="360"></div><div class="field"><label for="walletMobileCostCup">Valor CUP de esas unidades</label><input id="walletMobileCostCup" type="number" min="1" step="0.01" value="1200"></div></div>
+  <p class="wallet-field-hint">Para saldo móvil, la conversión por Corona se calcula con las unidades de referencia, su valor en CUP y la tasa CUP/Corona. La red USDT está fijada en BNB Smart Chain (BEP20).</p>
+  <button class="primary-btn" type="button" onclick="saveWalletSettings()">Guardar configuración</button>
   <p id="walletSettingsMsg" class="msg" role="status"></p>
   <p class="wallet-field-hint">El sistema redondea hacia abajo a dos decimales. La recarga mínima es de 1 Corona equivalente.</p>
  </section>
@@ -2762,7 +2766,7 @@ function loadCastleTurnstile(){
 // Rama de pruebas: nunca debe apuntar a la base de datos de producción.
 const STORE_SUPABASE_URL="https://kmotmgpzmeooznyymcxl.supabase.co";
 const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttb3RtZ3B6bWVvb3pueXltY3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzOTA5NzksImV4cCI6MjExMDk2Njk3OX0.57qf5Fy9cOR0txQ2Mevs41jht1BqnDFTmY5TiGqxYrA";
-let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"",usdt_address:""}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", playerValidationDebounceTimer=null, activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
+let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"BNB Smart Chain (BEP20)",usdt_address:"",mobile_credit_units:360,mobile_cost_cup:1200}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", playerValidationDebounceTimer=null, activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
 
 const $=id=>document.getElementById(id);
 const clean=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
