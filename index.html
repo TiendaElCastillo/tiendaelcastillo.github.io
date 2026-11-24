@@ -5905,9 +5905,21 @@ async function loadWalletDepositsAdmin(){
 }
 async function reviewWalletDeposit(id,approve){
  if(currentProfile?.role!=="admin")return;
+ const depositResult=await db.from("wallet_deposits").select("payment_method,amount,currency,credited_amount,payment_reference,sender_phone,txid,network,recipient_address").eq("id",id).maybeSingle();
+ if(depositResult.error||!depositResult.data){
+  $("walletAdminMsg").textContent="No pudimos verificar los datos de esta recarga. Actualiza el panel antes de decidir.";
+  return;
+ }
+ const deposit=depositResult.data,method=deposit.payment_method;
  let note=null;
  if(approve){
-  if(!window.confirm("APROBAR DEPÓSITO\n\nComprueba que la transferencia llegó a tu cuenta y que coinciden el importe, el teléfono de origen y el número de transacción.\n\nSolo después de verificarlo se acreditará el saldo USD. ¿Confirmas la recepción real?"))return;
+  const verification=method==="USDT"
+   ?"Verifica en BscScan que el TxID esté confirmado en BNB Smart Chain (BEP20), que el importe recibido sea exactamente el solicitado y que el destino coincida con la dirección de la tienda."
+   :method==="Saldo móvil"
+    ?"Comprueba en tu línea que recibiste realmente las unidades de saldo móvil indicadas. Verifica que coincidan el número de origen, la referencia y el SMS de ETECSA."
+    :"Comprueba en tu cuenta bancaria que recibiste el importe exacto. Verifica el número de transacción y el teléfono de origen.";
+  const accepted=window.confirm("APROBAR RECARGA DE CORONAS\n\nMétodo: "+method+"\nImporte: "+(method==="USDT"?moneyUSD(deposit.amount)+" USDT":money(deposit.amount)+" "+(method==="Transferencia CUP"?"CUP":"unidades de saldo móvil"))+"\nCoronas calculadas: "+moneyUSD(deposit.credited_amount)+"\n\n"+verification+"\n\nSolo después de confirmar la recepción real se acreditarán las Coronas y, si corresponde, el bono de primera recarga del 3 %. ¿Confirmas la aprobación manual?");
+  if(!accepted)return;
  }else{
   note=window.prompt("Escribe el motivo concreto del rechazo. El cliente podrá verlo en su historial:");
   if(note===null)return;
@@ -5917,7 +5929,6 @@ async function reviewWalletDeposit(id,approve){
  $("walletAdminMsg").textContent=result.error?"No se pudo procesar: "+result.error.message:(approve?"Recarga aprobada. Se acreditaron "+moneyUSD(Number(result.data?.credited_amount||0)+Number(result.data?.welcome_bonus_amount||0))+" Coronas"+(Number(result.data?.welcome_bonus_amount||0)>0?" (incluye "+moneyUSD(result.data.welcome_bonus_amount)+" Coronas de bono).":"."):"Recarga rechazada. El motivo quedó guardado para el cliente.");
  if(!result.error){await loadWalletDepositsAdmin();await loadWalletData();await loadMyWalletDeposits();}
 }
-
 async function loadAdminProducts(){
  if(currentProfile?.role!=="admin")return;
  const result=await db.from("products").select("id,game,name,description,amount,price_transfer,price_mobile,price_usdt,active,storefront_visible,provider_product_id,provider_region,provider_validation_supported,provider_in_stock").order("created_at",{ascending:false});
