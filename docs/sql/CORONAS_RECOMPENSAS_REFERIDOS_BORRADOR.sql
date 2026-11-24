@@ -165,6 +165,263 @@ $function$;
 REVOKE ALL ON FUNCTION private.reverse_wallet_referral_order_reward(uuid,text)
   FROM PUBLIC, anon, authenticated;
 
+
+-- ---------------------------------------------------------------------------
+-- 3a. Mantener el rechazo del proveedor como estado real.
+--     Una devolución solo se abona cuando el proveedor la confirma.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.finish_central_one_order(
+  p_order_id uuid,
+  p_provider_status text,
+  p_provider_order_id uuid DEFAULT NULL,
+  p_reference_code text DEFAULT NULL,
+  p_request_id text DEFAULT NULL,
+  p_response jsonb DEFAULT NULL,
+  p_error_code text DEFAULT NULL,
+  p_error_message text DEFAULT NULL
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  v_order public.orders%rowtype;
+  v_local_status text;
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_roles
+    WHERE rolname = current_user AND rolname IN ('service_role','postgres')
+  ) THEN
+    RAISE EXCEPTION 'Operación interna no autorizada.';
+  END IF;
+
+  IF p_provider_status NOT IN (
+    'unknown','retryable','rejected','created','confirmed',
+    'processing','partially_completed','completed','failed','cancelled'
+  ) THEN
+    RAISE EXCEPTION 'Estado de Central One no válido.';
+  END IF;
+
+  SELECT * INTO v_order
+  FROM public.orders
+  WHERE id = p_order_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Pedido local no encontrado.';
+  END IF;
+
+  IF v_order.central_one_order_id IS NOT NULL
+     AND p_provider_order_id IS NOT NULL
+     AND v_order.central_one_order_id <> p_provider_order_id THEN
+    RAISE EXCEPTION 'El pedido local ya está asociado a otra orden del proveedor.';
+  END IF;
+
+  v_local_status := v_order.status;
+  IF p_provider_status = 'completed' THEN
+    v_local_status := 'completed';
+  ELSIF p_provider_status = 'failed' THEN
+    v_local_status := 'failed';
+  ELSIF p_provider_status = 'cancelled' THEN
+    v_local_status := 'cancelled';
+  ELSIF p_provider_status = 'rejected' THEN
+    v_local_status := 'rejected';
+  END IF;
+
+  UPDATE public.orders
+  SET central_one_order_id = coalesce(p_provider_order_id,central_one_order_id),
+      central_one_reference_code = coalesce(p_reference_code,central_one_reference_code),
+      central_one_status = p_provider_status,
+      central_one_request_id = coalesce(p_request_id,central_one_request_id),
+      central_one_response = coalesce(p_response,central_one_response),
+      central_one_error_code = p_error_code,
+      central_one_error_message = p_error_message,
+      central_one_checked_at = now(),
+      status = v_local_status
+  WHERE id = p_order_id;
+
+  RETURN jsonb_build_object(
+    'order_id',p_order_id,
+    'status',v_local_status,
+    'central_one_status',p_provider_status,
+    'central_one_order_id',coalesce(p_provider_order_id,v_order.central_one_order_id),
+    'central_one_reference_code',coalesce(p_reference_code,v_order.central_one_reference_code)
+  );
+END;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.refund_wallet_order_after_provider_refund(
+  p_order_id uuid,
+  p_provider_order_id uuid
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  v_order public.orders%rowtype;
+  v_existing public.wallet_transactions%rowtype;
+  v_refund_amount numeric(12,2);
+  v_description text;
+BEGIN
+  IF current_user NOT IN ('service_role','postgres') THEN
+    RAISE EXCEPTION 'Operación interna no autorizada.';
+  END IF;
+
+  IF p_order_id IS NULL OR p_provider_order_id IS NULL THEN
+    RAISE EXCEPTION 'Faltan los identificadores de la orden.';
+  END IF;
+
+  SELECT * INTO v_order
+  FROM public.orders
+  WHERE id = p_order_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Pedido local no encontrado.';
+  END IF;
+
+  IF v_order.central_one_order_id IS DISTINCT FROM p_provider_order_id THEN
+    RAISE EXCEPTION 'La orden del proveedor no coincide con el pedido local.';
+  END IF;
+
+  IF v_order.central_one_status NOT IN ('failed','cancelled','rejected')
+     OR v_order.status NOT IN ('failed','cancelled','rejected') THEN
+    RAISE EXCEPTION 'El proveedor no ha confirmado un pedido fallido, cancelado o rechazado.';
+  END IF;
+
+  IF coalesce(v_order.central_one_response->'refund'->>'refunded','false') <> 'true' THEN
+    RAISE EXCEPTION 'Central One todavía no confirma la devolución.';
+  END IF;
+
+  IF v_order.payment_source = 'wallet'
+     AND v_order.payment_method = 'Saldo de Tienda El Castillo' THEN
+    IF NOT EXISTS (
+      SELECT 1
+      FROM public.wallet_transactions
+      WHERE order_id = p_order_id
+        AND user_id = v_order.user_id
+        AND kind = 'purchase'
+        AND currency = 'USD'
+        AND amount = v_order.price
+    ) THEN
+      RAISE EXCEPTION 'No encontramos el débito original de la billetera; no se acreditó ninguna devolución.';
+    END IF;
+
+    v_refund_amount := v_order.price;
+    v_description := 'Devolución automática: Central One confirmó el reembolso del pedido ' || v_order.order_code;
+
+  ELSIF v_order.payment_source = 'direct'
+        AND v_order.payment_method IN ('Transferencia CUP','Saldo móvil','USDT') THEN
+    IF v_order.paid_at IS NULL
+       OR v_order.payment_confirmed_at IS NULL
+       OR v_order.payment_confirmed_by IS NULL
+       OR v_order.proof_path IS NULL
+       OR NOT EXISTS (
+         SELECT 1
+         FROM public.profiles admin_profile
+         WHERE admin_profile.id = v_order.payment_confirmed_by
+           AND admin_profile.role = 'admin'
+       )
+       OR NOT EXISTS (
+         SELECT 1
+         FROM storage.objects proof
+         WHERE proof.bucket_id = 'payment-proofs'
+           AND proof.name = v_order.proof_path
+       ) THEN
+      RAISE EXCEPTION 'No se puede acreditar la devolución: el pago directo no tiene una verificación administrativa completa.';
+    END IF;
+
+    v_refund_amount := v_order.wallet_refund_amount;
+    IF v_refund_amount IS NULL OR v_refund_amount <= 0 THEN
+      UPDATE public.orders
+      SET central_one_response = coalesce(central_one_response,'{}'::jsonb) ||
+        jsonb_build_object(
+          'external_payment_refund_review',
+          jsonb_build_object(
+            'required',true,
+            'provider_refunded',true,
+            'recorded_at',now(),
+            'message','El proveedor confirmó la devolución. Este pedido antiguo no tiene guardado el equivalente USD para acreditar la wallet y requiere revisión manual.'
+          )
+        )
+      WHERE id = p_order_id;
+
+      RETURN jsonb_build_object(
+        'ok',true,
+        'refunded',false,
+        'reason','legacy_order_missing_wallet_refund_amount',
+        'message','El proveedor devolvió el dinero, pero el pedido no tiene guardado el equivalente en USD. Requiere revisión manual.'
+      );
+    END IF;
+
+    v_description := 'Devolución a la wallet: el proveedor confirmó que no pudo completar el pedido ' || v_order.order_code;
+  ELSE
+    RAISE EXCEPTION 'El origen o el método de pago no admite una devolución a la wallet.';
+  END IF;
+
+  SELECT * INTO v_existing
+  FROM public.wallet_transactions
+  WHERE order_id = p_order_id
+    AND kind = 'refund'
+  LIMIT 1;
+
+  IF NOT FOUND THEN
+    INSERT INTO public.wallet_transactions(
+      user_id,order_id,kind,amount,currency,description
+    )
+    VALUES (
+      v_order.user_id,p_order_id,'refund',v_refund_amount,'USD',v_description
+    )
+    ON CONFLICT (order_id)
+      WHERE kind = 'refund' AND order_id IS NOT NULL
+    DO NOTHING;
+
+    SELECT * INTO v_existing
+    FROM public.wallet_transactions
+    WHERE order_id = p_order_id
+      AND kind = 'refund'
+    LIMIT 1;
+  END IF;
+
+  IF NOT FOUND
+     OR v_existing.user_id IS DISTINCT FROM v_order.user_id
+     OR v_existing.currency IS DISTINCT FROM 'USD'
+     OR v_existing.amount IS DISTINCT FROM v_refund_amount THEN
+    RAISE EXCEPTION 'El movimiento de devolución no coincide con el pedido; no se confirmó el abono.';
+  END IF;
+
+  UPDATE public.orders
+  SET central_one_response =
+    (coalesce(central_one_response,'{}'::jsonb) - 'external_payment_refund_review') ||
+    jsonb_build_object(
+      'wallet_refund',
+      jsonb_build_object(
+        'refunded',true,
+        'credited_amount',v_existing.amount,
+        'currency',v_existing.currency,
+        'confirmed_by_provider',true,
+        'recorded_at',now(),
+        'original_payment_method',v_order.payment_method
+      )
+    )
+  WHERE id = p_order_id;
+
+  RETURN jsonb_build_object(
+    'ok',true,
+    'refunded',true,
+    'credited_amount',v_existing.amount,
+    'currency',v_existing.currency,
+    'reason',case when v_order.payment_source = 'wallet'
+      then 'wallet_purchase_provider_refund'
+      else 'direct_payment_provider_refund_to_wallet'
+    end
+  );
+END;
+$function$;
+
 -- Provider result transitions are written by the restricted
 -- finish_central_one_order function. Reward creation happens only when both
 -- provider and local order statuses are completed.
@@ -182,8 +439,8 @@ BEGIN
     PERFORM private.credit_wallet_referral_order_reward(NEW.id);
   ELSIF (
        (OLD.central_one_status = 'completed' OR OLD.status = 'completed')
-       AND (NEW.central_one_status IN ('failed','cancelled')
-            OR NEW.status IN ('failed','cancelled'))
+       AND (NEW.central_one_status IN ('failed','cancelled','rejected')
+            OR NEW.status IN ('failed','cancelled','rejected'))
   ) THEN
     PERFORM private.reverse_wallet_referral_order_reward(
       NEW.id,'Central One marcó la entrega como fallida o cancelada'
