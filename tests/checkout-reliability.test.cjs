@@ -771,5 +771,5 @@ test("las promociones del inicio corresponden a las tres condiciones publicadas 
   assert.match(indexHtml, /0,7 % para ti/);
   assert.match(indexHtml, /10 % más diamantes/);
   assert.match(indexHtml, /extra ya está incluido en los paquetes participantes/);
-  assert.match(indexHtml, /No se suma otro regalo/);
+  assert.match(indexHtml, /no es un regalo adicional de la tienda/i);
 });
