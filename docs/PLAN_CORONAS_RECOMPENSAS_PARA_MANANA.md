@@ -25,13 +25,15 @@
 ## Lista de mañana
 - [ ] Recibir el PNG exportado desde Canva del diseño **«Icono oficial Coronas del Castillo»**.
 - [ ] Sustituir el SVG provisional por el recurso original en la wallet, perfil, navegación, checkout, tarjetas promocionales y movimientos; revisar peso del archivo para Cuba.
-- [ ] Revisar el diff de PR #40 y terminar la actualización de 3 % / 5 % en interfaz, resumen de invitaciones, textos para compartir y panel de administración.
+- [x] Actualizar en la rama de PR #40 el texto de bienvenida 3 % sin límite, invitaciones 5 % por paquete entregado, resumen de Coronas y textos para compartir. Falta la revisión visual con el PNG de Canva.
 - [ ] Crear la migración con Supabase CLI desde el nombre generado por `supabase migration new`; comparar con el esquema real de producción y probar primero en un entorno de pruebas completo.
 - [ ] Probar cálculo 3 % sin límite: por ejemplo, 20 USD → 0,60 Corona extra; 100 USD → 3,00 Coronas extra.
 - [ ] Probar comisión 5 % por pedido entregado: paquete 4,00 USD → 0,20 Corona; dos pedidos entregados del mismo amigo → 0,40 Coronas en total.
 - [ ] Comprobar que pedidos pendientes, rechazados, cancelados o fallidos no pagan comisión; un pedido repetido no paga dos veces; una devolución revierte una sola vez la comisión.
 - [ ] Comprobar autorreferidos, códigos vencidos, código ya utilizado, cuenta con primer depósito y reintentos de conexión.
-- [ ] Ejecutar pruebas automatizadas, revisar la versión móvil y la caché, y ejecutar asesores de seguridad y rendimiento de Supabase.
+- [x] Revisar sintaxis de los scripts principales y actualizar la versión de caché a shell-v184.
+- [ ] Reejecutar GitHub Actions y confirmar todas las pruebas; la ejecución visible anterior falló porque aún esperaba la equivalencia antigua y el 0,7 %, y esas aserciones ya se corrigieron.
+- [ ] Revisar la versión móvil y ejecutar los asesores de seguridad y rendimiento de Supabase.
 - [ ] No publicar ni unir PR #40 a `main` hasta terminar las comprobaciones. No hacer compras de prueba en producción ni usar saldo de Central One sin una autorización específica para una prueba real.
 
 ## Estado de publicación
