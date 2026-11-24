@@ -20,6 +20,7 @@ const playerValidationEdgeSource = fs.readFileSync(path.join(root, "supabase/fun
 const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-order/index.ts"), "utf8");
 const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
 const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
+const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
 
 
 function makeNode(id = "") {
@@ -230,11 +231,11 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=23"));
-  assert.ok(serviceWorker.includes('shell-v184'));
+  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
+  assert.ok(serviceWorker.includes('shell-v185'));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=3'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=23"));
+  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
   assert.ok(indexHtml.includes('id="proofUploadCircuit"'));
   assert.ok(serviceWorker.includes("./assets/checkout-reliability.js?v=1"));
@@ -838,7 +839,7 @@ test("el panel de Coronas usa un icono propio y no superpone la marca de agua", 
   assert.doesNotMatch(indexHtml, /class="wallet-watermark"/);
   assert.match(storefrontPolishSource, /\.wallet-hero:after,\.wallet-watermark\{display:none!important/);
   assert.match(storefrontPolishSource, /\.wallet-coin-art img/);
-  assert.match(indexHtml, /Cada Corona equivale a 1 USD para calcular tus compras dentro de la tienda/);
+  assert.match(indexHtml, /Valor de referencia: 1 Corona equivale a 1 USD al pagar paquetes en la tienda/);
   assert.doesNotMatch(indexHtml, /1:1: 1 Corona = 1 USD/);
 });
 
@@ -875,4 +876,39 @@ test("los mensajes visibles del historial y perfil hablan de Coronas y Cartera, 
   assert.match(indexHtml, /Devolución de Coronas en revisión/);
   assert.match(indexHtml, /<option value="Saldo de Tienda El Castillo">Coronas<\/option>/);
   assert.match(indexHtml, /name:"Saldo de Tienda El Castillo",short:"Coronas"/);
+});
+
+
+test("las compras con Coronas se registran en un apartado administrativo separado", () => {
+  assert.match(indexHtml, /id="walletPurchasesAdmin"/);
+  assert.match(indexHtml, /id="walletPurchaseAdminCount"/);
+  assert.match(indexHtml, /id="walletPurchaseAdminTotal"/);
+  assert.match(indexHtml, /async function loadWalletPurchasesAdmin\(\)/);
+  assert.match(indexHtml, /\.eq\("kind","purchase"\)\s*\.eq\("currency","USD"\)/);
+  assert.match(indexHtml, /db\.from\("orders"\)[\s\S]*?payment_source/);
+  assert.match(indexHtml, /db\.from\("profiles"\)[\s\S]*?full_name,email/);
+  assert.match(indexHtml, /Revisar registro/);
+  assert.match(indexHtml, /Coste descontado:/);
+  assert.match(adminPanelSource, /if\(selected==="wallet"\)[\s\S]*?loadWalletDepositsAdmin[\s\S]*?loadWalletPurchasesAdmin/);
+});
+
+test("la recarga externa de Coronas continúa pendiente hasta la aprobación manual", () => {
+  assert.match(indexHtml, /status:"pending"/);
+  assert.match(indexHtml, /admin_review_wallet_deposit/);
+  assert.match(indexHtml, /¿Confirmas la aprobación manual\?/);
+  assert.match(coronasProductionMigrationSource, /if v_deposit\.status <> 'payment_review' then/);
+  assert.match(coronasProductionMigrationSource, /if p_approve then/);
+  assert.match(coronasProductionMigrationSource, /insert into public\.wallet_transactions\([\s\S]*?'deposit'/);
+  assert.match(coronasProductionMigrationSource, /set status = 'approved'/);
+});
+
+test("la compra con Coronas se cobra una vez y dispara el envío automático al juego", () => {
+  assert.match(coronasProductionMigrationSource, /wallet_request_id = p_request_id/);
+  assert.match(coronasProductionMigrationSource, /insert into public\.wallet_transactions\(user_id,order_id,kind,amount,currency,description\)[\s\S]*?'purchase'/);
+  assert.match(walletAutoSubmitMigrationSource, /CREATE OR REPLACE FUNCTION public\.claim_central_one_wallet_order/);
+  assert.match(walletAutoSubmitMigrationSource, /v_order\.payment_source IS DISTINCT FROM 'wallet'/);
+  assert.match(walletAutoSubmitMigrationSource, /kind = 'purchase'/);
+  assert.match(centralOneOrderEdgeSource, /action==="submit_wallet"/);
+  assert.match(indexHtml, /requestWalletAutoOrder\(result\.data\.order_id\)/);
+  assert.match(indexHtml, /no necesitas esperar aprobación administrativa/i);
 });
