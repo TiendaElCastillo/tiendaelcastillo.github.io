@@ -723,3 +723,11 @@ test("la rama de liberación usa producción y enruta las funciones reales; los 
   assert.match(indexHtml, /Coronas/i);
   assert.match(indexHtml, /coronas-promotions\.js\?v=1/);
 });
+
+ 
+test("la tasa inicial de Coronas coincide con la configuración productiva actual y la FAQ no fija una tasa obsoleta", () => {
+  assert.match(indexHtml, /walletSettings=\{cup_per_usd:1230,/);
+  assert.match(indexHtml, /walletCupRate[^>]+value="1230"/);
+  assert.match(indexHtml, /pricingUsdtRate[^>]+value="1230"/);
+  assert.doesNotMatch(indexHtml, /1\.160 CUP por Corona|1160 CUP, equivalente a 1 Corona/);
+});
