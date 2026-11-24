@@ -223,7 +223,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=23"));
-  assert.ok(serviceWorker.includes('shell-v181'));
+  assert.ok(serviceWorker.includes('shell-v183'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=23"));
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
@@ -650,7 +650,7 @@ test("la base de datos exige el archivo almacenado y los datos completos al entr
   assert.match(checkoutGuardMigrationSource, /payment_method = 'Transferencia CUP'/);
   assert.match(checkoutGuardMigrationSource, /payment_method = 'Saldo móvil'/);
   assert.match(checkoutGuardMigrationSource, /payment_method = 'USDT'/);
-  assert.match(checkoutGuardMigrationSource, /NEW\.status = 'payment_review'/);
+  assert.match(checkoutGuardMigrationSource, /NEW\.status IN \('payment_review','processing','completed'\)/);
 });
 
 test("la recarga de billetera se completa en dos pasos y el formulario queda junto a las instrucciones", () => {
