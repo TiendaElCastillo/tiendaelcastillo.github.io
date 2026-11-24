@@ -2406,7 +2406,7 @@ body{min-width:0}
   </section>
   <section class="wallet-panel coronas-referral-panel" aria-labelledby="coronasReferralTitle">
    <h3 id="coronasReferralTitle">Invita a tus amigos</h3>
-   <p>Comparte tu enlace personal. Al abrirlo, la invitación queda guardada automáticamente al crear o confirmar su cuenta; nadie tiene que copiar ni pegar códigos. Recibirás el 5 % del valor de su primera compra hecha después de vincularse, únicamente cuando el proveedor confirme que la recarga fue entregada.</p>
+   <p>Comparte tu enlace personal. Tu amigo debe abrirlo durante los primeros 7 días de su cuenta y antes de completar su primera compra. La invitación queda guardada automáticamente; nadie tiene que copiar ni pegar códigos. Tú recibirás el 5 % del valor de su primera compra posterior, solo cuando el proveedor confirme la entrega.</p>
    <div class="coronas-referral-code-row"><div id="walletReferralCode" class="coronas-referral-code" aria-live="polite">Tu enlace personal incluye la invitación. No hace falta pegar códigos.</div>
     <div class="coronas-referral-actions"><button class="secondary-btn" type="button" onclick="shareWalletReferralLink()">Compartir invitación</button><button class="secondary-btn" type="button" onclick="copyWalletReferralLink()">Copiar enlace</button></div>
    </div>
@@ -5407,7 +5407,7 @@ function refreshWalletReferralAuthNotice(){
  const hasPending=Boolean(pendingWalletReferralCode(currentUser));
  if(!hasPending||currentUser){notice.classList.add("hidden");return;}
  notice.classList.remove("hidden");
- notice.textContent="Llegaste mediante una invitación de Tienda El Castillo. Al crear tu cuenta y confirmar el correo, la invitación quedará vinculada automáticamente. No tienes que copiar ni pegar ningún código. La persona que te invitó recibirá el 5 % de tu primera compra cuando la recarga sea entregada.";
+ notice.textContent="Llegaste mediante una invitación de Tienda El Castillo. Para que sea válida, debes crear una cuenta nueva, abrir el enlace durante sus primeros 7 días y antes de completar tu primera compra. La invitación quedará vinculada automáticamente; no tienes que copiar ni pegar ningún código. Quien te invitó recibirá el 5 % cuando tu primera compra posterior sea entregada.";
 }
 function captureWalletReferralFromUrl(){
  const url=new URL(window.location.href);
@@ -5498,7 +5498,7 @@ async function loadWalletPromotions(){
   if(autoLink?.linked)msg.textContent="Invitación vinculada automáticamente. La recompensa del 5 % se acreditará a quien te invitó solo cuando tu primera compra posterior a la vinculación figure como entregada.";
   else if(autoLink?.error)msg.textContent=autoLink.permanent?"No se pudo vincular la invitación: "+autoLink.error:"La invitación quedó guardada, pero no pudimos vincularla por la conexión. Al volver a entrar lo intentaremos de nuevo.";
   else if(data.invite_linked)msg.textContent="Tu cuenta ya tiene una invitación vinculada. No necesitas introducir ni pegar ningún código.";
-  else msg.textContent="Comparte tu enlace personal. Quien lo abra tendrá la invitación guardada automáticamente al crear su cuenta.";
+  else msg.textContent="Comparte tu enlace personal. El amigo debe abrirlo dentro de los primeros 7 días de su cuenta y antes de su primera compra; quedará vinculado automáticamente, sin pegar códigos.";
  }
  refreshWalletReferralAuthNotice();
 }
@@ -5527,7 +5527,7 @@ async function copyWalletReferralLink(){
 async function shareWalletReferralLink(){
  const url=walletReferralUrl(),msg=$("walletReferralMsg");
  if(!url){if(msg)msg.textContent="Todavía no tenemos tu enlace personal. Actualiza la Cartera cuando haya conexión.";return;}
- const data={title:"Tienda El Castillo",text:"Te invito a Tienda El Castillo. Abre este enlace y crea tu cuenta; la invitación quedará vinculada automáticamente, sin copiar ni pegar códigos. Cuando completes tu primera compra posterior a la invitación y la recarga sea entregada, recibiré el 5 % de su valor en Coronas.",url};
+ const data={title:"Tienda El Castillo",text:"Te invito a Tienda El Castillo. Abre este enlace durante los primeros 7 días de tu cuenta y antes de completar tu primera compra. La invitación se vincula automáticamente, sin pegar códigos. Cuando se entregue tu primera compra posterior, recibiré el 5 % de su valor en Coronas.",url};
  try{
   if(navigator.share)await navigator.share(data);
   else await copyWalletReferralLink();
