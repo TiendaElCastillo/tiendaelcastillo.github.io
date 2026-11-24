@@ -3,6 +3,7 @@ name: Pruebas de fiabilidad de la tienda
 on:
   pull_request:
     paths:
+      - ".github/workflows/**"
       - "index.html"
       - "sw.js"
       - "tests/**"
@@ -17,10 +18,13 @@ on:
       - main
       - release/coronas-wallet-cutover
     paths:
+      - ".github/workflows/**"
       - "index.html"
       - "sw.js"
       - "tests/**"
       - "assets/checkout-reliability.js"
+      - "assets/coronas-promotions.js"
+      - "assets/coronas-promotions.css"
       - "supabase/functions/central-one-order/**"
       - "supabase/functions/central-one-player-validate/**"
       - "supabase/migrations/**"
