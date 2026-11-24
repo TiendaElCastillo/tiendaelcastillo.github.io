@@ -1,40 +1,55 @@
-# Pendientes de Coronas, invitaciones y wallet — preparar para mañana
+# Plan operativo — terminar Coronas, invitaciones y wallet
 
-## Reglas nuevas acordadas
-- **1 Corona = 1 USD**. La base de datos conserva USD como unidad contable; el cliente ve Coronas.
-- **Primera recarga aprobada:** acreditar un 3 % adicional sobre todo el importe de la primera recarga, sin tope. Solo al aprobar manualmente el pago.
-- **Invitaciones:** el usuario que invita gana el 5 % del valor USD del paquete de su amigo, convertido a Coronas, **por cada paquete que el proveedor confirme como entregado**. No se paga por depósitos ni por pedidos pendientes, rechazados, cancelados o fallidos.
-- No pagarse a sí mismo, un solo código por cuenta, solo cuentas nuevas (máximo 7 días desde el alta) y antes de la primera recarga; una invitación por cuenta.
-- Si una entrega que ya había generado comisión se devuelve o se revierte, se revierte también la comisión del invitador una sola vez.
-- El 10 % que ya viene incluido en determinados paquetes de Free Fire no se vuelve a anunciar ni a acreditar como un bono adicional.
+**Última actualización:** 24 de noviembre de 2026  
+**Memoria técnica permanente:** [ESTADO_TECNICO_CORONAS_WALLET.md](./ESTADO_TECNICO_CORONAS_WALLET.md)  
+**Rama:** `feat/coronas-wallet-referrals` · **PR #40:** https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/pull/40
 
-## Qué ya existía
-- PR #40 ya contiene códigos de invitación, límite de elegibilidad, bono del 3 % (antes con tope de 10 USD), comisión de invitación (antes 0,7 % de la primera recarga, con tope) y la ruta de compra automática con Coronas.
-- En Supabase de producción ya existen las tablas privadas de invitaciones y el campo del bono de primera recarga. La auditoría no encontró códigos, invitaciones ni bonos históricos.
-- La función `central-one-order` está desplegada como versión 24 con la ruta autenticada `submit_wallet`. No se hizo una compra real de prueba y no se debe afirmar que el flujo completo está validado.
-- El icono SVG actual es provisional. Sustituirlo por el PNG original de Canva cuando Enrique lo envíe.
+## Reglas acordadas
 
-## Preparación técnica
-- La comisión del 5 % se registra por pedido y con índice único por pedido.
-- Solo se acredita después de `central_one_status = completed` y `orders.status = completed`, con ID de pedido real del proveedor y pago confirmado.
-- La base de cálculo es `orders.wallet_refund_amount`, instantánea USD del valor del paquete al crearse el pedido; no se calcula con el precio de catálogo posterior ni con el importe CUP.
-- Hay borrador SQL separado en `docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql`. No es una migración ejecutable todavía; convertirlo con `supabase migration new` y revisarlo antes de aplicarlo.
-- Las tablas de códigos e invitaciones permanecen privadas, con RLS y sin permisos directos para el cliente.
-- Los débitos/reembolsos siguen usando la cartera contable USD. No se tocará el saldo del proveedor durante pruebas.
+- 1 Corona = 1 USD; la contabilidad interna de Supabase sigue en USD.
+- Primera recarga aprobada: 3 % extra sobre el importe completo, sin tope.
+- Invitador: 5 % del valor USD de cada paquete de su amigo, solo después de que el proveedor y el pedido local confirmen la entrega.
+- No hay comisión por depósitos ni por pedidos pendientes, rechazados, fallidos o cancelados. La comisión es única por pedido y se revierte ante devolución/reversión.
+- Los códigos solo se vinculan a cuentas nuevas (primeros 7 días), antes de solicitar la primera recarga; no hay autorreferidos ni cambio de invitador.
+- El 10 % incluido en determinados paquetes Free Fire no se suma ni se presenta como una promoción adicional.
 
-## Lista de mañana
-- [ ] Recibir el PNG exportado desde Canva del diseño **«Icono oficial Coronas del Castillo»**.
-- [ ] Sustituir el SVG provisional por el recurso original en la wallet, perfil, navegación, checkout, tarjetas promocionales y movimientos; revisar peso del archivo para Cuba.
-- [x] Actualizar en la rama de PR #40 el texto de bienvenida 3 % sin límite, invitaciones 5 % por paquete entregado, resumen de Coronas, textos para compartir y guías públicas. Falta la revisión visual con el PNG de Canva.
-- [ ] Crear la migración con Supabase CLI desde el nombre generado por `supabase migration new`; comparar con el esquema real de producción y probar primero en un entorno de pruebas completo. En producción aún sigue desplegada la función resumen antigua que muestra 0,7 % y tope; el borrador nuevo aún no se ha aplicado.
-- [ ] Probar cálculo 3 % sin límite: por ejemplo, 20 USD → 0,60 Corona extra; 100 USD → 3,00 Coronas extra.
-- [ ] Probar comisión 5 % por pedido entregado: paquete 4,00 USD → 0,20 Corona; dos pedidos entregados del mismo amigo → 0,40 Coronas en total.
-- [ ] Comprobar que pedidos pendientes, rechazados, cancelados o fallidos no pagan comisión; un pedido repetido no paga dos veces; una devolución revierte una sola vez la comisión.
-- [ ] Comprobar autorreferidos, códigos vencidos, código ya utilizado, cuenta con primer depósito y reintentos de conexión.
-- [x] Revisar sintaxis de los scripts principales y actualizar la versión de caché a shell-v184.
-- [ ] Reejecutar GitHub Actions y confirmar todas las pruebas; la ejecución visible anterior falló porque aún esperaba la equivalencia antigua y el 0,7 %, y esas aserciones ya se corrigieron.
-- [ ] Revisar la versión móvil y ejecutar los asesores de seguridad y rendimiento de Supabase.
-- [ ] No publicar ni unir PR #40 a `main` hasta terminar las comprobaciones. No hacer compras de prueba en producción ni usar saldo de Central One sin una autorización específica para una prueba real.
+## Avances guardados en PR #40
 
-## Estado de publicación
-Los cambios preparados siguen en la rama `feat/coronas-wallet-referrals` y PR #40 continúa abierto. No se han publicado estos cambios nuevos en la web ni se ha aplicado el nuevo borrador SQL.
+- [x] Interfaz de wallet, checkout, promociones y guías actualizadas a Coronas y equivalencia 1:1.
+- [x] Bono visual de primera recarga actualizado a 3 % sin límite.
+- [x] Invitaciones visuales actualizadas a 5 % por paquete entregado.
+- [x] Se conserva la clave interna histórica del método de wallet para no romper pedidos previos.
+- [x] Caché móvil en `shell-v184`.
+- [x] Corrección preparada para reconocer los estados `rejected` en el envío y refresco del proveedor.
+- [x] Reembolso en caso de rechazo preparado para ejecutarse solo con confirmación explícita del proveedor.
+- [x] Reversión de la comisión del invitador preparada para `failed`, `cancelled`, `rejected` y devolución.
+- [x] Pruebas de regresión añadidas para rechazos y reembolsos confirmados.
+- [x] Memoria técnica persistente creada en `docs/ESTADO_TECNICO_CORONAS_WALLET.md`.
+
+## Estado real de los entornos
+
+- Producción Supabase está activa. Tiene aplicadas las migraciones históricas de la primera versión de Coronas, pero sus funciones activas todavía aplican 3 % con base máxima de 10 USD y 0,7 % por primera recarga invitada. La tabla nueva de comisiones por pedido entregado no existe en producción.
+- La función `central-one-order` desplegada en producción sigue en versión 24; la corrección de estado `rejected` está únicamente en la rama GitHub.
+- El proyecto Supabase de pruebas no tiene el esquema completo de wallet, depósitos, comprobantes y referidos. No está listo para validar esta migración.
+- La revisión de asesores no encontró alertas de salud. Queda pendiente activar en el panel Auth la protección contra contraseñas filtradas. Los índices marcados como no utilizados no se borrarán automáticamente.
+- El entorno disponible no tiene Supabase CLI. No existe todavía una migración nueva formal creada mediante `supabase migration new`; el SQL actualizado continúa siendo un borrador revisable, no una migración aplicada.
+- GitHub Actions tuvo una ejecución correcta antes de los últimos cambios de rechazo. Falta confirmar el resultado posterior al último commit de la rama.
+- El icono SVG actual es provisional; falta recibir el PNG original de Canva y hacer revisión visual móvil.
+
+## Pendientes obligatorios antes de publicar
+
+- [ ] Crear o completar un proyecto de pruebas con el esquema real de producción, sin modificar datos reales.
+- [ ] Instalar/usar Supabase CLI y crear una migración formal con `supabase migration new`; revisar firmas, funciones, privilegios, triggers y dependencias contra producción.
+- [ ] Probar en pruebas: 20 USD → 0,60 Corona; 100 USD → 3,00 Coronas; paquete 4 USD → 0,20 Corona; dos paquetes entregados → 0,40 Coronas.
+- [ ] Verificar cero comisión por depósitos/pedidos pendientes, duplicación bloqueada, no autorreferido, códigos expirados y un solo invitador por cuenta.
+- [ ] Probar cambios de completado a fallido/cancelado/rechazado, devolución confirmada y rechazo sin devolución confirmada. No se debe acreditar automáticamente si el proveedor no confirma el reembolso.
+- [ ] Ejecutar GitHub Actions en el último commit y ejecutar asesores Supabase tras aplicar la migración al entorno de pruebas.
+- [ ] Desplegar la Edge Function revisada solo después de verificar que las RPC correspondientes estén aplicadas y probadas.
+- [ ] Recibir el PNG oficial del diseño «Icono oficial Coronas del Castillo» (Canva), optimizarlo y revisar wallet, perfil, menú, checkout, promociones e historial en un móvil.
+- [ ] Activar la protección contra contraseñas filtradas desde Supabase Dashboard → Authentication → Security / Password protection.
+- [ ] Mantener PR #40 en borrador hasta completar todas las validaciones. No unir ni publicar aún.
+
+## Seguridad operativa
+
+**No consumir saldo del proveedor ni crear pedidos reales para probar.** La prueba de compra automática debe hacerse en un entorno de pruebas aislado. Cualquier gasto o compra real necesita autorización específica. No se han realizado compras ni consumido saldo en esta revisión.
+
