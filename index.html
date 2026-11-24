@@ -1840,8 +1840,8 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=24">
-<link rel="stylesheet" href="./assets/coronas-promotions.css?v=2">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=25">
+<link rel="stylesheet" href="./assets/coronas-promotions.css?v=3">
 <script src="./assets/posthog.js?v=3" defer></script>
 
 <!-- Google Analytics 4: medición básica de visitas de la tienda -->
@@ -2390,7 +2390,7 @@ body{min-width:0}
 <section id="walletView" class="store-view hidden">
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
-   <div><span class="wallet-kicker">MONEDA DE LA TIENDA</span><h2 id="walletTitle">Coronas</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Cada Corona equivale a 1 USD para calcular tus compras dentro de la tienda. No es efectivo ni se puede retirar.</small></div>
+   <div><span class="wallet-kicker">MONEDA DE LA TIENDA</span><h2 id="walletTitle">Coronas</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Valor de referencia: 1 Corona equivale a 1 USD al pagar paquetes en la tienda. Las Coronas no son efectivo ni se pueden retirar.</small></div>
    <div class="wallet-coin wallet-coin-art coronas-coin-mark" aria-hidden="true">
     <img src="./assets/corona-coin.svg" alt="" width="180" height="180" decoding="async">
    </div>
@@ -5580,9 +5580,10 @@ function updateWalletDepositMethod(resetFields=false){
  if(!select)return;
  const current=String(select.value||"").trim();
  const methods=walletDepositAvailableMethods();
- const requested=resetFields&&methods.includes(current)
+ // El valor visible en el selector siempre tiene prioridad sobre el método anterior.
+ const requested=methods.includes(current)
   ?current
-  :(methods.includes(walletDepositMethodPrevious)?walletDepositMethodPrevious:current);
+  :(methods.includes(walletDepositMethodPrevious)?walletDepositMethodPrevious:(methods[0]||""));
  select.innerHTML=methods.length?methods.map(name=>'<option value="'+clean(name)+'">'+clean(name)+'</option>').join(""):'<option value="">No hay métodos configurados</option>';
  select.disabled=methods.length===0;
  const selected=methods.includes(requested)?requested:(methods[0]||"");
