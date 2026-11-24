@@ -13,8 +13,8 @@ const checkoutReliabilitySource = fs.readFileSync(path.join(root, "assets/checko
 const checkoutGuardMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123170000_harden_checkout_proof_transition.sql"), "utf8");
 const playerValidationEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-player-validate/index.ts"), "utf8");
 const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-order/index.ts"), "utf8");
-const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124170000_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
-const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124171000_coronas_wallet_policy_index_cleanup.sql"), "utf8");
+const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
+const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
 
 
 function makeNode(id = "") {
