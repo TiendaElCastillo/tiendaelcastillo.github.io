@@ -2687,7 +2687,7 @@ body{min-width:0}
   <article class="faq-item"><h3>¿Dónde se publican las novedades de la tienda?</h3><p>En el canal oficial de WhatsApp compartiremos anuncios, cambios de la tienda y novedades para la comunidad. Es un canal informativo; no sustituye el seguimiento de pedidos ni el soporte personal.</p></article>
   <article class="faq-item"><h3>¿Dónde veo mis pedidos?</h3><p>Inicia sesión y abre «Pedidos» en la navegación inferior. Allí verás el folio, el estado y el avance de cada solicitud.</p></article>
   <article class="faq-item"><h3>¿Qué hago si hice el mismo pago dos veces?</h3><p>No crees un segundo pedido para justificar el pago duplicado. Guarda el folio y los dos comprobantes o referencias de transacción y contacta con soporte. La tienda debe comprobar ambas operaciones antes de registrar una devolución o compensación.</p></article>
-  <article class="faq-item"><h3>¿Qué son las Coronas?</h3><p>Las Coronas son el saldo interno de Tienda El Castillo. Cada Corona equivale a 1 USD como referencia para calcular los precios; solo sirven para pagar dentro de la tienda y no se pueden retirar en efectivo. Las recargas se revisan manualmente y las Coronas solo están disponibles después de confirmar el pago. La tasa vigente en CUP se muestra en el formulario de recarga antes de que envíes el pago y puede actualizarse desde administración.</p></article>
+  <article class="faq-item"><h3>¿Qué son las Coronas?</h3><p>Las Coronas son la moneda interna de Tienda El Castillo. Cada Corona equivale a 1 USD como referencia para calcular los precios; solo sirven para pagar dentro de la tienda y no se pueden retirar en efectivo. Las recargas se revisan manualmente y las Coronas solo están disponibles después de confirmar el pago. La tasa vigente en CUP se muestra en el formulario de recarga antes de que envíes el pago y puede actualizarse desde administración.</p></article>
   <article class="faq-item"><h3>¿Cómo funcionan las promociones de Coronas?</h3><p>En tu primera recarga aprobada recibes un 3 % extra, acreditado automáticamente. También puedes compartir tu código: ganas el 5 % del valor de la primera compra de cada amigo cuando el pedido se completa correctamente y se confirma la entrega.</p></article>
    <article class="faq-item"><h3>¿Qué ocurre si una compra pagada con Coronas falla?</h3><p>Si el servicio no llegó a crear una orden, Tienda El Castillo puede cancelar el pedido y devolver el débito original a tus Coronas. Si ya se creó una orden, el saldo se devuelve cuando se confirma la devolución del proveedor. Mientras el resultado esté pendiente o sea incierto, no se acreditará una devolución anticipada. Consulta el estado en «Mis pedidos» y el movimiento en el historial de Coronas.</p></article>
   <article class="faq-item"><h3>¿Qué información debo enviar al reclamar?</h3><p>Indica el folio del pedido, el método de pago, la referencia de la operación cuando exista y una captura legible del comprobante. No envíes contraseñas del juego, códigos de acceso, claves bancarias ni frases de recuperación de billeteras.</p></article>
@@ -5512,7 +5512,7 @@ async function loadWalletData(){
  let rows=[];
  for(let from=0;;from+=1000){
   const result=await db.from("wallet_transactions").select("kind,amount,currency,description,created_at,order_id,deposit_id").eq("user_id",currentUser.id).eq("currency","USD").order("created_at",{ascending:false}).range(from,from+999);
-  if(result.error){walletBalanceUSD=0;if($("walletBalance"))$("walletBalance").textContent="No disponible";if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Saldo no disponible";if($("walletTransactions"))$("walletTransactions").textContent="No se pudo cargar la billetera. Actualiza el perfil antes de comprar con saldo.";updateCheckoutSummary();return;}
+  if(result.error){walletBalanceUSD=0;if($("walletBalance"))$("walletBalance").textContent="No disponible";if($("profileWalletQuickBalance"))$("profileWalletQuickBalance").textContent="Saldo no disponible";if($("walletTransactions"))$("walletTransactions").textContent="No se pudo cargar tu Cartera. Actualiza el perfil antes de pagar con Coronas.";updateCheckoutSummary();return;}
   rows=rows.concat(result.data||[]);
   if(!result.data||result.data.length<1000)break;
  }
@@ -6809,7 +6809,7 @@ async function loadAllOrders(options={}){
   const options=allowed.map(value=>{const item=orderStatuses.find(s=>s.value===value);return '<option value="'+value+'">'+(item?.label||value)+'</option>';}).join("");
   const actionLabel=o.status==="payment_review"?"Confirmar pago recibido":"Rechazar pedido";
   const rejectReasonField=allowed.includes("rejected")?'<div class="order-reject-reason-field hidden" id="'+rejectReasonId+'-wrap"><label for="'+rejectReasonId+'">Motivo que verá el cliente (obligatorio)</label><textarea id="'+rejectReasonId+'" maxlength="500" rows="2" placeholder="Ej. El importe o los datos de la operación no coinciden con el comprobante."></textarea><small>Escribe entre 5 y 500 caracteres. El cliente recibirá esta explicación en sus mensajes.</small></div>':"";
-  let proofLink=o.payment_source==="wallet"?'<span class="subtle">Pago descontado desde billetera</span>':'<span class="subtle">Sin comprobante</span>';
+  let proofLink=o.payment_source==="wallet"?'<span class="subtle">Pago realizado con Coronas</span>':'<span class="subtle">Sin comprobante</span>';
   if(o.proof_path){
    proofLink='<a href="#" data-proof-preview data-proof-path="'+clean(o.proof_path)+'" data-order-code="'+clean(o.order_code||"")+'" data-payment-reference="'+clean(o.payment_reference||"No indicado")+'" data-payment-sender-phone="'+clean(o.payment_sender_phone||"No indicado")+'" data-payment-method="'+clean(o.payment_method||"")+'" data-payment-amount="'+clean(o.price||"")+'">Ver comprobante</a>';
   }
@@ -6848,11 +6848,11 @@ async function loadAllOrders(options={}){
     (o.central_one_reference_code?' · Referencia: '+clean(o.central_one_reference_code):"")+
     (o.central_one_error_message?' · '+clean(o.central_one_error_message):"")+'</p>';
    if(o.central_one_response?.wallet_refund?.refunded===true){
-    providerInfo+='<p class="track-note"><strong>Billetera devuelta:</strong> se acreditaron '+money(o.central_one_response.wallet_refund.credited_amount)+' '+clean(o.central_one_response.wallet_refund.currency||"USD")+' al cliente. La devolución del proveedor fue confirmada.</p>';
+    providerInfo+='<p class="track-note"><strong>Cartera actualizada con la devolución:</strong> se acreditaron '+money(o.central_one_response.wallet_refund.credited_amount)+' '+clean(o.central_one_response.wallet_refund.currency||"USD")+' al cliente. La devolución del proveedor fue confirmada.</p>';
    }else if(o.central_one_response?.external_payment_refund_review?.required===true){
     providerInfo+='<p class="track-note"><strong>Devolución externa pendiente:</strong> Central One confirmó el reembolso al proveedor. Debes devolver manualmente el pago CUP/USDT/saldo móvil del cliente y registrar el comprobante de esa devolución.</p>';
    }else if(o.payment_source==="wallet"&&["failed","cancelled"].includes(providerStatus)&&o.central_one_response?.wallet_refund?.refunded!==true){
-    providerInfo+='<p class="track-note"><strong>Devolución de billetera en revisión:</strong> el pedido falló o fue cancelado, pero la base de datos todavía no confirma que Central One haya devuelto los fondos. No se ha acreditado saldo al cliente para evitar una devolución duplicada. Comprueba el estado y vuelve a consultar al proveedor.</p>';
+    providerInfo+='<p class="track-note"><strong>Devolución de Coronas en revisión:</strong> el pedido falló o fue cancelado, pero la base de datos todavía no confirma que Central One haya devuelto los fondos. No se ha acreditado saldo al cliente para evitar una devolución duplicada. Comprueba el estado y vuelve a consultar al proveedor.</p>';
    }
   }else if(providerErrorCode==="central_one_insufficient_balance"){
    providerInfo='<p class="track-note"><strong>SALDO INSUFICIENTE EN CENTRAL ONE.</strong> '+clean(o.central_one_error_message||"El proveedor rechazó el pedido por falta de saldo.")+
@@ -6866,7 +6866,7 @@ async function loadAllOrders(options={}){
   }else if(providerErrorCode==="admin_cancelled_before_provider"){
    const walletRefundedBeforeProvider=o.central_one_response?.wallet_refund?.refunded===true;
    providerInfo=walletRefundedBeforeProvider
-    ?'<p class="track-note"><strong>Cancelado antes del proveedor:</strong> Central One no creó la orden. Se devolvieron '+moneyUSD(o.central_one_response.wallet_refund.credited_amount)+' USD a la billetera del cliente.</p>'
+    ?'<p class="track-note"><strong>Cancelado antes del proveedor:</strong> Central One no creó la orden. Se devolvieron '+moneyUSD(o.central_one_response.wallet_refund.credited_amount)+' USD a la Cartera del cliente.</p>'
     :'<p class="track-note"><strong>Cancelado antes del proveedor:</strong> no se creó una orden de Central One. No hubo devolución automática al cliente.</p>';
   }else if(o.central_one_error_message){
    providerInfo='<p class="track-note"><strong>Central One:</strong> '+centralOneStatusText(providerStatus)+' · '+clean(o.central_one_error_message)+'</p>';
