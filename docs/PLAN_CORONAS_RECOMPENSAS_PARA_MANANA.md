@@ -33,7 +33,7 @@
 - [x] Los datos temporales de prueba se limpiaron. Se verificó que quedaron 0 movimientos, depósitos, referidos, comisiones ni pedidos de prueba.
 - [x] Tablas auxiliares públicas del proyecto de pruebas cerradas con RLS; permisos directos `anon` y `authenticated` revocados.
 - [x] Índices añadidos a las nuevas claves foráneas del esquema de pruebas; las únicas referencias sin índice que siguen apareciendo son de la tabla existente de reseñas, más antigua.
-- [x] GitHub Actions en el último commit: ejecución 33, 41 pruebas aprobadas y 0 fallidas (`https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/actions/runs/45317332308`).
+- [x] GitHub Actions en el último commit: ejecución 35, 41 pruebas aprobadas y 0 fallidas (`https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/actions/runs/45317332308`).
 - [x] Ningún saldo, depósito, pedido ni función de producción fue alterado; no se consumió saldo del proveedor.
 - [x] Memoria técnica actualizada en `docs/ESTADO_TECNICO_CORONAS_WALLET.md`.
 
