@@ -40,15 +40,16 @@ Las versiones anteriores `20261123222640`, `20261123222909`, `20261124005127` y 
 
 ## Verificaciones ya realizadas
 
-- Proyecto productivo activo y saludable.
-- 548 productos; 0 depósitos, 1 movimiento histórico de wallet y 3 pedidos del proveedor completados en el momento del prechequeo.
-- No existe aún `private.wallet_referral_order_rewards`.
-- No hay depósitos incompatibles con las nuevas restricciones ni referencias móviles duplicadas.
+- Proyecto productivo activo; el asesor de salud de Supabase no informa errores.
+- 548 productos; 0 depósitos; 1 movimiento histórico de wallet (devolución por 0,16 USD); 0 compras con wallet y 3 pedidos del proveedor completados.
+- `private.wallet_referral_order_rewards` existe, tiene RLS habilitado y empieza con 0 filas; su índice único está creado.
+- No hay depósitos incompatibles con las nuevas restricciones ni referencias móviles duplicadas; la política de inserción duplicada fue retirada.
 - Configuración observada: 1230 CUP/USD, red BNB Smart Chain (BEP20), 360 unidades móviles y coste de 1200 CUP.
-- Las pruebas transaccionales de staging de bonos, referidos, validaciones y reversos constan en el historial de trabajo; sigue pendiente la prueba de navegador con sesión autenticada.
+- GitHub Actions: 33 pruebas aprobadas y 0 fallidas. Las pruebas transaccionales de staging de bonos, referidos, validaciones y reversos también constan en el historial.
 
 ## Acciones manuales pendientes
 
-- Antes de la publicación, hacer la prueba de navegador autenticado y la revisión visual móvil. No usar el método/dirección ficticios del entorno de pruebas para pagos reales.
-- Durante el corte, comprobar en Supabase que los secretos actuales del proveedor permanecen configurados; no copiarlos ni exponerlos en el repositorio.
+- Publicar esta rama en `main` para que el usuario pueda revisar visualmente la página real en su teléfono.
+- El usuario enviará los defectos visuales o funcionales encontrados para corregirlos antes de hacer transacciones de prueba.
+- Cuando el aspecto y el recorrido estén correctos, el usuario hará una recarga pequeña, verificará el bono del 3 % después de la aprobación y realizará una compra con Coronas.
 - No ejecutar ninguna migración de `supabase/staging-migrations/` ni desplegar funciones de `supabase/staging-functions/` en producción.
