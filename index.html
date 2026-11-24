@@ -2441,7 +2441,7 @@ body{min-width:0}
      <div class="checkout-stage-title"><strong>1. ¿Cuánto vas a transferir?</strong><small>Indica la cantidad que vas a transferir en CUP. Podrás revisar el importe antes de enviarnos la solicitud.</small></div>
      <div class="field"><label for="walletDepositMethod">Método para recargar Coronas</label><select id="walletDepositMethod" onchange="updateWalletDepositMethod(true)"><option value="">Comprobando métodos disponibles…</option></select><small id="walletDepositMethodHint" class="wallet-field-hint">El saldo no se acredita automáticamente: la tienda revisará y aprobará cada recarga.</small></div>
      <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad que vas a transferir (CUP)</label><input id="walletDepositAmount" type="number" inputmode="decimal" min="1" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1160 CUP, equivalente a 1 Corona.</small></div>
-     <div id="walletDepositPreview" class="wallet-preview"><small>Coronas que recibirás después de la revisión</small><strong>0,00 Coronas</strong><small>El importe final se calcula y verifica en el servidor antes de acreditarse.</small></div>
+     <div id="walletDepositPreview" class="wallet-preview"><small>Coronas base estimadas antes del posible bono</small><strong>0,00 Coronas</strong><small>Si esta es tu primera recarga aprobada, recibirás un 3 % adicional sin límite de importe. Las Coronas solo se acreditan después de la revisión y aprobación del administrador.</small></div>
      <div class="checkout-stage-actions"><span></span><button class="primary-btn" type="button" onclick="goWalletDepositStep(2)">Continuar →</button></div>
     </div>
     <div id="walletDepositStep2" class="wallet-deposit-stage hidden">
@@ -5571,7 +5571,7 @@ function previewWalletDeposit(){
  else if(method==="USDT"){credited=Math.floor(amount*10000)/10000;unit="USDT";}
  else if(method==="Saldo móvil"){credited=Math.floor((amount/Math.max(walletMobileUnitsPerCorona(),0.000001))*100)/100;unit="unidades de saldo móvil";}
  const valid=Number.isFinite(credited)&&credited>=1&&amount>=minimum;
- box.innerHTML='<small>Coronas que recibirás '+(valid?"al aprobar tu pago":"si cumples el mínimo")+'</small><strong>'+moneyUSD(Math.max(0,credited))+' Coronas</strong><small>Importe: '+money(amount)+' '+unit+'. Mínimo: '+money(minimum)+' '+unit+'. 1 Corona = 1 USD. El saldo solo se acredita después de tu aprobación.</small>';
+ box.innerHTML='<small>Coronas base estimadas '+(valid?"si se aprueba tu pago":"si cumples el mínimo")+'</small><strong>'+moneyUSD(Math.max(0,credited))+' Coronas</strong><small>Importe: '+money(amount)+' '+unit+'. Mínimo: '+money(minimum)+' '+unit+'. 1 Corona = 1 USD. Si es tu primera recarga aprobada, recibirás además un 3 % de bonificación sin límite de importe. El saldo solo se acredita después de la revisión y aprobación del administrador.</small>';
  updateWalletDepositInstructions();
 }
 function updateWalletDepositMethod(resetFields=false){
