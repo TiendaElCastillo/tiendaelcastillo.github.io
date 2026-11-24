@@ -790,7 +790,7 @@ test("la primera recarga solo genera un bono y la invitación se acredita despu�
 
 test("las promociones del inicio corresponden a las tres condiciones publicadas y no suman otro 10 % a Free Fire", () => {
   assert.match(indexHtml, /PRIMERA RECARGA DE CORONAS/i);
-  assert.match(indexHtml, /0,7 % para ti/);
+  assert.match(indexHtml, /5 % para ti/);
   assert.match(indexHtml, /10 % más diamantes/);
   assert.match(indexHtml, /extra ya está incluido en los paquetes participantes/);
   assert.match(indexHtml, /no es un regalo adicional de la tienda/i);
