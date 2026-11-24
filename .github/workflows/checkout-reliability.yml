@@ -7,12 +7,15 @@ on:
       - "sw.js"
       - "tests/**"
       - "assets/checkout-reliability.js"
+      - "assets/coronas-promotions.js"
+      - "assets/coronas-promotions.css"
       - "supabase/functions/central-one-order/**"
       - "supabase/functions/central-one-player-validate/**"
       - "supabase/migrations/**"
   push:
     branches:
       - main
+      - release/coronas-wallet-cutover
     paths:
       - "index.html"
       - "sw.js"
