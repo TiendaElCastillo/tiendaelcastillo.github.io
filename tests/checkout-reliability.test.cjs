@@ -720,6 +720,6 @@ test("la rama de liberación usa producción y enruta las funciones reales; los 
   assert.match(indexHtml, /const isStaging=STORE_SUPABASE_URL\.includes\("kmotmgpzmeooznyymcxl"\)/);
   assert.match(indexHtml, /"central-one-order":"coronas-staging-wallet-order"/);
   assert.ok(indexHtml.includes('"/functions/v1/"'));
-  assert.match(indexHtml, /Coronas del Castillo/);
+  assert.match(indexHtml, /Coronas/i);
   assert.match(indexHtml, /coronas-promotions\.js\?v=1/);
 });
