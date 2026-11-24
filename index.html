@@ -4783,6 +4783,9 @@ async function placeOrder(){
     window.castleAnalytics?.capture?.("purchase_completed",{game:product.game,package:product.name,payment_method:"Saldo de Tienda El Castillo"});
     $("ordermsg").textContent="¡Recarga entregada! Tu compra se procesó automáticamente. Pedido "+result.data.order_code+".";
     $("checkoutDoneMessage").textContent="La recarga fue entregada automáticamente. Puedes consultar el pedido en «Mis pedidos».";
+   }else if(["failed","cancelled"].includes(autoResult?.provider_status)){
+    $("ordermsg").textContent="El proveedor no completó esta recarga. No vuelvas a pagar ni crees otro pedido.";
+    $("checkoutDoneMessage").textContent="El pedido "+result.data.order_code+" requiere una comprobación del equipo. Consulta su detalle en «Mis pedidos» antes de volver a intentarlo.";
    }else if(autoResult?.ok===true){
     $("ordermsg").textContent="Compra enviada automáticamente. No necesitas esperar una aprobación manual. Pedido "+result.data.order_code+".";
     $("checkoutDoneMessage").textContent="Tu saldo se descontó y la recarga está en proceso. Te mostraremos la confirmación cuando se complete.";
