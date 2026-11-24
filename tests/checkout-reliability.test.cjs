@@ -718,7 +718,7 @@ test("las invitaciones quedan guardadas en el enlace y se vinculan sin pegar có
   assert.match(indexHtml, /walletReferralAuthNotice/);
   assert.match(indexHtml, /searchParams\.set\("ref",code\.toUpperCase\(\)\)/);
   assert.doesNotMatch(indexHtml, /walletReferralInput|walletReferralApplyBtn|Vincular código/);
-  assert.match(indexHtml, /sin copiar ni pegar códigos/i);
+  assert.match(indexHtml, /sin pegar códigos/i);
 });
 
 test("la recompensa de invitación solo usa compras creadas después de vincularse y una vez por referido", () => {
