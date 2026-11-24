@@ -47,6 +47,10 @@ function showAdminSection(key){
  document.querySelectorAll("#admin [data-admin-section]").forEach(n=>n.classList.toggle("hidden",n.dataset.adminSection!==selected));
  document.querySelectorAll("#admin [data-admin-tab]").forEach(n=>n.classList.toggle("active",n.dataset.adminTab===selected));
  if(selected==="support"&&typeof window.loadAdminSupportTickets==="function")window.loadAdminSupportTickets();
+ if(selected==="wallet"){
+  if(typeof window.loadWalletDepositsAdmin==="function")window.loadWalletDepositsAdmin();
+  if(typeof window.loadWalletPurchasesAdmin==="function")window.loadWalletPurchasesAdmin();
+ }
 }
 
 let activeWalletDepositFilter="all";
