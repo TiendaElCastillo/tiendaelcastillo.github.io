@@ -231,11 +231,11 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=23"));
-  assert.ok(serviceWorker.includes('shell-v184'));
+  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
+  assert.ok(serviceWorker.includes('shell-v185'));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=3'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=23"));
+  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
   assert.ok(indexHtml.includes('id="proofUploadCircuit"'));
   assert.ok(serviceWorker.includes("./assets/checkout-reliability.js?v=1"));
@@ -839,7 +839,7 @@ test("el panel de Coronas usa un icono propio y no superpone la marca de agua", 
   assert.doesNotMatch(indexHtml, /class="wallet-watermark"/);
   assert.match(storefrontPolishSource, /\.wallet-hero:after,\.wallet-watermark\{display:none!important/);
   assert.match(storefrontPolishSource, /\.wallet-coin-art img/);
-  assert.match(indexHtml, /Cada Corona equivale a 1 USD para calcular tus compras dentro de la tienda/);
+  assert.match(indexHtml, /Valor de referencia: 1 Corona equivale a 1 USD al pagar paquetes en la tienda/);
   assert.doesNotMatch(indexHtml, /1:1: 1 Corona = 1 USD/);
 });
 
