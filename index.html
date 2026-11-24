@@ -2781,6 +2781,7 @@ function loadCastleTurnstile(){
 const STORE_SUPABASE_URL="https://kfllglkfncebpknnugnx.supabase.co";
 const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtmbGxnbGtmbmNlYnBrbm51Z254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3Mjg5MTMsImV4cCI6MjEwOTMwNDkxM30.9lyiZC57tJuSRN6ReLkZZVsedJzl0kVxlhxUX90cE6g";
 let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"",usdt_address:""}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", playerValidationDebounceTimer=null, activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
+let walletReferralApplyPromise=null;
 
 const $=id=>document.getElementById(id);
 const clean=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -5399,21 +5400,36 @@ async function loadWalletReferralSummary(){
  return data;
 }
 async function applyPendingWalletReferralCode(){
- if(!currentUser||!db)return;
- let code="";
- try{code=localStorage.getItem(WALLET_REFERRAL_STORAGE_KEY)||"";}catch(_){}
- if(!code)return;
- const result=await db.rpc("apply_wallet_referral_code",{p_code:code});
- if(!result.error){
-  try{localStorage.removeItem(WALLET_REFERRAL_STORAGE_KEY);}catch(_){}
-  const msg=$("walletReferralMsg");if(msg)msg.textContent="Invitación vinculada correctamente. Si es tu primera recarga aprobada, recibirás el 3 % de bienvenida.";
-  return;
- }
- const message=result.error.message||"No se pudo vincular la invitación.";
- if(/7 días|antes de solicitar|ya tiene una invitación|no puedes usar tu propio/i.test(message)){
-  try{localStorage.removeItem(WALLET_REFERRAL_STORAGE_KEY);}catch(_){}
- }
- const msg=$("walletReferralMsg");if(msg)msg.textContent=message;
+ if(!currentUser||!db)return false;
+ if(walletReferralApplyPromise)return walletReferralApplyPromise;
+ walletReferralApplyPromise=(async()=>{
+  let code="";
+  try{code=localStorage.getItem(WALLET_REFERRAL_STORAGE_KEY)||"";}catch(_){}
+  if(!code)return true;
+  try{
+   const result=await db.rpc("apply_wallet_referral_code",{p_code:code});
+   if(!result.error){
+    try{localStorage.removeItem(WALLET_REFERRAL_STORAGE_KEY);}catch(_){}
+    const msg=$("walletReferralMsg");if(msg)msg.textContent="Invitación vinculada correctamente. Si es tu primera recarga aprobada, recibirás el 3 % de bienvenida.";
+    return true;
+   }
+   const message=result.error.message||"No se pudo vincular el código de invitación.";
+   const terminal=/7 días|antes de solicitar|ya tiene una invitación|no puedes usar tu propio|no existe|formato válido/i.test(message);
+   if(terminal){
+    try{localStorage.removeItem(WALLET_REFERRAL_STORAGE_KEY);}catch(_){}
+    const msg=$("walletReferralMsg");if(msg)msg.textContent=message;
+    return true;
+   }
+   const msg=$("walletReferralMsg");if(msg)msg.textContent="No pudimos confirmar tu invitación por un problema de conexión. No se enviará la solicitud de depósito todavía. "+message;
+   return false;
+  }catch(error){
+   const msg=$("walletReferralMsg");if(msg)msg.textContent="No pudimos confirmar tu invitación. Comprueba la conexión e inténtalo de nuevo antes de solicitar el depósito.";
+   console.warn("No se pudo vincular el código de invitación:",error);
+   return false;
+  }
+ })();
+ try{return await walletReferralApplyPromise;}
+ finally{walletReferralApplyPromise=null;}
 }
 async function applyWalletReferralCode(){
  if(!currentUser||!db){openAccount();return;}
@@ -5594,6 +5610,12 @@ function goWalletDepositStep(step){
 }
 async function requestWalletDeposit(){
  if(!currentUser){openAccount();return;}
+ const referralReady=await applyPendingWalletReferralCode();
+ if(referralReady===false){
+  const referralMsg=$("walletReferralMsg");
+  if(referralMsg)referralMsg.scrollIntoView({behavior:"smooth",block:"center"});
+  return;
+ }
  const amount=Number($("walletDepositAmount").value);
  const files=Array.from($("walletDepositProof").files||[]);
  const senderPhoneNational=cubaMobileNational($("walletDepositSenderPhone").value.trim());
