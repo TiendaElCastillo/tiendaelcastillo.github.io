@@ -721,7 +721,7 @@ test("Coronas equivale a 1 USD y conserva la clave interna del método de pago",
   assert.match(indexHtml, /1 Corona = 1 USD/);
   assert.match(indexHtml, /Coronas del Castillo/);
   assert.match(indexHtml, /name:"Saldo de Tienda El Castillo",short:"Coronas del Castillo"/);
-  assert.match(indexHtml, /const unit=isWallet\?"Coronas"/);
+  assert.match(indexHtml, /const unit=isWallet\?\(Math\.abs\(Number\(raw\)-1\)<0\.000001\?"Corona":"Coronas"\)/);
   assert.match(indexHtml, /No son criptomonedas/);
 });
 
