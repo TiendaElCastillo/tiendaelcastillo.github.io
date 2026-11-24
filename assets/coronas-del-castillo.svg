@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+ <title id="title">Corona del Castillo</title>
+ <desc id="desc">Moneda azul y dorada con una fortaleza coronada en el centro.</desc>
+ <defs>
+  <linearGradient id="rim" x1="12" y1="10" x2="116" y2="120" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#FFF0B8"/>
+   <stop offset=".42" stop-color="#DCA83E"/>
+   <stop offset="1" stop-color="#A96B19"/>
+  </linearGradient>
+  <linearGradient id="face" x1="25" y1="18" x2="102" y2="111" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#397FE8"/>
+   <stop offset=".52" stop-color="#174EAA"/>
+   <stop offset="1" stop-color="#10264A"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="39" y1="36" x2="91" y2="91" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#FFF6D8"/>
+   <stop offset=".45" stop-color="#F5CB72"/>
+   <stop offset="1" stop-color="#C98B2E"/>
+  </linearGradient>
+  <filter id="shadow" x="0" y="0" width="128" height="128" color-interpolation-filters="sRGB">
+   <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#071B3D" flood-opacity=".28"/>
+  </filter>
+ </defs>
+ <g filter="url(#shadow)">
+  <circle cx="64" cy="62" r="58" fill="url(#rim)"/>
+  <circle cx="64" cy="62" r="52.5" fill="#FFF4D2" opacity=".9"/>
+  <circle cx="64" cy="62" r="48.5" fill="url(#face)" stroke="#F8D889" stroke-width="1.4"/>
+  <circle cx="64" cy="62" r="42.5" fill="none" stroke="#9BC3FF" stroke-opacity=".42" stroke-width="1.2"/>
+  <path d="M27 44c10-15 24-23 41-24" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="3" stroke-linecap="round"/>
+  <path d="M35 78c8 12 18 19 30 21" fill="none" stroke="#081C43" stroke-opacity=".25" stroke-width="3" stroke-linecap="round"/>
+  <g fill="url(#gold)" stroke="#FFF0C4" stroke-width="1.2" stroke-linejoin="round">
+   <path d="M38 89V57h11V48h9V39h12v9h9v9h11v32H38Z"/>
+   <path d="M34 58h13V49h10V40h14v9h10v9h13v7H34z"/>
+   <path d="M52 89V70q0-12 12-12t12 12v19H52Z" fill="#174EAA" stroke="#F5D88F" stroke-width="2"/>
+   <path d="M58 88V75q0-6 6-6t6 6v13" fill="none" stroke="#F5D88F" stroke-width="2"/>
+   <path d="M36 47 42 34l9 8 13-14 13 14 9-8 6 13-14-4H50z" />
+   <circle cx="64" cy="28" r="3.2" fill="#FFF4D2" stroke="none"/>
+   <path d="M28 64h7m58 0h7M44 102l-3 5m46-5 3 5" stroke="#FFE9B1" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </g>
+  <path d="M25 62h4m70 0h4" stroke="#FFE7A5" stroke-width="2" stroke-linecap="round"/>
+ </g>
+</svg>
