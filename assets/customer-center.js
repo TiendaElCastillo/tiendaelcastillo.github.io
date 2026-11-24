@@ -89,12 +89,12 @@
       message: "Comprueba que estás entrando en la cuenta correcta y vuelve a revisar el juego. Si sigue sin aparecer, prepara el folio, el ID utilizado y una captura de la pantalla del juego donde se vea el problema. No compartas contraseñas."
     },
     wallet: {
-      title: "Hay una diferencia en un depósito o movimiento de la Wallet.",
-      message: "Los depósitos pendientes no forman parte del saldo disponible hasta que se aprueban. Contacta solo si el depósito aparece aprobado y el saldo no se refleja, o si hay un movimiento ya registrado con un importe incorrecto. Adjunta la referencia o el folio correspondiente."
+      title: "Hay una diferencia en una recarga o movimiento de Coronas."
+      message: "Las recargas pendientes no forman parte de las Coronas disponibles hasta que se aprueban. Contacta solo si el depósito aparece aprobado y las Coronas no se reflejan, o si hay un movimiento ya registrado con un importe incorrecto. Adjunta la referencia o el folio correspondiente."
     },
     wallet_pending: {
-      title: "El depósito de Wallet todavía está pendiente de revisión.",
-      message: "Un depósito pendiente no forma parte del saldo disponible y no puede utilizarse para comprar. Consulta el estado en el historial de depósitos. No hace falta contactar por una solicitud que todavía no aparece aprobada."
+      title: "La recarga de Coronas todavía está pendiente de revisión."
+      message: "Una recarga pendiente no forma parte de las Coronas disponibles y no puede utilizarse para comprar. Consulta el estado en el historial de recargas. No hace falta contactar por una solicitud que todavía no aparece aprobada."
     }
   };
 
@@ -165,7 +165,7 @@
         '<article><strong>Transferencia CUP</strong><p>Envía el importe exacto. Escribe el número de transacción, el teléfono desde el que pagaste y adjunta el comprobante solicitado.</p></article>' +
         '<article><strong>Saldo móvil</strong><p>Envía la cantidad exacta de saldo. Indica el teléfono de origen y adjunta la captura del SMS. Este método no utiliza número de transacción bancaria.</p></article>' +
         '<article><strong>USDT</strong><p>Comprueba la red y la dirección que muestra el checkout. Escribe el importe exacto, el TxID de la operación y adjunta el comprobante.</p></article>' +
-        '<article><strong>Saldo de Tienda El Castillo</strong><p>Solo puedes usar el saldo que ya esté disponible en tu Wallet. Revisa el importe: la compra descuenta el precio mostrado en USD.</p></article>' +
+        '<article><strong>Corona</strong><p>Solo puedes usar las Coronas que ya estén disponibles en tu Wallet. 1 Corona equivale a 1 USD. La compra descuenta el precio mostrado en Coronas.</p></article>' +
       '</div>';
 
     detail.innerHTML =
@@ -208,8 +208,8 @@
     duplicate: "Pago duplicado",
     rejected: "Pedido rechazado con pago realizado",
     delivered: "Contenido no recibido",
-    wallet_pending: "Depósito de Wallet pendiente",
-    wallet: "Incidencia de Wallet"
+    wallet_pending: "Recarga de Coronas pendiente",
+    wallet: "Incidencia con Coronas"
   };
   var activeCustomerSupportTicketId = null;
   var activeAdminSupportTicketId = null;
@@ -256,7 +256,7 @@
         duplicate: "Pago duplicado",
         rejected: "Pedido rechazado con pago",
         delivered: "Contenido no recibido",
-        wallet_pending: "Depósito de Wallet pendiente",
+        wallet_pending: "Recarga de Coronas pendiente",
         wallet: "Incidencia con Wallet"
       };
       subjectInput.value = defaults[key] || "Consulta de soporte";
