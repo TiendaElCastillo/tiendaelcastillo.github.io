@@ -11,12 +11,12 @@ La rama de liberación ya está preparada para conectarse a producción, pero **
 
 La rama de pruebas conserva su URL, clave y simuladores propios. La rama de liberación usa la URL y la clave pública `anon` que ya emplea `main`, y llama directamente a las funciones reales `central-one-player-validate`, `central-one-order` y `central-one-read`. Los nombres de funciones simuladas y sus carpetas no se incluyen en esta rama.
 
-## Migraciones que faltan en producción
+## Migraciones aplicadas en producción
 
-Aplicar exclusivamente, y en este orden:
+Ya aplicadas en producción y registradas en el historial de Supabase, en este orden:
 
-1. `20261124170000_coronas_production_wallet_and_first_purchase_rewards.sql`
-2. `20261124171000_coronas_wallet_policy_index_cleanup.sql`
+1. `20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql` — aplicada.
+2. `20261124222200_coronas_wallet_policy_index_cleanup.sql` — aplicada.
 
 Las versiones `20261123222640`, `20261123222909`, `20261124005127` y `20261124005315` ya aparecen registradas en el historial de producción. Solo quedan pendientes las dos migraciones indicadas. Las migraciones sintéticas están aisladas en la rama de pruebas; no copiarlas ni ejecutarlas en producción.
 
