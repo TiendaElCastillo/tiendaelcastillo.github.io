@@ -727,11 +727,11 @@ test("Coronas convierte el saldo interno a 100 monedas por cada USD sin sustitui
 test("Coronas usa la equivalencia 1 Corona = 1 USD y la primera recarga aprobada recibe el 3 % completo", () => {
   const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261124005127_coronas_wallet_referrals_first_deposit.sql"), "utf8");
   const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  assert.match(migration, /ALTER COLUMN amount TYPE numeric\\(18,4\\)/);
-  assert.match(rewardsDraft, /round\\(v_deposit\\.credited_amount \\* 0\\.03,4\\)/);
-  assert.doesNotMatch(rewardsDraft, /least\\(v_deposit\\.credited_amount,10\\)/);
+  assert.match(migration, /ALTER COLUMN amount TYPE numeric\(18,4\)/);
+  assert.match(rewardsDraft, /round\(v_deposit\.credited_amount \* 0\.03,4\)/);
+  assert.doesNotMatch(rewardsDraft, /least\(v_deposit\.credited_amount,10\)/);
   assert.match(migration, /invitee_user_id uuid NOT NULL UNIQUE/);
-  assert.match(migration, /v_created_at < now\\(\\) - interval '7 days'/);
+  assert.match(migration, /v_created_at < now\(\) - interval '7 days'/);
   assert.match(indexHtml, /1 Corona = 1 USD de saldo/);
   assert.match(indexHtml, /3 % extra sobre el importe completo/);
   assert.doesNotMatch(indexHtml, /100 COR = 1 USD|hasta 30 COR/);
@@ -739,11 +739,11 @@ test("Coronas usa la equivalencia 1 Corona = 1 USD y la primera recarga aprobada
 
 test("la comisión de invitación del 5 % se acredita una sola vez por paquete entregado", () => {
   const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  assert.match(rewardsDraft, /CREATE TABLE IF NOT EXISTS private\\.wallet_referral_order_rewards/);
-  assert.match(rewardsDraft, /order_id uuid PRIMARY KEY REFERENCES public\\.orders/);
-  assert.match(rewardsDraft, /v_order\\.central_one_status IS DISTINCT FROM 'completed'/);
-  assert.match(rewardsDraft, /v_order\\.status IS DISTINCT FROM 'completed'/);
-  assert.match(rewardsDraft, /round\\(v_order\\.wallet_refund_amount \\* 0\\.05,4\\)/);
+  assert.match(rewardsDraft, /CREATE TABLE IF NOT EXISTS private\.wallet_referral_order_rewards/);
+  assert.match(rewardsDraft, /order_id uuid PRIMARY KEY REFERENCES public\.orders/);
+  assert.match(rewardsDraft, /v_order\.central_one_status IS DISTINCT FROM 'completed'/);
+  assert.match(rewardsDraft, /v_order\.status IS DISTINCT FROM 'completed'/);
+  assert.match(rewardsDraft, /round\(v_order\.wallet_refund_amount \* 0\.05,4\)/);
   assert.match(rewardsDraft, /reverse_wallet_referral_order_reward/);
   assert.match(indexHtml, /5 % del valor de cada paquete/);
   assert.match(indexHtml, /cada paquete que tu amigo compre/);
@@ -754,8 +754,8 @@ test("los pagos pendientes y las recargas no pagan la comisión de invitación",
   const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
   const depositApproval = rewardsDraft.slice(rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit"));
   assert.doesNotMatch(depositApproval, /reward_wallet_referrer|referral_bonus_amount/);
-  assert.match(rewardsDraft, /AFTER UPDATE OF status, central_one_status ON public\\.orders/);
-  assert.match(rewardsDraft, /AFTER INSERT ON public\\.wallet_transactions/);
+  assert.match(rewardsDraft, /AFTER UPDATE OF status, central_one_status ON public\.orders/);
+  assert.match(rewardsDraft, /AFTER INSERT ON public\.wallet_transactions/);
 });
 test("el programa de invitaciones vincula el código solo a una cuenta nueva antes de su primer depósito", () => {
   assert.match(indexHtml, /captureWalletReferralParameter\(\)/);
