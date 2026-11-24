@@ -2,7 +2,7 @@ const APP_ROOT = self.registration.scope;
 const scopePath = new URL(APP_ROOT).pathname.replace(/\/+$/, "") || "/";
 const scopeName = scopePath === "/" ? "root" : scopePath.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
 const CACHE_PREFIX = "el-castillo-" + scopeName + "-";
-const CACHE_NAME = CACHE_PREFIX + "shell-v182";
+const CACHE_NAME = CACHE_PREFIX + "shell-v183";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -10,6 +10,7 @@ const APP_SHELL = [
   "./castle-icon.svg",
   "./recargar-free-fire-cuba.html",
   "./recargas-juegos-cuba.html",
+  "./como-pagar-recargas-juegos-cuba.html",
   "./recargar-mobile-legends-cuba.html",
   "./recargar-pubg-mobile-cuba.html",
   "./recargar-arena-breakout-cuba.html",
@@ -29,7 +30,7 @@ const APP_SHELL = [
   "./assets/games/blood-strike-cover.webp?v=1",
   "./assets/games/arena-breakout.webp?v=1",
   "./assets/games/pubg-mobile.webp?v=1",
-  "./assets/customer-center.js?v=6",
+  "./assets/customer-center.js?v=7",
   "./assets/games/store-offers-sprite.webp",
 
   "./assets/games/mlbb-diamonds.svg",
@@ -41,8 +42,8 @@ const APP_SHELL = [
   "./assets/storefront-polish.css?v=23",
   "./assets/posthog.js?v=1",
   "./assets/offline-guard.js?v=3",
-  "./assets/admin-panel.js?v=23",
-  "./assets/checkout-reliability.js?v=1",
+  "./assets/admin-panel.js?v=24",
+  "./assets/checkout-reliability.js?v=2",
   "./assets/diamond-pile.svg",
   "./assets/diamond-chest.svg",
   "./assets/ff-diamonds-110.svg",
