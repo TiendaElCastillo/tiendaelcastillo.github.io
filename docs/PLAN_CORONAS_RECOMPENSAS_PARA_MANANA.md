@@ -25,8 +25,8 @@
 ## Lista de mañana
 - [ ] Recibir el PNG exportado desde Canva del diseño **«Icono oficial Coronas del Castillo»**.
 - [ ] Sustituir el SVG provisional por el recurso original en la wallet, perfil, navegación, checkout, tarjetas promocionales y movimientos; revisar peso del archivo para Cuba.
-- [x] Actualizar en la rama de PR #40 el texto de bienvenida 3 % sin límite, invitaciones 5 % por paquete entregado, resumen de Coronas y textos para compartir. Falta la revisión visual con el PNG de Canva.
-- [ ] Crear la migración con Supabase CLI desde el nombre generado por `supabase migration new`; comparar con el esquema real de producción y probar primero en un entorno de pruebas completo.
+- [x] Actualizar en la rama de PR #40 el texto de bienvenida 3 % sin límite, invitaciones 5 % por paquete entregado, resumen de Coronas, textos para compartir y guías públicas. Falta la revisión visual con el PNG de Canva.
+- [ ] Crear la migración con Supabase CLI desde el nombre generado por `supabase migration new`; comparar con el esquema real de producción y probar primero en un entorno de pruebas completo. En producción aún sigue desplegada la función resumen antigua que muestra 0,7 % y tope; el borrador nuevo aún no se ha aplicado.
 - [ ] Probar cálculo 3 % sin límite: por ejemplo, 20 USD → 0,60 Corona extra; 100 USD → 3,00 Coronas extra.
 - [ ] Probar comisión 5 % por pedido entregado: paquete 4,00 USD → 0,20 Corona; dos pedidos entregados del mismo amigo → 0,40 Coronas en total.
 - [ ] Comprobar que pedidos pendientes, rechazados, cancelados o fallidos no pagan comisión; un pedido repetido no paga dos veces; una devolución revierte una sola vez la comisión.
