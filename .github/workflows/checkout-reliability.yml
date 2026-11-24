@@ -6,6 +6,9 @@ on:
       - ".github/workflows/**"
       - "index.html"
       - "sw.js"
+      - "como-pagar-recargas-juegos-cuba.html"
+      - "recargas-juegos-cuba.html"
+      - "sobre-tienda-el-castillo.html"
       - "tests/**"
       - "assets/checkout-reliability.js"
       - "assets/coronas-promotions.js"
@@ -45,3 +48,5 @@ jobs:
           node-version: 22
       - name: Ejecutar pruebas automatizadas
         run: node --test tests/checkout-reliability.test.cjs
+      - name: Comprobar sintaxis de scripts incrustados
+        run: node tests/check-inline-scripts.cjs
