@@ -5114,7 +5114,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
   }
  }else if(customerProviderError==="admin_cancelled_before_provider"){
   if(customerWalletRefund?.refunded===true){
-   providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
+   providerInfo='<p class="track-note"><strong>Coronas acreditadas en tu wallet:</strong> se abonaron '+moneyCoronas(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+'. Puedes usarlas en otra compra y consultar el movimiento en el historial de Coronas.</p>';
   }else{
    providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
   }
