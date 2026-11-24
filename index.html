@@ -4797,18 +4797,27 @@ async function placeOrder(){
     automaticError=dispatchError;
    }
    if(automaticResult?.wallet_refund?.refunded===true){
-    $("checkoutDoneMessage").textContent="No se pudo iniciar la recarga de "+result.data.order_code+". No se creó una orden del proveedor y se devolvieron automáticamente "+moneyUSD(automaticResult.wallet_refund.credited_amount||result.data.price)+" Coronas a tu saldo.";
-    $("ordermsg").textContent="La recarga fue bloqueada antes del envío y las Coronas se devolvieron automáticamente.";
+    $("checkoutDoneMessage").textContent="No se pudo iniciar la recarga del pedido "+result.data.order_code+". Se devolvieron automáticamente "+moneyUSD(automaticResult.wallet_refund.credited_amount||result.data.price)+" Coronas a tu saldo.";
+    $("ordermsg").textContent="La recarga no llegó a iniciarse y las Coronas ya volvieron a tu Cartera.";
    }else if(automaticError){
-    $("checkoutDoneMessage").textContent="El pedido "+result.data.order_code+" quedó pagado con Coronas, pero no pudimos confirmar ahora mismo la respuesta del sistema automático. No repitas la compra: consulta «Pedidos» y el estado del mismo pedido. Detalle: "+(automaticError.message||"conexión no disponible");
-    $("ordermsg").textContent="Pedido registrado. Estamos verificando su envío; no se descontará otra vez si vuelves a consultar el mismo pedido.";
+    console.warn("No se pudo confirmar la respuesta de la compra automática:",automaticError);
+    $("checkoutDoneMessage").textContent="El pedido "+result.data.order_code+" quedó pagado con Coronas, pero todavía no pudimos confirmar el estado de la recarga. No repitas la compra. Consulta «Mis pedidos»; si el estado no se actualiza, contacta con el soporte de Tienda El Castillo e indica este código.";
+    $("ordermsg").textContent="Pedido registrado. Estamos verificando la recarga; no se descontará otra vez por consultar el mismo pedido.";
    }else{
     const providerStatus=automaticResult?.provider_status||automaticResult?.local?.central_one_status||"processing";
-    const providerReference=automaticResult?.reference_code?" Referencia: "+automaticResult.reference_code+".":"";
-    $("checkoutDoneMessage").textContent=providerStatus==="completed"
-     ?"¡Recarga entregada! El pedido "+result.data.order_code+" fue completado automáticamente."+providerReference
-     :"Pedido "+result.data.order_code+" enviado automáticamente y en proceso. No necesitas que un administrador lo acepte."+providerReference;
-    $("ordermsg").textContent="Compra con Coronas enviada automáticamente. Estado de la recarga: "+providerStatus+".";
+    if(providerStatus==="completed"){
+     $("checkoutDoneMessage").textContent="¡Recarga entregada! El pedido "+result.data.order_code+" fue completado automáticamente.";
+     $("ordermsg").textContent="Tu compra con Coronas se completó correctamente.";
+    }else if(["failed","cancelled","rejected"].includes(providerStatus)){
+     $("checkoutDoneMessage").textContent="No pudimos completar la recarga del pedido "+result.data.order_code+". El equipo de Tienda El Castillo revisará el caso y la devolución que corresponda. No repitas la compra.";
+     $("ordermsg").textContent="La recarga no se completó. El pedido quedó registrado para revisión.";
+    }else if(["unknown","retryable"].includes(providerStatus)){
+     $("checkoutDoneMessage").textContent="El pedido "+result.data.order_code+" está registrado, pero todavía no podemos confirmar la entrega. No repitas la compra; consulta «Mis pedidos» para ver las novedades.";
+     $("ordermsg").textContent="Estamos comprobando el estado de tu recarga.";
+    }else{
+     $("checkoutDoneMessage").textContent="Pedido "+result.data.order_code+" enviado automáticamente y en proceso. No necesitas esperar una aprobación administrativa.";
+     $("ordermsg").textContent="Tu compra con Coronas fue enviada automáticamente. Te informaremos cuando finalice.";
+    }
    }
    try{await loadWalletData();}catch(refreshWalletError){console.warn("El pedido quedó creado; no se pudo actualizar el saldo visual:",refreshWalletError);}
    try{await loadMyOrders();}catch(refreshOrdersError){
