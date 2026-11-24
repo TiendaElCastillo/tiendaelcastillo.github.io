@@ -269,7 +269,7 @@ window.addEventListener("DOMContentLoaded",function(){
 <style>
 /* Wallet Tienda El Castillo: panel financiero claro y móvil */
 .wallet-shell{display:grid;gap:16px}
-.wallet-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:22px;border-radius:22px;background:linear-gradient(125deg,#10284f 0%,#194c92 62%,#286be0 100%);color:#fff;box-shadow:0 14px 34px rgba(20,55,112,.18)}
+.wallet-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:22px;border-radius:22px;background:linear-gradient(125deg,#26114f 0%,#67258d 58%,#b23aa5 100%);color:#fff;box-shadow:0 14px 34px rgba(78,28,112,.2)}
 .wallet-hero:after{content:"";position:absolute;width:142px;height:142px;right:52px;top:50%;bottom:auto;transform:translateY(-50%) rotate(5deg);border:0;border-radius:0;box-shadow:none;background:url("./assets/el-castillo-watermark.svg") center/contain no-repeat;opacity:.13;pointer-events:none;z-index:0}.wallet-hero>div:first-child{position:relative;z-index:1}.wallet-hero .wallet-coin{position:relative;z-index:1}
 .wallet-kicker{font-size:10px;font-weight:850;letter-spacing:.13em;text-transform:uppercase;color:#d7e7ff}
 .wallet-hero h2{font-size:17px;margin:6px 0 8px;color:#fff}
@@ -304,6 +304,22 @@ window.addEventListener("DOMContentLoaded",function(){
 .wallet-rate-row .field{margin:8px 0}
 .wallet-rate-row button{width:auto;margin-bottom:8px;white-space:nowrap}
 @media(max-width:680px){.wallet-content-grid{grid-template-columns:1fr}.wallet-hero{padding:18px}.wallet-hero:after{width:112px;height:112px;right:46px;opacity:.10}.wallet-coin{width:52px;height:52px;border-radius:17px}.wallet-admin-actions{grid-template-columns:1fr 1fr}}
+.coronas-promo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.coronas-promo-card{min-width:0;padding:16px;border:1px solid #eadcf4;border-radius:17px;background:linear-gradient(135deg,#fff,#fcf5ff)}
+.coronas-promo-tag{display:inline-flex;padding:5px 8px;border-radius:99px;background:#f3e4fa;color:#762b98;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.coronas-promo-card strong{display:block;margin:9px 0 5px;color:#552073;font-size:18px}
+.coronas-promo-card p{margin:0;color:#6e6079;font-size:11px;line-height:1.55}
+.coronas-referral-panel{border-color:#e7d4f2;background:linear-gradient(145deg,#fff,#fcf6ff)}
+.coronas-referral-code-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin:12px 0}
+.coronas-referral-code{padding:11px 13px;border:1px dashed #c99bdd;border-radius:12px;background:#fff;color:#632582;font-size:18px;font-weight:950;letter-spacing:.16em;text-align:center}
+.coronas-referral-actions{display:flex;gap:8px;flex-wrap:wrap}
+.coronas-referral-actions button{flex:1 1 130px}
+.coronas-referral-note{font-size:10px;color:#7c6b86;line-height:1.5}
+.coronas-referral-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.coronas-referral-stats article{padding:10px;border:1px solid #eee1f4;border-radius:12px;background:#fff}
+.coronas-referral-stats small{display:block;color:#887a91;font-size:9px}
+.coronas-referral-stats strong{display:block;margin-top:3px;color:#632582;font-size:15px;overflow-wrap:anywhere}
+@media(max-width:680px){.coronas-promo-grid{grid-template-columns:1fr}.coronas-referral-code-row{grid-template-columns:1fr}.coronas-referral-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:390px){.wallet-rate-row{grid-template-columns:1fr}.wallet-rate-row button{width:100%;margin:0}}
 
 /* Acreditación de saldo en dos pasos, compacta y adaptable a móvil */
@@ -2226,7 +2242,7 @@ body{min-width:0}
  </div>
  <div id="checkoutStagePayment" class="checkout-stage-panel hidden">
   <div class="checkout-stage-title"><strong>Completa los datos de pago</strong><small>Envía la cantidad exacta y conserva el comprobante original.</small></div>
-  <div class="field"><label>Selecciona el método de pago</label><div id="checkoutPaymentMethods" class="checkout-payment-methods" role="group" aria-label="Método de pago"></div><select id="payment" class="hidden" aria-hidden="true" tabindex="-1" onchange="updateCheckoutSummary()"><option value="Transferencia CUP">Transferencia CUP</option><option value="Saldo móvil">Saldo móvil</option><option value="USDT">USDT</option><option value="Saldo de Tienda El Castillo">Saldo de Tienda El Castillo</option></select></div>
+  <div class="field"><label>Selecciona el método de pago</label><div id="checkoutPaymentMethods" class="checkout-payment-methods" role="group" aria-label="Método de pago"></div><select id="payment" class="hidden" aria-hidden="true" tabindex="-1" onchange="updateCheckoutSummary()"><option value="Transferencia CUP">Transferencia CUP</option><option value="Saldo móvil">Saldo móvil</option><option value="USDT">USDT</option><option value="Saldo de Tienda El Castillo">Coronas del Castillo</option></select></div>
   <div id="checkoutSummary" class="checkout-summary" aria-live="polite"></div><p id="walletCheckoutNote" class="track-note" aria-live="polite"></p>
   <div class="field hidden" id="senderPhoneWrap"><label id="senderPhoneLabel" for="senderPhone">¿Desde qué número haces el pago? (obligatorio)</label><div class="cuba-phone-control"><span class="cuba-phone-prefix">🇨🇺 +53</span><input id="senderPhone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="xxxxxxxx" maxlength="20" aria-label="Ocho dígitos del móvil cubano desde el que pagaste"></div><small class="field-hint" id="senderPhoneHelp">Escribe los 8 dígitos de la línea desde la que realizaste el pago.</small></div>
   <div id="paymentInstructions" class="payment-data-panel" role="status" aria-live="polite"></div>
@@ -2303,7 +2319,7 @@ body{min-width:0}
  <div class="panel">
   <div class="section-head"><div><h2>Accesos rápidos</h2><p>Entra directamente a lo que necesitas.</p></div></div>
   <div class="profile-action-grid">
-   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><svg class="wallet-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 6.5h13.5A2.5 2.5 0 0 1 21 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h12"/><path d="M3 8h14.5A2.5 2.5 0 0 1 20 10.5V12h-4.2a2.3 2.3 0 0 0 0 4.6H21"/><circle cx="16" cy="14.8" r=".65" fill="currentColor" stroke="none"/></svg></span><strong>Mi wallet</strong><small id="profileWalletQuickBalance">Saldo: 0,00 USD</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><svg class="wallet-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 6.5h13.5A2.5 2.5 0 0 1 21 9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a3 3 0 0 1 3-3h12"/><path d="M3 8h14.5A2.5 2.5 0 0 1 20 10.5V12h-4.2a2.3 2.3 0 0 0 0 4.6H21"/><circle cx="16" cy="14.8" r=".65" fill="currentColor" stroke="none"/></svg></span><strong>Mis Coronas</strong><small id="profileWalletQuickBalance">Coronas: 0,00</small></button>
    <button class="profile-action-card" type="button" onclick="showView('orders')"><span class="profile-action-icon">▤</span><strong>Mis pedidos</strong><small>Consulta entregas y estados</small></button>
    <button class="profile-action-card" type="button" onclick="showView('notifications')"><span class="profile-action-icon"><svg class="messages-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.25 11.25a7.25 7.25 0 0 1-7.25 7.25H7l-3.25 2V11.25A7.25 7.25 0 0 1 11 4h2a7.25 7.25 0 0 1 7.25 7.25Z"/><path d="M8.5 10h7M8.5 13.75h4.75"/></svg></span><strong>Mensajes y avisos</strong><small id="profileUnreadNotifications">Revisa las novedades de tu cuenta</small></button>
    <button class="profile-action-card" type="button" onclick="showView('help')"><span class="profile-action-icon">?</span><strong>Centro de ayuda</strong><small>Guías, pagos, pedidos y soporte</small></button>
@@ -2346,7 +2362,7 @@ body{min-width:0}
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
    <img class="wallet-watermark" src="./assets/el-castillo-icon.webp" alt="" aria-hidden="true" width="180" height="180" loading="lazy" decoding="async">
-   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> BILLETERA PERSONAL</span><h2 id="walletTitle">Wallet de Tienda El Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando saldo…</div><small>Este es tu saldo para pagar paquetes. Los reembolsos de pedidos fallidos que correspondan también se acreditarán aquí.</small></div>
+   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> MONEDA INTERNA</span><h2 id="walletTitle">Coronas del Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Tu moneda para comprar en la tienda. 1 Corona = 1 USD. Las devoluciones que correspondan también regresan a tus Coronas.</small></div>
    <div class="wallet-coin wallet-coin-art" aria-hidden="true">
     <svg viewBox="0 0 180 150" role="img" focusable="false">
      <defs><linearGradient id="walletShell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dceaff"/></linearGradient><linearGradient id="walletCard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#75b4ff"/><stop offset="1" stop-color="#2868df"/></linearGradient></defs>
@@ -2360,24 +2376,41 @@ body{min-width:0}
     </svg>
    </div>
   </section>
+  <section class="wallet-panel coronas-promotions" aria-labelledby="coronasPromotionsTitle">
+   <h3 id="coronasPromotionsTitle">Promociones de Coronas</h3>
+   <p>Consigue Coronas extra al recargar por primera vez o al invitar amigos.</p>
+   <div class="coronas-promo-grid">
+    <article class="coronas-promo-card"><span class="coronas-promo-tag">Primera recarga</span><strong>3 % extra</strong><p>Al aprobar tu primera recarga de Coronas, recibes automáticamente un 3 % adicional, sin límite de importe.</p></article>
+    <article class="coronas-promo-card"><span class="coronas-promo-tag">Invita y gana</span><strong>5 % de recompensa</strong><p>Gana el 5 % del valor de la primera compra de cada amigo, cuando su pedido se complete correctamente.</p></article>
+   </div>
+  </section>
+  <section class="wallet-panel coronas-referral-panel" aria-labelledby="coronasReferralTitle">
+   <h3 id="coronasReferralTitle">Invita a tus amigos</h3>
+   <p>Comparte tu enlace personal. La recompensa se acredita una sola vez por amigo, cuando su primera compra se entregue correctamente.</p>
+   <div class="coronas-referral-code-row"><div id="walletReferralCode" class="coronas-referral-code" aria-live="polite">Preparando código…</div>
+    <div class="coronas-referral-actions"><button class="secondary-btn" type="button" onclick="shareWalletReferralLink()">Compartir invitación</button><button class="secondary-btn" type="button" onclick="copyWalletReferralLink()">Copiar enlace</button></div>
+   </div>
+   <div id="walletReferralStats" class="coronas-referral-stats"><article><small>Amigos invitados</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas ganadas</small><strong>—</strong></article></div>
+   <div id="walletReferralApplyBox"><p class="coronas-referral-note">¿Tienes un código? Puedes vincularlo durante los primeros 7 días de tu cuenta y antes de tu primera recarga.</p><div class="field"><label for="walletReferralInput">Código de invitación</label><input id="walletReferralInput" type="text" maxlength="8" autocapitalize="characters" placeholder="Ej. A1B2C3D4"></div><button id="walletReferralApplyBtn" class="primary-btn" type="button" onclick="applyWalletReferralCode()">Vincular código</button><p id="walletReferralMsg" class="msg" role="status" aria-live="polite"></p></div>
+  </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
-   <h3 id="walletInformationTitle">Tu saldo de tienda</h3>
-   <p>Usa tu wallet para pagar paquetes dentro de Tienda El Castillo. Si un pedido pagado no se puede completar y corresponde una devolución, el reembolso se acreditará aquí.</p>
-   <p>Para añadir saldo, realiza una transferencia CUP y envía el comprobante. El dinero estará disponible cuando confirmemos el pago.</p>
+   <h3 id="walletInformationTitle">Tu moneda interna</h3>
+   <p>Usa tus Coronas para pagar paquetes dentro de Tienda El Castillo. 1 Corona equivale exactamente a 1 USD; no son una cuenta bancaria ni se pueden retirar en efectivo. Las devoluciones que correspondan se acreditarán en Coronas.</p>
+   <p>Para conseguir Coronas, realiza una transferencia CUP y envía el comprobante. Estarán disponibles cuando confirmemos el pago.</p>
   </section>
   <div class="wallet-content-grid">
    <section class="wallet-panel wallet-deposit-wizard">
-    <h3>Agregar saldo</h3>
-    <p>Realiza una transferencia CUP. Tu saldo estará disponible después de comprobar el pago.</p>
+    <h3>Recargar Coronas</h3>
+    <p>Realiza una transferencia CUP. Tus Coronas estarán disponibles después de comprobar el pago.</p>
     <ol id="walletDepositStepper" class="wallet-deposit-stepper" aria-label="Pasos para acreditar saldo">
      <li class="active" data-step="1"><b>1</b><span>Importe</span></li>
      <li data-step="2"><b>2</b><span>Pagar y enviar datos</span></li>
     </ol>
     <div id="walletDepositStep1" class="wallet-deposit-stage">
-     <div class="checkout-stage-title"><strong>1. ¿Cuánto saldo quieres añadir?</strong><small>Indica la cantidad que vas a transferir en CUP. Podrás revisar el importe antes de enviarnos la solicitud.</small></div>
+     <div class="checkout-stage-title"><strong>1. ¿Cuánto vas a transferir?</strong><small>Indica la cantidad que vas a transferir en CUP. Podrás revisar el importe antes de enviarnos la solicitud.</small></div>
      <div class="wallet-method-note"><span>Único método disponible</span><strong>Transferencia CUP</strong></div>
-     <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad que vas a transferir (CUP)</label><input id="walletDepositAmount" type="number" inputmode="numeric" min="1160" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1160 CUP, equivalente a 1 USD.</small></div>
-     <div id="walletDepositPreview" class="wallet-preview"><small>Saldo estimado que recibirás después de la revisión</small><strong>0,00 USD</strong><small>El importe final se calcula y verifica en el servidor antes de acreditarse.</small></div>
+     <div class="field"><label id="walletDepositAmountLabel" for="walletDepositAmount">Cantidad que vas a transferir (CUP)</label><input id="walletDepositAmount" type="number" inputmode="numeric" min="1160" step="1" placeholder="Ej. 2000" oninput="previewWalletDeposit()"><small id="walletDepositAmountHint" class="wallet-field-hint">Mínimo inicial: 1160 CUP, equivalente a 1 Corona.</small></div>
+     <div id="walletDepositPreview" class="wallet-preview"><small>Coronas que recibirás después de la revisión</small><strong>0,00 Coronas</strong><small>El importe final se calcula y verifica en el servidor antes de acreditarse.</small></div>
      <div class="checkout-stage-actions"><span></span><button class="primary-btn" type="button" onclick="goWalletDepositStep(2)">Continuar →</button></div>
     </div>
     <div id="walletDepositStep2" class="wallet-deposit-stage hidden">
@@ -2400,13 +2433,13 @@ body{min-width:0}
     <p id="walletDepositMsg" class="msg" role="status" aria-live="polite"></p>
    </section>
    <section class="wallet-panel">
-    <h3>Movimientos de tu wallet</h3>
+    <h3>Movimientos de Coronas</h3>
     <p>Consulta tus compras, depósitos y reembolsos, con sus fechas e importes.</p>
     <div id="walletTransactions"><p class="empty-note">Cargando movimientos…</p></div>
    </section>
   </div>
   <section class="wallet-panel">
-   <h3>Historial de depósitos</h3>
+   <h3>Historial de recargas de Coronas</h3>
    <p>Consulta el estado de tus depósitos y el importe que se añadió a tu saldo.</p>
    <div id="walletDepositsMine"><p class="empty-note">Cargando depósitos…</p></div>
   </section>
@@ -3117,7 +3150,7 @@ const gamePaymentCatalog=[
  {name:"Transferencia CUP",short:"Transferencia",icon:"🏦",unit:"CUP"},
  {name:"Saldo móvil",short:"Saldo móvil",icon:"📱",unit:"saldo móvil"},
  {name:"USDT",short:"USDT",icon:"₮",unit:"USDT"},
- {name:"Saldo de Tienda El Castillo",short:"Saldo de tienda",icon:"💳",unit:"USD"}
+ {name:"Saldo de Tienda El Castillo",short:"Coronas",icon:"👑",unit:"Coronas"}
 ];
 function gameFor(name){return gameCatalog.find(item=>fold(item.name)===fold(name))||gameCatalog.find(item=>(item.match||[]).some(word=>fold(name).includes(fold(word))||fold(word).includes(fold(name))))}
 function isLevelUpPackage(p){return /paquete\s+de\s+(?:mejora|subida)\s+de\s+nivel|level\s*up/i.test(fold(String(p.name||"")));}
