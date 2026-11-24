@@ -1,6 +1,6 @@
 # Plan operativo — Coronas, invitaciones y wallet
 
-**Última actualización:** 23 de noviembre de 2026  
+**Última actualización:** 24 de noviembre de 2026  
 **Memoria técnica permanente:** [ESTADO_TECNICO_CORONAS_WALLET.md](./ESTADO_TECNICO_CORONAS_WALLET.md)  
 **Rama:** `feat/coronas-wallet-referrals` · **PR #40:** https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/pull/40  
 **Estado:** cambios no unidos a `main`; la web pública continúa con la versión anterior.
@@ -30,14 +30,18 @@
 - [x] En Supabase de pruebas se creó un esquema mínimo aislado para wallet, depósitos, referidos, pedidos y devoluciones. No es una copia completa de producción.
 - [x] Pruebas PostgreSQL superadas: 20 USD → 0,60 Corona; 100 USD → 3 Coronas; segunda recarga → 0; pedido 4 USD → 0,20 Corona; duplicados bloqueados; reversión por rechazo y devolución; rechazo sin reembolso confirmado sin abono; reembolso previo bloquea comisión tardía; snapshot falso 999 sustituido por 1,24 USD.
 - [x] Permisos revisados en pruebas: cierre y devolución de proveedor solo `service_role`; revisión de depósitos solo `authenticated`.
-- [x] Los datos temporales de prueba se limpiaron. Ningún saldo ni pedido real fue tocado.
+- [x] Los datos temporales de prueba se limpiaron. Se verificó que quedaron 0 movimientos, depósitos, referidos, comisiones ni pedidos de prueba.
+- [x] Tablas auxiliares públicas del proyecto de pruebas cerradas con RLS; permisos directos `anon` y `authenticated` revocados.
+- [x] Índices añadidos a las nuevas claves foráneas del esquema de pruebas; las únicas referencias sin índice que siguen apareciendo son de la tabla existente de reseñas, más antigua.
+- [x] GitHub Actions en el último commit: ejecución 34, 41 pruebas aprobadas y 0 fallidas (`https://github.com/TiendaElCastillo/tiendaelcastillo.github.io/actions/runs/45317332308`).
+- [x] Ningún saldo, depósito, pedido ni función de producción fue alterado; no se consumió saldo del proveedor.
 - [x] Memoria técnica actualizada en `docs/ESTADO_TECNICO_CORONAS_WALLET.md`.
 
 ## Pendiente antes de activar o publicar
 
-- [ ] Comprobar la ejecución de GitHub Actions posterior al último commit.
+- [x] Comprobar GitHub Actions: el último commit tiene 41 pruebas aprobadas y 0 fallidas.
 - [ ] Crear una migración formal con Supabase CLI (`supabase migration new`). El CLI no está disponible en el entorno actual; el archivo en `docs/sql` sigue siendo borrador validado en pruebas, no una migración formal ni producción.
-- [ ] Completar una copia de pruebas con el esquema real, autenticación, validación de jugador y almacenamiento de comprobantes; revisar el flujo integral desde checkout hasta entrega sin gastar saldo del proveedor.
+- [ ] Completar una copia de pruebas con el esquema real, autenticación, validación de jugador y almacenamiento de comprobantes; revisar el flujo integral desde checkout hasta entrega sin gastar saldo del proveedor. El esquema sintético actual solo valida la lógica SQL principal.
 - [ ] Aplicar la migración formal en pruebas completas y verificar permisos, datos y resultados antes de modificar producción.
 - [ ] Desplegar la Edge Function revisada solo después de las RPC y migraciones.
 - [ ] Recibir el PNG original de Canva «Icono oficial Coronas del Castillo» (128 × 128); reemplazar el SVG provisional y revisar todos los puntos de wallet en móvil.

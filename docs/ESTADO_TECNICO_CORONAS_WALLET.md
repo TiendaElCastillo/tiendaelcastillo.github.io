@@ -69,10 +69,13 @@ Esta corrección está escrita en el borrador SQL y en la Edge Function de la ra
 
 ## 6. Pruebas, infraestructura y seguridad
 
-- GitHub Actions: la última ejecución anterior a esta tanda de cambios terminó correctamente; al guardar esta actualización se debe comprobar la nueva ejecución del commit actualizado.
-- El arnés anterior de JavaScript había pasado 38/38 comprobaciones aisladas. Las comprobaciones estáticas ahora incluyen además el snapshot USD desde el producto, el bloqueo de una comisión si ya existe un reembolso y los permisos explícitos de las RPC.
+- GitHub Actions, ejecución 34 (run `45317332308`), commit `3f664a10b97d524280a02a43a774928ae89769d8`: terminó correctamente, **41 pruebas aprobadas, 0 fallidas**.
+- Las comprobaciones estáticas de JavaScript incluyen el snapshot USD desde el producto, el bloqueo de una comisión si ya existe un reembolso y los permisos explícitos de las RPC. El resultado oficial de GitHub Actions para el último commit es 41/41.
 - El proyecto Supabase de pruebas sigue sin ser una copia completa de producción. Para validar esta promoción se creó una base mínima de prueba con el esquema de wallet, pedidos, depósitos, comprobantes, invitaciones, cierre y devolución. Se preparó mediante migraciones exclusivas de pruebas; no se copiaron usuarios, saldos ni pedidos de producción.
-- Migraciones exclusivas del entorno de pruebas: `staging_wallet_promotion_test_baseline`, `staging_coronas_first_recharge_and_package_referrals`, `staging_provider_order_refund_test_fields`, `staging_coronas_promotions_full_validated`, `staging_coronas_rpc_access_hardening` y `staging_wallet_usd_price_snapshot_trigger`. No aplicar esos archivos/nombres a producción.
+- Migraciones exclusivas del entorno de pruebas: `staging_wallet_promotion_test_baseline`, `staging_coronas_first_recharge_and_package_referrals`, `staging_provider_order_refund_test_fields`, `staging_coronas_promotions_full_validated`, `staging_coronas_rpc_access_hardening`, `staging_wallet_usd_price_snapshot_trigger`, `staging_wallet_tables_lockdown` y `staging_wallet_foreign_key_indexes`. No aplicar esos archivos/nombres a producción.
+- Las tablas auxiliares de wallet y productos del proyecto de pruebas tienen RLS activado y los privilegios directos para `anon` y `authenticated` revocados; el esquema de pruebas permanece cerrado para accesos del cliente. El asesor de seguridad ya no detecta tablas nuevas de `public` sin RLS. Los avisos `rls_enabled_no_policy` son INFO por el cierre intencional de tablas privadas/públicas del entorno de prueba.
+- El asesor de rendimiento del entorno pequeño aún lista 3 claves foráneas de la tabla de reseñas sin índice y varios índices recién creados como no usados; no corresponden a fallos funcionales. No se borran índices automáticamente.
+- La protección contra contraseñas filtradas permanece desactivada; requiere una activación manual desde el panel de Supabase.
 - Pruebas reales ejecutadas en PostgreSQL del proyecto de pruebas y datos temporales limpiados:
   - Primera recarga de 20 USD: 0,60 Corona adicional; segunda recarga: 0; primera recarga de 100 USD: 3,00 Coronas, sin tope.
   - Paquete de 4 USD: 0,20 Corona por invitación; no se duplica por repetir la actualización del pedido.
@@ -115,5 +118,6 @@ No hacer compras reales de prueba ni consumir saldo de Central One para verifica
 ## Registro adicional de validación — 24 de noviembre de 2026
 
 - La corrección del estado `rejected`, el reembolso condicionado a confirmación del proveedor, la reversión de comisiones y sus pruebas quedó en el commit de código `6f2cec31b85d1d6fd2a1984243a7c5f1bd4fc6c8`.
-- GitHub Actions, ejecución **31** (`45316625583`), terminó correctamente: **39 pruebas aprobadas, 0 fallidas**. La ejecución anterior falló únicamente porque una prueba antigua seguía esperando la lista de estados sin `rejected`; esa expectativa se actualizó y la nueva ejecución pasó.
-- El PR continúa en borrador. El código probado todavía no está unido a `main` ni desplegado en producción.
+- GitHub Actions, ejecución **34** (`45317332308`), terminó correctamente sobre el commit `3f664a10b97d524280a02a43a774928ae89769d8`: **41 pruebas aprobadas, 0 fallidas**.
+- El proyecto de pruebas recibió escrituras solo para preparar el esquema sintético, ejecutar pruebas y cerrar las tablas auxiliares. Después de las pruebas se comprobó que no quedaran depósitos, movimientos, referidos, comisiones ni pedidos temporales. Producción no recibió escrituras.
+- La rama y PR continúan en borrador; el código probado todavía no está unido a `main` ni desplegado en producción.
