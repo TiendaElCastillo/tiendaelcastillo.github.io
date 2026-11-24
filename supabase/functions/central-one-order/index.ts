@@ -206,7 +206,7 @@ function providerRefundInfo(order: any) {
 }
 
 async function applyConfirmedWalletRefund(orderId: string, providerOrderId: string, status: string, refund: any) {
-  if (!["failed","cancelled"].includes(status) || refund?.refunded !== true) return null;
+  if (!["failed","cancelled","rejected"].includes(status) || refund?.refunded !== true) return null;
   return await serviceRpc("refund_wallet_order_after_provider_refund", {
     p_order_id: orderId,
     p_provider_order_id: providerOrderId
@@ -646,7 +646,7 @@ async function submitOrder(orderId: string, adminId: string, walletUserId: strin
     const providerOrderId = typeof providerOrder?.id === "string" &&
       /^[0-9a-f-]{36}$/i.test(providerOrder.id) ? providerOrder.id : null;
     const providerStatus = typeof providerOrder?.status === "string" &&
-      ["created","confirmed","processing","partially_completed","completed","failed","cancelled"].includes(providerOrder.status)
+      ["created","confirmed","processing","partially_completed","completed","failed","cancelled","rejected"].includes(providerOrder.status)
         ? providerOrder.status : "unknown";
     if (!providerOrderId) {
       await finishOrder({
@@ -741,7 +741,7 @@ async function refreshOrder(orderId: string) {
   if(!order || order.id!==local.central_one_order_id || typeof order.status!=="string"){
     return reply(502,{error:"invalid_provider_order_response",message:"Central One devolvió un pedido que no pudimos verificar."});
   }
-  const providerStatus=["created","confirmed","processing","partially_completed","completed","failed","cancelled"].includes(order.status)?order.status:"unknown";
+  const providerStatus=["created","confirmed","processing","partially_completed","completed","failed","cancelled","rejected"].includes(order.status)?order.status:"unknown";
   const refund = providerRefundInfo(order);
   const safe = {
     status:providerStatus,
