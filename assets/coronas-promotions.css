@@ -38,11 +38,12 @@
 .coronas-promo-art-tag{
  position:absolute;z-index:2;right:2%;bottom:4%;display:grid;place-items:center;
  min-width:66px;min-height:66px;padding:7px;border:3px solid #fff;border-radius:50%;
- background:linear-gradient(145deg,#ffe9a9,#f1b83c);color:#51277e;
+ background:linear-gradient(145deg,#f7e8ff,#c45be0);color:#4b1b70;
  font-size:20px;font-weight:1000;letter-spacing:-.06em;
  box-shadow:0 6px 18px rgba(30,13,55,.23);
 }
-.coronas-promo-slide--invite .coronas-promo-art-tag{background:linear-gradient(145deg,#fff,#d9c5ff);color:#642e9a}
+.coronas-promo-slide--invite .coronas-promo-art-tag,
+.coronas-promo-slide--auto .coronas-promo-art-tag{background:linear-gradient(145deg,#fff,#d9c5ff);color:#642e9a}
 .coronas-promo-copy{min-width:0;max-width:560px}
 .coronas-promo-kicker{display:block;margin:0 0 7px;font-size:9px;font-weight:1000;letter-spacing:.16em;opacity:.82}
 .coronas-promo-copy h2{margin:0 0 8px;font-size:clamp(19px,4vw,29px);line-height:1.08;font-weight:1000;letter-spacing:-.045em;color:inherit}
