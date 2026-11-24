@@ -716,11 +716,12 @@ test("el checkout de billetera inicia el envío automático y solo registra comp
 
 
 
-test("Coronas convierte el saldo interno a 100 monedas por cada USD sin sustituir el método interno de pago", () => {
-  assert.match(indexHtml, /const coronasValue=usd=>\(Number\(usd\|\|0\)\*100\)/);
+test("Coronas equivale a 1 USD y conserva la clave interna del método de pago", () => {
+  assert.match(indexHtml, /const coronasValue=usd=>Number\\(usd\\|\\|0\\)\\.toLocaleString/);
+  assert.match(indexHtml, /1 Corona = 1 USD/);
   assert.match(indexHtml, /Coronas del Castillo/);
   assert.match(indexHtml, /name:"Saldo de Tienda El Castillo",short:"Coronas del Castillo"/);
-  assert.match(indexHtml, /const unit=isWallet\?"COR"/);
+  assert.match(indexHtml, /const unit=isWallet\\?"Coronas"/);
   assert.match(indexHtml, /No son criptomonedas/);
 });
 
@@ -752,7 +753,9 @@ test("la comisión de invitación del 5 % se acredita una sola vez por paquete e
 
 test("los pagos pendientes y las recargas no pagan la comisión de invitación", () => {
   const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  const depositApproval = rewardsDraft.slice(rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit"));
+  const approvalStart = rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit");
+  const approvalEnd = rewardsDraft.indexOf("-- The former 0.7 %",approvalStart);
+  const depositApproval = rewardsDraft.slice(approvalStart,approvalEnd);
   assert.doesNotMatch(depositApproval, /reward_wallet_referrer|referral_bonus_amount/);
   assert.match(rewardsDraft, /AFTER UPDATE OF status, central_one_status ON public\.orders/);
   assert.match(rewardsDraft, /AFTER INSERT ON public\.wallet_transactions/);
@@ -781,7 +784,9 @@ test("el enlace de invitación se vincula antes de que se cree la primera solici
 test("la primera recarga aprobada suma el 3 % completo y no paga comisión de invitación por depósito", () => {
   const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261124005127_coronas_wallet_referrals_first_deposit.sql"), "utf8");
   const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  const approval = rewardsDraft.slice(rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit"));
+  const approvalStart = rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit");
+  const approvalEnd = rewardsDraft.indexOf("-- The former 0.7 %",approvalStart);
+  const approval = rewardsDraft.slice(approvalStart,approvalEnd);
   assert.match(approval, /IF NOT v_has_previous_deposit THEN[\s\S]*?round\(v_deposit\.credited_amount \* 0\.03,4\)/);
   assert.match(approval, /v_welcome_bonus :=/);
   assert.doesNotMatch(approval, /reward_wallet_referrer|referral_bonus_amount/);
