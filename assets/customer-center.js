@@ -89,11 +89,11 @@
       message: "Comprueba que estás entrando en la cuenta correcta y vuelve a revisar el juego. Si sigue sin aparecer, prepara el folio, el ID utilizado y una captura de la pantalla del juego donde se vea el problema. No compartas contraseñas."
     },
     wallet: {
-      title: "Hay una diferencia en una recarga o movimiento de Coronas."
+      title: "Hay una diferencia en una recarga o movimiento de Coronas.",
       message: "Las recargas pendientes no forman parte de las Coronas disponibles hasta que se aprueban. Contacta solo si la recarga aparece aprobada y las Coronas no se reflejan, o si hay un movimiento ya registrado con un importe incorrecto. Adjunta la referencia o el folio correspondiente."
     },
     wallet_pending: {
-      title: "La recarga de Coronas todavía está pendiente de revisión."
+      title: "La recarga de Coronas todavía está pendiente de revisión.",
       message: "Una recarga pendiente no forma parte de las Coronas disponibles y no puede utilizarse para comprar. Consulta el estado en el historial de recargas. No hace falta contactar por una solicitud que todavía no aparece aprobada."
     }
   };
