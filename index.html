@@ -2465,7 +2465,8 @@ body{min-width:0}
  <section class="wallet-panel wallet-admin-settings">
   <h3>Configuración de las Coronas</h3>
   <p>Esta tasa convierte las transferencias CUP a Coronas. 1 Corona = 1 USD. Los cambios se aplican solo a las nuevas solicitudes; cada recarga anterior conserva su tasa.</p>
-  <div class="field-row"><div class="field"><label for="walletCupRate">CUP por cada 1 Corona</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1160"></div><div class="field"><label for="walletUsdtAddress">Dirección receptora USDT (BEP20)</label><input id="walletUsdtAddress" type="text" inputmode="text" autocapitalize="none" spellcheck="false" maxlength="42" placeholder="0x…"></div></div>
+  <div class="field"><label for="walletCupRate">CUP por cada 1 Corona</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1160"></div>
+  <p class="wallet-field-hint">USDT utiliza la dirección BEP20 común que ya está configurada en los métodos de pago de la tienda.</p>
   <div class="field-row"><div class="field"><label for="walletMobileCreditUnits">Unidades de saldo móvil de referencia</label><input id="walletMobileCreditUnits" type="number" min="1" step="1" value="360"></div><div class="field"><label for="walletMobileCostCup">Valor CUP de esas unidades</label><input id="walletMobileCostCup" type="number" min="1" step="0.01" value="1200"></div></div>
   <p class="wallet-field-hint">Para saldo móvil, la conversión por Corona se calcula con las unidades de referencia, su valor en CUP y la tasa CUP/Corona. La red USDT está fijada en BNB Smart Chain (BEP20).</p>
   <button class="primary-btn" type="button" onclick="saveWalletSettings()">Guardar configuración</button>
@@ -5400,7 +5401,6 @@ async function loadWalletSettings(){
  walletSettings=result.data;
  if(currentProfile?.role==="admin"){
   if($("walletCupRate"))$("walletCupRate").value=walletSettings.cup_per_usd;
-  if($("walletUsdtAddress"))$("walletUsdtAddress").value=walletSettings.usdt_address||"";
   if($("walletMobileCreditUnits"))$("walletMobileCreditUnits").value=walletSettings.mobile_credit_units||360;
   if($("walletMobileCostCup"))$("walletMobileCostCup").value=walletSettings.mobile_cost_cup||1200;
  }
@@ -5418,14 +5418,8 @@ async function saveWalletSettings(){
  const rate=Number($("walletCupRate")?.value);
  const mobileUnits=Number($("walletMobileCreditUnits")?.value);
  const mobileCost=Number($("walletMobileCostCup")?.value);
- const address=String($("walletUsdtAddress")?.value||"").trim();
  if(!Number.isFinite(rate)||rate<=0||!Number.isInteger(mobileUnits)||mobileUnits<=0||!Number.isFinite(mobileCost)||mobileCost<=0){
   $("walletSettingsMsg").textContent="Revisa la tasa CUP, las unidades de saldo móvil y su valor de referencia.";
-  return;
- }
- if(address&&!/^0x[a-f0-9]{40}$/i.test(address)){
-  $("walletSettingsMsg").textContent="La dirección USDT BEP20 debe tener el formato 0x seguido de 40 caracteres hexadecimales.";
-  $("walletUsdtAddress")?.focus();
   return;
  }
  const button=document.querySelector("#admin button[onclick='saveWalletSettings()']");
@@ -5442,8 +5436,6 @@ async function saveWalletSettings(){
   const values={
    mobile_credit_units:mobileUnits,
    mobile_cost_cup:mobileCost,
-   usdt_address:address,
-   usdt_network:"BNB Smart Chain (BEP20)",
    updated_at:new Date().toISOString(),
    updated_by:currentUser.id
   };
