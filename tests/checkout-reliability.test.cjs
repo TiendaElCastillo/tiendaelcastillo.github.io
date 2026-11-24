@@ -231,8 +231,8 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=23"));
-  assert.ok(serviceWorker.includes('shell-v183'));
-  assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=2'));
+  assert.ok(serviceWorker.includes('shell-v184'));
+  assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=3'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=23"));
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
@@ -825,6 +825,11 @@ test("cambiar entre CUP, saldo móvil y USDT conserva el método elegido y adapt
     assert.equal(elements.walletDepositStep1Title.textContent, expectedTitle);
     assert.match(elements.walletDepositStep2Title.textContent, new RegExp(method === "Saldo móvil" ? "saldo móvil" : method));
     assert.equal(elements.walletDepositFormIntroHelp.textContent.includes("bancaria"), method === "Transferencia CUP");
+
+    // Una actualización posterior no debe restaurar el método anterior.
+    sandbox.walletDepositMethodPrevious = "Transferencia CUP";
+    sandbox.updateWalletDepositMethod(false);
+    assert.equal(elements.walletDepositMethod.value, method, method + " debe conservarse aunque exista un método anterior");
   }
 });
 
