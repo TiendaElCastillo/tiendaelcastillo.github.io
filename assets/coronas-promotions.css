@@ -1,0 +1,89 @@
+/* Promociones ligeras de Tienda El Castillo */
+.coronas-promo-carousel{
+ position:relative;
+ margin:16px 0 22px;
+ overflow:hidden;
+ border:1px solid rgba(123,83,190,.18);
+ border-radius:22px;
+ background:#f8f4ff;
+ box-shadow:0 10px 28px rgba(62,36,101,.09);
+}
+.coronas-promo-slides{position:relative;min-height:228px;isolation:isolate}
+.coronas-promo-slide{
+ position:absolute;inset:0;
+ display:grid;grid-template-columns:minmax(116px,.78fr) minmax(0,1.5fr);
+ align-items:center;gap:clamp(12px,3vw,24px);
+ min-height:228px;padding:20px clamp(17px,4vw,30px);
+ opacity:0;visibility:hidden;pointer-events:none;transform:translateX(12px);
+ transition:opacity .28s ease,transform .28s ease,visibility .28s;
+}
+.coronas-promo-slide.is-active{
+ position:relative;inset:auto;opacity:1;visibility:visible;pointer-events:auto;transform:none;
+}
+.coronas-promo-slide--first{background:radial-gradient(circle at 16% 50%,rgba(255,255,255,.28),transparent 34%),linear-gradient(115deg,#4c1b83 0%,#762ca5 54%,#a34bce 100%);color:#fff}
+.coronas-promo-slide--invite{background:radial-gradient(circle at 16% 50%,rgba(255,255,255,.55),transparent 35%),linear-gradient(115deg,#f2eaff 0%,#e4d6ff 58%,#d4c2fa 100%);color:#38205e}
+.coronas-promo-slide--auto{background:radial-gradient(circle at 16% 50%,rgba(255,255,255,.5),transparent 36%),linear-gradient(115deg,#e9efff 0%,#dbe4ff 55%,#d8d4ff 100%);color:#1e315f}
+.coronas-promo-art{
+ position:relative;display:grid;place-items:center;min-width:0;min-height:166px;
+}
+.coronas-promo-art:before{
+ content:"";position:absolute;width:min(100%,158px);aspect-ratio:1;border-radius:50%;
+ background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+ box-shadow:inset 0 0 26px rgba(255,255,255,.12),0 12px 28px rgba(28,12,55,.12);
+}
+.coronas-promo-slide--invite .coronas-promo-art:before,
+.coronas-promo-slide--auto .coronas-promo-art:before{background:rgba(255,255,255,.6);border-color:rgba(255,255,255,.75)}
+.coronas-promo-art img{position:relative;z-index:1;display:block;width:min(74%,122px);height:auto;max-height:130px;object-fit:contain;filter:drop-shadow(0 9px 12px rgba(30,13,55,.2))}
+.coronas-promo-slide--first .coronas-promo-art img{width:min(66%,105px)}
+.coronas-promo-art-tag{
+ position:absolute;z-index:2;right:2%;bottom:4%;display:grid;place-items:center;
+ min-width:66px;min-height:66px;padding:7px;border:3px solid #fff;border-radius:50%;
+ background:linear-gradient(145deg,#ffe9a9,#f1b83c);color:#51277e;
+ font-size:20px;font-weight:1000;letter-spacing:-.06em;
+ box-shadow:0 6px 18px rgba(30,13,55,.23);
+}
+.coronas-promo-slide--invite .coronas-promo-art-tag{background:linear-gradient(145deg,#fff,#d9c5ff);color:#642e9a}
+.coronas-promo-copy{min-width:0;max-width:560px}
+.coronas-promo-kicker{display:block;margin:0 0 7px;font-size:9px;font-weight:1000;letter-spacing:.16em;opacity:.82}
+.coronas-promo-copy h2{margin:0 0 8px;font-size:clamp(19px,4vw,29px);line-height:1.08;font-weight:1000;letter-spacing:-.045em;color:inherit}
+.coronas-promo-copy p{max-width:490px;margin:0 0 13px;font-size:clamp(11px,1.8vw,13px);line-height:1.5;font-weight:600;opacity:.9}
+.coronas-promo-cta{
+ display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:39px;padding:9px 15px;
+ border:0;border-radius:12px;background:#fff;color:#60288e;font-size:11px;font-weight:900;text-decoration:none;
+ box-shadow:0 5px 14px rgba(26,10,50,.16);cursor:pointer;
+}
+.coronas-promo-slide--invite .coronas-promo-cta,
+.coronas-promo-slide--auto .coronas-promo-cta{background:#612c97;color:#fff}
+.coronas-promo-cta:focus-visible,.coronas-promo-control:focus-visible,.coronas-promo-dot:focus-visible{outline:3px solid #f5c95b;outline-offset:3px}
+.coronas-promo-bottom{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:42px;padding:7px 14px;
+ border-top:1px solid rgba(91,62,137,.12);background:rgba(255,255,255,.76);
+}
+.coronas-promo-bottom-note{color:#726581;font-size:9px;font-weight:700}
+.coronas-promo-controls{display:flex;align-items:center;gap:7px}
+.coronas-promo-control{
+ display:grid;place-items:center;width:29px;height:29px;border:1px solid #e3d8f1;border-radius:50%;
+ background:#fff;color:#5e2c8b;font-size:17px;line-height:1;cursor:pointer;
+}
+.coronas-promo-dots{display:flex;align-items:center;gap:5px}
+.coronas-promo-dot{width:7px;height:7px;padding:0;border:0;border-radius:20px;background:#c9bbdc;cursor:pointer;transition:width .2s ease,background .2s ease}
+.coronas-promo-dot[aria-current="true"]{width:21px;background:#7135a6}
+@media(max-width:520px){
+ .coronas-promo-carousel{margin:13px 0 19px;border-radius:18px}
+ .coronas-promo-slides{min-height:211px}
+ .coronas-promo-slide{grid-template-columns:minmax(90px,.72fr) minmax(0,1.55fr);gap:9px;min-height:211px;padding:16px 13px}
+ .coronas-promo-art{min-height:145px}
+ .coronas-promo-art:before{width:min(100%,126px)}
+ .coronas-promo-art img{width:min(78%,94px);max-height:108px}
+ .coronas-promo-slide--first .coronas-promo-art img{width:min(70%,85px)}
+ .coronas-promo-art-tag{right:-2%;bottom:4%;min-width:52px;min-height:52px;border-width:2px;font-size:17px}
+ .coronas-promo-kicker{font-size:8px;margin-bottom:6px;letter-spacing:.12em}
+ .coronas-promo-copy h2{font-size:clamp(17px,5.3vw,23px);margin-bottom:7px}
+ .coronas-promo-copy p{font-size:10px;line-height:1.4;margin-bottom:10px}
+ .coronas-promo-cta{min-height:36px;padding:8px 10px;font-size:10px}
+ .coronas-promo-bottom{min-height:38px;padding:6px 10px}
+ .coronas-promo-bottom-note{font-size:8px}
+}
+@media(prefers-reduced-motion:reduce){
+ .coronas-promo-slide,.coronas-promo-dot{transition:none}
+}
