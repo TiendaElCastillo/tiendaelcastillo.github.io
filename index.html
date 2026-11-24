@@ -5146,10 +5146,13 @@ let selectedCustomerOrderId = null;
 let customerOrdersCache = [];
 let customerOrderEventsCache = new Map();
 
+function orderPaymentDisplayName(order){
+ return order?.payment_source==="wallet"||order?.payment_method==="Saldo de Tienda El Castillo"?"Coronas":String(order?.payment_method||"");
+}
 function renderCustomerOrderDetailHtml(o, statusEvents) {
  const canRetryDirectProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.payment_confirmed_at&&!o.central_one_order_id&&["Transferencia CUP","Saldo móvil","USDT"].includes(o.payment_method);
  const proofNote=o.payment_source==="wallet"
-  ?'<p class="track-note">El pago se realizó con el saldo de tu wallet.</p>'
+  ?'<p class="track-note">El pago se realizó con tus Coronas.</p>'
   :o.proof_path
    ?'<p class="track-note">Comprobante recibido y guardado de forma privada.</p>'
    :canRetryDirectProof
@@ -5163,7 +5166,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
  let providerInfo="";
  if(o.central_one_order_id){
   if(customerWalletRefund?.refunded===true){
-   providerInfo='<p class="track-note"><strong>Devolución acreditada:</strong> el importe de tu compra ya fue devuelto a tu billetera de Tienda El Castillo.</p>';
+   providerInfo='<p class="track-note"><strong>Devolución acreditada:</strong> el importe de tu compra ya fue devuelto a tu saldo de Coronas.</p>';
   }else if(externalRefundReview?.required===true){
    providerInfo='<p class="track-note"><strong>Devolución en revisión:</strong> estamos revisando la devolución de tu compra. Te informaremos desde «Mensajes». No vuelvas a pagar.</p>';
   }else if(["failed","cancelled"].includes(customerProviderStatus)){
@@ -5171,7 +5174,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
   }
  }else if(customerProviderError==="admin_cancelled_before_provider"){
   if(customerWalletRefund?.refunded===true){
-   providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
+   providerInfo='<p class="track-note"><strong>Coronas devueltas:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en tu historial de Coronas.</p>';
   }else{
    providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
   }
@@ -5200,7 +5203,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
   '<strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong>'+
   (o.provider_region?'<span class="order-region-pill">🌐 Región de recarga · '+clean(o.provider_region)+'</span>':"")+
   '<div class="order-player-box"><span>Cuenta destinataria</span><strong>'+clean(o.player_name||"Nombre no disponible")+'</strong><small>ID de jugador: '+clean(o.player_id||"No disponible")+'</small></div>'+
-  '<div class="order-detail">'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
+  '<div class="order-detail">'+money(o.price)+' '+clean(orderPaymentDisplayName(o))+'<br>'+(o.payment_source==="wallet"?"Pagado con Coronas<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
   '<span class="status">'+statusText(o.status)+'</span>'+progress+proofNote+providerInfo+rejectionInfo+retryProofBlock+cancelBlock+'</article>';
 }
 
@@ -6587,7 +6590,7 @@ function notifyNewPaymentReviews(rows){
  fresh.forEach(o=>{
   const label="Nuevo pago recibido · Pedido "+String(o.order_code||"");
   const proofDetail=o.payment_reference?" · Tx "+String(o.payment_reference):o.payment_reported_amount?" · Saldo declarado "+money(o.payment_reported_amount)+" unidades" :"";
-  const detail=String(o.game||"")+" · "+String(o.package_name||"")+" · "+money(o.price)+" "+String(o.payment_method||"")+" · Remitente "+String(o.payment_sender_phone||"sin número")+proofDetail;
+  const detail=String(o.game||"")+" · "+String(o.package_name||"")+" · "+money(o.price)+" "+orderPaymentDisplayName(o)+" · Remitente "+String(o.payment_sender_phone||"sin número")+proofDetail;
   showPaymentAlertToast(label+" — "+detail+". Entra a Pedidos y verifica el dinero.");
   if("Notification" in window&&Notification.permission==="granted"){
    try{new Notification("Tienda El Castillo: pago por revisar",{body:label+" · "+detail,icon:"./assets/el-castillo-icon.webp",tag:"castle-payment-"+o.id});}catch(e){}
@@ -6843,7 +6846,7 @@ async function loadAllOrders(options={}){
    '<div class="admin-order-detail-grid">'+
     '<div class="admin-order-field"><span>Juego y paquete</span><strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong></div>'+
     '<div class="admin-order-field"><span>Jugador</span><strong>'+clean(o.player_id)+' '+(o.player_name?"("+clean(o.player_name)+")":"")+'</strong></div>'+
-    '<div class="admin-order-field"><span>Precio cobrado</span><strong>'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'</strong></div>'+
+    '<div class="admin-order-field"><span>Precio cobrado</span><strong>'+money(o.price)+' '+clean(orderPaymentDisplayName(o))+'</strong></div>'+
     '<div class="admin-order-field"><span>'+(o.payment_method==="Saldo móvil"?"Remitente del SMS":"Móvil de origen")+'</span><strong>'+clean(o.payment_sender_phone||"No indicado")+'</strong></div>'+
     (o.payment_method==="Saldo móvil"?'<div class="admin-order-field"><span>Importe enviado (CUP)</span><strong>'+money(o.payment_reported_amount)+' CUP</strong></div><div class="admin-order-field"><span>Compara con el SMS que recibes</span><strong>Usted ha recibido '+money(o.payment_reported_amount)+' CUP del numero '+clean(String(o.payment_sender_phone||"").replace(/^\+?53/,""))+'</strong></div>':"")+
     ((o.payment_method==="Transferencia CUP"||o.payment_method==="USDT")?'<div class="admin-order-field"><span>'+(o.payment_method==="USDT"?"Hash / TxID":"N.º transacción")+'</span><strong>'+clean(o.payment_reference||"No indicado")+'</strong></div>':"")+
