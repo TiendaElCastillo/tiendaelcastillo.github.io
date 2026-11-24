@@ -5220,7 +5220,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
    providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
   }
  }else if(customerProviderError==="provider_product_unavailable"){
-  providerInfo='<p class="track-note"><strong>Paquete agotado temporalmente.</strong> No se llegó a crear la recarga. La administración está revisando tu pago para acreditar, si corresponde, el equivalente en USD a tu cartera de Tienda El Castillo. No vuelvas a pagar ni crees otro pedido.</p>';
+  providerInfo='<p class="track-note"><strong>Paquete agotado temporalmente.</strong> No se llegó a crear la recarga. La administración está revisando tu pago para acreditar, si corresponde, el equivalente en Coronas a tu wallet de Tienda El Castillo. No vuelvas a pagar ni crees otro pedido.</p>';
  }else if(customerProviderError){
   providerInfo='<p class="track-note"><strong>Tu pago está registrado.</strong> Existe una demora técnica antes de iniciar la recarga. Tu pedido sigue guardado y el equipo de Tienda El Castillo lo revisará. No vuelvas a pagar ni crees otro pedido.</p>';
  }else if(customerProviderStatus==="unknown"){
@@ -5394,7 +5394,6 @@ async function loadWalletReferralSummary(){
  if(result.error)throw new Error(result.error.message||"No se pudo cargar el programa de invitaciones.");
  const data=result.data||{};
  const code=$("walletReferralCodeValue");if(code)code.textContent=data.code||"—";
- const count=$("walletReferralCount");if(count)count.textContent=Number(data.referrals_count||0)+" amigos invitados · "+Number(data.rewarded_count||0)+" recompensados";
  const earned=$("walletReferralEarned");if(earned)earned.textContent=coronas(data.earned_usd||0)+" ganadas";
  const ordersCount=Number(data.referral_orders_count||0);
  const orderSummary=$("walletReferralCount");if(orderSummary)orderSummary.textContent=Number(data.referrals_count||0)+" amigos invitados · "+Number(data.rewarded_count||0)+" con paquetes entregados · "+ordersCount+" paquetes recompensados";
