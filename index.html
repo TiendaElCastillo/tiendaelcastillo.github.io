@@ -5106,7 +5106,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
  let providerInfo="";
  if(o.central_one_order_id){
   if(customerWalletRefund?.refunded===true){
-   providerInfo='<p class="track-note"><strong>Devolución acreditada:</strong> el importe de tu compra ya fue devuelto a tu billetera de Tienda El Castillo.</p>';
+   providerInfo='<p class="track-note"><strong>Devolución acreditada:</strong> el importe se abonó en Coronas a tu wallet. 1 Corona equivale a 1 USD.</p>';
   }else if(externalRefundReview?.required===true){
    providerInfo='<p class="track-note"><strong>Devolución en revisión:</strong> estamos revisando la devolución de tu compra. Te informaremos desde «Mensajes». No vuelvas a pagar.</p>';
   }else if(["failed","cancelled"].includes(customerProviderStatus)){
