@@ -795,6 +795,17 @@ test("la primera recarga aprobada suma el 3 % completo y no paga comisión de in
   assert.match(rewardsDraft, /round\(v_order\.wallet_refund_amount \* 0\.05,4\)/);
   assert.match(migration, /wallet_referrals_not_self/);
 });
+test("las guías públicas describen Coronas y su equivalencia 1:1 en lugar del nombre anterior", () => {
+  const guides = [
+    fs.readFileSync(path.join(root, "como-pagar-recargas-juegos-cuba.html"), "utf8"),
+    fs.readFileSync(path.join(root, "recargas-juegos-cuba.html"), "utf8"),
+    fs.readFileSync(path.join(root, "sobre-tienda-el-castillo.html"), "utf8")
+  ].join("\\n");
+  assert.match(guides, /Coronas/);
+  assert.match(guides, /1 Corona equivale a 1 USD/);
+  assert.doesNotMatch(guides, /saldo interno de Tienda El Castillo/i);
+});
+
 test("las promociones del inicio corresponden a las tres condiciones publicadas y no suman otro 10 % a Free Fire", () => {
   assert.match(indexHtml, /PRIMERA RECARGA DE CORONAS/i);
   assert.match(indexHtml, /5 % para ti/);
