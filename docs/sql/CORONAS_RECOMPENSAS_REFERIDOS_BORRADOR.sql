@@ -57,7 +57,14 @@ BEGIN
      OR v_order.central_one_status IS DISTINCT FROM 'completed'
      OR v_order.central_one_order_id IS NULL
      OR v_order.payment_confirmed_at IS NULL
-     OR coalesce(v_order.wallet_refund_amount,0) <= 0 THEN
+     OR coalesce(v_order.wallet_refund_amount,0) <= 0
+     OR EXISTS (
+       SELECT 1
+       FROM public.wallet_transactions wt
+       WHERE wt.order_id = p_order_id
+         AND wt.kind = 'refund'
+         AND wt.currency = 'USD'
+     ) THEN
     RETURN 0;
   END IF;
 
@@ -443,7 +450,7 @@ BEGIN
             OR NEW.status IN ('failed','cancelled','rejected'))
   ) THEN
     PERFORM private.reverse_wallet_referral_order_reward(
-      NEW.id,'Central One marcó la entrega como fallida o cancelada'
+      NEW.id,'Central One marcó la entrega como fallida, rechazada o cancelada'
     );
   END IF;
 
@@ -661,3 +668,69 @@ $function$;
 -- columns and rows intact, but prevent any future direct call of the old helper.
 REVOKE ALL ON FUNCTION private.reward_wallet_referrer(uuid,uuid,numeric)
   FROM PUBLIC, anon, authenticated;
+
+
+-- ---------------------------------------------------------------------------
+-- 6. Fijar la base USD desde el producto para cualquier pedido nuevo.
+--    La función validate_order_request ya valida jugador y reconstruye el pedido.
+--    Este trigger posterior vuelve a fijar el snapshot desde public.products,
+--    evitando que un campo enviado por el navegador altere la base del 5 %.
+--    El prefijo zzzz hace que se ejecute después de los triggers BEFORE INSERT
+--    actuales: validate_order_before_insert, zz_enforce... y zzz_enforce...
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION private.snapshot_order_wallet_usd_amount()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  v_amount numeric(18,4);
+BEGIN
+  SELECT round(p.price_usdt,2)
+  INTO v_amount
+  FROM public.products p
+  WHERE p.id = NEW.product_id
+    AND p.active IS TRUE
+    AND p.storefront_visible IS TRUE;
+
+  IF v_amount IS NULL OR v_amount <= 0 THEN
+    RAISE EXCEPTION 'El paquete no tiene un precio USD válido para la instantánea de Coronas.';
+  END IF;
+
+  NEW.wallet_refund_amount := v_amount;
+  RETURN NEW;
+END;
+$function$;
+
+REVOKE ALL ON FUNCTION private.snapshot_order_wallet_usd_amount()
+  FROM PUBLIC, anon, authenticated;
+
+DROP TRIGGER IF EXISTS zzzz_wallet_usd_snapshot_before_insert
+  ON public.orders;
+CREATE TRIGGER zzzz_wallet_usd_snapshot_before_insert
+BEFORE INSERT ON public.orders
+FOR EACH ROW
+EXECUTE FUNCTION private.snapshot_order_wallet_usd_amount();
+
+-- ---------------------------------------------------------------------------
+-- 7. Permisos explícitos para que las RPC internas no queden públicas al
+--    instalar este SQL en un entorno donde aún no existan esas funciones.
+-- ---------------------------------------------------------------------------
+REVOKE ALL ON FUNCTION public.finish_central_one_order(uuid,text,uuid,text,text,jsonb,text,text)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.finish_central_one_order(uuid,text,uuid,text,text,jsonb,text,text)
+  TO service_role;
+
+REVOKE ALL ON FUNCTION public.refund_wallet_order_after_provider_refund(uuid,uuid)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.refund_wallet_order_after_provider_refund(uuid,uuid)
+  TO service_role;
+
+REVOKE ALL ON FUNCTION public.admin_review_wallet_deposit(uuid,boolean,text)
+  FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.admin_review_wallet_deposit(uuid,boolean,text)
+  TO authenticated;
+
+REVOKE ALL ON FUNCTION private.wallet_referral_summary() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION private.wallet_referral_summary() TO authenticated;

@@ -69,24 +69,37 @@ Esta corrección está escrita en el borrador SQL y en la Edge Function de la ra
 
 ## 6. Pruebas, infraestructura y seguridad
 
-- GitHub Actions ejecutó el flujo «Pruebas de fiabilidad de la tienda» (ejecución 25) y terminó correctamente antes de las últimas correcciones de rechazo. Hay que confirmar la ejecución posterior al último commit de esta rama.
-- El arnés aislado anterior pasó 38/38 comprobaciones, pero no sustituye a GitHub Actions ni a una prueba completa de Supabase.
-- El proyecto Supabase de pruebas no tiene el esquema completo de la tienda: solo aparecen tablas de perfiles, pedidos de prueba simplificados y reseñas. Faltan las tablas de wallet, depósitos, comprobantes y referidos; no sirve todavía para probar esta migración.
-- La auditoría de asesores de producción no encontró avisos de salud. Seguridad: hay un aviso informativo por tablas privadas con RLS sin políticas (el acceso está revocado, por lo que es intencional) y una advertencia porque la protección contra contraseñas filtradas está desactivada. Esta última se activa manualmente en Supabase Dashboard, en Authentication → Security / Password protection.
-- Rendimiento: solo se listaron índices sin uso en esta base de datos todavía pequeña; no eliminarlos automáticamente.
-- El entorno de trabajo no tiene instalado Supabase CLI. No se ha creado aún una migración formal con `supabase migration new`. No inventar un nombre de migración ni reescribir archivos de migraciones ya aplicadas.
-- No se ha ejecutado SQL de escritura durante esta auditoría, no se han creado pedidos en el proveedor y no se ha consumido saldo de proveedor.
-
+- GitHub Actions: la última ejecución anterior a esta tanda de cambios terminó correctamente; al guardar esta actualización se debe comprobar la nueva ejecución del commit actualizado.
+- El arnés anterior de JavaScript había pasado 38/38 comprobaciones aisladas. Las comprobaciones estáticas ahora incluyen además el snapshot USD desde el producto, el bloqueo de una comisión si ya existe un reembolso y los permisos explícitos de las RPC.
+- El proyecto Supabase de pruebas sigue sin ser una copia completa de producción. Para validar esta promoción se creó una base mínima de prueba con el esquema de wallet, pedidos, depósitos, comprobantes, invitaciones, cierre y devolución. Se preparó mediante migraciones exclusivas de pruebas; no se copiaron usuarios, saldos ni pedidos de producción.
+- Migraciones exclusivas del entorno de pruebas: `staging_wallet_promotion_test_baseline`, `staging_coronas_first_recharge_and_package_referrals`, `staging_provider_order_refund_test_fields`, `staging_coronas_promotions_full_validated`, `staging_coronas_rpc_access_hardening` y `staging_wallet_usd_price_snapshot_trigger`. No aplicar esos archivos/nombres a producción.
+- Pruebas reales ejecutadas en PostgreSQL del proyecto de pruebas y datos temporales limpiados:
+  - Primera recarga de 20 USD: 0,60 Corona adicional; segunda recarga: 0; primera recarga de 100 USD: 3,00 Coronas, sin tope.
+  - Paquete de 4 USD: 0,20 Corona por invitación; no se duplica por repetir la actualización del pedido.
+  - Una entrega que pasa de `completed` a `rejected` revierte la comisión una sola vez.
+  - Una devolución del pedido revierte la comisión; la RPC de devolución confirmada acredita al cliente una sola vez.
+  - Un rechazo sin confirmación de reembolso no acredita saldo.
+  - Un reembolso ya registrado bloquea una confirmación tardía y no genera comisión.
+  - Los pedidos no completados no reciben comisión; el resumen devuelve 5 % y cuenta los pedidos premiados activos.
+  - El bono de depósito no genera comisión para el invitador.
+  - El trigger de snapshot sustituyó un valor falso enviado por el cliente (999) por el precio USD del producto (1,237 → 1,24).
+- En el proyecto de pruebas se comprobaron los permisos: `finish_central_one_order` y `refund_wallet_order_after_provider_refund` solo son ejecutables por `service_role`; `admin_review_wallet_deposit` queda para `authenticated`, sin acceso de `anon`.
+- El SQL de promociones sigue siendo un borrador en `docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql`; no se ha creado todavía el archivo formal mediante `supabase migration new`, porque Supabase CLI no está instalado y el intento con npx no pudo completarse.
+- La auditoría de producción no encontró alertas de salud. La seguridad mostró un aviso informativo de tablas privadas con RLS sin políticas (acceso directo revocado intencionalmente) y una advertencia: la protección contra contraseñas filtradas está desactivada y debe activarse en Supabase Dashboard → Authentication → Security / Password protection.
+- Rendimiento: hay índices no usados en una base aún pequeña; no se borran automáticamente.
+- Producción no ha recibido estas funciones ni estas migraciones. Mantiene las antiguas reglas 3 % con base máxima de 10 USD y comisión 0,7 % sobre primera recarga. No se modificó su ledger: conserva un saldo histórico de 0,16 USD en movimientos y no se tocó.
+- El proyecto público no se ha actualizado ni publicado. No se ha llamado al proveedor, no se han creado pedidos reales ni se ha consumido saldo.
+ 
 ## 7. Próximos pasos obligatorios antes de publicar
 
-1. Preparar un entorno de pruebas completo, con el esquema real de wallet, pedidos, validación de jugador y reembolsos.
-2. Instalar/usar Supabase CLI y crear la migración formal mediante `supabase migration new`; revisar la firma y las dependencias contra producción. Incluir la nueva tabla, funciones, permisos y disparadores, junto con la corrección del estado `rejected`.
-3. Probar en pruebas la primera recarga 3 % sin tope (20 USD → 0,60 Corona; 100 USD → 3,00 Coronas), el 5 % por pedido entregado (4 USD → 0,20 Corona), varios pedidos del mismo invitado, no duplicación, devolución, reversión, rechazo sin reembolso confirmado y rechazo con devolución confirmada.
-4. Ejecutar GitHub Actions después de los cambios y los asesores de Supabase después de la migración.
-5. Desplegar la Edge Function revisada solo después de tener las RPC correspondientes aplicadas y comprobadas en pruebas.
-6. Recibir el PNG oficial de Canva, optimizarlo para conexiones lentas y revisar wallet, perfil, navegación, checkout, promociones y movimientos en móvil.
-7. Activar la protección contra contraseñas filtradas en el panel de Supabase.
-8. Mantener PR #40 como borrador hasta terminar lo anterior. No unir ni publicar mientras las pruebas integrales y la migración sigan pendientes.
+1. Confirmar la nueva ejecución de GitHub Actions después del commit que actualiza el SQL y las pruebas.
+2. Instalar/usar Supabase CLI y crear una migración formal mediante `supabase migration new`; no renombrar ni reescribir migraciones históricas ya aplicadas.
+3. Completar el esquema de pruebas para que refleje las tablas, RPC, autenticación, validación de jugador y comprobantes reales; probar todo el flujo de compra con wallet y métodos externos. La rama de SQL ya tiene pruebas de la lógica principal, pero la prueba integral de interfaz y almacenamiento de comprobantes sigue pendiente.
+4. Revisar las firmas y permisos de las funciones con el estado final de producción, crear la migración oficial y aplicarla primero a un entorno de pruebas completo.
+5. Desplegar la Edge Function revisada solo después de aplicar y verificar las RPC; después probar sin gastar saldo real (usar un proveedor de pruebas o simulación).
+6. Recibir el PNG original de Canva del diseño «Icono oficial Coronas del Castillo» (128 × 128), optimizarlo para conexiones lentas y revisar wallet, perfil, navegación, checkout, promociones e historial en móvil.
+7. Activar la protección contra contraseñas filtradas desde el panel de Supabase.
+8. Mantener PR #40 en borrador y no unir ni publicar hasta completar migración formal, permisos, pruebas integrales e icono.
 
 ## 8. Restricción operativa que no se debe olvidar
 

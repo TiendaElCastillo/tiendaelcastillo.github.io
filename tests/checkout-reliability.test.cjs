@@ -825,3 +825,22 @@ test("las promociones del inicio corresponden a las tres condiciones publicadas 
   assert.match(indexHtml, /extra ya está incluido en los paquetes participantes/);
   assert.match(indexHtml, /no es un regalo adicional de la tienda/i);
 });
+
+
+test("El precio USD del paquete se fija desde el servidor antes de calcular recompensas", () => {
+  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
+  assert.match(rewardsDraft, /CREATE OR REPLACE FUNCTION private\.snapshot_order_wallet_usd_amount/);
+  assert.match(rewardsDraft, /round\(p\.price_usdt,2\)/);
+  assert.match(rewardsDraft, /NEW\.wallet_refund_amount := v_amount/);
+  assert.match(rewardsDraft, /CREATE TRIGGER zzzz_wallet_usd_snapshot_before_insert/);
+});
+
+test("una devolución previa impide una comisión tardía y las RPC conservan permisos restringidos", () => {
+  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
+  assert.match(rewardsDraft, /wt\.order_id = p_order_id[\s\S]*?wt\.kind = 'refund'[\s\S]*?wt\.currency = 'USD'/);
+  assert.match(rewardsDraft, /REVOKE ALL ON FUNCTION public\.finish_central_one_order[\s\S]*?FROM PUBLIC, anon, authenticated/);
+  assert.match(rewardsDraft, /GRANT EXECUTE ON FUNCTION public\.finish_central_one_order[\s\S]*?TO service_role/);
+  assert.match(rewardsDraft, /REVOKE ALL ON FUNCTION public\.refund_wallet_order_after_provider_refund[\s\S]*?FROM PUBLIC, anon, authenticated/);
+  assert.match(rewardsDraft, /GRANT EXECUTE ON FUNCTION public\.refund_wallet_order_after_provider_refund[\s\S]*?TO service_role/);
+  assert.match(rewardsDraft, /GRANT EXECUTE ON FUNCTION public\.admin_review_wallet_deposit[\s\S]*?TO authenticated/);
+});
