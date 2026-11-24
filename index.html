@@ -2202,8 +2202,8 @@ body{min-width:0}
  <section class="home-promotions" aria-label="Promociones activas de Tienda El Castillo">
   <div class="home-promotions-heading"><div><span class="home-promotions-kicker">BENEFICIOS DE LA TIENDA</span><h2>Promociones activas</h2></div><span>Para clientes de El Castillo</span></div>
   <div class="home-promotions-grid">
-   <button class="home-promo-card home-promo-welcome" type="button" onclick="showView('wallet')"><span class="home-promo-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"></span><span class="home-promo-copy"><small>PRIMERA RECARGA DE CORONAS</small><strong>3 % extra</strong><span>En tu primera recarga aprobada. Bono sobre los primeros 10 USD: hasta 30 COR.</span><b>Recargar Coronas →</b></span></button>
-   <button class="home-promo-card home-promo-referral" type="button" onclick="goWalletReferralPanel()"><span class="home-promo-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"></span><span class="home-promo-copy"><small>INVITA Y GANA</small><strong>0,7 % para ti</strong><span>Por la primera recarga aprobada de tu amigo. Base máxima 10 USD: hasta 7 COR.</span><b>Compartir invitación →</b></span></button>
+   <button class="home-promo-card home-promo-welcome" type="button" onclick="showView('wallet')"><span class="home-promo-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"></span><span class="home-promo-copy"><small>PRIMERA RECARGA DE CORONAS</small><strong>3 % extra</strong><span>En tu primera recarga aprobada. Bono del 3 % sobre el importe completo de tu primera recarga aprobada, sin límite.</span><b>Recargar Coronas →</b></span></button>
+   <button class="home-promo-card home-promo-referral" type="button" onclick="goWalletReferralPanel()"><span class="home-promo-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"></span><span class="home-promo-copy"><small>INVITA Y GANA</small><strong>5 % para ti</strong><span>Por cada paquete que tu amigo compre y el proveedor confirme como entregado.</span><b>Compartir invitación →</b></span></button>
    <button class="home-promo-card home-promo-freefire" type="button" onclick="chooseGame('Free Fire')"><span class="home-promo-icon"><img src="./assets/games/free-fire-tienda.webp?v=2" alt="" width="58" height="58" loading="lazy"></span><span class="home-promo-copy"><small>FREE FIRE · PAQUETES SELECCIONADOS</small><strong>10 % más diamantes</strong><span>El extra ya está incluido en los paquetes participantes; no es un regalo adicional de la tienda. Consulta el catálogo.</span><b>Ver Free Fire →</b></span></button>
   </div>
   <p class="home-promotions-footnote">Los bonos de primera recarga se acreditan solo después de que el administrador confirme el depósito. Una promoción por cuenta.</p>
@@ -2357,7 +2357,7 @@ body{min-width:0}
  <div class="panel">
   <div class="section-head"><div><h2>Accesos rápidos</h2><p>Entra directamente a lo que necesitas.</p></div></div>
   <div class="profile-action-grid">
-   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="30" height="30" loading="lazy"></span><strong>Coronas del Castillo</strong><small id="profileWalletQuickBalance">Saldo: 0,00 COR</small></button>
+   <button class="profile-action-card" type="button" onclick="showView('wallet')"><span class="profile-action-icon"><img src="./assets/coronas-del-castillo.svg" alt="" width="30" height="30" loading="lazy"></span><strong>Coronas del Castillo</strong><small id="profileWalletQuickBalance">Coronas: 0,00</small></button>
    <button class="profile-action-card" type="button" onclick="showView('orders')"><span class="profile-action-icon">▤</span><strong>Mis pedidos</strong><small>Consulta entregas y estados</small></button>
    <button class="profile-action-card" type="button" onclick="showView('notifications')"><span class="profile-action-icon"><svg class="messages-line-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.25 11.25a7.25 7.25 0 0 1-7.25 7.25H7l-3.25 2V11.25A7.25 7.25 0 0 1 11 4h2a7.25 7.25 0 0 1 7.25 7.25Z"/><path d="M8.5 10h7M8.5 13.75h4.75"/></svg></span><strong>Mensajes y avisos</strong><small id="profileUnreadNotifications">Revisa las novedades de tu cuenta</small></button>
    <button class="profile-action-card" type="button" onclick="showView('help')"><span class="profile-action-icon">?</span><strong>Centro de ayuda</strong><small>Guías, pagos, pedidos y soporte</small></button>
@@ -2400,17 +2400,17 @@ body{min-width:0}
  <div class="wallet-shell">
   <section class="wallet-hero" aria-labelledby="walletTitle">
    <img class="wallet-watermark" src="./assets/el-castillo-icon.webp" alt="" aria-hidden="true" width="180" height="180" loading="lazy" decoding="async">
-   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/coronas-del-castillo.svg" alt=""> MONEDA INTERNA DE LA TIENDA</span><h2 id="walletTitle">Cartera del Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Usa tus Coronas para pagar recargas. 100 COR equivalen a 1 USD de saldo interno. No son criptomonedas, no se retiran ni se transfieren a otras cuentas.</small></div>
+   <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/coronas-del-castillo.svg" alt=""> MONEDA INTERNA DE LA TIENDA</span><h2 id="walletTitle">Cartera del Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Usa tus Coronas para pagar recargas. 1 Corona equivale a 1 USD de saldo interno. No son criptomonedas, no se retiran ni se transfieren a otras cuentas.</small></div>
    <div class="wallet-coin wallet-coin-art" aria-hidden="true"><img src="./assets/coronas-del-castillo.svg" alt="" width="86" height="86" decoding="async"></div>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
-   <h3 id="walletInformationTitle">Tu moneda: Coronas del Castillo (COR)</h3>
-   <p>Las Coronas son el saldo interno de Tienda El Castillo. 100 COR = 1 USD de saldo. Puedes usarlas para pagar recargas y recibir aquí las devoluciones que correspondan.</p>
+   <h3 id="walletInformationTitle">Tu moneda: Coronas del Castillo</h3>
+   <p>Las Coronas son el saldo interno de Tienda El Castillo. 1 Corona = 1 USD de saldo. Puedes usarlas para pagar recargas y recibir aquí las devoluciones que correspondan.</p>
    <p>No son una criptomoneda, no se pueden retirar en efectivo ni enviar a otras cuentas. Para conseguir más Coronas, realiza una transferencia CUP y espera la aprobación de tu depósito.</p>
   </section>
   <section id="walletReferralPanel" class="wallet-panel wallet-referral-panel" aria-labelledby="walletReferralTitle">
-   <div class="wallet-referral-head"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"><div><span class="wallet-referral-kicker">INVITA Y GANA</span><h3 id="walletReferralTitle">Comparte Coronas del Castillo</h3><p>Tu amigo recibe un 3 % extra en su primera recarga aprobada (base máxima 10 USD). Tú ganas un 0,7 % de esa primera recarga, también sobre un máximo de 10 USD.</p></div></div>
-   <div class="wallet-referral-rewards"><div><small>Tu recompensa máxima</small><strong>7 COR</strong></div><div><small>Bono de bienvenida máximo</small><strong>30 COR</strong></div></div>
+   <div class="wallet-referral-head"><img src="./assets/coronas-del-castillo.svg" alt="" width="48" height="48"><div><span class="wallet-referral-kicker">INVITA Y GANA</span><h3 id="walletReferralTitle">Comparte Coronas del Castillo</h3><p>Tu amigo recibe un 3 % extra en toda su primera recarga aprobada, sin límite. Tú ganas un 5 % del valor de cada paquete que compre y que Central One confirme como entregado.</p></div></div>
+   <div class="wallet-referral-rewards"><div><small>Comisión por cada paquete entregado</small><strong>5 %</strong></div><div><small>Bono de primera recarga</small><strong>3 % sin límite</strong></div></div>
    <div class="wallet-referral-code-row"><div><small>Tu código de invitación</small><strong id="walletReferralCodeValue">Cargando…</strong></div><button class="secondary-btn" type="button" onclick="shareWalletReferral()">Compartir enlace</button></div>
    <div class="wallet-referral-stats"><span id="walletReferralCount">0 amigos invitados</span><span id="walletReferralEarned">0,00 COR ganadas</span></div>
    <div id="walletReferralInviteStatus" class="wallet-referral-status" role="status" aria-live="polite"></div>
@@ -2787,8 +2787,8 @@ const $=id=>document.getElementById(id);
 const clean=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=v=>Number(v||0).toLocaleString("es-ES");
 const moneyUSD=v=>Number(v||0).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:6});
-const coronasValue=usd=>(Number(usd||0)*100).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2});
-const coronas=usd=>coronasValue(usd)+" COR";
+const coronasValue=usd=>Number(usd||0).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:4});
+const coronas=usd=>coronasValue(usd)+" "+(Math.abs(Number(usd||0)-1)<0.000001?"Corona":"Coronas");
 const WALLET_REFERRAL_STORAGE_KEY="castle_pending_wallet_referral";
 function captureWalletReferralParameter(){
  try{
@@ -3188,7 +3188,7 @@ const gamePaymentCatalog=[
  {name:"Transferencia CUP",short:"Transferencia",icon:"🏦",unit:"CUP"},
  {name:"Saldo móvil",short:"Saldo móvil",icon:"📱",unit:"saldo móvil"},
  {name:"USDT",short:"USDT",icon:"₮",unit:"USDT"},
- {name:"Saldo de Tienda El Castillo",short:"Coronas del Castillo",icon:"coronas",unit:"COR"}
+ {name:"Saldo de Tienda El Castillo",short:"Coronas del Castillo",icon:"coronas",unit:"Coronas"}
 ];
 function gameFor(name){return gameCatalog.find(item=>fold(item.name)===fold(name))||gameCatalog.find(item=>(item.match||[]).some(word=>fold(name).includes(fold(word))||fold(word).includes(fold(name))))}
 function isLevelUpPackage(p){return /paquete\s+de\s+(?:mejora|subida)\s+de\s+nivel|level\s*up/i.test(fold(String(p.name||"")));}
@@ -4391,7 +4391,7 @@ function updateCheckoutSummary(){
  }
  checkoutPaymentMethodPrevious=method;
  renderCheckoutPaymentMethods();
- const unit=isWallet?"COR":method==="USDT"?"USDT":"CUP";
+ const unit=isWallet?"Coronas":method==="USDT"?"USDT":"CUP";
  const amount=Number(raw)>0?(isWallet?coronasValue(raw):money(raw)):"—";
  const regionLine=p.provider_region?'<small>Región de recarga '+clean(p.provider_region)+(requiresPlayerValidation(p)?' · Comprobación de ID obligatoria':'')+'</small>':'<small>Precio final según el método de pago</small>';
  $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'<small class="checkout-locked-method">Forma de pago elegida: '+clean(method)+'</small></div><div class="checkout-total"><strong>'+amount+'</strong><small>'+unit+'</small></div>';
@@ -5215,7 +5215,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
   providerInfo='<p class="track-note"><strong>Coronas devueltas automáticamente:</strong> se abonaron '+coronas(customerWalletRefund.credited_amount||o.price)+' a tu cartera porque la recarga no llegó a iniciarse. Puedes usar ese saldo en otra compra.</p>';
  }else if(customerProviderError==="admin_cancelled_before_provider"){
   if(customerWalletRefund?.refunded===true){
-   providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
+   providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+coronas(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+'. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
   }else{
    providerInfo='<p class="track-note"><strong>Pedido anulado antes de iniciar la recarga.</strong> Si pagaste directamente por transferencia, saldo móvil o USDT, conserva el comprobante y contacta con Tienda El Castillo para coordinar la devolución.</p>';
   }
@@ -5244,7 +5244,7 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
   '<strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong>'+
   (o.provider_region?'<span class="order-region-pill">🌐 Región de recarga · '+clean(o.provider_region)+'</span>':"")+
   '<div class="order-player-box"><span>Cuenta destinataria</span><strong>'+clean(o.player_name||"Nombre no disponible")+'</strong><small>ID de jugador: '+clean(o.player_id||"No disponible")+'</small></div>'+
-  '<div class="order-detail">'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
+  '<div class="order-detail">'+(o.payment_source==="wallet"?coronas(o.price):money(o.price)+' '+clean(o.payment_method))+'<br>'+(o.payment_source==="wallet"?"Pago descontado de billetera<br>":"")+'Creado: '+new Date(o.created_at).toLocaleString("es-CU")+'</div>'+
   '<span class="status">'+statusText(o.status)+'</span>'+progress+proofNote+providerInfo+rejectionInfo+retryProofBlock+cancelBlock+'</article>';
 }
 
@@ -5336,8 +5336,9 @@ async function loadMyOrders(){
  list.innerHTML=groups.length?groups.map(group=>
   '<section class="order-day-group"><header class="order-day-group-header"><strong>'+clean(group.label)+'</strong><span class="order-day-count">'+group.count+' '+(group.count===1?"pedido":"pedidos")+'</span></header><div class="order-day-items">'+
   group.orders.map(order=>{
-   const amountCurrency=order.payment_source==="wallet"?"USD":order.payment_method==="USDT"?"USDT":"CUP";
-   return view.renderSummary(order,{statusLabel:view.shortStatusLabel(order.status),amountLabel:money(order.price)+" "+amountCurrency});
+   const amountCurrency=order.payment_method==="USDT"?"USDT":"CUP";
+   const amountLabel=order.payment_source==="wallet"?coronas(order.price):money(order.price)+" "+amountCurrency;
+   return view.renderSummary(order,{statusLabel:view.shortStatusLabel(order.status),amountLabel});
   }).join("")+'</div></section>'
  ).join(""):'<div class="customer-empty-state"><span class="customer-empty-crown"><img src="./assets/el-castillo-icon.webp" alt="" width="46" height="46"></span><strong>Tu próxima recarga puede empezar aquí</strong><p>Aún no tienes pedidos. Explora los juegos y encuentra tu próximo paquete favorito.</p><button type="button" class="primary-btn" onclick="showView(&quot;home&quot;)">Explorar juegos</button></div>';
  if(selectedCustomerOrderId&&customerOrdersCache.some(order=>String(order.id)===selectedCustomerOrderId)){
@@ -5395,10 +5396,12 @@ async function loadWalletReferralSummary(){
  const code=$("walletReferralCodeValue");if(code)code.textContent=data.code||"—";
  const count=$("walletReferralCount");if(count)count.textContent=Number(data.referrals_count||0)+" amigos invitados · "+Number(data.rewarded_count||0)+" recompensados";
  const earned=$("walletReferralEarned");if(earned)earned.textContent=coronas(data.earned_usd||0)+" ganadas";
+ const ordersCount=Number(data.referral_orders_count||0);
+ const orderSummary=$("walletReferralCount");if(orderSummary)orderSummary.textContent=Number(data.referrals_count||0)+" amigos invitados · "+Number(data.rewarded_count||0)+" con paquetes entregados · "+ordersCount+" paquetes recompensados";
  const linked=Boolean(data.invite_linked);
  const applyBox=$("walletReferralApplyBox");if(applyBox)applyBox.classList.toggle("hidden",linked);
  const status=$("walletReferralInviteStatus");
- if(status)status.textContent=linked?"Ya tienes vinculada una invitación. No puedes cambiarla ni combinar dos códigos.":"Comparte tu código: tu amigo recibe 3 % en su primera recarga aprobada y tú ganas 0,7 % de esa misma recarga.";
+ if(status)status.textContent=linked?"Ya tienes vinculada una invitación. No puedes cambiarla ni combinar dos códigos.":"Comparte tu código: tu amigo recibe 3 % extra en toda su primera recarga aprobada y tú ganas 5 % de cada paquete que reciba como entregado.";
  window.castleWalletReferralUrl=data.code?new URL("./?ref="+encodeURIComponent(data.code),window.location.href).toString():"";
  return data;
 }
@@ -5452,7 +5455,7 @@ async function applyWalletReferralCode(){
 async function shareWalletReferral(){
  if(!window.castleWalletReferralUrl){try{await loadWalletReferralSummary();}catch(error){const msg=$("walletReferralMsg");if(msg)msg.textContent=error.message;return;}}
  const link=window.castleWalletReferralUrl;if(!link)return;
- const shareData={title:"Coronas del Castillo",text:"Únete a Tienda El Castillo con mi invitación. Recibe un 3 % extra en tu primera recarga aprobada y yo gano un 0,7 % de esa primera recarga.",url:link};
+ const shareData={title:"Coronas del Castillo",text:"Únete a Tienda El Castillo con mi invitación. Recibe un 3 % extra en toda tu primera recarga aprobada. Yo gano un 5 % en Coronas por cada paquete que recibas como entregado.",url:link};
  try{
   if(navigator.share){await navigator.share(shareData);return;}
   await navigator.clipboard.writeText(link);
@@ -5495,8 +5498,8 @@ function previewWalletDeposit(){
  }
  const rate=Number(walletSettings.cup_per_usd||1160);
  const credit=Math.floor((amount/rate)*100)/100;
- const welcomeBonus=Math.round(Math.min(credit,10)*0.03*10000)/10000;
- box.innerHTML='<small>Saldo estimado después de aprobar</small><strong>'+coronas(credit)+'</strong><small>Si es tu primera recarga aprobada, puedes recibir además un 3 % extra sobre los primeros 10 USD (hasta 30 COR; estimado '+coronas(welcomeBonus)+'). El importe final se confirma tras la revisión.</small>';
+ const welcomeBonus=Math.round(credit*0.03*10000)/10000;
+ box.innerHTML='<small>Saldo estimado después de aprobar</small><strong>'+coronas(credit)+'</strong><small>Si es tu primera recarga aprobada, puedes recibir además un 3 % extra sobre el importe completo (estimado '+coronas(welcomeBonus)+'). El importe final se confirma tras la revisión.</small>';
  updateWalletDepositInstructions();
 }
 function updateWalletDepositMethod(){
@@ -5818,7 +5821,7 @@ async function reviewWalletDeposit(id,approve){
   if(note.trim().length<5){window.alert("El motivo debe tener al menos 5 caracteres.");return;}
  }
  const result=await db.rpc("admin_review_wallet_deposit",{p_deposit_id:id,p_approve:approve,p_note:note});
- $("walletAdminMsg").textContent=result.error?"No se pudo procesar: "+result.error.message:(approve?"Depósito aprobado. Bono de bienvenida: "+coronas(result.data?.welcome_bonus_amount||0)+". Recompensa para quien invitó, si corresponde: "+coronas(result.data?.referral_bonus_amount||0)+".":"Depósito rechazado. El motivo quedó guardado para el cliente.");
+ $("walletAdminMsg").textContent=result.error?"No se pudo procesar: "+result.error.message:(approve?"Recarga aprobada. Bono de primera recarga: "+coronas(result.data?.welcome_bonus_amount||0)+".":"Depósito rechazado. El motivo quedó guardado para el cliente.");
  if(!result.error){await loadWalletDepositsAdmin();await loadWalletData();await loadMyWalletDeposits();}
 }
 
@@ -6734,7 +6737,7 @@ async function loadAllOrders(options={}){
    '<div class="admin-order-detail-grid">'+
     '<div class="admin-order-field"><span>Juego y paquete</span><strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong></div>'+
     '<div class="admin-order-field"><span>Jugador</span><strong>'+clean(o.player_id)+' '+(o.player_name?"("+clean(o.player_name)+")":"")+'</strong></div>'+
-    '<div class="admin-order-field"><span>Precio cobrado</span><strong>'+money(o.price)+' '+clean(o.payment_method)+(o.payment_source==="wallet"?" · USD":"")+'</strong></div>'+
+    '<div class="admin-order-field"><span>Precio cobrado</span><strong>'+(o.payment_source==="wallet"?coronas(o.price):money(o.price)+' '+clean(o.payment_method))+'</strong></div>'+
     '<div class="admin-order-field"><span>'+(o.payment_method==="Saldo móvil"?"Remitente del SMS":"Móvil de origen")+'</span><strong>'+clean(o.payment_sender_phone||"No indicado")+'</strong></div>'+
     (o.payment_method==="Saldo móvil"?'<div class="admin-order-field"><span>Importe enviado (CUP)</span><strong>'+money(o.payment_reported_amount)+' CUP</strong></div><div class="admin-order-field"><span>Compara con el SMS que recibes</span><strong>Usted ha recibido '+money(o.payment_reported_amount)+' CUP del numero '+clean(String(o.payment_sender_phone||"").replace(/^\+?53/,""))+'</strong></div>':"")+
     ((o.payment_method==="Transferencia CUP"||o.payment_method==="USDT")?'<div class="admin-order-field"><span>'+(o.payment_method==="USDT"?"Hash / TxID":"N.º transacción")+'</span><strong>'+clean(o.payment_reference||"No indicado")+'</strong></div>':"")+
