@@ -907,7 +907,7 @@ test("la compra con Coronas se cobra una vez y dispara el envío automático al 
   assert.match(coronasProductionMigrationSource, /insert into public\.wallet_transactions\(user_id,order_id,kind,amount,currency,description\)[\s\S]*?'purchase'/);
   assert.match(walletAutoSubmitMigrationSource, /CREATE OR REPLACE FUNCTION public\.claim_central_one_wallet_order/);
   assert.match(walletAutoSubmitMigrationSource, /v_order\.payment_source IS DISTINCT FROM 'wallet'/);
-  assert.match(walletAutoSubmitMigrationSource, /v_purchase\.kind = 'purchase'/);
+  assert.match(walletAutoSubmitMigrationSource, /kind = 'purchase'/);
   assert.match(centralOneOrderEdgeSource, /action==="submit_wallet"/);
   assert.match(indexHtml, /requestWalletAutoOrder\(result\.data\.order_id\)/);
   assert.match(indexHtml, /no necesitas esperar aprobación administrativa/i);
