@@ -5391,11 +5391,11 @@ function normalizeWalletReferralCode(value){
  return /^[A-F0-9]{8}$/.test(code)?code:"";
 }
 function pendingWalletReferralCode(user=currentUser){
+ const metadata=normalizeWalletReferralCode(user?.user_metadata?.referral_code);
  let stored="";
  try{stored=normalizeWalletReferralCode(localStorage.getItem(walletReferralPendingStorageKey));}catch(storageError){}
- const metadata=normalizeWalletReferralCode(user?.user_metadata?.referral_code);
  const query=normalizeWalletReferralCode(new URLSearchParams(window.location.search).get("ref"));
- return stored||metadata||query;
+ return metadata||stored||query;
 }
 function clearWalletReferralPendingStorage(){
  try{localStorage.removeItem(walletReferralPendingStorageKey);}catch(storageError){}
