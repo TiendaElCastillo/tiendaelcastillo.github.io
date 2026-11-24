@@ -3112,6 +3112,10 @@ async function openStore(user){
   await loadWalletData();
   await loadMyWalletDeposits();
  });
+ runStoreBackground("invitaciones",async()=>{
+  await applyPendingWalletReferralCode();
+  await loadWalletReferralSummary();
+ });
  runStoreBackground("pedidos del cliente",async()=>{
   try{await loadMyOrders();}
   catch(orderError){const list=$("myordersList");if(list)list.textContent="No se pudieron cargar tus pedidos: "+clean(orderError.message||orderError);}
@@ -4062,6 +4066,7 @@ function showView(name){
  if(["home","games","search","checkout","orders","notifications","wallet","profile","help","guides","support","legal","faq","privacy","terms"].includes(name))window.castleAnalytics?.capture?.("store_section_opened",{view:name});
  document.querySelectorAll("#bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
  $("bottomNav").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
+ if(name==="wallet")loadWalletReferralSummary().catch(error=>{const msg=$("walletReferralMsg");if(msg)msg.textContent=error.message||"No se pudo cargar el programa de invitaciones.";});
 }
 function openPublicInfo(name){if(!currentUser){openAccount();$("authmsg").textContent="Inicia sesión para consultar la información de la tienda.";return;}$("auth").classList.add("hidden");$("siteHeader").classList.remove("hidden");$("store").classList.remove("hidden");showView(name||"faq");}
 function setAuthMode(mode){
@@ -4761,8 +4766,34 @@ async function placeOrder(){
    clearWalletRequestIdentity(requestInfo);
    window.castleAnalytics?.capture?.("store_order_submitted",{game:product.game,package:product.name,payment_method:"Saldo de Tienda El Castillo"});
    resetPlayerValidation();
-   $("ordermsg").textContent=result.data.already_processed?"Este pedido ya se había creado. No se descontó saldo otra vez. Pedido "+result.data.order_code+".":"Compra creada correctamente. Pedido "+result.data.order_code+". Se descontaron "+moneyUSD(result.data.price)+" USD de tu wallet.";
-   $("checkoutDoneMessage").textContent="Tu pedido "+result.data.order_code+" fue pagado con el saldo de tu wallet. Puedes consultar su progreso en «Mis pedidos».";
+   if(button){button.disabled=true;button.textContent="Enviando recarga…";}
+   let autoResult=null,autoError=null;
+   try{
+    autoResult=await requestWalletOrderAutoSubmit(result.data.order_id);
+   }catch(sendError){
+    autoError=sendError;
+    autoResult=sendError?.payload||null;
+   }
+   const autoRefund=autoResult?.wallet_refund;
+   if(autoRefund?.refunded===true){
+    $("ordermsg").textContent="No pudimos iniciar esta recarga, pero devolvimos automáticamente "+moneyUSD(autoRefund.credited_amount||result.data.price)+" USD a tu billetera. No tienes que volver a pagar.";
+    $("checkoutDoneMessage").textContent="El pedido "+result.data.order_code+" no se envió y el saldo quedó devuelto. Puedes intentarlo cuando el paquete vuelva a estar disponible.";
+   }else if(autoResult?.provider_status==="completed"){
+    window.castleAnalytics?.capture?.("purchase_completed",{game:product.game,package:product.name,payment_method:"Saldo de Tienda El Castillo"});
+    $("ordermsg").textContent="¡Recarga entregada! Tu compra se procesó automáticamente. Pedido "+result.data.order_code+".";
+    $("checkoutDoneMessage").textContent="La recarga fue entregada automáticamente. Puedes consultar el pedido en «Mis pedidos».";
+   }else if(autoResult?.ok===true){
+    $("ordermsg").textContent="Compra enviada automáticamente. No necesitas esperar una aprobación manual. Pedido "+result.data.order_code+".";
+    $("checkoutDoneMessage").textContent="Tu saldo se descontó y la recarga está en proceso. Te mostraremos la confirmación cuando se complete.";
+   }else{
+    $("ordermsg").textContent="Tu compra quedó registrada y se intentó enviar automáticamente. Estamos comprobando el resultado; no repitas la compra ni vuelvas a pagar.";
+    $("checkoutDoneMessage").textContent=autoError?.message
+     ?"El pedido "+result.data.order_code+" quedó registrado. Estamos comprobando el resultado para proteger tu saldo. No crees otro pedido."
+     :"El pedido "+result.data.order_code+" quedó registrado. Consulta su estado en «Mis pedidos».";
+    if(autoResult?.wallet_refund?.error){
+     $("checkoutDoneMessage").textContent+=" La devolución automática necesita una comprobación del equipo.";
+    }
+   }
    showView("orders");
    try{await loadWalletData();}catch(refreshWalletError){console.warn("El pedido quedó creado; no se pudo actualizar el saldo visual:",refreshWalletError);}
    try{await loadMyOrders();}catch(refreshOrdersError){
@@ -5156,7 +5187,7 @@ let customerOrderEventsCache = new Map();
 function renderCustomerOrderDetailHtml(o, statusEvents) {
  const canRetryDirectProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.payment_confirmed_at&&!o.central_one_order_id&&["Transferencia CUP","Saldo móvil","USDT"].includes(o.payment_method);
  const proofNote=o.payment_source==="wallet"
-  ?'<p class="track-note">El pago se realizó con el saldo de tu wallet.</p>'
+  ?'<p class="track-note">El pedido se pagó con Coronas del Castillo. La recarga se envía automáticamente cuando el servicio está activo.</p>'
   :o.proof_path
    ?'<p class="track-note">Comprobante recibido y guardado de forma privada.</p>'
    :canRetryDirectProof
@@ -5176,6 +5207,8 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
   }else if(["failed","cancelled"].includes(customerProviderStatus)){
    providerInfo='<p class="track-note">No pudimos completar la recarga. El equipo de Tienda El Castillo está revisando tu pedido y la solución correspondiente. No realices otro pago ni crees otro pedido.</p>';
   }
+ }else if(customerProviderError==="wallet_auto_refunded_before_provider"&&customerWalletRefund?.refunded===true){
+  providerInfo='<p class="track-note"><strong>Coronas devueltas automáticamente:</strong> se abonaron '+coronas(customerWalletRefund.credited_amount||o.price)+' a tu cartera porque la recarga no llegó a iniciarse. Puedes usar ese saldo en otra compra.</p>';
  }else if(customerProviderError==="admin_cancelled_before_provider"){
   if(customerWalletRefund?.refunded===true){
    providerInfo='<p class="track-note"><strong>Saldo acreditado en tu cartera:</strong> se abonaron '+moneyUSD(customerWalletRefund.credited_amount||o.wallet_refund_amount||o.price)+' USD. Puedes usarlo en otra compra y consultar el movimiento en el historial de tu cartera.</p>';
@@ -5349,6 +5382,70 @@ async function saveWalletSettings(){
   $("walletSettingsMsg").textContent="Tasa oficial guardada y sincronizada con la wallet. Los depósitos anteriores conservan la conversión que tenían al crearse.";
  }catch(e){$("walletSettingsMsg").textContent="No se pudo guardar la tasa unificada: "+(e.message||"error de conexión.");}
  finally{if(button){button.disabled=false;button.textContent="Guardar tasa";}}
+}
+async function loadWalletReferralSummary(){
+ if(!currentUser||!db)return null;
+ const result=await db.rpc("get_wallet_referral_summary");
+ if(result.error)throw new Error(result.error.message||"No se pudo cargar el programa de invitaciones.");
+ const data=result.data||{};
+ const code=$("walletReferralCodeValue");if(code)code.textContent=data.code||"—";
+ const count=$("walletReferralCount");if(count)count.textContent=Number(data.referrals_count||0)+" amigos invitados · "+Number(data.rewarded_count||0)+" recompensados";
+ const earned=$("walletReferralEarned");if(earned)earned.textContent=coronas(data.earned_usd||0)+" ganadas";
+ const linked=Boolean(data.invite_linked);
+ const applyBox=$("walletReferralApplyBox");if(applyBox)applyBox.classList.toggle("hidden",linked);
+ const status=$("walletReferralInviteStatus");
+ if(status)status.textContent=linked?"Ya tienes vinculada una invitación. No puedes cambiarla ni combinar dos códigos.":"Comparte tu código: tu amigo recibe 3 % en su primera recarga aprobada y tú ganas 0,7 % de esa misma recarga.";
+ window.castleWalletReferralUrl=data.code?new URL("./?ref="+encodeURIComponent(data.code),window.location.href).toString():"";
+ return data;
+}
+async function applyPendingWalletReferralCode(){
+ if(!currentUser||!db)return;
+ let code="";
+ try{code=localStorage.getItem(WALLET_REFERRAL_STORAGE_KEY)||"";}catch(_){}
+ if(!code)return;
+ const result=await db.rpc("apply_wallet_referral_code",{p_code:code});
+ if(!result.error){
+  try{localStorage.removeItem(WALLET_REFERRAL_STORAGE_KEY);}catch(_){}
+  const msg=$("walletReferralMsg");if(msg)msg.textContent="Invitación vinculada correctamente. Si es tu primera recarga aprobada, recibirás el 3 % de bienvenida.";
+  return;
+ }
+ const message=result.error.message||"No se pudo vincular la invitación.";
+ if(/7 días|antes de solicitar|ya tiene una invitación|no puedes usar tu propio/i.test(message)){
+  try{localStorage.removeItem(WALLET_REFERRAL_STORAGE_KEY);}catch(_){}
+ }
+ const msg=$("walletReferralMsg");if(msg)msg.textContent=message;
+}
+async function applyWalletReferralCode(){
+ if(!currentUser||!db){openAccount();return;}
+ const input=$("walletReferralCodeInput"),button=document.querySelector("#walletReferralApplyBox button"),msg=$("walletReferralMsg");
+ const code=String(input?.value||"").trim().toUpperCase();
+ if(!/^[A-F0-9]{8}$/.test(code)){if(msg)msg.textContent="Escribe el código de 8 caracteres que te compartió tu amigo.";input?.focus();return;}
+ if(button){button.disabled=true;button.textContent="Aplicando…";}
+ try{
+  const result=await db.rpc("apply_wallet_referral_code",{p_code:code});
+  if(result.error)throw new Error(result.error.message);
+  if(input)input.value="";
+  if(msg)msg.textContent="Invitación vinculada. Si es tu primera recarga aprobada, recibirás el 3 % de bienvenida.";
+  await loadWalletReferralSummary();
+ }catch(error){if(msg)msg.textContent=error.message||"No se pudo aplicar el código.";}
+ finally{if(button){button.disabled=false;button.textContent="Aplicar código";}}
+}
+async function shareWalletReferral(){
+ if(!window.castleWalletReferralUrl){try{await loadWalletReferralSummary();}catch(error){const msg=$("walletReferralMsg");if(msg)msg.textContent=error.message;return;}}
+ const link=window.castleWalletReferralUrl;if(!link)return;
+ const shareData={title:"Coronas del Castillo",text:"Únete a Tienda El Castillo con mi invitación. Recibe un 3 % extra en tu primera recarga aprobada y yo gano un 0,7 % de esa primera recarga.",url:link};
+ try{
+  if(navigator.share){await navigator.share(shareData);return;}
+  await navigator.clipboard.writeText(link);
+  const msg=$("walletReferralMsg");if(msg)msg.textContent="Tu enlace de invitación se copió. Envíalo a tu amigo.";
+ }catch(error){
+  if(error?.name==="AbortError")return;
+  const msg=$("walletReferralMsg");if(msg)msg.textContent="No pudimos compartir automáticamente. Enlace: "+link;
+ }
+}
+function goWalletReferralPanel(){
+ showView("wallet");
+ $("walletReferralPanel")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 async function loadWalletData(){
  if(!currentUser){walletBalanceUSD=0;return;}
@@ -5961,6 +6058,24 @@ async function requestCentralOneOrder(action,orderId){
  });
  const result=await response.json().catch(()=>({}));
  if(!response.ok)throw new Error(result?.message||result?.error||("Error HTTP "+response.status));
+ return result;
+}
+async function requestWalletOrderAutoSubmit(orderId){
+ if(!currentUser||!db||!orderId)throw new Error("No encontramos tu sesión o el pedido.");
+ const {data:sessionData,error:sessionError}=await db.auth.getSession();
+ const accessToken=sessionData?.session?.access_token;
+ if(sessionError||!accessToken)throw new Error("Tu sesión expiró. Vuelve a entrar para consultar el pedido.");
+ const response=await fetch(STORE_SUPABASE_URL+"/functions/v1/central-one-order",{
+  method:"POST",
+  headers:{"Content-Type":"application/json","Authorization":"Bearer "+accessToken,"apikey":STORE_SUPABASE_KEY},
+  body:JSON.stringify({action:"submit_wallet",order_id:orderId})
+ });
+ const result=await response.json().catch(()=>({}));
+ if(!response.ok){
+  const error=new Error(result?.message||result?.error||("Error HTTP "+response.status));
+  error.payload=result;
+  throw error;
+ }
  return result;
 }
 async function cancelPreflightBlockedOrder(orderId,orderCode){
