@@ -760,6 +760,18 @@ test("los pagos pendientes y las recargas no pagan la comisión de invitación",
   assert.match(rewardsDraft, /AFTER UPDATE OF status, central_one_status ON public\.orders/);
   assert.match(rewardsDraft, /AFTER INSERT ON public\.wallet_transactions/);
 });
+test("los rechazos del proveedor se conservan y solo se reembolsa con confirmación explícita", () => {
+  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
+  assert.match(centralOneOrderEdgeSource, /"completed","failed","cancelled","rejected"/);
+  assert.match(centralOneOrderEdgeSource, /!\["failed","cancelled","rejected"\]\.includes\(status\) \|\| refund\?\.refunded !== true/);
+  assert.match(rewardsDraft, /ELSIF p_provider_status = 'rejected' THEN[\s\S]*?v_local_status := 'rejected'/);
+  assert.match(rewardsDraft, /central_one_status NOT IN \('failed','cancelled','rejected'\)/);
+  assert.match(rewardsDraft, /coalesce\(v_order\.central_one_response->'refund'->>'refunded','false'\) <> 'true'/);
+  assert.match(rewardsDraft, /NEW\.central_one_status IN \('failed','cancelled','rejected'\)/);
+  assert.match(rewardsDraft, /NEW\.status IN \('failed','cancelled','rejected'\)/);
+  assert.match(indexHtml, /\["failed","cancelled","rejected"\]\.includes\(autoResult\?\.provider_status\)/);
+});
+
 test("el programa de invitaciones vincula el código solo a una cuenta nueva antes de su primer depósito", () => {
   assert.match(indexHtml, /captureWalletReferralParameter\(\)/);
   assert.match(indexHtml, /applyPendingWalletReferralCode\(\)/);
