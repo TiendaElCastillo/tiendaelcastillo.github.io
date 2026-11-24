@@ -90,7 +90,7 @@
     },
     wallet: {
       title: "Hay una diferencia en una recarga o movimiento de Coronas."
-      message: "Las recargas pendientes no forman parte de las Coronas disponibles hasta que se aprueban. Contacta solo si el depósito aparece aprobado y las Coronas no se reflejan, o si hay un movimiento ya registrado con un importe incorrecto. Adjunta la referencia o el folio correspondiente."
+      message: "Las recargas pendientes no forman parte de las Coronas disponibles hasta que se aprueban. Contacta solo si la recarga aparece aprobada y las Coronas no se reflejan, o si hay un movimiento ya registrado con un importe incorrecto. Adjunta la referencia o el folio correspondiente."
     },
     wallet_pending: {
       title: "La recarga de Coronas todavía está pendiente de revisión."
@@ -257,7 +257,7 @@
         rejected: "Pedido rechazado con pago",
         delivered: "Contenido no recibido",
         wallet_pending: "Recarga de Coronas pendiente",
-        wallet: "Incidencia con Wallet"
+        wallet: "Incidencia con Coronas"
       };
       subjectInput.value = defaults[key] || "Consulta de soporte";
       subjectInput.dataset.category = key;
@@ -265,7 +265,7 @@
     if (statusAction) statusAction.hidden = !(key === "pending" || key === "wallet_pending");
     if (statusButton) {
       if (key === "wallet_pending") {
-        statusButton.textContent = "Revisar historial de depósitos";
+        statusButton.textContent = "Revisar historial de recargas";
         statusButton.onclick = function () { if (typeof window.showView === "function") window.showView("wallet"); };
       } else if (key === "pending") {
         statusButton.textContent = "Consultar mis órdenes";
