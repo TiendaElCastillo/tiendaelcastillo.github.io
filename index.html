@@ -2759,8 +2759,9 @@ function loadCastleTurnstile(){
  });
  return castleTurnstilePromise;
 }
-const STORE_SUPABASE_URL="https://kfllglkfncebpknnugnx.supabase.co";
-const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtmbGxnbGtmbmNlYnBrbm51Z254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3Mjg5MTMsImV4cCI6MjEwOTMwNDkxM30.9lyiZC57tJuSRN6ReLkZZVsedJzl0kVxlhxUX90cE6g";
+// Rama de pruebas: nunca debe apuntar a la base de datos de producción.
+const STORE_SUPABASE_URL="https://kmotmgpzmeooznyymcxl.supabase.co";
+const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imttb3RtZ3B6bWVvb3pueXltY3hsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUzOTA5NzksImV4cCI6MjExMDk2Njk3OX0.57qf5Fy9cOR0txQ2Mevs41jht1BqnDFTmY5TiGqxYrA";
 let db=null, currentUser=null, currentProfile=null, products=[], paymentMethods=[], paymentLoadError=null, editingProductId=null, pendingCheckoutAfterLogin=false, pendingCheckoutProductId="", pendingCheckoutPaymentMethod="", checkoutPaymentMethodPrevious="", checkoutLockedPaymentMethod="", walletBalanceUSD=0, walletRequestMemory={}, walletDepositMethodPrevious="Transferencia CUP", walletSettings={cup_per_usd:1160,usdt_network:"",usdt_address:""}, validatedPlayerCheckout=null, adminOrderPoll=null, adminOrderChannel=null, customerOrderChannel=null, customerOrderPoll=null, playerValidationRequest=0, playerValidationInFlightKey="", playerValidationDebounceTimer=null, activeFreeFireCategory="diamonds", activeMobileLegendsCategory="diamonds", notificationPoll=null;
 
 const $=id=>document.getElementById(id);
