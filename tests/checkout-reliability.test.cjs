@@ -778,16 +778,18 @@ test("el enlace de invitación se vincula antes de que se cree la primera solici
   assert.match(indexHtml, /let walletReferralApplyPromise=null/);
 });
 
-test("la primera recarga solo genera un bono y la invitación se acredita después de la aprobación administrativa", () => {
+test("la primera recarga aprobada suma el 3 % completo y no paga comisión de invitación por depósito", () => {
   const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261124005127_coronas_wallet_referrals_first_deposit.sql"), "utf8");
-  const approval = migration.slice(migration.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit"));
-  assert.match(approval, /IF NOT v_has_previous_deposit THEN[\s\S]*?least\(v_deposit\.credited_amount,10\) \* 0\.03/);
+  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
+  const approval = rewardsDraft.slice(rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit"));
+  assert.match(approval, /IF NOT v_has_previous_deposit THEN[\\s\\S]*?round\\(v_deposit\\.credited_amount \\* 0\\.03,4\\)/);
   assert.match(approval, /v_welcome_bonus :=/);
-  assert.match(approval, /v_referral_bonus := private\.reward_wallet_referrer/);
+  assert.doesNotMatch(approval, /reward_wallet_referrer|referral_bonus_amount/);
   assert.match(approval, /status = 'approved'/);
-  assert.match(approval, /wallet_referral_bonus|welcome_bonus_amount/);
+  assert.match(approval, /welcome_bonus_amount/);
+  assert.match(rewardsDraft, /round\\(v_order\\.wallet_refund_amount \\* 0\\.05,4\\)/);
+  assert.match(migration, /wallet_referrals_not_self/);
 });
-
 test("las promociones del inicio corresponden a las tres condiciones publicadas y no suman otro 10 % a Free Fire", () => {
   assert.match(indexHtml, /PRIMERA RECARGA DE CORONAS/i);
   assert.match(indexHtml, /5 % para ti/);
