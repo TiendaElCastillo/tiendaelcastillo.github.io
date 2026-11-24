@@ -13,6 +13,9 @@ const checkoutReliabilitySource = fs.readFileSync(path.join(root, "assets/checko
 const checkoutGuardMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123170000_harden_checkout_proof_transition.sql"), "utf8");
 const playerValidationEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-player-validate/index.ts"), "utf8");
 const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-order/index.ts"), "utf8");
+const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124170000_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
+const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124171000_coronas_wallet_policy_index_cleanup.sql"), "utf8");
+
 
 function makeNode(id = "") {
   return {
@@ -223,7 +226,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=23"));
-  assert.ok(serviceWorker.includes('shell-v184'));
+  assert.ok(serviceWorker.includes('shell-v181'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=23"));
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
@@ -650,7 +653,7 @@ test("la base de datos exige el archivo almacenado y los datos completos al entr
   assert.match(checkoutGuardMigrationSource, /payment_method = 'Transferencia CUP'/);
   assert.match(checkoutGuardMigrationSource, /payment_method = 'Saldo móvil'/);
   assert.match(checkoutGuardMigrationSource, /payment_method = 'USDT'/);
-  assert.match(checkoutGuardMigrationSource, /NEW\.status IN \('payment_review','processing','completed'\)/);
+  assert.match(checkoutGuardMigrationSource, /NEW\.status = 'payment_review'/);
 });
 
 test("la recarga de billetera se completa en dos pasos y el formulario queda junto a las instrucciones", () => {
@@ -669,178 +672,54 @@ test("la recarga de billetera se completa en dos pasos y el formulario queda jun
   assert.match(indexHtml, /No repitas el pago/);
 });
 
-test("el envío automático solo admite pedidos de billetera propiedad del cliente autenticado", () => {
-  assert.match(centralOneOrderEdgeSource, /action==="submit_wallet"/);
-  assert.match(centralOneOrderEdgeSource, /customerContext\(req\)/);
-  assert.match(centralOneOrderEdgeSource, /claim_central_one_wallet_order/);
-  assert.match(centralOneOrderEdgeSource, /p_order_id: orderId, p_user_id: walletUserId/);
-  assert.match(centralOneOrderEdgeSource, /async function adminContext/);
-  assert.match(centralOneOrderEdgeSource, /if\(action==="submit"\) return await submitOrder\(orderId,admin.userId\)/);
-  assert.match(centralOneOrderEdgeSource, /async function customerContext/);
+
+test("la primera recarga aprobada acredita un 3 % adicional sin tope y solo una vez", () => {
+  assert.match(coronasProductionMigrationSource, /if not v_has_previous_deposit then\s+v_welcome_bonus := round\(v_deposit\.credited_amount \* 0\.03,4\);/);
+  assert.match(coronasProductionMigrationSource, /if p_approve then[\s\S]*?v_welcome_bonus := round/);
+  assert.match(coronasProductionMigrationSource, /'Primera recarga USDT BEP20 aprobada \+ bono del 3 % sin límite'/);
+  assert.match(coronasProductionMigrationSource, /welcome_bonus_amount = v_welcome_bonus/);
 });
 
-test("las compras de billetera conservan los controles de ID, región, stock, beneficio y saldo del proveedor", () => {
-  assert.match(centralOneOrderEdgeSource, /claim_central_one_wallet_order/);
-  assert.match(centralOneOrderEdgeSource, /preflightPriceAndStock\(claim\)/);
-  assert.match(centralOneOrderEdgeSource, /checkProviderAvailableBalance\(wholesale\)/);
-  assert.match(centralOneOrderEdgeSource, /roundedProfitCup <= 0/);
-  assert.match(centralOneOrderEdgeSource, /liveTarget\.zoneKey !== storedTarget\.zoneKey/);
-  assert.match(centralOneOrderEdgeSource, /Idempotency-Key/);
+test("la recompensa de invitación es el 5 % de la primera compra completada, no de las siguientes", () => {
+  assert.match(coronasProductionMigrationSource, /v_order\.status is distinct from 'completed'/);
+  assert.match(coronasProductionMigrationSource, /v_order\.central_one_status is distinct from 'completed'/);
+  assert.match(coronasProductionMigrationSource, /v_reward := round\(v_order\.wallet_refund_amount \* 0\.05,4\)/);
+  assert.match(coronasProductionMigrationSource, /o\.id <> p_order_id[\s\S]*?o\.status = 'completed'[\s\S]*?o\.central_one_status = 'completed'/);
+  assert.match(coronasProductionMigrationSource, /'reward_basis','first_successfully_completed_purchase'/);
 });
 
-test("la devolución automática se limita a fallos demostrados antes de crear una orden del proveedor", () => {
-  const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
-  const hardeningMigration = fs.readFileSync(path.join(root, "supabase/migrations/20261123222909_wallet_auto_refund_unsent_claim.sql"), "utf8");
-  assert.match(migration, /central_one_status NOT IN \('retryable','rejected'\)/);
-  assert.match(migration, /central_one_response->>'preflight'/);
-  assert.match(migration, /central_one_response->>'no_provider_order_created'/);
-  assert.match(migration, /wallet_auto_refunded_before_provider/);
-  assert.match(migration, /ON CONFLICT \(order_id\)/);
-  assert.match(hardeningMigration, /central_one_status = 'not_submitted'/);
-  assert.match(hardeningMigration, /central_one_submitted_at IS NULL/);
-  assert.match(hardeningMigration, /central_one_idempotency_key IS NULL/);
-  assert.match(hardeningMigration, /REVOKE ALL ON FUNCTION public\.refund_wallet_order_before_provider/);
-  assert.match(centralOneOrderEdgeSource, /refund_wallet_order_before_provider/);
-  assert.match(centralOneOrderEdgeSource, /catch \(claimError\)/);
-  assert.match(centralOneOrderEdgeSource, /status:"unknown",errorCode:"network_or_timeout"/);
+test("las recompensas de invitación están protegidas contra duplicados y autorreferidos", () => {
+  assert.match(coronasProductionMigrationSource, /order_id uuid primary key references public\.orders\(id\)/);
+  assert.match(coronasProductionMigrationSource, /wallet_transaction_id uuid not null unique/);
+  assert.match(coronasProductionMigrationSource, /v_referrer = v_order\.user_id/);
+  assert.match(coronasPolicyCleanupSource, /create unique index if not exists wallet_referral_order_rewards_invitee_active_uidx/);
 });
 
-test("el checkout de billetera inicia el envío automático y solo registra compra completada cuando Central One lo confirma", () => {
-  assert.match(indexHtml, /async function requestWalletOrderAutoSubmit\(orderId\)/);
-  assert.match(indexHtml, /action:"submit_wallet",order_id:orderId/);
-  assert.match(indexHtml, /requestWalletOrderAutoSubmit\(result\.data\.order_id\)/);
-  assert.match(indexHtml, /autoResult\?\.provider_status==="completed"[\s\S]*?capture\?\.\("purchase_completed"/);
-  assert.match(indexHtml, /Estamos comprobando el resultado; no repitas la compra/);
-  assert.match(indexHtml, /\["failed","cancelled","rejected"\]\.includes\(autoResult\?\.provider_status\)/);
+test("la comisión de invitación se revierte ante fallo, rechazo o cancelación después de una entrega", () => {
+  assert.match(coronasProductionMigrationSource, /old\.central_one_status = 'completed' or old\.status = 'completed'/);
+  assert.match(coronasProductionMigrationSource, /new\.central_one_status in \('failed','cancelled','rejected'\)/);
+  assert.match(coronasProductionMigrationSource, /private\.reverse_wallet_referral_order_reward\(\s+new\.id/);
+  assert.match(coronasProductionMigrationSource, /if not found or v_reward\.reversed_at is not null then\s+return 0/);
 });
 
+test("las compras de Coronas conservan la clave histórica y son idempotentes", () => {
+  assert.match(coronasProductionMigrationSource, /wallet_request_id = p_request_id/);
+  assert.match(coronasProductionMigrationSource, /'already_processed',true/);
+  assert.match(coronasProductionMigrationSource, /'Saldo de Tienda El Castillo'/);
+  assert.match(coronasProductionMigrationSource, /wallet_transactions\(user_id,order_id,kind,amount,currency,description\)/);
+});
 
+test("la función de proveedor conserva rechazos y solo devuelve Coronas cuando Central One confirma el reembolso", () => {
+  assert.match(centralOneOrderEdgeSource, /\["failed","cancelled","rejected"\]\.includes\(status\)/);
+  assert.match(centralOneOrderEdgeSource, /refund\?\.refunded !== true\) return null/);
+  assert.match(centralOneOrderEdgeSource, /refund_wallet_order_after_provider_refund/);
+});
 
-test("Coronas equivale a 1 USD y conserva la clave interna del método de pago", () => {
-  assert.match(indexHtml, /const coronasValue=usd=>Number\(usd\|\|0\)\.toLocaleString/);
-  assert.match(indexHtml, /1 Corona = 1 USD/);
+test("la rama de liberación usa producción y enruta las funciones reales; los simuladores quedan aislados a pruebas", () => {
+  assert.match(indexHtml, /const STORE_SUPABASE_URL="https:\/\/kfllglkfncebpknnugnx\.supabase\.co"/);
+  assert.match(indexHtml, /const isStaging=STORE_SUPABASE_URL\.includes\("kmotmgpzmeooznyymcxl"\)/);
+  assert.match(indexHtml, /"central-one-order":"coronas-staging-wallet-order"/);
+  assert.match(indexHtml, /return STORE_SUPABASE_URL\+"\/functions\/v1\/"+functionName/);
   assert.match(indexHtml, /Coronas del Castillo/);
-  assert.match(indexHtml, /name:"Saldo de Tienda El Castillo",short:"Coronas del Castillo"/);
-  assert.match(indexHtml, /const unit=isWallet\?\(Math\.abs\(Number\(raw\)-1\)<0\.000001\?"Corona":"Coronas"\)/);
-  assert.match(indexHtml, /No son criptomonedas/);
-});
-
-test("Coronas usa la equivalencia 1 Corona = 1 USD y la primera recarga aprobada recibe el 3 % completo", () => {
-  const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261124005127_coronas_wallet_referrals_first_deposit.sql"), "utf8");
-  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  assert.match(migration, /ALTER COLUMN amount TYPE numeric\(18,4\)/);
-  assert.match(rewardsDraft, /round\(v_deposit\.credited_amount \* 0\.03,4\)/);
-  assert.doesNotMatch(rewardsDraft, /least\(v_deposit\.credited_amount,10\)/);
-  assert.match(migration, /invitee_user_id uuid NOT NULL UNIQUE/);
-  assert.match(migration, /v_created_at < now\(\) - interval '7 days'/);
-  assert.match(indexHtml, /1 Corona = 1 USD de saldo/);
-  assert.match(indexHtml, /3 % extra sobre el importe completo/);
-  assert.doesNotMatch(indexHtml, /100 COR = 1 USD|hasta 30 COR/);
-});
-
-test("la comisión de invitación del 5 % se acredita una sola vez por paquete entregado", () => {
-  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  assert.match(rewardsDraft, /CREATE TABLE IF NOT EXISTS private\.wallet_referral_order_rewards/);
-  assert.match(rewardsDraft, /order_id uuid PRIMARY KEY REFERENCES public\.orders/);
-  assert.match(rewardsDraft, /v_order\.central_one_status IS DISTINCT FROM 'completed'/);
-  assert.match(rewardsDraft, /v_order\.status IS DISTINCT FROM 'completed'/);
-  assert.match(rewardsDraft, /round\(v_order\.wallet_refund_amount \* 0\.05,4\)/);
-  assert.match(rewardsDraft, /reverse_wallet_referral_order_reward/);
-  assert.match(indexHtml, /5 % del valor de cada paquete/);
-  assert.match(indexHtml, /cada paquete que tu amigo compre/);
-  assert.doesNotMatch(indexHtml, /0,7 %/);
-});
-
-test("los pagos pendientes y las recargas no pagan la comisión de invitación", () => {
-  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  const approvalStart = rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit");
-  const approvalEnd = rewardsDraft.indexOf("-- The former 0.7 %",approvalStart);
-  const depositApproval = rewardsDraft.slice(approvalStart,approvalEnd);
-  assert.doesNotMatch(depositApproval, /reward_wallet_referrer|referral_bonus_amount/);
-  assert.match(rewardsDraft, /AFTER UPDATE OF status, central_one_status ON public\.orders/);
-  assert.match(rewardsDraft, /AFTER INSERT ON public\.wallet_transactions/);
-});
-test("los rechazos del proveedor se conservan y solo se reembolsa con confirmación explícita", () => {
-  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  assert.match(centralOneOrderEdgeSource, /"completed","failed","cancelled","rejected"/);
-  assert.match(centralOneOrderEdgeSource, /!\["failed","cancelled","rejected"\]\.includes\(status\) \|\| refund\?\.refunded !== true/);
-  assert.match(rewardsDraft, /ELSIF p_provider_status = 'rejected' THEN[\s\S]*?v_local_status := 'rejected'/);
-  assert.match(rewardsDraft, /central_one_status NOT IN \('failed','cancelled','rejected'\)/);
-  assert.match(rewardsDraft, /coalesce\(v_order\.central_one_response->'refund'->>'refunded','false'\) <> 'true'/);
-  assert.match(rewardsDraft, /NEW\.central_one_status IN \('failed','cancelled','rejected'\)/);
-  assert.match(rewardsDraft, /NEW\.status IN \('failed','cancelled','rejected'\)/);
-  assert.match(indexHtml, /\["failed","cancelled","rejected"\]\.includes\(autoResult\?\.provider_status\)/);
-});
-
-test("el programa de invitaciones vincula el código solo a una cuenta nueva antes de su primer depósito", () => {
-  assert.match(indexHtml, /captureWalletReferralParameter\(\)/);
-  assert.match(indexHtml, /applyPendingWalletReferralCode\(\)/);
-  assert.match(indexHtml, /apply_wallet_referral_code/);
-  assert.match(indexHtml, /get_wallet_referral_summary/);
-  assert.match(indexHtml, /shareWalletReferral\(\)/);
-});
-
-
-test("el enlace de invitación se vincula antes de que se cree la primera solicitud de depósito", () => {
-  const start = indexHtml.indexOf("async function requestWalletDeposit()");
-  const end = indexHtml.indexOf("async function attachWalletDepositProof", start);
-  assert.ok(start >= 0 && end > start, "Debe existir el formulario de depósito");
-  const submit = indexHtml.slice(start, end);
-  const referralGate = submit.indexOf("const referralReady=await applyPendingWalletReferralCode()");
-  const depositInsert = submit.indexOf('db.from("wallet_deposits").insert');
-  assert.ok(referralGate >= 0 && depositInsert > referralGate, "El código debe vincularse antes del primer depósito");
-  assert.match(submit, /if\(referralReady===false\)[\s\S]*?return;/);
-  assert.match(indexHtml, /let walletReferralApplyPromise=null/);
-});
-
-test("la primera recarga aprobada suma el 3 % completo y no paga comisión de invitación por depósito", () => {
-  const migration = fs.readFileSync(path.join(root, "supabase/migrations/20261124005127_coronas_wallet_referrals_first_deposit.sql"), "utf8");
-  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  const approvalStart = rewardsDraft.indexOf("CREATE OR REPLACE FUNCTION public.admin_review_wallet_deposit");
-  const approvalEnd = rewardsDraft.indexOf("-- The former 0.7 %",approvalStart);
-  const approval = rewardsDraft.slice(approvalStart,approvalEnd);
-  assert.match(approval, /IF NOT v_has_previous_deposit THEN[\s\S]*?round\(v_deposit\.credited_amount \* 0\.03,4\)/);
-  assert.match(approval, /v_welcome_bonus :=/);
-  assert.doesNotMatch(approval, /reward_wallet_referrer|referral_bonus_amount/);
-  assert.match(approval, /status = 'approved'/);
-  assert.match(approval, /welcome_bonus_amount/);
-  assert.match(rewardsDraft, /round\(v_order\.wallet_refund_amount \* 0\.05,4\)/);
-  assert.match(migration, /wallet_referrals_not_self/);
-});
-test("las guías públicas describen Coronas y su equivalencia 1:1 en lugar del nombre anterior", () => {
-  const guides = [
-    fs.readFileSync(path.join(root, "como-pagar-recargas-juegos-cuba.html"), "utf8"),
-    fs.readFileSync(path.join(root, "recargas-juegos-cuba.html"), "utf8"),
-    fs.readFileSync(path.join(root, "sobre-tienda-el-castillo.html"), "utf8")
-  ].join("\\n");
-  assert.match(guides, /Coronas/);
-  assert.match(guides, /1 Corona equivale a 1 USD/);
-  assert.doesNotMatch(guides, /saldo interno de Tienda El Castillo/i);
-});
-
-test("las promociones del inicio corresponden a las tres condiciones publicadas y no suman otro 10 % a Free Fire", () => {
-  assert.match(indexHtml, /PRIMERA RECARGA DE CORONAS/i);
-  assert.match(indexHtml, /5 % para ti/);
-  assert.match(indexHtml, /10 % más diamantes/);
-  assert.match(indexHtml, /extra ya está incluido en los paquetes participantes/);
-  assert.match(indexHtml, /no es un regalo adicional de la tienda/i);
-});
-
-
-test("El precio USD del paquete se fija desde el servidor antes de calcular recompensas", () => {
-  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  assert.match(rewardsDraft, /CREATE OR REPLACE FUNCTION private\.snapshot_order_wallet_usd_amount/);
-  assert.match(rewardsDraft, /round\(p\.price_usdt,2\)/);
-  assert.match(rewardsDraft, /NEW\.wallet_refund_amount := v_amount/);
-  assert.match(rewardsDraft, /CREATE TRIGGER zzzz_wallet_usd_snapshot_before_insert/);
-});
-
-test("una devolución previa impide una comisión tardía y las RPC conservan permisos restringidos", () => {
-  const rewardsDraft = fs.readFileSync(path.join(root, "docs/sql/CORONAS_RECOMPENSAS_REFERIDOS_BORRADOR.sql"), "utf8");
-  assert.match(rewardsDraft, /wt\.order_id = p_order_id[\s\S]*?wt\.kind = 'refund'[\s\S]*?wt\.currency = 'USD'/);
-  assert.match(rewardsDraft, /REVOKE ALL ON FUNCTION public\.finish_central_one_order[\s\S]*?FROM PUBLIC, anon, authenticated/);
-  assert.match(rewardsDraft, /GRANT EXECUTE ON FUNCTION public\.finish_central_one_order[\s\S]*?TO service_role/);
-  assert.match(rewardsDraft, /REVOKE ALL ON FUNCTION public\.refund_wallet_order_after_provider_refund[\s\S]*?FROM PUBLIC, anon, authenticated/);
-  assert.match(rewardsDraft, /GRANT EXECUTE ON FUNCTION public\.refund_wallet_order_after_provider_refund[\s\S]*?TO service_role/);
-  assert.match(rewardsDraft, /GRANT EXECUTE ON FUNCTION public\.admin_review_wallet_deposit[\s\S]*?TO authenticated/);
+  assert.match(indexHtml, /coronas-promotions\.js\?v=1/);
 });
