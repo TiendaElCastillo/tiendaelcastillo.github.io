@@ -1,6 +1,4 @@
--- Recupera en el entorno de pruebas las funciones seguras de reserva automática de pedidos.
-
--- Los validadores privados solo son ejecutables dentro de las funciones protegidas.
+-- Restores the provider order claim functions needed by the wallet automatic checkout.
 
 CREATE OR REPLACE FUNCTION private.additional_game_target_schema_supported(p_fields jsonb, p_schema jsonb)
  RETURNS boolean
@@ -35,8 +33,7 @@ begin
      and lower(coalesce(v_descriptor->>'type','text')) = 'text'
      and lower(coalesce(v_descriptor->>'label','')) !~ '(password|contraseñ|correo|email|login|credential|access|token)';
 end;
-$function$
-
+$function$;
 
 CREATE OR REPLACE FUNCTION private.mobile_legends_target_schema_supported(p_fields jsonb, p_schema jsonb)
  RETURNS boolean
@@ -88,8 +85,7 @@ BEGIN
 
   RETURN v_player_count = 1 AND v_zone_count = 1;
 END;
-$function$
-
+$function$;
 
 CREATE OR REPLACE FUNCTION public.claim_central_one_order(p_order_id uuid, p_admin_id uuid)
  RETURNS jsonb
@@ -218,8 +214,7 @@ begin
     'idempotency_key',v_key
   );
 end;
-$function$
-
+$function$;
 
 CREATE OR REPLACE FUNCTION public.claim_central_one_wallet_order(p_order_id uuid, p_user_id uuid)
  RETURNS jsonb
@@ -371,8 +366,7 @@ BEGIN
     'idempotency_key',v_key
   );
 END;
-$function$
-
+$function$;
 
 REVOKE ALL ON FUNCTION private.additional_game_target_schema_supported(jsonb,jsonb) FROM PUBLIC, anon, authenticated, service_role;
 
