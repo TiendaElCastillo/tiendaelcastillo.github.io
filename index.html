@@ -2363,16 +2363,18 @@ body{min-width:0}
   <section class="wallet-hero" aria-labelledby="walletTitle">
    <img class="wallet-watermark" src="./assets/el-castillo-icon.webp" alt="" aria-hidden="true" width="180" height="180" loading="lazy" decoding="async">
    <div><span class="wallet-kicker"><img class="castle-inline-icon" src="./assets/el-castillo-icon.webp" alt=""> MONEDA INTERNA</span><h2 id="walletTitle">Coronas del Castillo</h2><div id="walletBalance" class="wallet-balance" aria-live="polite">Cargando Coronas…</div><small>Tu moneda para comprar en la tienda. 1 Corona = 1 USD. Las devoluciones que correspondan también regresan a tus Coronas.</small></div>
-   <div class="wallet-coin wallet-coin-art" aria-hidden="true">
-    <svg viewBox="0 0 180 150" role="img" focusable="false">
-     <defs><linearGradient id="walletShell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dceaff"/></linearGradient><linearGradient id="walletCard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#75b4ff"/><stop offset="1" stop-color="#2868df"/></linearGradient></defs>
-     <path d="M30 45 118 20q9-3 13 6l18 65-94 26q-9 2-12-7L24 57q-3-9 6-12Z" fill="url(#walletCard)" opacity=".95"/>
-     <path d="M34 54 127 29q8-2 10 6l16 66q2 8-7 11l-88 24q-9 2-11-7L28 64q-2-8 6-10Z" fill="url(#walletShell)" stroke="#fff" stroke-width="3"/>
-     <path d="m38 65 98-26 9 34-98 26Z" fill="#edf5ff"/>
-     <path d="m44 83 93-25 11 40-93 25q-7 2-9-6Z" fill="#245fca"/>
-     <rect x="83" y="83" width="44" height="22" rx="7" fill="#fff" opacity=".96"/>
-     <circle cx="96" cy="94" r="4" fill="#347df0"/><path d="m104 94 14-4" stroke="#347df0" stroke-width="3" stroke-linecap="round"/>
-     <path d="m52 44 49-13" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+   <div class="wallet-coin wallet-coin-art coronas-coin-mark" aria-hidden="true">
+    <svg viewBox="0 0 120 120" role="img" focusable="false">
+     <defs>
+      <linearGradient id="coronasCoinFace" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8d9ff"/><stop offset=".48" stop-color="#c45be0"/><stop offset="1" stop-color="#70218f"/></linearGradient>
+      <linearGradient id="coronasCoinEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#e8b9f7"/></linearGradient>
+     </defs>
+     <circle cx="60" cy="60" r="51" fill="url(#coronasCoinEdge)" opacity=".95"/>
+     <circle cx="60" cy="57" r="45" fill="url(#coronasCoinFace)" stroke="#fff" stroke-width="3"/>
+     <circle cx="60" cy="57" r="37" fill="none" stroke="#fff" stroke-width="1.5" opacity=".65"/>
+     <path d="m31 48 12 9 9-20 9 18 13-21 6 20 11-8-5 28H36Z" fill="#fff"/>
+     <path d="M42 81h36" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+     <path d="M47 88h26" stroke="#f2c9ff" stroke-width="3" stroke-linecap="round"/>
     </svg>
    </div>
   </section>
