@@ -4339,7 +4339,7 @@ function updateCheckoutSummary(){
  select.disabled=true;
  const raw=priceForMethod(p,method),isWallet=method==="Saldo de Tienda El Castillo";
  if(Number(raw)<=0||!isPaymentMethodReady(method)){
-  $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong><small>Forma de pago elegida: '+clean(method)+'</small></div><div class="checkout-total"><strong>No disponible</strong></div>';
+  $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong><small>Forma de pago elegida: '+clean(isWallet?"Coronas del Castillo":method)+'</small></div><div class="checkout-total"><strong>No disponible</strong></div>';
   $("paymentInstructions").innerHTML='<div class="payment-unavailable"><strong>La forma de pago elegida ya no está disponible</strong><span>Vuelve al catálogo para elegir otra. No se ha creado ningún pedido.</span></div>';
   $("walletCheckoutNote").textContent="";
   renderCheckoutPaymentMethods();updatePaymentFields();window.updateCheckoutSubmitState?.();return;
@@ -4353,7 +4353,7 @@ function updateCheckoutSummary(){
  const unit=isWallet?"Coronas":method==="USDT"?"USDT":"CUP";
  const amount=Number(raw)>0?(isWallet?moneyUSD(raw):money(raw)):"—";
  const regionLine=p.provider_region?'<small>Región de recarga '+clean(p.provider_region)+(requiresPlayerValidation(p)?' · Comprobación de ID obligatoria':'')+'</small>':'<small>Precio final según el método de pago</small>';
- $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'<small class="checkout-locked-method">Forma de pago elegida: '+clean(method)+'</small></div><div class="checkout-total"><strong>'+amount+'</strong><small>'+unit+'</small></div>';
+ $("checkoutSummary").innerHTML='<div><strong>'+clean(p.game)+' · '+clean(p.name)+'</strong>'+regionLine+'<small class="checkout-locked-method">Forma de pago elegida: '+clean(isWallet?"Coronas del Castillo":method)+'</small></div><div class="checkout-total"><strong>'+amount+'</strong><small>'+unit+'</small></div>';
  syncPlayerRegionUI();
  const walletNote=$("walletCheckoutNote");
  if(walletNote)walletNote.textContent=isWallet?"Tienes "+moneyUSD(walletBalanceUSD)+" Coronas disponibles. "+(walletBalanceUSD>=Number(raw)?"Tienes Coronas suficientes. El importe se descontará cuando confirmes esta compra.":"Te faltan "+moneyUSD(Number(raw)-walletBalanceUSD)+" Coronas. No se creará el pedido hasta que tengas saldo suficiente."):"";
@@ -5690,7 +5690,7 @@ async function loadMyWalletDeposits(){
    '<button id="wallet-retry-button-'+clean(d.id)+'" class="secondary-btn" type="button" onclick="attachWalletDepositProof(\''+clean(d.id)+'\',\''+clean(d.payment_method)+'\')">Enviar comprobantes</button><p id="wallet-retry-msg-'+clean(d.id)+'" class="msg" role="status"></p>':'';
   const links=await createSignedWalletProofLinks(proofRows);
   const credited=d.credited_amount==null?"Pendiente de cálculo":moneyUSD(Number(d.credited_amount||0)+Number(d.welcome_bonus_amount||0))+" Coronas";
-  cards.push('<article class="wallet-history-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>Depósito · '+money(d.amount)+' '+currency+'</strong><span class="wallet-status '+statusClass+'">'+status+'</span></div><div class="order-detail">'+clean(d.payment_method)+'<br>Coronas previstas: '+credited+(d.status==="approved"?"<br>Saldo acreditado: "+moneyUSD(d.credited_amount)+" USD":"")+'<br>Fecha: '+new Date(d.created_at).toLocaleString("es-CU")+(d.exchange_rate?"<br>Tasa aplicada: "+money(d.exchange_rate)+" CUP/USD":"")+(d.network?"<br>Red: "+clean(d.network):"")+(d.payment_reference?"<br>Referencia: "+clean(d.payment_reference):"")+'</div>'+links+(d.admin_notes?'<p class="wallet-warning"><strong>Motivo del rechazo:</strong> '+clean(d.admin_notes)+'</p>':'')+retry+'</article>');
+  cards.push('<article class="wallet-history-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>Recarga · '+money(d.amount)+' '+currency+'</strong><span class="wallet-status '+statusClass+'">'+status+'</span></div><div class="order-detail">'+clean(d.payment_method)+'<br>Coronas previstas: '+credited+(d.status==="approved"?"<br>Coronas acreditadas: "+moneyUSD(Number(d.credited_amount||0)+Number(d.welcome_bonus_amount||0))+" Coronas":"")+'<br>Fecha: '+new Date(d.created_at).toLocaleString("es-CU")+(d.exchange_rate?"<br>Tasa aplicada: "+money(d.exchange_rate)+" CUP por Corona":"")+(d.network?"<br>Red: "+clean(d.network):"")+(d.payment_reference?"<br>Referencia: "+clean(d.payment_reference):"")+'</div>'+links+(d.admin_notes?'<p class="wallet-warning"><strong>Motivo del rechazo:</strong> '+clean(d.admin_notes)+'</p>':'')+retry+'</article>');
  }
  list.innerHTML=proofLoadWarning+cards.join("");
 }
