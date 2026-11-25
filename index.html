@@ -2429,10 +2429,9 @@ body{min-width:0}
    <div id="walletReferralStats" class="coronas-referral-stats wallet-referral-metrics" aria-label="Resultados de tus invitaciones">
     <article><small>Amigos vinculados</small><strong>—</strong></article>
     <article><small>Compras premiadas</small><strong>—</strong></article>
-    <article><small>Ventas generadas</small><strong>—</strong></article>
     <article><small>Ganancia obtenida (5 %)</small><strong>—</strong></article>
    </div>
-   <p class="wallet-referral-stats-note">Las ventas se cuentan cuando el proveedor confirma la entrega. Tu ganancia es el 5 % acreditado en Coronas por la primera compra válida de cada amigo.</p>
+   <p class="wallet-referral-stats-note">Tu ganancia del 5 % se acredita automáticamente en Coronas cuando el proveedor confirma la entrega de la primera compra válida de cada amigo.</p>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
    <h3 id="walletInformationTitle">Cómo funciona tu saldo</h3>
@@ -5630,18 +5629,9 @@ async function loadWalletPromotions(){
   if(autoLink?.summary)data=autoLink.summary;
  }
  if(data.invite_linked)discardWalletReferralAttribution();
- let generatedVolume=0;
- try{
-  const volumeResult=await db.rpc("get_wallet_referral_purchase_volume");
-  if(!volumeResult.error){
-   const raw=volumeResult.data;
-   generatedVolume=Number(raw&&typeof raw==="object"?raw.purchase_volume_usd:raw)||0;
-  }
- }catch(volumeError){console.warn("No se pudo actualizar el volumen de compras invitadas:",volumeError);}
- data={...data,purchase_volume_usd:generatedVolume};
  walletReferralSummary=data;
  if(codeBox)codeBox.textContent="La invitación viaja dentro de tu enlace personal. No hace falta pegar códigos.";
- if(stats)stats.innerHTML='<article><small>Amigos vinculados</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Ventas generadas</small><strong>'+moneyUSD(data.purchase_volume_usd||0)+' USD</strong></article><article><small>Ganancia obtenida (5 %)</small><strong>'+moneyUSD(data.earned_usd||0)+' Coronas</strong></article>';
+ if(stats)stats.innerHTML='<article><small>Amigos vinculados</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Ganancia obtenida (5 %)</small><strong>'+moneyUSD(data.earned_usd||0)+' Coronas</strong></article>';
  renderWalletPromotionStates(data);
  previewWalletDeposit();
  if(msg){
