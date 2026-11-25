@@ -1,5 +1,5 @@
 -- Restore automatic publication of Free Fire EVO products after the supplier retest request.
--- Only publish the seven previously approved LATAM products when the latest provider
+-- Only publish the eight previously approved LATAM products when the latest provider
 -- sync confirms active status, stock, player-ID validation and the expected target schema.
 DO $migration$
 DECLARE
@@ -67,7 +67,8 @@ DECLARE
     'a7d58f19-3ace-49a8-be09-0e5edde9d448'::uuid, -- 50 cajas
     '51825a7b-68b0-4d1d-84e8-36367d316844'::uuid, -- 10 fragmentos
     'f6133c86-37cd-48af-8868-dc44cce482a8'::uuid, -- 50 fragmentos
-    '64e90b95-ccf8-40da-9c4b-37e5e25e32d5'::uuid  -- 100 fragmentos
+    '64e90b95-ccf8-40da-9c4b-37e5e25e32d5'::uuid, -- 100 fragmentos
+    'a9cfa9a9-2310-4167-bdb9-6740413660dc'::uuid  -- 500 fragmentos
   ];
   v_published_count integer;
 BEGIN
