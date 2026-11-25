@@ -238,7 +238,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v196"));
+  assert.ok(serviceWorker.includes("shell-v197"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=5'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -1130,10 +1130,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v196"));
+  assert.ok(serviceWorker.includes("shell-v197"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=28"));
-  assert.ok(serviceWorker.includes("shell-v196"));
+  assert.ok(serviceWorker.includes("shell-v197"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=28"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1163,7 +1163,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v196"));
+  assert.ok(serviceWorker.includes("shell-v197"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1182,4 +1182,27 @@ test("invitaciones y compras pagadas con Coronas también usan resúmenes desple
   assert.match(indexHtml, /wallet-admin-referral-summary/);
   assert.match(indexHtml, /wallet-purchase-admin-card" data-wallet-purchase-card/);
   assert.match(indexHtml, /wallet-admin-purchase-summary/);
+});
+
+
+test("Wallet conserva las solicitudes visibles y limita las consultas de administración a las 50 más recientes", () => {
+  const deposits = extractNamedFunction(indexHtml, "loadWalletDepositsAdmin");
+  const purchases = extractNamedFunction(indexHtml, "loadWalletPurchasesAdmin");
+  assert.match(deposits, /walletDepositsAdminLoadPromise/);
+  assert.match(deposits, /list\\.dataset\\.loaded==="1"/);
+  assert.match(deposits, /\\.limit\\(50\\)/);
+  assert.match(deposits, /La lista anterior permanece visible/);
+  assert.doesNotMatch(deposits, /list\\.textContent="Cargando recargas…"/);
+  assert.match(purchases, /walletPurchasesAdminLoadPromise/);
+  assert.match(purchases, /list\\.dataset\\.loaded==="1"/);
+  assert.match(purchases, /\\.limit\\(50\\)/);
+  assert.match(purchases, /La lista anterior permanece visible/);
+  assert.doesNotMatch(purchases, /list\\.textContent="Cargando compras pagadas con Coronas…"/);
+  assert.match(indexHtml, /function walletAdminSectionIsVisible\\(section\\)/);
+  assert.match(indexHtml, /table:"wallet_transactions",filter:"kind=eq\\.purchase"/);
+  const polling = extractNamedFunction(indexHtml, "startAdminPaymentPolling");
+  assert.match(polling, /walletAdminSectionIsVisible\\("deposits"\\)/);
+  assert.match(polling, /walletAdminSectionIsVisible\\("purchases"\\)/);
+  const openStore = extractNamedFunction(indexHtml, "openStore");
+  assert.doesNotMatch(openStore, /depósitos de administración/);
 });
