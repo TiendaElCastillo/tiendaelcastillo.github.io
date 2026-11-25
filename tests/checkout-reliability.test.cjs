@@ -27,6 +27,7 @@ const referralPurchaseVolumeMigrationSource = fs.readFileSync(path.join(root, "s
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
 const evoPublicationMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125150000_publish_free_fire_evo_products.sql"), "utf8");
 const freeFireEvoPauseMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125204814_pause_free_fire_evo_items_until_provider_fix.sql"), "utf8");
+const freeFireEvoReenableMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125215000_reenable_free_fire_evo_for_provider_retest.sql"), "utf8");
 const coronasPromotionsJsSource = fs.readFileSync(path.join(root, "assets/coronas-promotions.js"), "utf8");
 
 
@@ -239,7 +240,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v199"));
+  assert.ok(serviceWorker.includes("shell-v200"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -1132,10 +1133,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v199"));
+  assert.ok(serviceWorker.includes("shell-v200"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=28"));
-  assert.ok(serviceWorker.includes("shell-v199"));
+  assert.ok(serviceWorker.includes("shell-v200"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=28"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1162,7 +1163,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v199"));
+  assert.ok(serviceWorker.includes("shell-v200"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1237,7 +1238,7 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
   assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
-  assert.ok(serviceWorker.includes("shell-v199"));
+  assert.ok(serviceWorker.includes("shell-v200"));
   assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
 });
 
@@ -1302,4 +1303,42 @@ test("la recompensa por invitación acredita el 5 % de la compra automáticament
   assert.ok(coronasProductionMigrationSource.includes("perform private.credit_wallet_referral_order_reward(new.id)"));
   assert.ok(referralAutoLinkMigrationSource.includes("v_order.created_at < v_linked_at"));
   assert.ok(referralAutoLinkMigrationSource.includes("wallet_referral_order_rewards_invitee_once_uidx"));
+});
+
+
+test("los mensajes de acceso explican qué corregir y se muestran con contraste legible", () => {
+  assert.match(indexHtml, /function setReadableFormMessage\(node,message,type="info"\)/);
+  assert.match(indexHtml, /function setAuthMessage\(message,type="error"\)/);
+  assert.match(indexHtml, /function markAuthFieldErrors\(fieldIds,message\)/);
+  assert.match(indexHtml, /El correo o la contraseña no coinciden/);
+  assert.match(indexHtml, /Si no la recuerdas, pulsa «¿Olvidaste tu contraseña\?»/);
+  assert.match(indexHtml, /Escribe tu contraseña para continuar/);
+  assert.match(indexHtml, /Revisa el correo\. Debe tener un formato parecido a nombre@correo\.com/);
+  assert.match(indexHtml, /\.msg\.is-error\{[^}]*background:#fff0f2/s);
+  assert.match(indexHtml, /\.msg:empty\{display:none\}/);
+  assert.match(indexHtml, /input\[aria-invalid="true"\]/);
+  assert.match(indexHtml, /aria-live",isError\?"assertive":"polite"/);
+  assert.match(indexHtml, /required aria-describedby="authmsg"/);
+});
+
+test("el alta de cuenta informa los campos obligatorios con instrucciones concretas", () => {
+  assert.match(indexHtml, /Escribe tu nombre para identificar tu cuenta/);
+  assert.match(indexHtml, /Escribe el correo electrónico que quieres usar/);
+  assert.match(indexHtml, /La contraseña debe tener al menos 8 caracteres/);
+  assert.match(indexHtml, /Ese correo ya tiene una cuenta/);
+});
+
+test("la reactivación EVO revierte la pausa permanente y solo publica productos confirmados recientemente", () => {
+  assert.ok(freeFireEvoReenableMigrationSource.includes("v_active_paused"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("v_active_original"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("v_return_paused"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("v_return_original"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("SET active = true,"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("storefront_visible = true"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("provider_status = 'active'"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("provider_in_stock IS TRUE"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("provider_validation_supported IS TRUE"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("provider_synced_at >= now() - interval '30 minutes'"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("'11251c9b-4966-4210-969e-3d4ffdfb70aa'"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("'64e90b95-ccf8-40da-9c4b-37e5e25e32d5'"));
 });
