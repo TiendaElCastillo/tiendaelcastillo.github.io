@@ -111,7 +111,7 @@ function setupWalletDepositFilters(panel){
 }
 let activeWalletAdminSection="deposits";
 const walletAdminSections=["deposits","referrals","purchases","settings"];
-function showWalletAdminSection(section){
+function showWalletAdminSection(section,loadData=true){
  activeWalletAdminSection=walletAdminSections.includes(section)?section:"deposits";
  const panel=document.querySelector("#admin .wallet-admin-panel");
  if(!panel)return;
@@ -123,9 +123,9 @@ function showWalletAdminSection(section){
   button.classList.toggle("active",active);
   button.setAttribute("aria-pressed",active?"true":"false");
  });
- if(activeWalletAdminSection==="deposits"&&typeof window.loadWalletDepositsAdmin==="function")window.loadWalletDepositsAdmin();
- if(activeWalletAdminSection==="referrals"&&typeof window.loadWalletReferralAdmin==="function")window.loadWalletReferralAdmin();
- if(activeWalletAdminSection==="purchases"&&typeof window.loadWalletPurchasesAdmin==="function")window.loadWalletPurchasesAdmin();
+ if(loadData&&activeWalletAdminSection==="deposits"&&typeof window.loadWalletDepositsAdmin==="function")window.loadWalletDepositsAdmin();
+ if(loadData&&activeWalletAdminSection==="referrals"&&typeof window.loadWalletReferralAdmin==="function")window.loadWalletReferralAdmin();
+ if(loadData&&activeWalletAdminSection==="purchases"&&typeof window.loadWalletPurchasesAdmin==="function")window.loadWalletPurchasesAdmin();
 }
 function setupWalletAdminTabs(panel){
  if(!panel||panel.dataset.walletAdminTabsReady==="1")return;
@@ -135,7 +135,7 @@ function setupWalletAdminTabs(panel){
  buttons.forEach(button=>{
   button.addEventListener("click",()=>showWalletAdminSection(button.dataset.walletAdminTab));
  });
- showWalletAdminSection(activeWalletAdminSection);
+ showWalletAdminSection(activeWalletAdminSection,false);
 }
 
 function installWalletDepositRefreshFilter(){
