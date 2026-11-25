@@ -241,7 +241,7 @@ test("la actualización de los bloqueos se descarga también en teléfonos con c
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=4'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes("shell-v188"));
+  assert.match(serviceWorker, /keys\.filter\(key =>[\s\S]*key !== CACHE_NAME[\s\S]*key.startsWith\(CACHE_PREFIX\)/);
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
   assert.ok(indexHtml.includes('id="proofUploadCircuit"'));
   assert.ok(serviceWorker.includes("./assets/checkout-reliability.js?v=1"));
@@ -840,7 +840,7 @@ test("la rama de liberación usa producción y enruta las funciones reales; los 
   assert.ok(indexHtml.includes('"central-one-order"'));
   assert.ok(!indexHtml.includes("coronas-staging-"));
   assert.match(indexHtml, /Coronas/i);
-  assert.match(indexHtml, /coronas-promotions\\.js\\?v=2/);
+  assert.match(indexHtml, /coronas-promotions\.js\?v=2/);
 });
 
  
