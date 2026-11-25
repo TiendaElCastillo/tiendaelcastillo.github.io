@@ -1120,7 +1120,11 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(inviteSection, /Recibes esta recompensa cuando el proveedor confirme/);
   assert.match(inviteSection, /onclick="shareWalletReferralLink\(\)">Compartir invitación/);
   assert.equal((inviteSection.match(/<button\b/g) || []).length, 1);
-  assert.doesNotMatch(inviteSection, /Copiar enlace|walletReferralCode|walletReferralStats|walletReferralRewardList/);
+  assert.doesNotMatch(inviteSection, /Copiar enlace|walletReferralCode|walletReferralRewardList/);
+  assert.match(inviteSection, /id="walletReferralStats"/);
+  assert.match(inviteSection, /Amigos vinculados/);
+  assert.match(inviteSection, /Ventas generadas/);
+  assert.match(inviteSection, /Ganancia obtenida \(5 %\)/);
   assert.doesNotMatch(indexHtml, /id="walletReferralPromoCard"|id="walletInviteProgress"/);
   assert.doesNotMatch(indexHtml, />\s*Copiar enlace\s*</);
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
