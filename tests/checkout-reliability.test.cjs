@@ -23,6 +23,7 @@ const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/mig
 const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
 const centralOrderAutoSyncMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125133000_central_one_auto_order_status_sync.sql"), "utf8");
 const walletPromotionCompletionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125130148_wallet_promotion_completion_states.sql"), "utf8");
+const referralPurchaseVolumeMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125184000_wallet_referral_purchase_volume.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
 const evoPublicationMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125150000_publish_free_fire_evo_products.sql"), "utf8");
 const coronasPromotionsJsSource = fs.readFileSync(path.join(root, "assets/coronas-promotions.js"), "utf8");
@@ -236,11 +237,11 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes("shell-v195"));
+  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
+  assert.ok(serviceWorker.includes("shell-v196"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=5'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
-  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
+  assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
   assert.match(serviceWorker, /keys\.filter\(key =>[\s\S]*key !== CACHE_NAME[\s\S]*key.startsWith\(CACHE_PREFIX\)/);
   assert.ok(indexHtml.includes("./assets/checkout-reliability.js?v=1"));
   assert.ok(indexHtml.includes('id="proofUploadCircuit"'));
@@ -1125,10 +1126,56 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v195"));
+  assert.ok(serviceWorker.includes("shell-v196"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=28"));
-  assert.ok(serviceWorker.includes("shell-v195"));
+  assert.ok(serviceWorker.includes("shell-v196"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=28"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
+});
+
+
+test("la Cartera muestra amigos vinculados, ventas generadas y recompensas reales por invitación", () => {
+  assert.match(indexHtml, /id="walletReferralStats"/);
+  assert.match(indexHtml, /Amigos vinculados/);
+  assert.match(indexHtml, /Ventas generadas/);
+  assert.match(indexHtml, /Ganancia obtenida \(5 %\)/);
+  const source = extractNamedFunction(indexHtml, "loadWalletPromotions");
+  assert.match(source, /get_wallet_referral_purchase_volume/);
+  assert.match(source, /purchase_volume_usd/);
+  assert.match(referralPurchaseVolumeMigrationSource, /auth\.uid\(\)/);
+  assert.match(referralPurchaseVolumeMigrationSource, /sum\(r\.package_amount_usd\)/);
+  assert.match(referralPurchaseVolumeMigrationSource, /r\.reversed_at is null/);
+  assert.match(referralPurchaseVolumeMigrationSource, /grant execute on function public\.get_wallet_referral_purchase_volume\(\) to authenticated/);
+});
+
+test("Gestión de Coronas se separa en apartados y solo carga la pestaña abierta", () => {
+  for (const section of ["deposits", "referrals", "purchases", "settings"]) {
+    assert.match(indexHtml, new RegExp('data-wallet-admin-section="' + section + '"'));
+    assert.match(indexHtml, new RegExp('data-wallet-admin-tab="' + section + '"'));
+  }
+  assert.match(adminPanelSource, /setupWalletAdminTabs\(panels\[5\]\)/);
+  assert.match(adminPanelSource, /function showWalletAdminSection\(section,loadData=true\)/);
+  assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
+  assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
+  assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
+  assert.ok(serviceWorker.includes("shell-v196"));
+  assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
+  assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
+});
+
+test("las recargas de Coronas se muestran resumidas y permiten abrir cada captura en el visor ampliado", () => {
+  assert.match(indexHtml, /<details class="wallet-admin-card wallet-admin-collapsible wallet-admin-deposit-card"/);
+  assert.match(indexHtml, /data-wallet-proof-preview/);
+  assert.match(indexHtml, /async function openWalletDepositProof\(button\)/);
+  assert.match(indexHtml, /showOrderProofPreview\(data\.signedUrl/);
+  assert.match(indexHtml, /if\(details\.amountLabel\)addInfo\("IMPORTE ENVIADO"/);
+  assert.match(indexHtml, /const canReview=d\.status==="payment_review"&&proofsAccessible/);
+});
+
+test("invitaciones y compras pagadas con Coronas también usan resúmenes desplegables", () => {
+  assert.match(indexHtml, /wallet-admin-referral-card/);
+  assert.match(indexHtml, /wallet-admin-referral-summary/);
+  assert.match(indexHtml, /wallet-purchase-admin-card" data-wallet-purchase-card/);
+  assert.match(indexHtml, /wallet-admin-purchase-summary/);
 });
