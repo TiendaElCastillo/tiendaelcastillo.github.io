@@ -2077,11 +2077,6 @@ button:active:not(:disabled){
 }
 
 /* Cabecera: el emblema de la tienda acompaña los accesos de mensajes y cuenta. */
-.account-header-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.header-account-brand-icon{display:block;width:16px;height:16px;flex:0 0 16px;object-fit:contain;border-radius:5px}
-#siteHeader .notification-header-btn>span:first-child{position:relative;overflow:visible}
-.notification-brand-icon{position:absolute;right:-8px;bottom:-7px;z-index:2;width:15px;height:15px;object-fit:contain;border-radius:5px;background:#fff;border:1px solid #fff;box-shadow:0 1px 4px rgba(8,24,54,.2)}
-@media(max-width:420px){.header-account-brand-icon{width:14px;height:14px;flex-basis:14px}.account-header-btn{gap:4px}.notification-brand-icon{right:-7px;bottom:-6px;width:13px;height:13px}}
 
 /* Cartera: recompensa de invitación integrada en una sola tarjeta. */
 #walletView .coronas-referral-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:15px;padding:19px!important;overflow:hidden;position:relative;border:1px solid #d8e3f4!important;background:linear-gradient(135deg,#fff 0%,#f4f8ff 58%,#f2efff 100%)!important;box-shadow:0 12px 30px rgba(32,67,125,.075)!important}

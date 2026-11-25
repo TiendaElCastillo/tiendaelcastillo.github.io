@@ -237,7 +237,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes("shell-v192"));
+  assert.ok(serviceWorker.includes("shell-v193"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=5'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
@@ -1086,8 +1086,15 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(gameTileSource, /el-castillo-icon\.webp/);
   assert.ok(indexHtml.includes('class="brand-logo"'));
   assert.ok(indexHtml.includes('src="./assets/el-castillo-logo.webp"'));
-  assert.match(indexHtml, /header-account-brand-icon/);
-  assert.match(indexHtml, /notification-brand-icon/);
+  const headerStart = indexHtml.indexOf('<header id="siteHeader"');
+  const headerEnd = indexHtml.indexOf("</header>", headerStart);
+  assert.ok(headerStart >= 0 && headerEnd > headerStart);
+  const headerSource = indexHtml.slice(headerStart, headerEnd);
+  assert.match(headerSource, /class="brand-logo" src="\.\/assets\/el-castillo-icon\.webp"/);
+  assert.doesNotMatch(headerSource, /el-castillo-logo\.webp/);
+  assert.doesNotMatch(headerSource, /header-account-brand-icon|header-action-brand-icon|notification-brand-icon|account-header-btn/);
+  assert.match(headerSource, /<button class="header-btn notification-header-btn hidden" id="notificationsButton"[^>]*onclick="openNotificationCenter\(\)"/);
+  assert.match(headerSource, /<button class="header-btn" type="button" onclick="currentUser\?showView\('profile'\):openAccount\(\)">Mi cuenta<\/button>/);
   assert.match(indexHtml, /RECARGAS DE JUEGOS EN CUBA/);
   assert.doesNotMatch(indexHtml, /Más que una tienda|MÁS QUE UNA TIENDA/);
   assert.match(storefrontPolishSource, /\.game-art-brand-badge/);
@@ -1108,7 +1115,7 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.doesNotMatch(indexHtml, />\s*Copiar enlace\s*</);
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=27"));
-  assert.ok(serviceWorker.includes("shell-v192"));
+  assert.ok(serviceWorker.includes("shell-v193"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=27"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
