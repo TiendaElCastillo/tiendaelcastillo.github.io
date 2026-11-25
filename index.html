@@ -6116,7 +6116,8 @@ function scrollWalletDepositHistory(){
  $("walletDepositsMine")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 let walletDepositDoneTimer=null;
-function resetWalletDepositWizard(options={}){
+function resetWalletDepositWizard(options){
+ options=options||{};
  const keepMessage=options&&options.keepMessage===true;
  if(walletDepositDoneTimer){window.clearTimeout(walletDepositDoneTimer);walletDepositDoneTimer=null;}
  resetWalletDepositProofUploadProgress();
