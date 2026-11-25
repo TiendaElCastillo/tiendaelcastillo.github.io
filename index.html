@@ -5696,7 +5696,15 @@ async function loadWalletReferralAdmin(){
  if(summary)summary.innerHTML='<article><small>Invitaciones</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Coronas entregadas</small><strong>'+moneyUSD(data.earned_usd||0)+'</strong></article>';
  if(!list)return;
  if(!rows.length){list.innerHTML='<p class="empty-note">Todavía no hay invitaciones registradas.</p>';return;}
- list.innerHTML=rows.map(row=>'<article class="wallet-admin-card"><strong>'+clean(row.inviter_name||row.inviter_email||"Cuenta invitadora")+' → '+clean(row.invited_name||row.invited_email||"Cuenta invitada")+'</strong><p class="wallet-admin-summary">Código: '+clean(row.referral_code||"—")+'<br>Vinculada: '+(row.linked_at?new Date(row.linked_at).toLocaleString("es-CU"):"—")+'<br>Primera compra: '+clean(row.order_code||"Pendiente")+'<br>Recompensa: '+(Number(row.reward_amount_usd||0)>0?moneyUSD(row.reward_amount_usd)+" Coronas":"Pendiente")+'<br>Estado: '+clean(row.reward_status||"Sin recompensa")+'</p></article>').join("");
+ list.innerHTML=rows.map(row=>{
+  const inviter=clean(row.inviter_name||row.inviter_email||"Cuenta invitadora");
+  const invited=clean(row.invited_name||row.invited_email||"Cuenta invitada");
+  const state=String(row.reward_status||"Sin recompensa");
+  const stateClass=state.toLocaleLowerCase("es").includes("acreditada")?"approved":state.toLocaleLowerCase("es").includes("revertida")?"rejected":"";
+  const reward=Number(row.reward_amount_usd||0)>0?moneyUSD(row.reward_amount_usd)+" Coronas":"Pendiente";
+  const date=row.linked_at?new Date(row.linked_at).toLocaleString("es-CU"):"—";
+  return '<details class="wallet-admin-card wallet-admin-collapsible wallet-admin-referral-card"><summary class="wallet-admin-referral-summary"><span><strong>'+inviter+' → '+invited+'</strong><small>Vinculada: '+date+'</small></span><span class="wallet-status '+stateClass+'">'+clean(state)+'</span><strong class="wallet-admin-referral-reward">'+reward+'</strong><span class="wallet-admin-expand-hint">Ver invitación <b aria-hidden="true">⌄</b></span></summary><div class="wallet-admin-card-detail"><p class="wallet-admin-summary">Código: <strong>'+clean(row.referral_code||"—")+'</strong><br>Fecha de vinculación: '+date+'<br>Primera compra entregada: <strong>'+clean(row.order_code||"Pendiente")+'</strong><br>Recompensa del 5 %: <strong>'+reward+'</strong><br>Estado: '+clean(state)+'</p></div></details>';
+ }).join("");
 }
 
 async function loadWalletSettings(){
@@ -6451,7 +6459,7 @@ async function loadWalletPurchasesAdmin(){
    const folio=clean(order?.order_code||("Movimiento "+String(transaction.id||"").slice(0,8)));
    const date=transaction.created_at?new Date(transaction.created_at).toLocaleString("es-CU"):"Fecha no disponible";
    const integrityNote=mismatch?'<p class="wallet-warning"><strong>Comprobación:</strong> el débito no coincide con un pedido de Coronas válido. Revisa este movimiento antes de darlo por entregado.</p>':"";
-   return '<article class="wallet-admin-card wallet-purchase-admin-card" data-wallet-purchase-card><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>'+customer+'</strong><span class="wallet-status '+statusClass+'">'+statusLabel+'</span></div><div class="wallet-admin-summary"><strong>'+game+(packageName?" · "+packageName:"")+'</strong><br>Folio: <strong>'+folio+'</strong><br>Jugador: '+player+(playerName?" · "+playerName:"")+'<br>Coste descontado: <strong>'+moneyUSD(amount)+' Coronas</strong><br>Fecha de compra: '+date+email+'</div>'+integrityNote+'</article>';
+   return '<details class="wallet-admin-card wallet-admin-collapsible wallet-purchase-admin-card" data-wallet-purchase-card><summary class="wallet-admin-purchase-summary"><span class="wallet-admin-purchase-customer"><strong>'+customer+'</strong><small>'+game+(packageName?" · "+packageName:"")+'</small><small>Folio: '+folio+'</small></span><span class="wallet-status '+statusClass+'">'+statusLabel+'</span><strong class="wallet-admin-purchase-amount">'+moneyUSD(amount)+' Coronas</strong><span class="wallet-admin-expand-hint">Ver pedido <b aria-hidden="true">⌄</b></span></summary><div class="wallet-admin-card-detail"><p class="wallet-admin-summary"><strong>'+game+(packageName?" · "+packageName:"")+'</strong><br>Folio: <strong>'+folio+'</strong><br>Jugador: '+player+(playerName?" · "+playerName:"")+'<br>Coste descontado: <strong>'+moneyUSD(amount)+' Coronas</strong><br>Fecha de compra: '+date+email+'</p>'+integrityNote+'</div></details>';
   });
   const count=$("walletPurchaseAdminCount"),spent=$("walletPurchaseAdminTotal"),issueCount=$("walletPurchaseAdminIssues");
   if(count)count.textContent=String(purchases.length);
