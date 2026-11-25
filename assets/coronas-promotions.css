@@ -169,3 +169,33 @@
  .coronas-promo-heading strong{font-size:13px}
  .coronas-promo-heading span{font-size:9px}
 }
+
+
+/* Historial de recargas del cliente: tarjetas resumidas y desplegables. */
+.wallet-customer-deposit-list{display:grid;gap:10px}
+.wallet-customer-deposit-card{min-width:0;overflow:hidden;border:1px solid #dfe7f2;border-radius:16px;background:#fff;box-shadow:0 5px 16px rgba(24,53,91,.045)}
+.wallet-customer-deposit-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:9px 10px;padding:13px 14px;list-style:none;cursor:pointer}
+.wallet-customer-deposit-summary::-webkit-details-marker{display:none}
+.wallet-customer-deposit-main{display:flex;min-width:0;flex-direction:column;gap:3px}
+.wallet-customer-deposit-main strong{overflow-wrap:anywhere;color:#243b5c;font-size:13px;line-height:1.35}
+.wallet-customer-deposit-main small{color:#78879b;font-size:11px;line-height:1.4}
+.wallet-customer-deposit-summary .wallet-status{justify-self:end;white-space:nowrap}
+.wallet-customer-deposit-summary-footer{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:7px;border-top:1px solid #edf1f6}
+.wallet-customer-deposit-summary-footer>strong{color:#245a96;font-size:13px;line-height:1.35}
+.wallet-customer-deposit-summary-footer>span{display:inline-flex;align-items:center;gap:5px;color:#718198;font-size:11px;font-weight:750;white-space:nowrap}
+.wallet-customer-deposit-summary-footer b{font-size:15px;transition:transform .2s ease}
+.wallet-customer-deposit-card[open] .wallet-customer-deposit-summary-footer b{transform:rotate(180deg)}
+.wallet-customer-deposit-details{display:grid;gap:0;padding:0 14px 13px;border-top:1px solid #edf1f6}
+.wallet-customer-deposit-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #f0f3f8;font-size:12px}
+.wallet-customer-deposit-row span{color:#78879b}
+.wallet-customer-deposit-row strong{color:#304764;text-align:right;overflow-wrap:anywhere}
+.wallet-customer-deposit-row.is-total strong{color:#245a96;font-size:14px}
+.wallet-customer-deposit-status-note{margin:11px 0 2px;color:#64758d;font-size:12px;line-height:1.5}
+.wallet-customer-deposit-retry{margin-top:10px;padding-top:9px;border-top:1px solid #edf1f6}
+.wallet-customer-deposit-retry .field{margin:9px 0}
+.wallet-customer-deposit-retry .wallet-warning{margin:4px 0 8px}
+@media(max-width:360px){
+ .wallet-customer-deposit-summary{padding:11px}
+ .wallet-customer-deposit-details{padding-right:11px;padding-left:11px}
+ .wallet-customer-deposit-summary-footer>strong{font-size:12px}
+}
