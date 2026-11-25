@@ -690,7 +690,7 @@ test("la recarga de Coronas usa el flujo guiado de juegos y termina con una conf
   assert.match(indexHtml, /No repitas el pago/);
 });
 test("el historial de Coronas no vuelve a pedir comprobantes cuando el pago está en revisión", () => {
-  assert.match(indexHtml, /const canUpload=d\.status==="pending"&&proofRows\.length===0&&!d\.proof_path/);
+  assert.match(indexHtml, /const canUpload=deposit\.status==="pending"&&!proofResult\.error&&!proofIds\.has\(deposit\.id\)&&!deposit\.proof_path/);
   assert.doesNotMatch(indexHtml, /const canUpload=\["pending","payment_review"\]/);
   assert.match(indexHtml, /Adjuntar comprobante pendiente \(1 imagen\)/);
 });
@@ -1212,7 +1212,7 @@ test("el historial de recargas del cliente no expone enlaces ni datos internos d
   const history = extractNamedFunction(indexHtml, "loadMyWalletDeposits");
   assert.ok(history.includes('select("id,status,amount,currency,payment_method,credited_amount,welcome_bonus_amount,created_at,proof_path")'));
   assert.ok(history.includes('select("deposit_id")'));
-  assert.ok(history.includes('createElement("details")'));
+  assert.ok(history.includes('node("details","wallet-customer-deposit-card")'));
   assert.ok(history.includes("wallet-customer-deposit-card"));
   assert.doesNotMatch(history, /createSignedUrl|signedUrl|wallet-proof-links|createSignedWalletProofLinks/);
   assert.doesNotMatch(history, /deposit\.(admin_notes|payment_reference|sender_phone|recipient_address|txid|exchange_rate)/);
