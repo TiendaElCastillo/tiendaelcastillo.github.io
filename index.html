@@ -2547,7 +2547,7 @@ body{min-width:0}
  </section>
  <section id="walletReferralAdminPanel" class="wallet-panel wallet-admin-settings" data-wallet-admin-section="referrals"><h3>Invitaciones y recompensas</h3><p>Revisa cada código vinculado, la primera compra entregada y las Coronas acreditadas por el 5 %.</p><div id="walletReferralAdminSummary" class="coronas-referral-stats"><article><small>Invitaciones</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas entregadas</small><strong>—</strong></article></div><div id="walletReferralAdminList"><p class="empty-note">Cargando invitaciones…</p></div><button class="secondary-btn" type="button" onclick="loadWalletReferralAdmin()">Actualizar invitaciones</button></section>
  <section class="wallet-panel wallet-admin-deposits" data-wallet-admin-section="deposits">
-  <div class="order-toolbar"><h3>Solicitudes de recarga de Coronas</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin()">Actualizar solicitudes</button></div>
+  <div class="order-toolbar"><h3>Solicitudes de recarga de Coronas</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin({force:true})">Actualizar solicitudes</button></div>
   <p class="subtle">Comprueba la recepción real en la tarjeta bancaria o en la red BNB Smart Chain antes de aprobar. Una captura por sí sola no demuestra que el dinero llegó. Al aprobar, el sistema acredita el importe una sola vez.</p>
   <p id="walletAdminMsg" class="msg" role="status"></p>
   <div id="walletDepositsAdmin">Cargando depósitos…</div>
@@ -2555,14 +2555,15 @@ body{min-width:0}
  <section class="wallet-panel wallet-admin-purchases" data-wallet-admin-section="purchases">
   <div class="order-toolbar">
    <div><h3>Compras pagadas con Coronas</h3><p class="subtle">Registro de cada débito y de la recarga enviada a la cuenta del juego. Estas compras no esperan aprobación manual de pago.</p></div>
-   <button id="walletPurchasesAdminRefresh" class="secondary-btn" type="button" onclick="loadWalletPurchasesAdmin()">Actualizar compras</button>
+   <button id="walletPurchasesAdminRefresh" class="secondary-btn" type="button" onclick="loadWalletPurchasesAdmin({force:true})">Actualizar compras</button>
   </div>
   <div id="walletPurchaseAdminStats" class="coronas-referral-stats" aria-label="Resumen de compras con Coronas">
-   <article><small>Compras registradas</small><strong id="walletPurchaseAdminCount">—</strong></article>
-   <article><small>Coronas descontadas</small><strong id="walletPurchaseAdminTotal">—</strong></article>
+   <article><small>Compras recientes (últimas 50)</small><strong id="walletPurchaseAdminCount">—</strong></article>
+   <article><small>Coronas descontadas (últimas 50)</small><strong id="walletPurchaseAdminTotal">—</strong></article>
    <article><small>Registros para revisar</small><strong id="walletPurchaseAdminIssues">—</strong></article>
   </div>
   <div class="field"><label for="walletPurchasesAdminSearch">Buscar por cliente, folio, juego o jugador</label><input id="walletPurchasesAdminSearch" class="wallet-deposit-search" type="search" autocomplete="off" placeholder="Escribe un nombre, folio o juego…"></div>
+  <p class="subtle">Se muestran las 50 compras más recientes para que las nuevas solicitudes aparezcan sin tener que recorrer todo el historial.</p>
   <p id="walletPurchasesAdminMsg" class="msg" role="status" aria-live="polite">Las compras pagadas con Coronas aparecerán aquí.</p>
   <div id="walletPurchasesAdmin"><p class="empty-note">Pulsa «Actualizar compras» para consultar el historial.</p></div>
   <p id="walletPurchasesAdminEmpty" class="empty-note hidden">No se encontraron compras con esa búsqueda.</p>
@@ -3190,9 +3191,6 @@ async function openStore(user){
   runStoreBackground("pedidos de administración",async()=>{
    try{await loadAllOrders();}
    catch(adminOrderError){const list=$("allorders");if(list)list.textContent="No se pudieron cargar los pedidos de administración: "+clean(adminOrderError.message||adminOrderError);}
-  });
-  runStoreBackground("depósitos de administración",async()=>{try{await loadWalletDepositsAdmin();await loadWalletReferralAdmin();}
-   catch(walletAdminError){const list=$("walletDepositsAdmin");if(list)list.textContent="No se pudieron cargar los depósitos: "+clean(walletAdminError.message||walletAdminError);}
   });
   runStoreBackground("reglas de precios",async()=>{
    try{await loadPricingSettings();}
@@ -5761,7 +5759,7 @@ async function saveWalletSettings(){
    await loadWalletSettings();
   }
   $("walletSettingsMsg").textContent="Configuración guardada. La tasa CUP y la conversión móvil se mantienen sincronizadas con los métodos de recarga. Cada solicitud conserva la conversión con la que se creó.";
-  await loadWalletDepositsAdmin();
+  await loadWalletDepositsAdmin({force:true,silent:true});
  }catch(e){
   $("walletSettingsMsg").textContent="No se pudo guardar la configuración: "+(e.message||"error de conexión.");
  }finally{
@@ -6250,7 +6248,7 @@ async function attachWalletDepositProof(id,method){
  if(!files.length){const msg=$("wallet-retry-msg-"+id);if(msg)msg.textContent="Selecciona al menos un comprobante.";return;}
  if(files.length!==1||Number(input?.dataset.maxFiles||1)!==1){const msg=$("wallet-retry-msg-"+id);if(msg)msg.textContent="Selecciona una sola captura para completar esta solicitud pendiente.";return;}
  if(button){button.disabled=true;button.textContent="Enviando…";}
- try{await uploadWalletDepositProofs(id,method,files,reference,sender,txid);await loadMyWalletDeposits();if(currentProfile?.role==="admin")await loadWalletDepositsAdmin();}
+ try{await uploadWalletDepositProofs(id,method,files,reference,sender,txid);await loadMyWalletDeposits();if(currentProfile?.role==="admin")await loadWalletDepositsAdmin({force:true,silent:true});}
  catch(e){const msg=$("wallet-retry-msg-"+id);if(msg)msg.textContent=e.message||"No se pudo enviar el comprobante.";}
  finally{const current=$("wallet-retry-button-"+id);if(current){current.disabled=false;current.textContent="Enviar comprobantes";}}
 }
@@ -6295,66 +6293,96 @@ async function loadMyWalletDeposits(){
  }
  list.innerHTML=proofLoadWarning+cards.join("");
 }
-async function loadWalletDepositsAdmin(){
+let walletDepositsAdminLoadPromise=null;
+let walletDepositsAdminLastLoadedAt=0;
+function walletAdminSectionIsVisible(section){
+ const walletMain=document.querySelector('#admin [data-admin-section="wallet"]');
+ const walletSubsection=document.querySelector('#admin [data-wallet-admin-section="'+section+'"]');
+ return currentProfile?.role==="admin"&&Boolean(walletMain&&walletSubsection&&!walletMain.classList.contains("hidden")&&!walletSubsection.classList.contains("hidden"));
+}
+async function loadWalletDepositsAdmin(options={}){
  if(currentProfile?.role!=="admin")return;
  const list=$("walletDepositsAdmin");if(!list)return;
- list.textContent="Cargando recargas…";
- let data=[];
- for(let from=0;;from+=1000){
-  const result=await db.from("wallet_deposits").select("*").order("created_at",{ascending:false}).range(from,from+999);
-  if(result.error){list.textContent="No se pudieron cargar las recargas: "+result.error.message;return;}
-  data=data.concat(result.data||[]);if(!result.data||result.data.length<1000)break;
- }
- if(!data.length){list.innerHTML='<p class="empty-note">No hay recargas solicitadas.</p>';return;}
- const ids=[...new Set(data.map(d=>d.user_id))],depositIds=data.map(d=>d.id);
- const profiles=await db.from("profiles").select("id,full_name,email").in("id",ids);
- const profileMap=new Map((profiles.data||[]).map(p=>[p.id,p]));
- const proofResult=await db.from("wallet_deposit_proofs").select("deposit_id,proof_path,uploaded_at").in("deposit_id",depositIds);
- if(proofResult.error){list.textContent="No se pudieron cargar los comprobantes de forma segura: "+proofResult.error.message+". No se puede aprobar ni rechazar hasta recuperar esa información.";return;}
- const proofsByDeposit=new Map();
- (proofResult.data||[]).forEach(p=>{if(!proofsByDeposit.has(p.deposit_id))proofsByDeposit.set(p.deposit_id,[]);proofsByDeposit.get(p.deposit_id).push(p);});
- const cards=[];
- for(const d of data){
-  const cup=d.payment_method==="Transferencia CUP",mobile=d.payment_method==="Saldo móvil",usdt=d.payment_method==="USDT",profile=profileMap.get(d.user_id);
-  const proofRows=proofsByDeposit.get(d.id)||[];
-  const customer=clean(profile?.full_name||profile?.email||("Cuenta "+String(d.user_id||"").slice(0,8)));
-  const status=d.status==="approved"?"Aprobada":d.status==="rejected"?"Rechazada":d.status==="payment_review"?"En revisión":"Pendiente";
-  const statusClass=d.status==="approved"?"approved":d.status==="rejected"?"rejected":"";
-  const amountLabel=cup?money(d.amount)+" CUP":usdt?moneyUSD(d.amount)+" USDT":money(d.amount)+" unidades de saldo móvil";
-  const expectedAmount=moneyUSD(Number(d.credited_amount||0))+" Coronas";
-  const totalCredited=Number(d.credited_amount||0)+Number(d.welcome_bonus_amount||0);
-  const creditedLabel=moneyUSD(totalCredited)+" Coronas";
-  const dateLabel=d.created_at?new Date(d.created_at).toLocaleString("es-CU"):"Fecha no disponible";
-  const proofButtons=[];
-  for(let i=0;i<proofRows.length;i++){
-   const proof=proofRows[i];
-   const signed=await db.storage.from("payment-proofs").createSignedUrl(proof.proof_path,1800);
-   if(!signed.error&&signed.data?.signedUrl){
-    proofButtons.push('<button class="wallet-proof-open" type="button" data-wallet-proof-preview data-proof-path="'+clean(proof.proof_path)+'" data-deposit-id="'+clean(d.id)+'" data-order-code="'+clean("Recarga de Coronas · "+d.id.slice(0,8).toUpperCase())+'" data-payment-reference="'+clean(d.payment_reference||"")+'" data-txid="'+clean(d.txid||"")+'" data-payment-sender-phone="'+clean(d.sender_phone||"")+'" data-payment-method="'+clean(d.payment_method)+'" data-amount-label="'+clean(amountLabel)+'">Ver comprobante '+(i+1)+'</button>');
+ const settings=options&&typeof options==="object"?options:{};
+ const force=settings.force===true,silent=settings.silent===true;
+ if(walletDepositsAdminLoadPromise)return walletDepositsAdminLoadPromise;
+ if(!force&&list.dataset.loaded==="1"&&Date.now()-walletDepositsAdminLastLoadedAt<15000)return;
+ const hadLoaded=list.dataset.loaded==="1";
+ const message=$("walletAdminMsg");
+ const openIds=new Set(Array.from(list.querySelectorAll("details[data-wallet-deposit-id][open]")).map(card=>card.dataset.walletDepositId));
+ if(!hadLoaded)list.textContent="Cargando recargas recientes…";
+ else if(message&&!silent)message.textContent="Actualizando recargas. La lista anterior permanece visible.";
+ const request=(async()=>{
+  try{
+   const result=await db.from("wallet_deposits").select("*").order("created_at",{ascending:false}).limit(50);
+   if(result.error)throw new Error("No se pudieron cargar las recargas: "+result.error.message);
+   const data=result.data||[];
+   if(!data.length){
+    list.innerHTML='<p class="empty-note">No hay recargas solicitadas.</p>';
+    list.dataset.loaded="1";walletDepositsAdminLastLoadedAt=Date.now();
+    if(message&&!silent)message.textContent="No hay solicitudes de recarga de Coronas.";
+    return;
    }
+   const ids=[...new Set(data.map(d=>d.user_id).filter(Boolean))],depositIds=data.map(d=>d.id);
+   const [profiles,proofResult]=await Promise.all([
+    ids.length?db.from("profiles").select("id,full_name,email").in("id",ids):Promise.resolve({data:[],error:null}),
+    depositIds.length?db.from("wallet_deposit_proofs").select("deposit_id,proof_path,uploaded_at").in("deposit_id",depositIds):Promise.resolve({data:[],error:null})
+   ]);
+   if(profiles.error)throw new Error("No se pudieron identificar los clientes: "+profiles.error.message);
+   if(proofResult.error)throw new Error("No se pudieron cargar los comprobantes de forma segura: "+proofResult.error.message+". No se puede aprobar ni rechazar hasta recuperar esa información.");
+   const profileMap=new Map((profiles.data||[]).map(p=>[p.id,p]));
+   const proofsByDeposit=new Map();
+   (proofResult.data||[]).forEach(p=>{if(!proofsByDeposit.has(p.deposit_id))proofsByDeposit.set(p.deposit_id,[]);proofsByDeposit.get(p.deposit_id).push(p);});
+   const reviewProofRows=data.filter(d=>d.status==="payment_review").flatMap(d=>proofsByDeposit.get(d.id)||[]);
+   const accessChecks=await Promise.all(reviewProofRows.map(async proof=>{
+    const signed=await db.storage.from("payment-proofs").createSignedUrl(proof.proof_path,1800);
+    return {path:proof.proof_path,ok:!signed.error&&Boolean(signed.data?.signedUrl)};
+   }));
+   const accessiblePaths=new Set(accessChecks.filter(item=>item.ok).map(item=>item.path));
+   const cards=[];
+   for(const d of data){
+    const cup=d.payment_method==="Transferencia CUP",mobile=d.payment_method==="Saldo móvil",usdt=d.payment_method==="USDT",profile=profileMap.get(d.user_id);
+    const proofRows=proofsByDeposit.get(d.id)||[];
+    const customer=clean(profile?.full_name||profile?.email||("Cuenta "+String(d.user_id||"").slice(0,8)));
+    const status=d.status==="approved"?"Aprobada":d.status==="rejected"?"Rechazada":d.status==="payment_review"?"En revisión":"Pendiente";
+    const statusClass=d.status==="approved"?"approved":d.status==="rejected"?"rejected":"";
+    const amountLabel=cup?money(d.amount)+" CUP":usdt?moneyUSD(d.amount)+" USDT":money(d.amount)+" unidades de saldo móvil";
+    const expectedAmount=moneyUSD(Number(d.credited_amount||0))+" Coronas";
+    const totalCredited=Number(d.credited_amount||0)+Number(d.welcome_bonus_amount||0);
+    const creditedLabel=moneyUSD(totalCredited)+" Coronas";
+    const dateLabel=d.created_at?new Date(d.created_at).toLocaleString("es-CU"):"Fecha no disponible";
+    const proofButtons=proofRows.filter(proof=>Boolean(proof.proof_path)).map((proof,i)=>'<button class="wallet-proof-open" type="button" data-wallet-proof-preview data-proof-path="'+clean(proof.proof_path)+'" data-deposit-id="'+clean(d.id)+'" data-order-code="'+clean("Recarga de Coronas · "+d.id.slice(0,8).toUpperCase())+'" data-payment-reference="'+clean(d.payment_reference||"")+'" data-txid="'+clean(d.txid||"")+'" data-payment-sender-phone="'+clean(d.sender_phone||"")+'" data-payment-method="'+clean(d.payment_method)+'" data-amount-label="'+clean(amountLabel)+'">Ver comprobante '+(i+1)+'</button>');
+    const proofsAccessible=proofRows.length>0&&proofRows.every(proof=>Boolean(proof.proof_path)&& (d.status!=="payment_review"||accessiblePaths.has(proof.proof_path)));
+    const canReview=d.status==="payment_review"&&proofsAccessible;
+    const proofWarning=d.status==="payment_review"&&!proofsAccessible?'<p class="wallet-warning"><strong>Revisión bloqueada:</strong> no se pudieron abrir todos los comprobantes. Actualiza el panel y comprueba el acceso antes de decidir.</p>':"";
+    const explorer=d.txid&&/^[a-f0-9]{64}$/i.test(d.txid)?'<p class="wallet-admin-summary">TxID: <code>'+clean(d.txid)+'</code><br><a href="https://bscscan.com/tx/'+encodeURIComponent(d.txid)+'" target="_blank" rel="noopener noreferrer">Abrir transacción en BscScan ↗</a></p>':"";
+    const methodDetails=cup
+     ?'Enviado: <strong>'+money(d.amount)+' CUP</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia bancaria: '+clean(d.payment_reference||"No indicada")+'<br>Tasa guardada: '+money(d.exchange_rate||0)+' CUP por Corona'
+     :mobile
+      ?'Enviado: <strong>'+money(d.amount)+' unidades de saldo móvil</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia del SMS: '+clean(d.payment_reference||"No indicada")+'<br>Conversión guardada: '+money(d.exchange_rate||0)+' unidades por Corona'
+      :'Enviado: <strong>'+moneyUSD(d.amount)+' USDT</strong><br>Red: '+clean(d.network||"BNB Smart Chain (BEP20)")+'<br>Dirección receptora: '+clean(d.recipient_address||walletSettings.usdt_address);
+    const actions=canReview?'<div class="wallet-admin-actions"><button class="primary-btn" type="button" onclick="reviewWalletDeposit(\\''+clean(d.id)+'\\',true)">Aprobar y acreditar</button><button class="secondary-btn" type="button" onclick="reviewWalletDeposit(\\''+clean(d.id)+'\\',false)">Rechazar</button></div>':"";
+    const proofPanel=proofButtons.length
+     ?'<div class="wallet-admin-proof-panel"><strong>Comprobantes recibidos · '+proofButtons.length+'</strong><div class="wallet-admin-proof-actions">'+proofButtons.join("")+'</div></div>'
+     :'<p class="track-note">Esta solicitud no tiene comprobantes disponibles.</p>';
+    const bonusLine=Number(d.welcome_bonus_amount||0)>0?'<br>Bono de primera recarga del 3 %: +'+moneyUSD(d.welcome_bonus_amount)+' Coronas':"";
+    const adminNote=d.admin_notes?'<p class="wallet-warning"><strong>Observación:</strong> '+clean(d.admin_notes)+'</p>':"";
+    const summary='<summary class="wallet-admin-deposit-summary"><span class="wallet-admin-deposit-customer"><strong>'+customer+'</strong><small>'+clean(d.payment_method)+' · '+clean(amountLabel)+'</small></span><span class="wallet-status '+statusClass+'">'+status+'</span><span class="wallet-admin-deposit-summary-meta"><strong>'+expectedAmount+'</strong><small>'+dateLabel+'</small><small>'+proofRows.length+' comprobante(s)</small></span><span class="wallet-admin-expand-hint">Ver solicitud y comprobantes <b aria-hidden="true">⌄</b></span></summary>';
+    cards.push('<details class="wallet-admin-card wallet-admin-collapsible wallet-admin-deposit-card" data-wallet-deposit-id="'+clean(d.id)+'">'+summary+'<div class="wallet-admin-card-detail"><div class="wallet-admin-summary">'+methodDetails+'<br>Coronas calculadas: <strong>'+expectedAmount+'</strong>'+bonusLine+'<br>Crédito total previsto: <strong>'+creditedLabel+'</strong><br>Cliente: '+customer+'<br>Solicitud: '+clean(d.id.slice(0,8).toUpperCase())+'</div>'+explorer+proofPanel+proofWarning+adminNote+actions+'</div></details>');
+   }
+   list.innerHTML=cards.join("");
+   list.dataset.loaded="1";
+   walletDepositsAdminLastLoadedAt=Date.now();
+   list.querySelectorAll("[data-wallet-proof-preview]").forEach(button=>button.addEventListener("click",()=>openWalletDepositProof(button)));
+   list.querySelectorAll("details[data-wallet-deposit-id]").forEach(card=>{if(openIds.has(card.dataset.walletDepositId))card.open=true;});
+   if(message&&!silent)message.textContent="Mostrando las "+data.length+" recargas más recientes.";
+  }catch(error){
+   if(!hadLoaded)list.textContent=error?.message||"No se pudieron cargar las recargas.";
+   if(message)message.textContent=hadLoaded?"No se pudo actualizar la Cartera. Se conserva la lista anterior.":(error?.message||"No se pudieron cargar las recargas.");
   }
-  const proofsAccessible=proofRows.length>0&&proofButtons.length===proofRows.length;
-  const canReview=d.status==="payment_review"&&proofsAccessible;
-  const proofWarning=d.status==="payment_review"&&!proofsAccessible?'<p class="wallet-warning"><strong>Revisión bloqueada:</strong> no se pudieron abrir todos los comprobantes. Actualiza el panel y comprueba el acceso antes de decidir.</p>':"";
-  const explorer=d.txid&&/^[a-f0-9]{64}$/i.test(d.txid)?'<p class="wallet-admin-summary">TxID: <code>'+clean(d.txid)+'</code><br><a href="https://bscscan.com/tx/'+encodeURIComponent(d.txid)+'" target="_blank" rel="noopener noreferrer">Abrir transacción en BscScan ↗</a></p>':"";
-  const methodDetails=cup
-   ?'Enviado: <strong>'+money(d.amount)+' CUP</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia bancaria: '+clean(d.payment_reference||"No indicada")+'<br>Tasa guardada: '+money(d.exchange_rate||0)+' CUP por Corona'
-   :mobile
-    ?'Enviado: <strong>'+money(d.amount)+' unidades de saldo móvil</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia del SMS: '+clean(d.payment_reference||"No indicada")+'<br>Conversión guardada: '+money(d.exchange_rate||0)+' unidades por Corona'
-    :'Enviado: <strong>'+moneyUSD(d.amount)+' USDT</strong><br>Red: '+clean(d.network||"BNB Smart Chain (BEP20)")+'<br>Dirección receptora: '+clean(d.recipient_address||walletSettings.usdt_address);
-  const actions=canReview?'<div class="wallet-admin-actions"><button class="primary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\',true)">Aprobar y acreditar</button><button class="secondary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\',false)">Rechazar</button></div>':"";
-  const proofPanel=proofButtons.length
-   ?'<div class="wallet-admin-proof-panel"><strong>Comprobantes recibidos · '+proofButtons.length+'</strong><div class="wallet-admin-proof-actions">'+proofButtons.join("")+'</div></div>'
-   :'<p class="track-note">Esta solicitud no tiene comprobantes disponibles.</p>';
-  const bonusLine=Number(d.welcome_bonus_amount||0)>0?'<br>Bono de primera recarga del 3 %: +'+moneyUSD(d.welcome_bonus_amount)+' Coronas':"";
-  const adminNote=d.admin_notes?'<p class="wallet-warning"><strong>Observación:</strong> '+clean(d.admin_notes)+'</p>':"";
-  const summary='<summary class="wallet-admin-deposit-summary"><span class="wallet-admin-deposit-customer"><strong>'+customer+'</strong><small>'+clean(d.payment_method)+' · '+clean(amountLabel)+'</small></span><span class="wallet-status '+statusClass+'">'+status+'</span><span class="wallet-admin-deposit-summary-meta"><strong>'+expectedAmount+'</strong><small>'+dateLabel+'</small><small>'+proofRows.length+' comprobante(s)</small></span><span class="wallet-admin-expand-hint">Ver solicitud y comprobantes <b aria-hidden="true">⌄</b></span></summary>';
-  cards.push('<details class="wallet-admin-card wallet-admin-collapsible wallet-admin-deposit-card" data-wallet-deposit-id="'+clean(d.id)+'">'+summary+'<div class="wallet-admin-card-detail"><div class="wallet-admin-summary">'+methodDetails+'<br>Coronas calculadas: <strong>'+expectedAmount+'</strong>'+bonusLine+'<br>Crédito total previsto: <strong>'+creditedLabel+'</strong><br>Cliente: '+customer+'<br>Solicitud: '+clean(d.id.slice(0,8).toUpperCase())+'</div>'+explorer+proofPanel+proofWarning+adminNote+actions+'</div></details>');
- }
- list.innerHTML=cards.join("");
- list.querySelectorAll("[data-wallet-proof-preview]").forEach(button=>{
-  button.addEventListener("click",()=>openWalletDepositProof(button));
- });
+ })();
+ walletDepositsAdminLoadPromise=request;
+ try{await request;}finally{if(walletDepositsAdminLoadPromise===request)walletDepositsAdminLoadPromise=null;}
 }
 async function openWalletDepositProof(button){
  if(currentProfile?.role!=="admin"||!button)return;
@@ -6396,92 +6424,95 @@ function applyWalletPurchasesAdminSearch(){
   empty.textContent=query?"No se encontraron compras con esa búsqueda.":"No hay compras pagadas con Coronas.";
  }
 }
-async function loadWalletPurchasesAdmin(){
+let walletPurchasesAdminLoadPromise=null;
+let walletPurchasesAdminLastLoadedAt=0;
+async function loadWalletPurchasesAdmin(options={}){
  if(currentProfile?.role!=="admin")return;
  const list=$("walletPurchasesAdmin");
  if(!list)return;
+ const settings=options&&typeof options==="object"?options:{};
+ const force=settings.force===true,silent=settings.silent===true;
+ if(walletPurchasesAdminLoadPromise)return walletPurchasesAdminLoadPromise;
+ if(!force&&list.dataset.loaded==="1"&&Date.now()-walletPurchasesAdminLastLoadedAt<15000)return;
+ const hadLoaded=list.dataset.loaded==="1";
  const refreshButton=$("walletPurchasesAdminRefresh");
  const message=$("walletPurchasesAdminMsg");
- if(refreshButton){refreshButton.disabled=true;refreshButton.textContent="Actualizando…";}
- list.textContent="Cargando compras pagadas con Coronas…";
- try{
-  const purchases=[];
-  for(let from=0;;from+=1000){
+ const openIds=new Set(Array.from(list.querySelectorAll("details[data-wallet-purchase-card][open]")).map(card=>card.dataset.walletPurchaseId));
+ if(refreshButton&&!silent){refreshButton.disabled=true;refreshButton.textContent="Actualizando…";}
+ if(!hadLoaded)list.textContent="Cargando las compras recientes…";
+ else if(message&&!silent)message.textContent="Actualizando compras. La lista anterior permanece visible.";
+ const request=(async()=>{
+  try{
    const result=await db.from("wallet_transactions")
     .select("id,user_id,order_id,amount,currency,description,created_at")
     .eq("kind","purchase")
     .eq("currency","USD")
     .order("created_at",{ascending:false})
-    .range(from,from+999);
+    .limit(50);
    if(result.error)throw new Error("No se pudo leer el registro de débitos: "+result.error.message);
-   purchases.push(...(result.data||[]));
-   if(!result.data||result.data.length<1000)break;
+   const purchases=result.data||[];
+   const orderIds=[...new Set(purchases.map(row=>row.order_id).filter(Boolean))];
+   const userIds=[...new Set(purchases.map(row=>row.user_id).filter(Boolean))];
+   const [ordersResult,profilesResult]=await Promise.all([
+    orderIds.length?db.from("orders").select("id,order_code,user_id,game,package_name,player_id,player_name,status,payment_source,central_one_status,created_at,price").in("id",orderIds):Promise.resolve({data:[],error:null}),
+    userIds.length?db.from("profiles").select("id,full_name,email").in("id",userIds):Promise.resolve({data:[],error:null})
+   ]);
+   if(ordersResult.error)throw new Error("No se pudieron comprobar los pedidos vinculados: "+ordersResult.error.message);
+   if(profilesResult.error)throw new Error("No se pudieron identificar los clientes de las compras: "+profilesResult.error.message);
+   const orderMap=new Map((ordersResult.data||[]).map(order=>[order.id,order]));
+   const profileMap=new Map((profilesResult.data||[]).map(profile=>[profile.id,profile]));
+   let total=0,issues=0;
+   const cards=purchases.map(transaction=>{
+    const order=transaction.order_id?orderMap.get(transaction.order_id):null;
+    const profile=profileMap.get(transaction.user_id);
+    const amount=Number(transaction.amount||0);
+    total+=Number.isFinite(amount)?amount:0;
+    const mismatch=!order||order.payment_source!=="wallet"||order.user_id!==transaction.user_id||Math.abs(Number(order.price||0)-amount)>0.0001;
+    if(mismatch)issues++;
+    const orderStatus=String(order?.status||"").toLowerCase();
+    const providerStatus=String(order?.central_one_status||"").toLowerCase();
+    let statusLabel="En proceso";
+    if(mismatch)statusLabel="Revisar registro";
+    else if(orderStatus==="completed"&&providerStatus==="completed")statusLabel="Entregado";
+    else if(["failed","cancelled","rejected"].includes(orderStatus)||["failed","cancelled","rejected"].includes(providerStatus))statusLabel="Requiere revisión";
+    else if(["unknown","retryable","submitting"].includes(providerStatus))statusLabel="Verificando entrega";
+    const statusClass=statusLabel==="Entregado"?"approved":statusLabel==="Requiere revisión"||statusLabel==="Revisar registro"?"rejected":"";
+    const customer=clean(profile?.full_name||profile?.email||("Cuenta "+String(transaction.user_id||"").slice(0,8)));
+    const email=profile?.full_name&&profile?.email?'<br>Correo: '+clean(profile.email):"";
+    const game=clean(order?.game||"Pedido no encontrado");
+    const packageName=clean(order?.package_name||"");
+    const player=clean(order?.player_id||"No disponible");
+    const playerName=clean(order?.player_name||"");
+    const folio=clean(order?.order_code||("Movimiento "+String(transaction.id||"").slice(0,8)));
+    const date=transaction.created_at?new Date(transaction.created_at).toLocaleString("es-CU"):"Fecha no disponible";
+    const integrityNote=mismatch?'<p class="wallet-warning"><strong>Comprobación:</strong> el débito no coincide con un pedido de Coronas válido. Revisa este movimiento antes de darlo por entregado.</p>':"";
+    return '<details class="wallet-admin-card wallet-admin-collapsible wallet-purchase-admin-card" data-wallet-purchase-card data-wallet-purchase-id="'+clean(transaction.id)+'"><summary class="wallet-admin-purchase-summary"><span class="wallet-admin-purchase-customer"><strong>'+customer+'</strong><small>'+game+(packageName?" · "+packageName:"")+'</small><small>Folio: '+folio+'</small></span><span class="wallet-status '+statusClass+'">'+statusLabel+'</span><strong class="wallet-admin-purchase-amount">'+moneyUSD(amount)+' Coronas</strong><span class="wallet-admin-expand-hint">Ver pedido <b aria-hidden="true">⌄</b></span></summary><div class="wallet-admin-card-detail"><p class="wallet-admin-summary"><strong>'+game+(packageName?" · "+packageName:"")+'</strong><br>Folio: <strong>'+folio+'</strong><br>Jugador: '+player+(playerName?" · "+playerName:"")+'<br>Coste descontado: <strong>'+moneyUSD(amount)+' Coronas</strong><br>Fecha de compra: '+date+email+'</p>'+integrityNote+'</div></details>';
+   });
+   const count=$("walletPurchaseAdminCount"),spent=$("walletPurchaseAdminTotal"),issueCount=$("walletPurchaseAdminIssues");
+   if(count)count.textContent=String(purchases.length);
+   if(spent)spent.textContent=moneyUSD(total)+" Coronas";
+   if(issueCount)issueCount.textContent=String(issues);
+   list.innerHTML=cards.length?cards.join(""):'<p class="empty-note">Todavía no hay compras pagadas con Coronas.</p>';
+   list.dataset.loaded="1";
+   walletPurchasesAdminLastLoadedAt=Date.now();
+   list.querySelectorAll("details[data-wallet-purchase-card]").forEach(card=>{if(openIds.has(card.dataset.walletPurchaseId))card.open=true;});
+   const search=$("walletPurchasesAdminSearch");
+   if(search&&search.dataset.walletPurchaseSearch!=="1"){
+    search.dataset.walletPurchaseSearch="1";
+    search.addEventListener("input",applyWalletPurchasesAdminSearch);
+   }
+   applyWalletPurchasesAdminSearch();
+   if(message&&!silent)message.textContent="Se muestran "+purchases.length+" compra(s) recientes. Las incidencias de vínculo o importe quedan señaladas para revisión.";
+  }catch(error){
+   if(!hadLoaded)list.textContent=error?.message||"No se pudo cargar el historial de compras con Coronas.";
+   if(message)message.textContent=hadLoaded?"No se pudo actualizar el historial. Se conserva la lista anterior.":"El historial no está disponible. Actualiza el apartado antes de verificar una compra.";
+   if(!hadLoaded)["walletPurchaseAdminCount","walletPurchaseAdminTotal","walletPurchaseAdminIssues"].forEach(id=>{const node=$(id);if(node)node.textContent="—";});
+  }finally{
+   if(refreshButton&&!silent){refreshButton.disabled=false;refreshButton.textContent="Actualizar compras";}
   }
-  const orderIds=[...new Set(purchases.map(row=>row.order_id).filter(Boolean))];
-  const userIds=[...new Set(purchases.map(row=>row.user_id).filter(Boolean))];
-  const orderMap=new Map(),profileMap=new Map();
-  for(let i=0;i<orderIds.length;i+=100){
-   const result=await db.from("orders")
-    .select("id,order_code,user_id,game,package_name,player_id,player_name,status,payment_source,central_one_status,created_at,price")
-    .in("id",orderIds.slice(i,i+100));
-   if(result.error)throw new Error("No se pudieron comprobar los pedidos vinculados: "+result.error.message);
-   (result.data||[]).forEach(order=>orderMap.set(order.id,order));
-  }
-  for(let i=0;i<userIds.length;i+=100){
-   const result=await db.from("profiles")
-    .select("id,full_name,email")
-    .in("id",userIds.slice(i,i+100));
-   if(result.error)throw new Error("No se pudieron identificar los clientes de las compras: "+result.error.message);
-   (result.data||[]).forEach(profile=>profileMap.set(profile.id,profile));
-  }
-  let total=0,issues=0;
-  const cards=purchases.map(transaction=>{
-   const order=transaction.order_id?orderMap.get(transaction.order_id):null;
-   const profile=profileMap.get(transaction.user_id);
-   const amount=Number(transaction.amount||0);
-   total+=Number.isFinite(amount)?amount:0;
-   const mismatch=!order||order.payment_source!=="wallet"||order.user_id!==transaction.user_id||Math.abs(Number(order.price||0)-amount)>0.0001;
-   if(mismatch)issues++;
-   const orderStatus=String(order?.status||"").toLowerCase();
-   const providerStatus=String(order?.central_one_status||"").toLowerCase();
-   let statusLabel="En proceso";
-   if(mismatch)statusLabel="Revisar registro";
-   else if(orderStatus==="completed"&&providerStatus==="completed")statusLabel="Entregado";
-   else if(["failed","cancelled","rejected"].includes(orderStatus)||["failed","cancelled","rejected"].includes(providerStatus))statusLabel="Requiere revisión";
-   else if(["unknown","retryable","submitting"].includes(providerStatus))statusLabel="Verificando entrega";
-   const statusClass=statusLabel==="Entregado"?"approved":statusLabel==="Requiere revisión"||statusLabel==="Revisar registro"?"rejected":"";
-   const customer=clean(profile?.full_name||profile?.email||("Cuenta "+String(transaction.user_id||"").slice(0,8)));
-   const email=profile?.full_name&&profile?.email?'<br>Correo: '+clean(profile.email):"";
-   const game=clean(order?.game||"Pedido no encontrado");
-   const packageName=clean(order?.package_name||"");
-   const player=clean(order?.player_id||"No disponible");
-   const playerName=clean(order?.player_name||"");
-   const folio=clean(order?.order_code||("Movimiento "+String(transaction.id||"").slice(0,8)));
-   const date=transaction.created_at?new Date(transaction.created_at).toLocaleString("es-CU"):"Fecha no disponible";
-   const integrityNote=mismatch?'<p class="wallet-warning"><strong>Comprobación:</strong> el débito no coincide con un pedido de Coronas válido. Revisa este movimiento antes de darlo por entregado.</p>':"";
-   return '<details class="wallet-admin-card wallet-admin-collapsible wallet-purchase-admin-card" data-wallet-purchase-card><summary class="wallet-admin-purchase-summary"><span class="wallet-admin-purchase-customer"><strong>'+customer+'</strong><small>'+game+(packageName?" · "+packageName:"")+'</small><small>Folio: '+folio+'</small></span><span class="wallet-status '+statusClass+'">'+statusLabel+'</span><strong class="wallet-admin-purchase-amount">'+moneyUSD(amount)+' Coronas</strong><span class="wallet-admin-expand-hint">Ver pedido <b aria-hidden="true">⌄</b></span></summary><div class="wallet-admin-card-detail"><p class="wallet-admin-summary"><strong>'+game+(packageName?" · "+packageName:"")+'</strong><br>Folio: <strong>'+folio+'</strong><br>Jugador: '+player+(playerName?" · "+playerName:"")+'<br>Coste descontado: <strong>'+moneyUSD(amount)+' Coronas</strong><br>Fecha de compra: '+date+email+'</p>'+integrityNote+'</div></details>';
-  });
-  const count=$("walletPurchaseAdminCount"),spent=$("walletPurchaseAdminTotal"),issueCount=$("walletPurchaseAdminIssues");
-  if(count)count.textContent=String(purchases.length);
-  if(spent)spent.textContent=moneyUSD(total)+" Coronas";
-  if(issueCount)issueCount.textContent=String(issues);
-  list.innerHTML=cards.length?cards.join(""):'<p class="empty-note">Todavía no hay compras pagadas con Coronas.</p>';
-  if(message)message.textContent=purchases.length
-   ?"Se cargaron "+purchases.length+" compra(s). Las incidencias de vínculo o importe quedan señaladas para revisión."
-   :"Todavía no hay compras pagadas con Coronas.";
-  const search=$("walletPurchasesAdminSearch");
-  if(search&&search.dataset.walletPurchaseSearch!=="1"){
-   search.dataset.walletPurchaseSearch="1";
-   search.addEventListener("input",applyWalletPurchasesAdminSearch);
-  }
-  applyWalletPurchasesAdminSearch();
- }catch(error){
-  list.textContent=error?.message||"No se pudo cargar el historial de compras con Coronas.";
-  if(message)message.textContent="El historial no está disponible. Actualiza el apartado antes de verificar una compra.";
-  ["walletPurchaseAdminCount","walletPurchaseAdminTotal","walletPurchaseAdminIssues"].forEach(id=>{const node=$(id);if(node)node.textContent="—";});
- }finally{
-  if(refreshButton){refreshButton.disabled=false;refreshButton.textContent="Actualizar compras";}
- }
+ })();
+ walletPurchasesAdminLoadPromise=request;
+ try{await request;}finally{if(walletPurchasesAdminLoadPromise===request)walletPurchasesAdminLoadPromise=null;}
 }
 async function reviewWalletDeposit(id,approve){
  if(currentProfile?.role!=="admin")return;
@@ -6507,7 +6538,7 @@ async function reviewWalletDeposit(id,approve){
  }
  const result=await db.rpc("admin_review_wallet_deposit",{p_deposit_id:id,p_approve:approve,p_note:note});
  $("walletAdminMsg").textContent=result.error?"No se pudo procesar: "+result.error.message:(approve?"Recarga aprobada. Se acreditaron "+moneyUSD(Number(result.data?.credited_amount||0)+Number(result.data?.welcome_bonus_amount||0))+" Coronas"+(Number(result.data?.welcome_bonus_amount||0)>0?" (incluye "+moneyUSD(result.data.welcome_bonus_amount)+" Coronas de bono).":"."):"Recarga rechazada. El motivo quedó guardado para el cliente.");
- if(!result.error){await loadWalletDepositsAdmin();await loadWalletData();await loadMyWalletDeposits();}
+ if(!result.error){await loadWalletDepositsAdmin({force:true,silent:true});await loadWalletData();await loadMyWalletDeposits();}
 }
 async function loadAdminProducts(){
  if(currentProfile?.role!=="admin")return;
@@ -7122,16 +7153,25 @@ function startAdminPaymentPolling(){
  if(currentProfile?.role!=="admin")return;
  if(db&&currentUser){
   adminOrderChannel=db.channel("castle-admin-orders-"+currentUser.id)
-   .on("postgres_changes",{event:"*",schema:"public",table:"orders"},()=>{if(currentProfile?.role==="admin")loadAllOrders({silent:true});})
+   .on("postgres_changes",{event:"*",schema:"public",table:"orders"},payload=>{
+    if(currentProfile?.role!=="admin")return;
+    loadAllOrders({silent:true});
+    const paymentSource=String(payload?.new?.payment_source||payload?.old?.payment_source||"");
+    if(payload?.eventType==="UPDATE"&&paymentSource==="wallet"&&walletAdminSectionIsVisible("purchases"))loadWalletPurchasesAdmin({force:true,silent:true});
+   })
+   .on("postgres_changes",{event:"*",schema:"public",table:"wallet_deposits"},()=>{
+    if(walletAdminSectionIsVisible("deposits"))loadWalletDepositsAdmin({force:true,silent:true});
+   })
+   .on("postgres_changes",{event:"INSERT",schema:"public",table:"wallet_transactions",filter:"kind=eq.purchase"},()=>{
+    if(walletAdminSectionIsVisible("purchases"))loadWalletPurchasesAdmin({force:true,silent:true});
+   })
    .subscribe();
  }
  adminOrderPoll=setInterval(()=>{
   if(currentProfile?.role==="admin"&&document.visibilityState!=="hidden"){
    loadAllOrders({silent:true});
-   loadWalletDepositsAdmin().catch(error=>{
-    const list=$("walletDepositsAdmin");
-    if(list)list.textContent="No se pudo actualizar el panel de depósitos: "+clean(error.message||error);
-   });
+   if(walletAdminSectionIsVisible("deposits"))loadWalletDepositsAdmin({force:true,silent:true});
+   if(walletAdminSectionIsVisible("purchases"))loadWalletPurchasesAdmin({force:true,silent:true});
   }
  },30000);
 }
