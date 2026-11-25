@@ -38,6 +38,7 @@ function initAdminLayout(){
  admin.insertBefore(nav,overview);
  admin.insertBefore(heading,nav);
  setupWalletDepositFilters(panels[5]);
+ setupWalletAdminTabs(panels[5]);
  setupOrderFilters(panels[6]);
  showAdminSection("overview");
 }
@@ -47,10 +48,7 @@ function showAdminSection(key){
  document.querySelectorAll("#admin [data-admin-section]").forEach(n=>n.classList.toggle("hidden",n.dataset.adminSection!==selected));
  document.querySelectorAll("#admin [data-admin-tab]").forEach(n=>n.classList.toggle("active",n.dataset.adminTab===selected));
  if(selected==="support"&&typeof window.loadAdminSupportTickets==="function")window.loadAdminSupportTickets();
- if(selected==="wallet"){
-  if(typeof window.loadWalletDepositsAdmin==="function")window.loadWalletDepositsAdmin();
-  if(typeof window.loadWalletPurchasesAdmin==="function")window.loadWalletPurchasesAdmin();
- }
+ if(selected==="wallet")showWalletAdminSection(activeWalletAdminSection);
 }
 
 let activeWalletDepositFilter="all";
@@ -111,6 +109,35 @@ function setupWalletDepositFilters(panel){
  container.parentNode.insertBefore(filters,container);
  container.parentNode.insertBefore(empty,container.nextSibling);
 }
+let activeWalletAdminSection="deposits";
+const walletAdminSections=["deposits","referrals","purchases","settings"];
+function showWalletAdminSection(section,loadData=true){
+ activeWalletAdminSection=walletAdminSections.includes(section)?section:"deposits";
+ const panel=document.querySelector("#admin .wallet-admin-panel");
+ if(!panel)return;
+ panel.querySelectorAll("[data-wallet-admin-section]").forEach(node=>{
+  node.classList.toggle("hidden",node.dataset.walletAdminSection!==activeWalletAdminSection);
+ });
+ panel.querySelectorAll("[data-wallet-admin-tab]").forEach(button=>{
+  const active=button.dataset.walletAdminTab===activeWalletAdminSection;
+  button.classList.toggle("active",active);
+  button.setAttribute("aria-pressed",active?"true":"false");
+ });
+ if(loadData&&activeWalletAdminSection==="deposits"&&typeof window.loadWalletDepositsAdmin==="function")window.loadWalletDepositsAdmin();
+ if(loadData&&activeWalletAdminSection==="referrals"&&typeof window.loadWalletReferralAdmin==="function")window.loadWalletReferralAdmin();
+ if(loadData&&activeWalletAdminSection==="purchases"&&typeof window.loadWalletPurchasesAdmin==="function")window.loadWalletPurchasesAdmin();
+}
+function setupWalletAdminTabs(panel){
+ if(!panel||panel.dataset.walletAdminTabsReady==="1")return;
+ const buttons=Array.from(panel.querySelectorAll("[data-wallet-admin-tab]"));
+ if(!buttons.length)return;
+ panel.dataset.walletAdminTabsReady="1";
+ buttons.forEach(button=>{
+  button.addEventListener("click",()=>showWalletAdminSection(button.dataset.walletAdminTab));
+ });
+ showWalletAdminSection(activeWalletAdminSection,false);
+}
+
 function installWalletDepositRefreshFilter(){
  if(typeof window.loadWalletDepositsAdmin!=="function"||window.loadWalletDepositsAdmin.__castleWalletFilterWrapped)return;
  const original=window.loadWalletDepositsAdmin;

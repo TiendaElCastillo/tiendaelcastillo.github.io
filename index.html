@@ -247,7 +247,7 @@ body{background:radial-gradient(ellipse at 50% -15%,#e8effd 0,transparent 48%),v
  .mlbb-plan-price{font-size:15px}
  .mlbb-plan-buy{font-size:11px;padding:8px}
 }
-.blood-strike-status-card{display:flex;gap:14px;align-items:flex-start;margin:14px 0 22px;padding:20px 18px;border:1px solid #e4dce5;border-radius:18px;background:linear-gradient(135deg,#151c2b 0%,#263448 62%,#4a2430 100%);color:#fff;box-shadow:0 14px 30px rgba(16,28,48,.12)}.blood-strike-status-mark{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.13);font-size:24px}.blood-strike-status-copy{min-width:0}.blood-strike-status-kicker{display:block;margin:1px 0 7px;color:#ffbd9c;font-size:10px;font-weight:900;letter-spacing:.12em}.blood-strike-status-copy h2{margin:0 0 8px;color:#fff;font-size:19px;line-height:1.15}.blood-strike-status-copy p{margin:0;color:#e5eaf2;font-size:13px;line-height:1.55}.blood-strike-region-note{display:inline-flex;margin-top:12px;padding:7px 9px;border:1px solid rgba(255,255,255,.16);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:10px;font-weight:750}</style><link rel="preload" as="image" href="./assets/el-castillo-logo.webp" type="image/webp"><link rel="stylesheet" href="./assets/admin-panel.css?v=33"><link rel="stylesheet" href="./assets/checkout-reliability.css?v=1">
+.blood-strike-status-card{display:flex;gap:14px;align-items:flex-start;margin:14px 0 22px;padding:20px 18px;border:1px solid #e4dce5;border-radius:18px;background:linear-gradient(135deg,#151c2b 0%,#263448 62%,#4a2430 100%);color:#fff;box-shadow:0 14px 30px rgba(16,28,48,.12)}.blood-strike-status-mark{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:rgba(255,255,255,.13);font-size:24px}.blood-strike-status-copy{min-width:0}.blood-strike-status-kicker{display:block;margin:1px 0 7px;color:#ffbd9c;font-size:10px;font-weight:900;letter-spacing:.12em}.blood-strike-status-copy h2{margin:0 0 8px;color:#fff;font-size:19px;line-height:1.15}.blood-strike-status-copy p{margin:0;color:#e5eaf2;font-size:13px;line-height:1.55}.blood-strike-region-note{display:inline-flex;margin-top:12px;padding:7px 9px;border:1px solid rgba(255,255,255,.16);border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:10px;font-weight:750}</style><link rel="preload" as="image" href="./assets/el-castillo-logo.webp" type="image/webp"><link rel="stylesheet" href="./assets/admin-panel.css?v=34"><link rel="stylesheet" href="./assets/checkout-reliability.css?v=1">
 <script>
 /* Salvavidas independiente: incluso si falla otro script externo, la pantalla inicial no queda bloqueada. */
 window.addEventListener("DOMContentLoaded",function(){
@@ -2425,6 +2425,14 @@ body{min-width:0}
     </div>
    </div>
    <button class="secondary-btn coronas-referral-share" type="button" onclick="shareWalletReferralLink()">Compartir invitación</button>
+   <div class="wallet-referral-stats-heading"><strong>Tu invitación en números</strong><span>Compras entregadas y recompensas confirmadas</span></div>
+   <div id="walletReferralStats" class="coronas-referral-stats wallet-referral-metrics" aria-label="Resultados de tus invitaciones">
+    <article><small>Amigos vinculados</small><strong>—</strong></article>
+    <article><small>Compras premiadas</small><strong>—</strong></article>
+    <article><small>Ventas generadas</small><strong>—</strong></article>
+    <article><small>Ganancia obtenida (5 %)</small><strong>—</strong></article>
+   </div>
+   <p class="wallet-referral-stats-note">Las ventas se cuentan cuando el proveedor confirma la entrega. Tu ganancia es el 5 % acreditado en Coronas por la primera compra válida de cada amigo.</p>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
    <h3 id="walletInformationTitle">Cómo funciona tu saldo</h3>
@@ -2520,7 +2528,13 @@ body{min-width:0}
   <article><span>Aprobados</span><strong id="walletCountApproved">0</strong></article>
   <article><span>Rechazados</span><strong id="walletCountRejected">0</strong></article>
  </div>
- <section class="wallet-panel wallet-admin-settings">
+ <nav class="wallet-admin-tabs" aria-label="Apartados de Gestión de Coronas">
+  <button class="wallet-admin-tab active" type="button" data-wallet-admin-tab="deposits">Recargas</button>
+  <button class="wallet-admin-tab" type="button" data-wallet-admin-tab="referrals">Invitaciones</button>
+  <button class="wallet-admin-tab" type="button" data-wallet-admin-tab="purchases">Compras con Coronas</button>
+  <button class="wallet-admin-tab" type="button" data-wallet-admin-tab="settings">Configuración</button>
+ </nav>
+ <section class="wallet-panel wallet-admin-settings" data-wallet-admin-section="settings">
   <h3>Configuración de las Coronas</h3>
   <p>Esta tasa convierte las transferencias CUP a Coronas. 1 Corona = 1 USD. Los cambios se aplican solo a las nuevas solicitudes; cada recarga anterior conserva su tasa.</p>
   <div class="field"><label for="walletCupRate">CUP por cada 1 Corona</label><input id="walletCupRate" type="number" min="1" step="0.01" value="1230"></div>
@@ -2531,14 +2545,14 @@ body{min-width:0}
   <p id="walletSettingsMsg" class="msg" role="status"></p>
   <p class="wallet-field-hint">El sistema redondea hacia abajo a dos decimales. La recarga mínima es de 1 Corona equivalente.</p>
  </section>
- <section id="walletReferralAdminPanel" class="wallet-panel wallet-admin-settings"><h3>Invitaciones y recompensas</h3><p>Revisa cada código vinculado, la primera compra entregada y las Coronas acreditadas por el 5 %.</p><div id="walletReferralAdminSummary" class="coronas-referral-stats"><article><small>Invitaciones</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas entregadas</small><strong>—</strong></article></div><div id="walletReferralAdminList"><p class="empty-note">Cargando invitaciones…</p></div><button class="secondary-btn" type="button" onclick="loadWalletReferralAdmin()">Actualizar invitaciones</button></section>
- <section class="wallet-panel wallet-admin-deposits">
+ <section id="walletReferralAdminPanel" class="wallet-panel wallet-admin-settings" data-wallet-admin-section="referrals"><h3>Invitaciones y recompensas</h3><p>Revisa cada código vinculado, la primera compra entregada y las Coronas acreditadas por el 5 %.</p><div id="walletReferralAdminSummary" class="coronas-referral-stats"><article><small>Invitaciones</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas entregadas</small><strong>—</strong></article></div><div id="walletReferralAdminList"><p class="empty-note">Cargando invitaciones…</p></div><button class="secondary-btn" type="button" onclick="loadWalletReferralAdmin()">Actualizar invitaciones</button></section>
+ <section class="wallet-panel wallet-admin-deposits" data-wallet-admin-section="deposits">
   <div class="order-toolbar"><h3>Solicitudes de recarga de Coronas</h3><button class="secondary-btn" type="button" onclick="loadWalletDepositsAdmin()">Actualizar solicitudes</button></div>
   <p class="subtle">Comprueba la recepción real en la tarjeta bancaria o en la red BNB Smart Chain antes de aprobar. Una captura por sí sola no demuestra que el dinero llegó. Al aprobar, el sistema acredita el importe una sola vez.</p>
   <p id="walletAdminMsg" class="msg" role="status"></p>
   <div id="walletDepositsAdmin">Cargando depósitos…</div>
  </section>
- <section class="wallet-panel wallet-admin-purchases">
+ <section class="wallet-panel wallet-admin-purchases" data-wallet-admin-section="purchases">
   <div class="order-toolbar">
    <div><h3>Compras pagadas con Coronas</h3><p class="subtle">Registro de cada débito y de la recarga enviada a la cuenta del juego. Estas compras no esperan aprobación manual de pago.</p></div>
    <button id="walletPurchasesAdminRefresh" class="secondary-btn" type="button" onclick="loadWalletPurchasesAdmin()">Actualizar compras</button>
@@ -5618,9 +5632,18 @@ async function loadWalletPromotions(){
   if(autoLink?.summary)data=autoLink.summary;
  }
  if(data.invite_linked)discardWalletReferralAttribution();
+ let generatedVolume=0;
+ try{
+  const volumeResult=await db.rpc("get_wallet_referral_purchase_volume");
+  if(!volumeResult.error){
+   const raw=volumeResult.data;
+   generatedVolume=Number(raw&&typeof raw==="object"?raw.purchase_volume_usd:raw)||0;
+  }
+ }catch(volumeError){console.warn("No se pudo actualizar el volumen de compras invitadas:",volumeError);}
+ data={...data,purchase_volume_usd:generatedVolume};
  walletReferralSummary=data;
  if(codeBox)codeBox.textContent="La invitación viaja dentro de tu enlace personal. No hace falta pegar códigos.";
- if(stats)stats.innerHTML='<article><small>Amigos invitados</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Coronas ganadas</small><strong>'+moneyUSD(data.earned_usd||0)+'</strong></article>';
+ if(stats)stats.innerHTML='<article><small>Amigos vinculados</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Ventas generadas</small><strong>'+moneyUSD(data.purchase_volume_usd||0)+' USD</strong></article><article><small>Ganancia obtenida (5 %)</small><strong>'+moneyUSD(data.earned_usd||0)+' Coronas</strong></article>';
  renderWalletPromotionStates(data);
  previewWalletDeposit();
  if(msg){
@@ -5673,7 +5696,15 @@ async function loadWalletReferralAdmin(){
  if(summary)summary.innerHTML='<article><small>Invitaciones</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Coronas entregadas</small><strong>'+moneyUSD(data.earned_usd||0)+'</strong></article>';
  if(!list)return;
  if(!rows.length){list.innerHTML='<p class="empty-note">Todavía no hay invitaciones registradas.</p>';return;}
- list.innerHTML=rows.map(row=>'<article class="wallet-admin-card"><strong>'+clean(row.inviter_name||row.inviter_email||"Cuenta invitadora")+' → '+clean(row.invited_name||row.invited_email||"Cuenta invitada")+'</strong><p class="wallet-admin-summary">Código: '+clean(row.referral_code||"—")+'<br>Vinculada: '+(row.linked_at?new Date(row.linked_at).toLocaleString("es-CU"):"—")+'<br>Primera compra: '+clean(row.order_code||"Pendiente")+'<br>Recompensa: '+(Number(row.reward_amount_usd||0)>0?moneyUSD(row.reward_amount_usd)+" Coronas":"Pendiente")+'<br>Estado: '+clean(row.reward_status||"Sin recompensa")+'</p></article>').join("");
+ list.innerHTML=rows.map(row=>{
+  const inviter=clean(row.inviter_name||row.inviter_email||"Cuenta invitadora");
+  const invited=clean(row.invited_name||row.invited_email||"Cuenta invitada");
+  const state=String(row.reward_status||"Sin recompensa");
+  const stateClass=state.toLocaleLowerCase("es").includes("acreditada")?"approved":state.toLocaleLowerCase("es").includes("revertida")?"rejected":"";
+  const reward=Number(row.reward_amount_usd||0)>0?moneyUSD(row.reward_amount_usd)+" Coronas":"Pendiente";
+  const date=row.linked_at?new Date(row.linked_at).toLocaleString("es-CU"):"—";
+  return '<details class="wallet-admin-card wallet-admin-collapsible wallet-admin-referral-card"><summary class="wallet-admin-referral-summary"><span><strong>'+inviter+' → '+invited+'</strong><small>Vinculada: '+date+'</small></span><span class="wallet-status '+stateClass+'">'+clean(state)+'</span><strong class="wallet-admin-referral-reward">'+reward+'</strong><span class="wallet-admin-expand-hint">Ver invitación <b aria-hidden="true">⌄</b></span></summary><div class="wallet-admin-card-detail"><p class="wallet-admin-summary">Código: <strong>'+clean(row.referral_code||"—")+'</strong><br>Fecha de vinculación: '+date+'<br>Primera compra entregada: <strong>'+clean(row.order_code||"Pendiente")+'</strong><br>Recompensa del 5 %: <strong>'+reward+'</strong><br>Estado: '+clean(state)+'</p></div></details>';
+ }).join("");
 }
 
 async function loadWalletSettings(){
@@ -6286,9 +6317,23 @@ async function loadWalletDepositsAdmin(){
  for(const d of data){
   const cup=d.payment_method==="Transferencia CUP",mobile=d.payment_method==="Saldo móvil",usdt=d.payment_method==="USDT",profile=profileMap.get(d.user_id);
   const proofRows=proofsByDeposit.get(d.id)||[];
-  const proofs=await createSignedWalletProofLinks(proofRows,"Ver captura");
-  const visibleProofCount=(proofs.match(/<a /g)||[]).length;
-  const proofsAccessible=proofRows.length>0&&visibleProofCount===proofRows.length;
+  const customer=clean(profile?.full_name||profile?.email||("Cuenta "+String(d.user_id||"").slice(0,8)));
+  const status=d.status==="approved"?"Aprobada":d.status==="rejected"?"Rechazada":d.status==="payment_review"?"En revisión":"Pendiente";
+  const statusClass=d.status==="approved"?"approved":d.status==="rejected"?"rejected":"";
+  const amountLabel=cup?money(d.amount)+" CUP":usdt?moneyUSD(d.amount)+" USDT":money(d.amount)+" unidades de saldo móvil";
+  const expectedAmount=moneyUSD(Number(d.credited_amount||0))+" Coronas";
+  const totalCredited=Number(d.credited_amount||0)+Number(d.welcome_bonus_amount||0);
+  const creditedLabel=moneyUSD(totalCredited)+" Coronas";
+  const dateLabel=d.created_at?new Date(d.created_at).toLocaleString("es-CU"):"Fecha no disponible";
+  const proofButtons=[];
+  for(let i=0;i<proofRows.length;i++){
+   const proof=proofRows[i];
+   const signed=await db.storage.from("payment-proofs").createSignedUrl(proof.proof_path,1800);
+   if(!signed.error&&signed.data?.signedUrl){
+    proofButtons.push('<button class="wallet-proof-open" type="button" data-wallet-proof-preview data-proof-path="'+clean(proof.proof_path)+'" data-deposit-id="'+clean(d.id)+'" data-order-code="'+clean("Recarga de Coronas · "+d.id.slice(0,8).toUpperCase())+'" data-payment-reference="'+clean(d.payment_reference||"")+'" data-txid="'+clean(d.txid||"")+'" data-payment-sender-phone="'+clean(d.sender_phone||"")+'" data-payment-method="'+clean(d.payment_method)+'" data-amount-label="'+clean(amountLabel)+'">Ver comprobante '+(i+1)+'</button>');
+   }
+  }
+  const proofsAccessible=proofRows.length>0&&proofButtons.length===proofRows.length;
   const canReview=d.status==="payment_review"&&proofsAccessible;
   const proofWarning=d.status==="payment_review"&&!proofsAccessible?'<p class="wallet-warning"><strong>Revisión bloqueada:</strong> no se pudieron abrir todos los comprobantes. Actualiza el panel y comprueba el acceso antes de decidir.</p>':"";
   const explorer=d.txid&&/^[a-f0-9]{64}$/i.test(d.txid)?'<p class="wallet-admin-summary">TxID: <code>'+clean(d.txid)+'</code><br><a href="https://bscscan.com/tx/'+encodeURIComponent(d.txid)+'" target="_blank" rel="noopener noreferrer">Abrir transacción en BscScan ↗</a></p>':"";
@@ -6297,11 +6342,41 @@ async function loadWalletDepositsAdmin(){
    :mobile
     ?'Enviado: <strong>'+money(d.amount)+' unidades de saldo móvil</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia del SMS: '+clean(d.payment_reference||"No indicada")+'<br>Conversión guardada: '+money(d.exchange_rate||0)+' unidades por Corona'
     :'Enviado: <strong>'+moneyUSD(d.amount)+' USDT</strong><br>Red: '+clean(d.network||"BNB Smart Chain (BEP20)")+'<br>Dirección receptora: '+clean(d.recipient_address||walletSettings.usdt_address);
-  const amountLabel=moneyUSD(Number(d.credited_amount||0))+" Coronas";
   const actions=canReview?'<div class="wallet-admin-actions"><button class="primary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\',true)">Aprobar y acreditar</button><button class="secondary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\',false)">Rechazar</button></div>':"";
-  cards.push('<article class="wallet-admin-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>'+clean(profile?.full_name||profile?.email||d.user_id)+'</strong><span class="wallet-status '+(d.status==="approved"?"approved":d.status==="rejected"?"rejected":"")+'">'+clean(d.status==="payment_review"?"En revisión":d.status==="approved"?"Aprobada":d.status==="rejected"?"Rechazada":"Pendiente")+'</span></div><div class="wallet-admin-summary">'+clean(d.payment_method)+' · '+new Date(d.created_at).toLocaleString("es-CU")+'<br>'+methodDetails+'<br>Crédito calculado: <strong>'+amountLabel+'</strong>'+(Number(d.welcome_bonus_amount||0)>0?'<br>Bono primera recarga 3 %: +'+moneyUSD(d.welcome_bonus_amount)+' Coronas':'')+'<br>Comprobantes: '+proofRows.length+'</div>'+explorer+proofs+proofWarning+(d.admin_notes?'<p class="wallet-warning">Observación: '+clean(d.admin_notes)+'</p>':"")+actions+'</article>');
+  const proofPanel=proofButtons.length
+   ?'<div class="wallet-admin-proof-panel"><strong>Comprobantes recibidos · '+proofButtons.length+'</strong><div class="wallet-admin-proof-actions">'+proofButtons.join("")+'</div></div>'
+   :'<p class="track-note">Esta solicitud no tiene comprobantes disponibles.</p>';
+  const bonusLine=Number(d.welcome_bonus_amount||0)>0?'<br>Bono de primera recarga del 3 %: +'+moneyUSD(d.welcome_bonus_amount)+' Coronas':"";
+  const adminNote=d.admin_notes?'<p class="wallet-warning"><strong>Observación:</strong> '+clean(d.admin_notes)+'</p>':"";
+  const summary='<summary class="wallet-admin-deposit-summary"><span class="wallet-admin-deposit-customer"><strong>'+customer+'</strong><small>'+clean(d.payment_method)+' · '+clean(amountLabel)+'</small></span><span class="wallet-status '+statusClass+'">'+status+'</span><span class="wallet-admin-deposit-summary-meta"><strong>'+expectedAmount+'</strong><small>'+dateLabel+'</small><small>'+proofRows.length+' comprobante(s)</small></span><span class="wallet-admin-expand-hint">Ver solicitud y comprobantes <b aria-hidden="true">⌄</b></span></summary>';
+  cards.push('<details class="wallet-admin-card wallet-admin-collapsible wallet-admin-deposit-card" data-wallet-deposit-id="'+clean(d.id)+'">'+summary+'<div class="wallet-admin-card-detail"><div class="wallet-admin-summary">'+methodDetails+'<br>Coronas calculadas: <strong>'+expectedAmount+'</strong>'+bonusLine+'<br>Crédito total previsto: <strong>'+creditedLabel+'</strong><br>Cliente: '+customer+'<br>Solicitud: '+clean(d.id.slice(0,8).toUpperCase())+'</div>'+explorer+proofPanel+proofWarning+adminNote+actions+'</div></details>');
  }
  list.innerHTML=cards.join("");
+ list.querySelectorAll("[data-wallet-proof-preview]").forEach(button=>{
+  button.addEventListener("click",()=>openWalletDepositProof(button));
+ });
+}
+async function openWalletDepositProof(button){
+ if(currentProfile?.role!=="admin"||!button)return;
+ const path=String(button.dataset.proofPath||"");
+ if(!path)return;
+ const oldLabel=button.textContent;
+ button.disabled=true;button.textContent="Abriendo comprobante…";
+ try{
+  const {data,error}=await db.storage.from("payment-proofs").createSignedUrl(path,1800);
+  if(error||!data?.signedUrl)throw error||new Error("No se pudo generar el enlace seguro.");
+  showOrderProofPreview(data.signedUrl,{
+   orderCode:button.dataset.orderCode||"Recarga de Coronas",
+   reference:button.dataset.paymentReference||button.dataset.txid||"",
+   senderPhone:button.dataset.paymentSenderPhone||"",
+   paymentMethod:button.dataset.paymentMethod||"",
+   amountLabel:button.dataset.amountLabel||""
+  });
+ }catch(error){
+  window.alert("No se pudo abrir el comprobante. Comprueba la conexión y vuelve a intentarlo."+(error?.message?" "+error.message:""));
+ }finally{
+  button.disabled=false;button.textContent=oldLabel;
+ }
 }
 function applyWalletPurchasesAdminSearch(){
  const list=$("walletPurchasesAdmin");
@@ -6384,7 +6459,7 @@ async function loadWalletPurchasesAdmin(){
    const folio=clean(order?.order_code||("Movimiento "+String(transaction.id||"").slice(0,8)));
    const date=transaction.created_at?new Date(transaction.created_at).toLocaleString("es-CU"):"Fecha no disponible";
    const integrityNote=mismatch?'<p class="wallet-warning"><strong>Comprobación:</strong> el débito no coincide con un pedido de Coronas válido. Revisa este movimiento antes de darlo por entregado.</p>':"";
-   return '<article class="wallet-admin-card wallet-purchase-admin-card" data-wallet-purchase-card><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>'+customer+'</strong><span class="wallet-status '+statusClass+'">'+statusLabel+'</span></div><div class="wallet-admin-summary"><strong>'+game+(packageName?" · "+packageName:"")+'</strong><br>Folio: <strong>'+folio+'</strong><br>Jugador: '+player+(playerName?" · "+playerName:"")+'<br>Coste descontado: <strong>'+moneyUSD(amount)+' Coronas</strong><br>Fecha de compra: '+date+email+'</div>'+integrityNote+'</article>';
+   return '<details class="wallet-admin-card wallet-admin-collapsible wallet-purchase-admin-card" data-wallet-purchase-card><summary class="wallet-admin-purchase-summary"><span class="wallet-admin-purchase-customer"><strong>'+customer+'</strong><small>'+game+(packageName?" · "+packageName:"")+'</small><small>Folio: '+folio+'</small></span><span class="wallet-status '+statusClass+'">'+statusLabel+'</span><strong class="wallet-admin-purchase-amount">'+moneyUSD(amount)+' Coronas</strong><span class="wallet-admin-expand-hint">Ver pedido <b aria-hidden="true">⌄</b></span></summary><div class="wallet-admin-card-detail"><p class="wallet-admin-summary"><strong>'+game+(packageName?" · "+packageName:"")+'</strong><br>Folio: <strong>'+folio+'</strong><br>Jugador: '+player+(playerName?" · "+playerName:"")+'<br>Coste descontado: <strong>'+moneyUSD(amount)+' Coronas</strong><br>Fecha de compra: '+date+email+'</p>'+integrityNote+'</div></details>';
   });
   const count=$("walletPurchaseAdminCount"),spent=$("walletPurchaseAdminTotal"),issueCount=$("walletPurchaseAdminIssues");
   if(count)count.textContent=String(purchases.length);
@@ -7155,7 +7230,8 @@ function showOrderProofPreview(url,details={}){
  addInfo("PEDIDO",details.orderCode||"");
  addInfo("MÓVIL DEL REMITENTE",details.senderPhone||"");
  addInfo("MÉTODO DE PAGO",details.paymentMethod||"");
- if(details.amount)addInfo("IMPORTE DEL PEDIDO",money(details.amount)+" CUP");
+ if(details.amountLabel)addInfo("IMPORTE ENVIADO",details.amountLabel);
+ else if(details.amount)addInfo("IMPORTE DEL PEDIDO",money(details.amount)+" CUP");
  const stage=document.createElement("div");
  stage.className="proof-viewer-image-stage";
  const image=document.createElement("img");
@@ -7444,7 +7520,7 @@ if(document.readyState==="loading"){
 </script>
 
 <script src="./assets/offline-guard.js?v=3"></script>
-<script src="./assets/admin-panel.js?v=24" defer></script>
+<script src="./assets/admin-panel.js?v=25" defer></script>
 <script src="./assets/customer-center.js?v=6" defer></script>
 <script src="./assets/checkout-reliability.js?v=1" defer></script>
 <script src="./assets/coronas-promotions.js?v=2" defer></script>

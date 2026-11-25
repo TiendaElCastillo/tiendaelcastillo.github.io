@@ -643,3 +643,81 @@
 .admin-support-panel #adminSupportTickets{display:grid;gap:8px}
 .admin-support-ticket-card{background:linear-gradient(150deg,#fff,#f8faff)}
 @media(max-width:520px){.support-ticket-card{padding:12px}.support-chat-message{max-width:96%}.support-thread-header{padding:11px}}
+
+
+/* Gestión de Coronas: apartados cortos y navegación sin una lista interminable. */
+.wallet-admin-tabs{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;
+ margin:14px 0 16px;padding:5px;border:1px solid #e0e8f4;border-radius:16px;
+ background:#f5f8fd;
+}
+.wallet-admin-tab{
+ min-width:0;min-height:42px;padding:9px 7px;border:1px solid transparent;
+ border-radius:11px;background:transparent;color:#53647d;font-size:11px;
+ font-weight:850;line-height:1.25;text-align:center;
+}
+.wallet-admin-tab.active{
+ border-color:#cbdcf4;background:#fff;color:#245eae;
+ box-shadow:0 3px 10px rgba(23,55,103,.09);
+}
+.wallet-admin-panel [data-wallet-admin-section].hidden{display:none!important}
+.wallet-admin-deposits,.wallet-admin-settings,.wallet-admin-purchases{min-width:0}
+.wallet-admin-deposit-card,.wallet-admin-referral-card,.wallet-purchase-admin-card{
+ display:block;margin:9px 0;padding:0!important;overflow:hidden;
+ border:1px solid #dfe7f2!important;border-radius:15px!important;
+ background:linear-gradient(145deg,#fff 0%,#fbfdff 100%)!important;
+ box-shadow:0 4px 13px rgba(18,43,82,.045);
+}
+.wallet-admin-deposit-card>summary,.wallet-admin-referral-summary,.wallet-admin-purchase-summary{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px 10px;
+ min-height:68px;padding:12px 13px;cursor:pointer;list-style:none;
+}
+.wallet-admin-deposit-card>summary::-webkit-details-marker,
+.wallet-admin-referral-card>summary::-webkit-details-marker,
+.wallet-purchase-admin-card>summary::-webkit-details-marker{display:none}
+.wallet-admin-deposit-customer,.wallet-admin-referral-summary>span:first-child,
+.wallet-admin-purchase-customer{display:grid;gap:4px;min-width:0}
+.wallet-admin-deposit-customer>strong,.wallet-admin-referral-summary>span:first-child>strong,
+.wallet-admin-purchase-customer>strong{color:#243956;font-size:13px;font-weight:900;line-height:1.3;overflow-wrap:anywhere}
+.wallet-admin-deposit-customer>small,.wallet-admin-referral-summary>span:first-child>small,
+.wallet-admin-purchase-customer>small{color:#718198;font-size:10px;line-height:1.4;overflow-wrap:anywhere}
+.wallet-admin-deposit-summary-meta{display:grid;gap:3px;grid-column:1/-1;grid-template-columns:repeat(2,minmax(0,1fr));min-width:0}
+.wallet-admin-deposit-summary-meta>strong{grid-column:1/-1;color:#285d9f;font-size:13px}
+.wallet-admin-deposit-summary-meta>small{color:#7c899b;font-size:9px;line-height:1.35}
+.wallet-admin-deposit-summary>.wallet-status,.wallet-admin-referral-summary>.wallet-status,
+.wallet-admin-purchase-summary>.wallet-status{justify-self:end;white-space:nowrap}
+.wallet-admin-expand-hint{display:flex;align-items:center;justify-content:space-between;gap:8px;grid-column:1/-1;padding-top:7px;border-top:1px solid #edf1f7;color:#3768a9;font-size:10px;font-weight:850}
+.wallet-admin-expand-hint b{font-size:15px;line-height:1}
+.wallet-admin-collapsible[open]>summary{border-bottom:1px solid #e6edf6;background:#f7faff}
+.wallet-admin-collapsible[open] .wallet-admin-expand-hint b{transform:rotate(180deg)}
+.wallet-admin-card-detail{display:grid;gap:11px;padding:12px 13px 14px}
+.wallet-admin-card-detail .wallet-admin-summary{margin:0;padding:11px;border:1px solid #e3eaf4;border-radius:12px;background:#f8faff;color:#52647d;font-size:11px;line-height:1.65;overflow-wrap:anywhere}
+.wallet-admin-proof-panel{display:grid;gap:8px;padding:11px;border:1px solid #d7e4f5;border-radius:13px;background:#f4f8fe}
+.wallet-admin-proof-panel>strong{color:#2b466d;font-size:11px}
+.wallet-admin-proof-actions{display:flex;flex-wrap:wrap;gap:8px}
+.wallet-proof-open{min-height:38px;padding:8px 12px;border:1px solid #cbdcf3;border-radius:11px;background:#fff;color:#245caa;font-size:11px;font-weight:850}
+.wallet-proof-open:disabled{opacity:.6}
+.wallet-admin-actions{display:flex;flex-wrap:wrap;gap:8px}
+.wallet-admin-actions>*{flex:1 1 130px;min-width:0}
+.wallet-admin-referral-reward,.wallet-admin-purchase-amount{color:#285eab;font-size:12px;font-weight:900;white-space:nowrap}
+.wallet-admin-referral-summary{grid-template-columns:minmax(0,1fr) auto}
+.wallet-admin-referral-summary .wallet-admin-expand-hint{grid-column:1/-1}
+.wallet-admin-purchase-summary{grid-template-columns:minmax(0,1fr) auto}
+.wallet-admin-purchase-summary .wallet-admin-expand-hint{grid-column:1/-1}
+.wallet-referral-stats-heading{display:flex;flex-direction:column;gap:3px;margin:15px 1px 8px}
+.wallet-referral-stats-heading strong{color:#2b4263;font-size:12px;font-weight:900}
+.wallet-referral-stats-heading span{color:#7b899c;font-size:10px}
+#walletReferralStats.wallet-referral-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+#walletReferralStats.wallet-referral-metrics article{min-width:0;padding:11px 12px;border:1px solid #dfe8f4;border-radius:13px;background:linear-gradient(145deg,#fff,#f5f8fd)}
+#walletReferralStats.wallet-referral-metrics small{display:block;color:#718198;font-size:9px;line-height:1.4}
+#walletReferralStats.wallet-referral-metrics strong{display:block;margin-top:5px;color:#285d9e;font-size:15px;font-weight:950;line-height:1.2;overflow-wrap:anywhere}
+.wallet-referral-stats-note{margin:9px 1px 0;color:#8190a4;font-size:9px;line-height:1.5}
+@media(max-width:520px){
+ .wallet-admin-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:11px 0 13px}
+ .wallet-admin-tab{min-height:39px;font-size:10px}
+ .wallet-admin-deposit-card>summary,.wallet-admin-referral-summary,.wallet-admin-purchase-summary{padding:10px;gap:7px}
+ .wallet-admin-deposit-summary-meta{gap:3px}
+ .wallet-admin-deposit-customer>strong,.wallet-admin-referral-summary>span:first-child>strong,.wallet-admin-purchase-customer>strong{font-size:12px}
+ .wallet-admin-card-detail{padding:10px}
+ .wallet-admin-actions>*{flex-basis:100%}
+}
