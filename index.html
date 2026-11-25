@@ -7208,6 +7208,61 @@ async function testCentralOneConnection(){
  finally{button.disabled=false;button.textContent="Probar conexión (ping)";}
 }
 
+let customerOrderRefreshPromise=null;
+let adminOrderRefreshPromise=null;
+let customerOrderResumeListenersInstalled=false;
+let adminOrderResumeListenersInstalled=false;
+
+function refreshCustomerOrderData(userId){
+ const targetId=userId||currentUser?.id;
+ if(!targetId||currentUser?.id!==targetId||document.visibilityState==="hidden")return Promise.resolve([]);
+ if(customerOrderRefreshPromise)return customerOrderRefreshPromise;
+ const request=Promise.allSettled([
+  Promise.resolve().then(()=>loadMyOrders()),
+  Promise.resolve().then(()=>loadWalletData())
+ ]);
+ customerOrderRefreshPromise=request;
+ return request.finally(()=>{
+  if(customerOrderRefreshPromise===request)customerOrderRefreshPromise=null;
+ });
+}
+function installCustomerOrderResumeListeners(){
+ if(customerOrderResumeListenersInstalled)return;
+ customerOrderResumeListenersInstalled=true;
+ const refreshIfVisible=()=>{
+  const userId=currentUser?.id;
+  if(userId&&document.visibilityState!=="hidden")refreshCustomerOrderData(userId);
+ };
+ document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState!=="hidden")refreshIfVisible();
+ });
+ window.addEventListener("focus",refreshIfVisible,{passive:true});
+ window.addEventListener("online",refreshIfVisible,{passive:true});
+}
+function refreshAdminOrderViews(){
+ if(currentProfile?.role!=="admin"||document.visibilityState==="hidden")return Promise.resolve([]);
+ if(adminOrderRefreshPromise)return adminOrderRefreshPromise;
+ const tasks=[Promise.resolve().then(()=>loadAllOrders({silent:true}))];
+ if(walletAdminSectionIsVisible("deposits"))tasks.push(Promise.resolve().then(()=>loadWalletDepositsAdmin({force:true,silent:true})));
+ if(walletAdminSectionIsVisible("purchases"))tasks.push(Promise.resolve().then(()=>loadWalletPurchasesAdmin({force:true,silent:true})));
+ const request=Promise.allSettled(tasks);
+ adminOrderRefreshPromise=request;
+ return request.finally(()=>{
+  if(adminOrderRefreshPromise===request)adminOrderRefreshPromise=null;
+ });
+}
+function installAdminOrderResumeListeners(){
+ if(adminOrderResumeListenersInstalled)return;
+ adminOrderResumeListenersInstalled=true;
+ const refreshIfVisible=()=>{
+  if(currentProfile?.role==="admin"&&document.visibilityState!=="hidden")refreshAdminOrderViews();
+ };
+ document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState!=="hidden")refreshIfVisible();
+ });
+ window.addEventListener("focus",refreshIfVisible,{passive:true});
+ window.addEventListener("online",refreshIfVisible,{passive:true});
+}
 function stopCustomerOrderRealtime(){
  if(customerOrderPoll){clearInterval(customerOrderPoll);customerOrderPoll=null;}
  if(customerOrderChannel&&db){try{db.removeChannel(customerOrderChannel);}catch(e){}customerOrderChannel=null;}
@@ -7216,21 +7271,20 @@ function startCustomerOrderRealtime(){
  stopCustomerOrderRealtime();
  if(!currentUser||!db)return;
  const userId=currentUser.id;
+ installCustomerOrderResumeListeners();
  customerOrderChannel=db.channel("castle-customer-orders-"+userId)
   .on("postgres_changes",{event:"*",schema:"public",table:"orders",filter:"user_id=eq."+userId},payload=>{
-   if(currentUser?.id===userId){
-    loadMyOrders();
-    loadWalletData().catch(error=>console.error("No se pudo actualizar el saldo tras el cambio del pedido:",error));
-   }
+   if(currentUser?.id===userId)refreshCustomerOrderData(userId);
   })
-  .subscribe();
+  .subscribe(status=>{
+   if(currentUser?.id!==userId)return;
+   if(status==="SUBSCRIBED")refreshCustomerOrderData(userId);
+   else if(["CHANNEL_ERROR","TIMED_OUT","CLOSED"].includes(status))console.warn("La actualización en tiempo real de tus pedidos se reconectará; sigue activo el refresco automático.");
+  });
+ refreshCustomerOrderData(userId);
  customerOrderPoll=setInterval(()=>{
-  if(currentUser?.id===userId&&document.visibilityState!=="hidden"){
-   loadMyOrders();
-   loadWalletData().catch(error=>console.error("No se pudo actualizar la wallet:",error));
-   loadMyWalletDeposits().catch(error=>console.error("No se pudo actualizar el historial de depósitos:",error));
-  }
- },60000);
+  if(currentUser?.id===userId&&document.visibilityState!=="hidden")refreshCustomerOrderData(userId);
+ },30000);
 }
 function stopAdminPaymentPolling(){
  if(adminOrderPoll){clearInterval(adminOrderPoll);adminOrderPoll=null;}
@@ -7239,11 +7293,12 @@ function stopAdminPaymentPolling(){
 function startAdminPaymentPolling(){
  stopAdminPaymentPolling();
  if(currentProfile?.role!=="admin")return;
+ installAdminOrderResumeListeners();
  if(db&&currentUser){
   adminOrderChannel=db.channel("castle-admin-orders-"+currentUser.id)
    .on("postgres_changes",{event:"*",schema:"public",table:"orders"},payload=>{
     if(currentProfile?.role!=="admin")return;
-    loadAllOrders({silent:true});
+    refreshAdminOrderViews();
     const paymentSource=String(payload?.new?.payment_source||payload?.old?.payment_source||"");
     if(payload?.eventType==="UPDATE"&&paymentSource==="wallet"&&walletAdminSectionIsVisible("purchases"))loadWalletPurchasesAdmin({force:true,silent:true});
    })
@@ -7253,14 +7308,14 @@ function startAdminPaymentPolling(){
    .on("postgres_changes",{event:"INSERT",schema:"public",table:"wallet_transactions",filter:"kind=eq.purchase"},()=>{
     if(walletAdminSectionIsVisible("purchases"))loadWalletPurchasesAdmin({force:true,silent:true});
    })
-   .subscribe();
+   .subscribe(status=>{
+    if(currentProfile?.role!=="admin")return;
+    if(status==="SUBSCRIBED")refreshAdminOrderViews();
+    else if(["CHANNEL_ERROR","TIMED_OUT","CLOSED"].includes(status))console.warn("La actualización en tiempo real del panel se reconectará; sigue activo el refresco automático.");
+   });
  }
  adminOrderPoll=setInterval(()=>{
-  if(currentProfile?.role==="admin"&&document.visibilityState!=="hidden"){
-   loadAllOrders({silent:true});
-   if(walletAdminSectionIsVisible("deposits"))loadWalletDepositsAdmin({force:true,silent:true});
-   if(walletAdminSectionIsVisible("purchases"))loadWalletPurchasesAdmin({force:true,silent:true});
-  }
+  if(currentProfile?.role==="admin"&&document.visibilityState!=="hidden")refreshAdminOrderViews();
  },30000);
 }
 async function enablePaymentNotifications(){

@@ -26,6 +26,7 @@ const walletPromotionCompletionMigrationSource = fs.readFileSync(path.join(root,
 const referralPurchaseVolumeMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125184000_wallet_referral_purchase_volume.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
 const evoPublicationMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125150000_publish_free_fire_evo_products.sql"), "utf8");
+const freeFireEvoPauseMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125204814_pause_free_fire_evo_items_until_provider_fix.sql"), "utf8");
 const coronasPromotionsJsSource = fs.readFileSync(path.join(root, "assets/coronas-promotions.js"), "utf8");
 
 
@@ -238,7 +239,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v198"));
+  assert.ok(serviceWorker.includes("shell-v199"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -1131,10 +1132,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v198"));
+  assert.ok(serviceWorker.includes("shell-v199"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=28"));
-  assert.ok(serviceWorker.includes("shell-v198"));
+  assert.ok(serviceWorker.includes("shell-v199"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=28"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1161,7 +1162,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v198"));
+  assert.ok(serviceWorker.includes("shell-v199"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1236,6 +1237,69 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
   assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
-  assert.ok(serviceWorker.includes("shell-v198"));
+  assert.ok(serviceWorker.includes("shell-v199"));
   assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
+});
+
+
+test("las cajas y los fragmentos EVO de Free Fire quedan pausados también después de sincronizar el catálogo", () => {
+  assert.ok(freeFireEvoPauseMigrationSource.includes("v_name not ilike '%fragmentos% evo%'"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("set active = false, storefront_visible = false"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("where game = 'Free Fire'"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("name ilike '%fragmentos% evo%'"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("private.sync_free_fire_provider_products"));
+});
+
+test("los detalles visibles al cliente nunca revelan el nombre ni los datos del proveedor", () => {
+  const detail = extractNamedFunction(indexHtml, "renderCustomerOrderDetailHtml");
+  assert.doesNotMatch(detail, /Central One|central-one|provider_product_id|provider_order_id|provider_sku/);
+  assert.match(detail, /El pago se realizó con tus Coronas/);
+  assert.match(detail, /No pudimos completar la recarga/);
+  assert.match(detail, /El equipo de Tienda El Castillo está revisando tu pedido/);
+});
+
+test("el cliente actualiza el seguimiento de pedidos por tiempo real y al volver a la pestaña", () => {
+  const refresh = extractNamedFunction(indexHtml, "refreshCustomerOrderData");
+  const resume = extractNamedFunction(indexHtml, "installCustomerOrderResumeListeners");
+  const realtime = extractNamedFunction(indexHtml, "startCustomerOrderRealtime");
+  assert.ok(refresh.includes("loadMyOrders"));
+  assert.ok(refresh.includes("loadWalletData"));
+  assert.ok(refresh.includes("Promise.allSettled"));
+  assert.ok(resume.includes("visibilitychange"));
+  assert.ok(resume.includes("focus"));
+  assert.ok(resume.includes("online"));
+  assert.ok(realtime.includes("postgres_changes"));
+  assert.ok(realtime.includes(".subscribe(status=>"));
+  assert.ok(realtime.includes('status==="SUBSCRIBED"'));
+  assert.ok(realtime.includes("CHANNEL_ERROR"));
+  assert.ok(realtime.includes("TIMED_OUT"));
+  assert.ok(realtime.includes("CLOSED"));
+  assert.ok(realtime.includes("customerOrderPoll=setInterval"));
+  assert.ok(realtime.includes("30000"));
+  assert.doesNotMatch(realtime, /Central One|central-one/);
+});
+
+test("el panel administrativo también se recupera al reabrir el navegador", () => {
+  const refresh = extractNamedFunction(indexHtml, "refreshAdminOrderViews");
+  const resume = extractNamedFunction(indexHtml, "installAdminOrderResumeListeners");
+  const realtime = extractNamedFunction(indexHtml, "startAdminPaymentPolling");
+  assert.ok(refresh.includes("loadAllOrders"));
+  assert.ok(refresh.includes("loadWalletPurchasesAdmin"));
+  assert.ok(resume.includes("visibilitychange"));
+  assert.ok(resume.includes("focus"));
+  assert.ok(resume.includes("online"));
+  assert.ok(realtime.includes("postgres_changes"));
+  assert.ok(realtime.includes(".subscribe(status=>"));
+  assert.ok(realtime.includes("adminOrderPoll=setInterval"));
+  assert.ok(realtime.includes("30000"));
+});
+
+test("la recompensa por invitación acredita el 5 % de la compra automáticamente al confirmar la entrega", () => {
+  assert.ok(coronasProductionMigrationSource.includes("round(v_order.wallet_refund_amount * 0.05,4)"));
+  assert.ok(coronasProductionMigrationSource.includes("'adjustment'"));
+  assert.ok(coronasProductionMigrationSource.includes("'USD'"));
+  assert.ok(coronasProductionMigrationSource.includes("private.handle_wallet_referral_order_status"));
+  assert.ok(coronasProductionMigrationSource.includes("perform private.credit_wallet_referral_order_reward(new.id)"));
+  assert.ok(referralAutoLinkMigrationSource.includes("v_order.created_at < v_linked_at"));
+  assert.ok(referralAutoLinkMigrationSource.includes("wallet_referral_order_rewards_invitee_once_uidx"));
 });
