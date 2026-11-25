@@ -1246,8 +1246,16 @@ test("las cajas y los fragmentos EVO de Free Fire quedan pausados también despu
   assert.ok(freeFireEvoPauseMigrationSource.includes("v_name not ilike '%fragmentos% evo%'"));
   assert.ok(freeFireEvoPauseMigrationSource.includes("set active = false, storefront_visible = false"));
   assert.ok(freeFireEvoPauseMigrationSource.includes("where game = 'Free Fire'"));
-  assert.ok(freeFireEvoPauseMigrationSource.includes("name ILIKE '%fragmentos% evo%'"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("name ilike '%fragmentos% evo%'"));
   assert.ok(freeFireEvoPauseMigrationSource.includes("private.sync_free_fire_provider_products"));
+});
+
+test("los detalles visibles al cliente nunca revelan el nombre ni los datos del proveedor", () => {
+  const detail = extractNamedFunction(indexHtml, "renderCustomerOrderDetailHtml");
+  assert.doesNotMatch(detail, /Central One|central-one|provider_product_id|provider_order_id|provider_sku/);
+  assert.match(detail, /El pago se realizó con tus Coronas/);
+  assert.match(detail, /No pudimos completar la recarga/);
+  assert.match(detail, /El equipo de Tienda El Castillo está revisando tu pedido/);
 });
 
 test("el cliente actualiza el seguimiento de pedidos por tiempo real y al volver a la pestaña", () => {
