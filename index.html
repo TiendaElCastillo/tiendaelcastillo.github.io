@@ -4084,6 +4084,9 @@ function showView(name){
  const views={home:"homeView",games:"gamesView",giftcards:"giftcardsView",search:"searchView",checkout:"checkoutView",orders:"ordersView",notifications:"notificationsView",wallet:"walletView",profile:"profileView",admin:"admin",help:"helpView",guides:"guidesView",support:"supportView",legal:"legalView",faq:"faqView",privacy:"privacyView",terms:"termsView"};
  Object.values(views).forEach(id=>$(id)?.classList.add("hidden"));
  $(views[name]||views.home)?.classList.remove("hidden");
+ if(name==="wallet"&&currentUser){
+  Promise.resolve().then(()=>loadWalletPromotions()).catch(error=>console.warn("No se pudieron actualizar los estados de las promociones:",error));
+ }
  if(["home","games","search","checkout","orders","notifications","wallet","profile","help","guides","support","legal","faq","privacy","terms"].includes(name))window.castleAnalytics?.capture?.("store_section_opened",{view:name});
  document.querySelectorAll("#bottomNav [data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
  $("bottomNav").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"});
