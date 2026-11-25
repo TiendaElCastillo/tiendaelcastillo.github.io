@@ -1143,7 +1143,7 @@ test("la Cartera muestra solo cuentas vinculadas, compras premiadas y ganancias 
   assert.match(indexHtml, /id="walletReferralStats"/);
   assert.match(indexHtml, /Amigos vinculados/);
   assert.match(indexHtml, /Compras premiadas/);
-  assert.match(indexHtml, /Ganancia obtenida \\(5 %\\)/);
+  assert.match(indexHtml, /Ganancia obtenida \(5 %\)/);
   assert.doesNotMatch(indexHtml, /Ventas generadas/);
   const source = extractNamedFunction(indexHtml, "loadWalletPromotions");
   assert.doesNotMatch(source, /get_wallet_referral_purchase_volume|purchase_volume_usd/);
