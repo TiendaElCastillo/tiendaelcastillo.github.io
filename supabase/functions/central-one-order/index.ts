@@ -8,7 +8,7 @@ const CENTRAL_ONE_BASE = "https://portal.centraloneglobal.com/api/v1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info, x-sync-token",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Content-Type": "application/json; charset=utf-8",
 };
@@ -790,13 +790,98 @@ async function refreshOrder(orderId: string) {
     local:saved,details:safe
   });
 }
+async function authorizeScheduledOrderSync(req: Request) {
+  const token = req.headers.get("x-sync-token") || "";
+  if (!token) return false;
+  const response = await fetch(SUPABASE_URL + "/rest/v1/rpc/authorize_central_one_sync", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: "Bearer " + SUPABASE_ANON_KEY,
+    },
+    body: JSON.stringify({ p_token: token }),
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!response.ok) return false;
+  return (await response.json().catch(() => false)) === true;
+}
+
+async function syncOpenOrders(req: Request, body: any) {
+  if (!CENTRAL_ONE_API_KEY) return reply(503,{error:"central_one_not_configured",message:"Falta la clave de Central One."});
+  if (!(await authorizeScheduledOrderSync(req))) {
+    return reply(401,{error:"sync_auth_required",message:"La autorización de sincronización no es válida."});
+  }
+
+  const requestedLimit = Math.floor(Number(body?.limit) || 6);
+  const limit = Math.max(1,Math.min(6,requestedLimit));
+  const cutoff = new Date(Date.now() - 45000).toISOString();
+  const lookup = new URL(SUPABASE_URL + "/rest/v1/orders");
+  lookup.searchParams.set("select","id");
+  lookup.searchParams.set("central_one_order_id","not.is.null");
+  lookup.searchParams.set("central_one_status","in.(created,confirmed,processing,partially_completed,unknown,retryable)");
+  lookup.searchParams.set("or","(central_one_checked_at.is.null,central_one_checked_at.lt." + cutoff + ")");
+  lookup.searchParams.set("order","central_one_checked_at.asc.nullsfirst,created_at.asc");
+  lookup.searchParams.set("limit",String(limit));
+
+  const localResponse = await fetch(lookup, {
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: "Bearer " + SUPABASE_SERVICE_ROLE_KEY,
+    },
+    signal: AbortSignal.timeout(10000),
+  });
+  if (!localResponse.ok) {
+    return reply(503,{error:"open_orders_lookup_failed",message:"No se pudieron consultar los pedidos pendientes de entrega."});
+  }
+  const rows = await localResponse.json().catch(() => []);
+  const orderIds = Array.isArray(rows)
+    ? rows.map((row: any) => String(row?.id || "")).filter((id: string) => /^[0-9a-f-]{36}$/i.test(id))
+    : [];
+
+  let cursor = 0;
+  let completed = 0;
+  let stillOpen = 0;
+  let errors = 0;
+  const worker = async () => {
+    while (cursor < orderIds.length) {
+      const index = cursor++;
+      const orderId = orderIds[index];
+      try {
+        const result = await refreshOrder(orderId);
+        const data = await result.json().catch(() => ({}));
+        if (!result.ok || data?.ok !== true) {
+          errors++;
+          continue;
+        }
+        if (data.provider_status === "completed") completed++;
+        else if (["created","confirmed","processing","partially_completed","unknown","retryable"].includes(String(data.provider_status))) stillOpen++;
+        else errors++;
+      } catch (_) {
+        errors++;
+      }
+    }
+  };
+
+  await Promise.all(Array.from({length:Math.min(3,orderIds.length)},()=>worker()));
+  return reply(200,{
+    ok:true,
+    checked:orderIds.length,
+    delivered:completed,
+    still_open:stillOpen,
+    errors,
+    checked_at:new Date().toISOString(),
+  });
+}
+
 Deno.serve(async (req: Request) => {
   if(req.method==="OPTIONS") return new Response("ok",{headers:corsHeaders});
   if(req.method!=="POST") return reply(405,{error:"method_not_allowed"});
   if(!SUPABASE_URL||!SUPABASE_ANON_KEY||!SUPABASE_SERVICE_ROLE_KEY) return reply(503,{error:"backend_not_configured"});
   try{
-    const body=await req.json().catch(()=>({}));
+    const body=await req.json().catch(() => ({}));
     const action=body?.action;
+    if(action==="sync_open_orders") return await syncOpenOrders(req,body);
     const orderId=typeof body?.order_id==="string"?body.order_id:"";
     if(!/^[0-9a-f-]{36}$/i.test(orderId)) return reply(400,{error:"invalid_order_id",message:"El identificador del pedido no es válido."});
     if(action==="submit_wallet"){
@@ -806,7 +891,7 @@ Deno.serve(async (req: Request) => {
     const admin=await adminContext(req);
     if(action==="submit") return await submitOrder(orderId,admin.userId);
     if(action==="refresh") return await refreshOrder(orderId);
-    return reply(400,{error:"unsupported_action",allowed_actions:["submit","submit_wallet","refresh"]});
+    return reply(400,{error:"unsupported_action",allowed_actions:["submit","submit_wallet","refresh","sync_open_orders"]});
   }catch(error){
     const status=Number((error as any)?.status)||400;
     return reply(status,{error:"central_one_order_failed",message:error instanceof Error?error.message:"No se pudo procesar la solicitud."});

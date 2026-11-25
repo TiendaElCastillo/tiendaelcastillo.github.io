@@ -21,6 +21,7 @@ const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/func
 const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
 const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
 const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
+const centralOrderAutoSyncMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125133000_central_one_auto_order_status_sync.sql"), "utf8");
 const walletPromotionCompletionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125130148_wallet_promotion_completion_states.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
 
@@ -782,6 +783,40 @@ test("la comisión de invitación se revierte ante fallo, rechazo o cancelación
   assert.match(coronasProductionMigrationSource, /new\.central_one_status in \('failed','cancelled','rejected'\)/);
   assert.match(coronasProductionMigrationSource, /private\.reverse_wallet_referral_order_reward\(\s+new\.id/);
   assert.match(coronasProductionMigrationSource, /if not found or v_reward\.reversed_at is not null then\s+return 0/);
+});
+
+test("Central One consulta automáticamente pedidos enviados que siguen abiertos", () => {
+  assert.match(centralOneOrderEdgeSource, /async function authorizeScheduledOrderSync/);
+  assert.match(centralOneOrderEdgeSource, /authorize_central_one_sync/);
+  assert.match(centralOneOrderEdgeSource, /async function syncOpenOrders/);
+  assert.match(centralOneOrderEdgeSource, /action==="sync_open_orders"/);
+  assert.match(centralOneOrderEdgeSource, /central_one_order_id.*not\.is\.null/);
+  assert.match(centralOneOrderEdgeSource, /central_one_status.*in\.\(created,confirmed,processing,partially_completed,unknown,retryable\)/);
+  assert.match(centralOneOrderEdgeSource, /refreshOrder\(orderId\)/);
+  assert.match(centralOneOrderEdgeSource, /Math\.min\(3,orderIds\.length\)/);
+  assert.match(centralOneOrderEdgeSource, /x-sync-token/);
+  assert.match(centralOneOrderEdgeSource, /allowed_actions:\[\"submit\",\"submit_wallet\",\"refresh\",\"sync_open_orders\"\]/);
+});
+
+test("la sincronización de pedidos de Central One se programa cada minuto con el secreto existente", () => {
+  assert.match(centralOrderAutoSyncMigrationSource, /cron\.schedule\([\s\S]*'\*\/1 \* \* \* \*'/);
+  assert.match(centralOrderAutoSyncMigrationSource, /functions\/v1\/central-one-order/);
+  assert.match(centralOrderAutoSyncMigrationSource, /x-sync-token/);
+  assert.match(centralOrderAutoSyncMigrationSource, /vault\.decrypted_secrets/);
+  assert.match(centralOrderAutoSyncMigrationSource, /sync_open_orders/);
+  assert.match(centralOrderAutoSyncMigrationSource, /timeout_milliseconds := 50000/);
+});
+
+test("cliente y administración reciben las actualizaciones de pedidos sin recargar la página", () => {
+  assert.match(indexHtml, /customerOrderChannel=db\.channel/);
+  assert.match(indexHtml, /table:"orders",filter:"user_id=eq\."\+userId/);
+  assert.match(indexHtml, /customerOrderPoll=setInterval/);
+  assert.match(indexHtml, /loadMyOrders\(\);/);
+  assert.match(indexHtml, /adminOrderChannel=db\.channel/);
+  assert.match(indexHtml, /adminOrderPoll=setInterval/);
+  assert.match(indexHtml, /loadAllOrders\(\{silent:true\}\)/);
+  assert.match(indexHtml, /function stopCustomerOrderRealtime/);
+  assert.match(indexHtml, /function stopAdminPaymentPolling/);
 });
 
 test("las compras de Coronas conservan la clave histórica y son idempotentes", () => {
