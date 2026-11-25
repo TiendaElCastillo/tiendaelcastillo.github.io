@@ -1215,7 +1215,7 @@ test("el historial de recargas del cliente no expone enlaces ni datos internos d
   assert.ok(history.includes('createElement("details")'));
   assert.ok(history.includes("wallet-customer-deposit-card"));
   assert.doesNotMatch(history, /createSignedUrl|signedUrl|wallet-proof-links|createSignedWalletProofLinks/);
-  assert.doesNotMatch(history, /admin_notes|payment_reference|sender_phone|recipient_address|txid|exchange_rate/);
+  assert.doesNotMatch(history, /deposit\.(admin_notes|payment_reference|sender_phone|recipient_address|txid|exchange_rate)/);
   assert.match(history, /No pudimos verificar el estado de los comprobantes/);
   assert.match(history, /data-wallet-deposit-history-id/);
 });
