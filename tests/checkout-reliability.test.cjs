@@ -237,8 +237,8 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes("shell-v191"));
-  assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=4'));
+  assert.ok(serviceWorker.includes("shell-v192"));
+  assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=5'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
   assert.match(serviceWorker, /keys\.filter\(key =>[\s\S]*key !== CACHE_NAME[\s\S]*key.startsWith\(CACHE_PREFIX\)/);
@@ -994,6 +994,13 @@ test("la portada conserva promociones, controles del carrusel y presentación ad
   assert.match(indexHtml, /id="homeView"/);
   assert.match(indexHtml, /class="home-intro"/);
   assert.match(indexHtml, /id="coronasPromoCarousel"/);
+  assert.match(indexHtml, /class="coronas-promo-heading"/);
+  assert.match(indexHtml, /Promociones de Tienda El Castillo/);
+  assert.match(indexHtml, /Ofertas y beneficios para nuestra comunidad/);
+  assert.match(coronasPromoCssSource, /\.coronas-promo-carousel\s*\{[\s\S]*border:2px solid #c7d9f1/);
+  assert.match(coronasPromoCssSource, /\.coronas-promo-heading\s*\{/);
+  assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=5"));
+  assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=5"));
   assert.match(indexHtml, /data-coronas-slide="0"/);
   assert.match(indexHtml, /data-coronas-prev/);
   assert.match(indexHtml, /data-coronas-next/);
@@ -1101,7 +1108,7 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.doesNotMatch(indexHtml, />\s*Copiar enlace\s*</);
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=27"));
-  assert.ok(serviceWorker.includes("shell-v191"));
+  assert.ok(serviceWorker.includes("shell-v192"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=27"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
