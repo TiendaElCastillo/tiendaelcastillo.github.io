@@ -1203,8 +1203,6 @@ test("Wallet conserva las solicitudes visibles y limita las consultas de adminis
   const polling = extractNamedFunction(indexHtml, "startAdminPaymentPolling");
   assert.ok(polling.includes('walletAdminSectionIsVisible("deposits")'));
   assert.ok(polling.includes('walletAdminSectionIsVisible("purchases")'));
-  assert.ok(polling.includes('walletAdminSectionIsVisible("purchases")'));
-  assert.ok(polling.includes('walletAdminSectionIsVisible("deposits")'));
   const openStore = extractNamedFunction(indexHtml, "openStore");
   assert.ok(!openStore.includes("depósitos de administración"));
 });
