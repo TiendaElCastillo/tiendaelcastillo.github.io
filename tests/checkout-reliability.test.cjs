@@ -980,7 +980,7 @@ test("la portada publica las ofertas Evo LATAM con stock y validación, sin expo
   assert.match(evoPublicationMigrationSource, /provider_in_stock is true/);
   assert.match(evoPublicationMigrationSource, /provider_validation_supported is true/);
   assert.match(evoPublicationMigrationSource, /provider_requires_target is true/);
-  assert.match(evoPublicationMigrationSource, /provider_target_fields = '\\["player_id"\\]'::jsonb/);
+  assert.ok(evoPublicationMigrationSource.includes("provider_target_fields = '[\"player_id\"]'::jsonb"));
   assert.match(evoPublicationMigrationSource, /provider_synced_at >= now\(\) - interval '30 minutes'/);
   assert.doesNotMatch(evoPublicationMigrationSource, /a9cfa9a9-2310-4167-bdb9-6740413660dc/);
   assert.match(indexHtml, /function freeFirePackageGroup[\s\S]*?fragmentos\.\*evo\|evo\.\*fragmentos[\s\S]*?return "evo"/);
@@ -999,7 +999,7 @@ test("la portada conserva promociones, controles del carrusel y presentación ad
   assert.match(indexHtml, /data-coronas-next/);
   assert.match(indexHtml, /data-coronas-dot="2"/);
   assert.match(storefrontPolishSource, /#homeView \.home-intro\s*\{/);
-  assert.match(storefrontPolishSource, /#homeGames\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(indexHtml, /#homeGames\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(coronasPromoCssSource, /\.coronas-promo-slide\.is-active/);
   assert.match(coronasPromotionsJsSource, /data-coronas-prev/);
   assert.match(coronasPromotionsJsSource, /data-coronas-next/);
