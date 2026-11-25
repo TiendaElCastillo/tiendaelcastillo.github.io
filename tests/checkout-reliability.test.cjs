@@ -1269,7 +1269,7 @@ test("el cliente actualiza el seguimiento de pedidos por tiempo real y al volver
   assert.ok(resume.includes("focus"));
   assert.ok(resume.includes("online"));
   assert.ok(realtime.includes("postgres_changes"));
-  assert.ok(realtime.includes(".subscribe(status =>"));
+  assert.ok(realtime.includes(".subscribe(status=>"));
   assert.ok(realtime.includes('status==="SUBSCRIBED"'));
   assert.ok(realtime.includes("CHANNEL_ERROR"));
   assert.ok(realtime.includes("TIMED_OUT"));
@@ -1289,7 +1289,7 @@ test("el panel administrativo también se recupera al reabrir el navegador", () 
   assert.ok(resume.includes("focus"));
   assert.ok(resume.includes("online"));
   assert.ok(realtime.includes("postgres_changes"));
-  assert.ok(realtime.includes(".subscribe(status =>"));
+  assert.ok(realtime.includes(".subscribe(status=>"));
   assert.ok(realtime.includes("adminOrderPoll=setInterval"));
   assert.ok(realtime.includes("30000"));
 });
