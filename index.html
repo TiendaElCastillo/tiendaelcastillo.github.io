@@ -6112,15 +6112,32 @@ function goWalletDepositStep(step){
  if(target===3)$("walletDepositStep3")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function scrollWalletDepositHistory(){
+ resetWalletDepositWizard({keepMessage:true});
  $("walletDepositsMine")?.scrollIntoView({behavior:"smooth",block:"start"});
 }
-function resetWalletDepositWizard(){
+let walletDepositDoneTimer=null;
+function resetWalletDepositWizard(options={}){
+ const keepMessage=options&&options.keepMessage===true;
+ if(walletDepositDoneTimer){window.clearTimeout(walletDepositDoneTimer);walletDepositDoneTimer=null;}
  resetWalletDepositProofUploadProgress();
  if(walletDepositPreviewUrl){URL.revokeObjectURL(walletDepositPreviewUrl);walletDepositPreviewUrl="";}
  ["walletDepositAmount","walletDepositSenderPhone","walletDepositReference","walletDepositTxid","walletDepositProof"].forEach(id=>{const field=$(id);if(field)field.value="";});
  previewWalletDepositProof();
  previewWalletDeposit();
  goWalletDepositStep(1);
+ if(!keepMessage&&$("walletDepositMsg"))$("walletDepositMsg").textContent="";
+}
+function scheduleWalletDepositConfirmationReset(){
+ if(walletDepositDoneTimer)window.clearTimeout(walletDepositDoneTimer);
+ walletDepositDoneTimer=window.setTimeout(()=>{
+  walletDepositDoneTimer=null;
+  const confirmation=$("walletDepositStep3");
+  if(confirmation&&!confirmation.classList.contains("hidden")){
+   resetWalletDepositWizard({keepMessage:true});
+   const message=$("walletDepositMsg");
+   if(message)message.textContent="Solicitud recibida correctamente. Puedes consultar su estado en el Historial de recargas.";
+  }
+ },15000);
 }
 async function requestWalletDeposit(){
  if(!currentUser){openAccount();return;}
@@ -6226,7 +6243,8 @@ async function requestWalletDeposit(){
   previewWalletDepositProof();
   previewWalletDeposit();
   goWalletDepositStep(3);
-  if(message)message.textContent="Solicitud "+createdDepositId.slice(0,8)+" recibida y enviada a revisión.";
+   scheduleWalletDepositConfirmationReset();
+   if(message)message.textContent="Solicitud "+createdDepositId.slice(0,8)+" recibida y enviada a revisión.";
   await loadMyWalletDeposits().catch(refreshError=>{
    console.warn("La solicitud fue enviada; no se pudo actualizar el historial:",refreshError);
    if(message)message.textContent="La solicitud "+createdDepositId.slice(0,8)+" quedó recibida y pendiente de revisión. No repitas el pago.";
