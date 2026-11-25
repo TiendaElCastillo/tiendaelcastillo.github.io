@@ -6252,46 +6252,125 @@ async function attachWalletDepositProof(id,method){
  catch(e){const msg=$("wallet-retry-msg-"+id);if(msg)msg.textContent=e.message||"No se pudo enviar el comprobante.";}
  finally{const current=$("wallet-retry-button-"+id);if(current){current.disabled=false;current.textContent="Enviar comprobantes";}}
 }
-async function createSignedWalletProofLinks(proofs,label){
- const links=[];
- for(let i=0;i<(proofs||[]).length;i++){
-  const item=proofs[i],signed=await db.storage.from("payment-proofs").createSignedUrl(item.proof_path,600);
-  if(!signed.error&&signed.data?.signedUrl)links.push('<a href="'+clean(signed.data.signedUrl)+'" target="_blank" rel="noopener noreferrer">'+clean(label||"Comprobante")+' '+(i+1)+'</a>');
- }
- return links.length?'<div class="wallet-proof-links">'+links.join("")+'</div>':'<p class="track-note">No se pudo generar el enlace seguro de los comprobantes.</p>';
-}
 async function loadMyWalletDeposits(){
  if(!currentUser)return;
  const list=$("walletDepositsMine");if(!list)return;
  let data=[];
  for(let from=0;;from+=1000){
-  const result=await db.from("wallet_deposits").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false}).range(from,from+999);
-  if(result.error){list.textContent="No se pudieron cargar tus recargas: "+result.error.message;return;}
-  data=data.concat(result.data||[]);if(!result.data||result.data.length<1000)break;
+  const result=await db.from("wallet_deposits")
+   .select("id,status,amount,currency,payment_method,credited_amount,welcome_bonus_amount,created_at,proof_path")
+   .eq("user_id",currentUser.id)
+   .order("created_at",{ascending:false})
+   .range(from,from+999);
+  if(result.error){
+   list.textContent="No se pudieron cargar tus recargas. Comprueba la conexión y vuelve a intentarlo.";
+   return;
+  }
+  data=data.concat(result.data||[]);
+  if(!result.data||result.data.length<1000)break;
  }
- if(!data.length){list.innerHTML='<p class="empty-note">Todavía no has solicitado recargas de Coronas.</p>';return;}
- const ids=data.map(d=>d.id),proofResult=await db.from("wallet_deposit_proofs").select("deposit_id,proof_path,uploaded_at").in("deposit_id",ids);
- const proofLoadWarning=proofResult.error?'<p class="wallet-warning">No se pudieron cargar todos los comprobantes: '+clean(proofResult.error.message)+'</p>':"";
- const proofsByDeposit=new Map();
- (proofResult.data||[]).forEach(p=>{if(!proofsByDeposit.has(p.deposit_id))proofsByDeposit.set(p.deposit_id,[]);proofsByDeposit.get(p.deposit_id).push(p);});
- const cards=[];
- for(const d of data){
-  const cup=d.payment_method==="Transferencia CUP",mobile=d.payment_method==="Saldo móvil",usdt=d.payment_method==="USDT";
+ if(!data.length){
+  list.textContent="Todavía no has solicitado recargas de Coronas.";
+  return;
+ }
+ const ids=data.map(row=>row.id);
+ const proofResult=await db.from("wallet_deposit_proofs").select("deposit_id").in("deposit_id",ids);
+ const proofIds=new Set((proofResult.data||[]).map(row=>row.deposit_id));
+ const opened=new Set(Array.from(list.querySelectorAll("details[data-wallet-deposit-history-id][open]")).map(card=>card.dataset.walletDepositHistoryId));
+ list.replaceChildren();
+ if(proofResult.error){
+  const warning=document.createElement("p");
+  warning.className="wallet-warning";
+  warning.textContent="No pudimos verificar el estado de los comprobantes. Actualiza el historial antes de adjuntar otro; no repitas el pago.";
+  list.appendChild(warning);
+ }
+ const cards=document.createElement("div");
+ cards.className="wallet-customer-deposit-list";
+ const node=(tag,className,text)=>{
+  const element=document.createElement(tag);
+  if(className)element.className=className;
+  if(text!==undefined)element.textContent=String(text);
+  return element;
+ };
+ const row=(container,label,value,total=false)=>{
+  const item=node("div","wallet-customer-deposit-row"+(total?" is-total":""));
+  item.append(node("span","",label),node("strong","",value));
+  container.appendChild(item);
+ };
+ for(const deposit of data){
+  const cup=deposit.payment_method==="Transferencia CUP";
+  const mobile=deposit.payment_method==="Saldo móvil";
+  const usdt=deposit.payment_method==="USDT";
   const unit=cup?"CUP":usdt?"USDT":"unidades de saldo móvil";
-  const status=d.status==="approved"?"Aprobada":d.status==="rejected"?"Rechazada":d.status==="payment_review"?"En revisión":"Pendiente";
-  const statusClass=d.status==="approved"?"approved":d.status==="rejected"?"rejected":"";
-  const proofRows=proofsByDeposit.get(d.id)||[];
-  const canUpload=d.status==="pending"&&proofRows.length===0&&!d.proof_path;
-  const retry=canUpload?'<p class="wallet-warning">Esta solicitud todavía no tiene un comprobante asociado. Completa el envío aquí; no vuelvas a realizar el pago.</p><div class="field"><label for="wallet-retry-proof-'+clean(d.id)+'">Adjuntar comprobante pendiente (1 imagen)</label><input id="wallet-retry-proof-'+clean(d.id)+'" data-max-files="1" type="file" accept="image/jpeg,image/png,image/webp"></div>'+
-   (cup||mobile?'<div class="field"><label for="wallet-retry-sender-'+clean(d.id)+'">Teléfono de origen</label><input id="wallet-retry-sender-'+clean(d.id)+'" value="'+clean(d.sender_phone||"")+'" placeholder="+53 5XXXXXXX"></div>':
-   '<div class="field"><label for="wallet-retry-txid-'+clean(d.id)+'">TxID</label><input id="wallet-retry-txid-'+clean(d.id)+'" maxlength="64" value="'+clean(d.txid||"")+'"></div>')+(cup?'<div class="field"><label for="wallet-retry-reference-'+clean(d.id)+'">Número de transacción bancaria</label><input id="wallet-retry-reference-'+clean(d.id)+'" value="'+clean(d.payment_reference||"")+'"></div>':"")+
-   '<button id="wallet-retry-button-'+clean(d.id)+'" class="secondary-btn" type="button" onclick="attachWalletDepositProof(\''+clean(d.id)+'\',\''+clean(d.payment_method)+'\')">Enviar comprobantes</button><p id="wallet-retry-msg-'+clean(d.id)+'" class="msg" role="status"></p>':"";
-  const links=await createSignedWalletProofLinks(proofRows);
-  const credited=d.credited_amount==null?"Pendiente de cálculo":moneyUSD(Number(d.credited_amount||0)+Number(d.welcome_bonus_amount||0))+" Coronas";
-  const paymentDetails=cup?"Importe enviado: "+money(d.amount)+" CUP":usdt?"Importe enviado: "+moneyUSD(d.amount)+" USDT":"Saldo móvil enviado: "+money(d.amount)+" unidades";
-  cards.push('<article class="wallet-history-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>Recarga · '+clean(d.payment_method)+' · '+clean(paymentDetails)+'</strong><span class="wallet-status '+statusClass+'">'+status+'</span></div><div class="order-detail">Coronas previstas: '+credited+(d.status==="approved"?"<br>Coronas acreditadas: "+moneyUSD(Number(d.credited_amount||0)+Number(d.welcome_bonus_amount||0))+" Coronas":"")+'<br>Fecha: '+new Date(d.created_at).toLocaleString("es-CU")+(d.exchange_rate?"<br>Conversión guardada: "+money(d.exchange_rate)+(mobile?" unidades por Corona":" CUP por Corona"):"")+(d.payment_reference?"<br>Referencia: "+clean(d.payment_reference):"")+(d.txid?"<br>TxID: "+clean(d.txid):"")+'</div>'+links+(d.admin_notes?'<p class="wallet-warning"><strong>Observación:</strong> '+clean(d.admin_notes)+'</p>':'')+retry+'</article>');
+  const amountLabel=(cup||mobile?money(deposit.amount):moneyUSD(deposit.amount))+" "+unit;
+  const status=deposit.status==="approved"?"Aprobada":deposit.status==="rejected"?"Rechazada":deposit.status==="payment_review"?"En revisión":"Pendiente";
+  const statusClass=deposit.status==="approved"?"approved":deposit.status==="rejected"?"rejected":"";
+  const base=deposit.credited_amount==null?null:Number(deposit.credited_amount||0);
+  const bonus=Number(deposit.welcome_bonus_amount||0);
+  const total=Number(deposit.credited_amount||0)+bonus;
+  const date=deposit.created_at?new Date(deposit.created_at).toLocaleString("es-CU"):"Fecha no disponible";
+  const compact=deposit.status==="approved"
+   ?moneyUSD(total)+" Coronas acreditadas"
+   :base===null?"Coronas pendientes de cálculo":moneyUSD(base)+" Coronas previstas";
+  const canUpload=deposit.status==="pending"&&!proofResult.error&&!proofIds.has(deposit.id)&&!deposit.proof_path;
+  const note=deposit.status==="approved"
+   ?"Pago confirmado. Las Coronas ya están disponibles en tu Cartera."
+   :deposit.status==="rejected"
+    ?"Esta recarga fue rechazada. Revisa los mensajes de tu cuenta para consultar la explicación."
+    :deposit.status==="payment_review"
+     ?"Estamos comprobando la recepción del pago. No necesitas enviar otra solicitud."
+     :canUpload
+      ?"Adjunta el comprobante dentro de esta solicitud para que podamos revisar el pago."
+      :"Tu solicitud está registrada y pendiente de revisión.";
+  const card=node("details","wallet-customer-deposit-card");
+  card.dataset.walletDepositHistoryId=deposit.id;
+  const summary=node("summary","wallet-customer-deposit-summary");
+  const main=node("span","wallet-customer-deposit-main");
+  main.append(node("strong","","Recarga · "+deposit.payment_method),node("small","",amountLabel+" · "+date));
+  summary.append(main,node("span","wallet-status "+statusClass,status));
+  const footer=node("span","wallet-customer-deposit-summary-footer");
+  const expand=node("span","");
+  expand.append(document.createTextNode("Ver detalles "),node("b","","⌄"));
+  footer.append(node("strong","",compact),expand);
+  summary.appendChild(footer);
+  card.appendChild(summary);
+  const detail=node("div","wallet-customer-deposit-details");
+  row(detail,"Importe enviado",amountLabel);
+  if(deposit.status==="rejected")row(detail,"Coronas acreditadas","0,00 Coronas");
+  else row(detail,deposit.status==="approved"?"Coronas base":"Coronas previstas",base===null?"Pendiente de cálculo":moneyUSD(base)+" Coronas");
+  if(deposit.status==="approved"&&bonus>0)row(detail,"Bono de primera recarga (3 %)","+"+moneyUSD(bonus)+" Coronas");
+  if(deposit.status==="approved")row(detail,"Total acreditado",moneyUSD(total)+" Coronas",true);
+  detail.appendChild(node("p","wallet-customer-deposit-status-note",note));
+  if(canUpload){
+   const retry=node("div","wallet-customer-deposit-retry");
+   retry.appendChild(node("p","wallet-warning","Esta solicitud todavía no tiene un comprobante asociado. Completa el envío aquí; no vuelvas a realizar el pago."));
+   const addField=(id,labelText,type,placeholder,maxLength)=>{
+    const wrap=node("div","field");
+    const label=node("label","",labelText);label.htmlFor=id;
+    const input=node("input","");input.id=id;input.type=type;
+    if(placeholder)input.placeholder=placeholder;
+    if(maxLength)input.maxLength=maxLength;
+    wrap.append(label,input);retry.appendChild(wrap);return input;
+   };
+   const proof=addField("wallet-retry-proof-"+deposit.id,"Adjuntar comprobante pendiente (1 imagen)","file");
+   proof.accept="image/jpeg,image/png,image/webp";proof.dataset.maxFiles="1";
+   if(cup||mobile)addField("wallet-retry-sender-"+deposit.id,"Teléfono de origen","tel","+53 5XXXXXXX");
+   else addField("wallet-retry-txid-"+deposit.id,"TxID","text","",64);
+   if(cup)addField("wallet-retry-reference-"+deposit.id,"Número de transacción bancaria","text");
+   const button=node("button","secondary-btn","Enviar comprobante");
+   button.type="button";button.id="wallet-retry-button-"+deposit.id;
+   const message=node("p","msg","");message.id="wallet-retry-msg-"+deposit.id;message.setAttribute("role","status");
+   button.addEventListener("click",()=>attachWalletDepositProof(deposit.id,deposit.payment_method));
+   retry.append(button,message);
+   detail.appendChild(retry);
+  }
+  card.appendChild(detail);
+  cards.appendChild(card);
  }
- list.innerHTML=proofLoadWarning+cards.join("");
+ list.appendChild(cards);
+ list.querySelectorAll("details[data-wallet-deposit-history-id]").forEach(card=>{
+  if(opened.has(card.dataset.walletDepositHistoryId))card.open=true;
+ });
 }
 let walletDepositsAdminLoadPromise=null;
 let walletDepositsAdminLastLoadedAt=0;
