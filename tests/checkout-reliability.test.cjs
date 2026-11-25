@@ -1123,7 +1123,8 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.doesNotMatch(inviteSection, /Copiar enlace|walletReferralCode|walletReferralRewardList/);
   assert.match(inviteSection, /id="walletReferralStats"/);
   assert.match(inviteSection, /Amigos vinculados/);
-  assert.match(inviteSection, /Ventas generadas/);
+  assert.match(inviteSection, /Compras premiadas/);
+  assert.doesNotMatch(inviteSection, /Ventas generadas/);
   assert.match(inviteSection, /Ganancia obtenida \(5 %\)/);
   assert.doesNotMatch(indexHtml, /id="walletReferralPromoCard"|id="walletInviteProgress"/);
   assert.doesNotMatch(indexHtml, />\s*Copiar enlace\s*</);
