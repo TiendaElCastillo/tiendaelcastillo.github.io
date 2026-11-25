@@ -237,7 +237,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes("shell-v193"));
+  assert.ok(serviceWorker.includes("shell-v194"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=5'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
@@ -1119,7 +1119,7 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.ok(serviceWorker.includes("shell-v194"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=27"));
-  assert.ok(serviceWorker.includes("shell-v193"));
+  assert.ok(serviceWorker.includes("shell-v194"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=27"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
