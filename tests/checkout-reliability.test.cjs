@@ -669,20 +669,29 @@ test("la base de datos exige el archivo almacenado y los datos completos al entr
   assert.match(checkoutGuardMigrationSource, /NEW\.status IN \('payment_review','processing','completed'\)/);
 });
 
-test("la recarga de billetera se completa en dos pasos y el formulario queda junto a las instrucciones", () => {
+test("la recarga de Coronas usa el flujo guiado de juegos y termina con una confirmación", () => {
   assert.match(indexHtml, /id="walletDepositStep1"/);
   assert.match(indexHtml, /id="walletDepositStep2"/);
-  assert.doesNotMatch(indexHtml, /id="walletDepositStep3"/);
-  assert.doesNotMatch(indexHtml, /goWalletDepositStep\(3\)/);
-  assert.match(indexHtml, /data-step="1"[\s\S]*?data-step="2"/);
+  assert.match(indexHtml, /id="walletDepositStep3"/);
+  assert.match(indexHtml, /data-step="1"[\s\S]*?data-step="2"[\s\S]*?data-step="3"/);
   assert.match(indexHtml, /id="walletDepositInstructions"/);
   assert.match(indexHtml, /id="walletDepositSenderPhone"/);
   assert.match(indexHtml, /id="walletDepositReference"/);
-  assert.match(indexHtml, /id="walletDepositProof"/);
+  assert.match(indexHtml, /id="walletDepositProofPreview"/);
+  assert.match(indexHtml, /id="walletDepositProofUploadCircuit"/);
   assert.match(indexHtml, /id="walletDepositSubmit"[^>]*onclick="requestWalletDeposit\(\)"/);
-  assert.match(indexHtml, /const target=Math\.max\(1,Math\.min\(2/);
+  assert.match(indexHtml, /const target=Math\.max\(1,Math\.min\(3/);
   assert.match(indexHtml, /uploadWalletDepositProofs\(createdDepositId/);
+  assert.match(indexHtml, /goWalletDepositStep\(3\)/);
+  assert.match(indexHtml, /walletDepositDoneCoronas/);
+  assert.match(indexHtml, /setWalletDepositProofUploadProgress\("upload"/);
+  assert.match(indexHtml, /files.length!==1/);
   assert.match(indexHtml, /No repitas el pago/);
+});
+test("el historial de Coronas no vuelve a pedir comprobantes cuando el pago está en revisión", () => {
+  assert.match(indexHtml, /const canUpload=d\.status==="pending"&&proofRows\.length===0&&!d\.proof_path/);
+  assert.doesNotMatch(indexHtml, /const canUpload=\["pending","payment_review"\]/);
+  assert.match(indexHtml, /Adjuntar comprobante pendiente \(1 imagen\)/);
 });
 
 
