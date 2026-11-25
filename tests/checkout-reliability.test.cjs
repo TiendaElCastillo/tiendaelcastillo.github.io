@@ -21,6 +21,7 @@ const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/func
 const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
 const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
 const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
+const walletPromotionCompletionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125130148_wallet_promotion_completion_states.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
 
 
@@ -729,6 +730,49 @@ test("la recompensa de invitación solo usa compras creadas después de vincular
   assert.match(referralAutoLinkMigrationSource, /where invitee_user_id = v_order\.user_id/);
   assert.doesNotMatch(referralAutoLinkMigrationSource, /where reversed_at is null/);
   assert.match(referralAutoLinkMigrationSource, /v_reward := round\(v_order\.wallet_refund_amount \* 0\.05,4\)/);
+});
+
+test("Supabase devuelve el estado personalizado del bono de primera recarga del 3 %", () => {
+  assert.match(walletPromotionCompletionMigrationSource, /welcome_bonus_amount/);
+  assert.match(walletPromotionCompletionMigrationSource, /v_first_deposit_status := 'obtained'/);
+  assert.match(walletPromotionCompletionMigrationSource, /v_first_deposit_status := 'used'/);
+  assert.match(walletPromotionCompletionMigrationSource, /v_first_deposit_status := 'pending'/);
+  assert.match(walletPromotionCompletionMigrationSource, /v_first_deposit_status := 'available'/);
+  assert.match(walletPromotionCompletionMigrationSource, /'first_deposit_status',v_first_deposit_status/);
+  assert.match(walletPromotionCompletionMigrationSource, /'first_deposit_bonus_amount',v_first_deposit_bonus_amount/);
+  assert.match(walletPromotionCompletionMigrationSource, /kind = 'deposit'[\\s\\S]*?currency = 'USD'/);
+});
+
+test("el invitador ve cada recompensa del 5 % como pendiente, obtenida o revertida", () => {
+  assert.match(walletPromotionCompletionMigrationSource, /'referrals',v_referral_rows/);
+  assert.match(walletPromotionCompletionMigrationSource, /when r\.order_id is null then 'pending'/);
+  assert.match(walletPromotionCompletionMigrationSource, /when r\.reversed_at is not null then 'reversed'/);
+  assert.match(walletPromotionCompletionMigrationSource, /else 'obtained'/);
+  assert.match(walletPromotionCompletionMigrationSource, /'referral_rewards_consumed_count',v_reward_consumed/);
+  assert.match(walletPromotionCompletionMigrationSource, /'reversed_count',v_reversed/);
+});
+
+test("la cuenta invitada ve su tarea completada sin recibir indebidamente el 5 %", () => {
+  assert.match(walletPromotionCompletionMigrationSource, /'invited_reward_status',v_invited_reward_status/);
+  assert.match(walletPromotionCompletionMigrationSource, /'invited_reward_amount_usd',v_invited_reward_amount/);
+  assert.match(indexHtml, /La persona que te invitó ya recibió/);
+  assert.match(indexHtml, /TAREA COMPLETADA/);
+});
+
+test("la Cartera marca los bonos obtenidos y no oculta la posibilidad de invitar a más amigos", () => {
+  assert.match(indexHtml, /id="walletFirstDepositPromoCard"/);
+  assert.match(indexHtml, /id="walletReferralPromoCard"/);
+  assert.match(indexHtml, /async function renderWalletPromotionStates\(data\)/);
+  assert.match(indexHtml, /firstStatus==="obtained"/);
+  assert.match(indexHtml, /firstStatus==="pending"/);
+  assert.match(indexHtml, /referrals\.filter\(row=>row\.status==="obtained"\)/);
+  assert.match(indexHtml, /id="walletReferralRewardList"/);
+  assert.match(indexHtml, /Puedes seguir invitando/);
+  assert.match(indexHtml, /const firstStatus=String\(walletReferralSummary\?\.first_deposit_status/);
+  assert.match(indexHtml, /renderWalletPromotionStates\(data\)/);
+  assert.match(coronasPromoCssSource, /\.coronas-promo-card\[data-promo-state="obtained"\]/);
+  assert.match(coronasPromoCssSource, /\.wallet-referral-reward-row\[data-reward-state="obtained"\]/);
+  assert.match(indexHtml, /onclick="shareWalletReferralLink\(\)"/);
 });
 
 test("la comisión de invitación se revierte ante fallo, rechazo o cancelación después de una entrega", () => {
