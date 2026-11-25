@@ -1840,7 +1840,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=25">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=26">
 <link rel="stylesheet" href="./assets/coronas-promotions.css?v=4">
 <script src="./assets/posthog.js?v=3" defer></script>
 
@@ -2405,27 +2405,14 @@ body{min-width:0}
      <strong id="walletFirstDepositPromoTitle">3 % extra</strong>
      <p id="walletFirstDepositPromoDescription">Al aprobar tu primera recarga de Coronas, recibes automáticamente un 3 % adicional, sin límite de importe.</p>
     </article>
-    <article id="walletReferralPromoCard" class="coronas-promo-card" data-promo-state="available">
-     <span id="walletReferralPromoTag" class="coronas-promo-tag">Invita y gana</span>
-     <strong id="walletReferralPromoTitle">5 % por cada amigo</strong>
-     <p id="walletReferralPromoDescription">Gana el 5 % del valor de la primera compra posterior a la invitación, cuando el proveedor confirme su entrega.</p>
-    </article>
    </div>
-   <section id="walletInviteProgress" class="wallet-promotion-progress hidden" aria-live="polite">
-    <span id="walletInviteProgressTag" class="wallet-promotion-state">INVITACIÓN VINCULADA</span>
-    <strong id="walletInviteProgressTitle">Tu invitación está activa</strong>
-    <p id="walletInviteProgressDescription">Cuando se entregue tu primera compra posterior al vínculo, quien te invitó recibirá el 5 % de recompensa.</p>
-   </section>
   </section>
   <section class="wallet-panel coronas-referral-panel" aria-labelledby="coronasReferralTitle">
-   <h3 id="coronasReferralTitle">Invita a tus amigos</h3>
-   <p>Comparte tu enlace personal. Tu amigo debe abrirlo durante los primeros 7 días de su cuenta y antes de completar su primera compra. La invitación queda guardada automáticamente; nadie tiene que copiar ni pegar códigos. Tú recibirás el 5 % del valor de su primera compra posterior, solo cuando el proveedor confirme la entrega.</p>
-   <div class="coronas-referral-code-row"><div id="walletReferralCode" class="coronas-referral-code" aria-live="polite">Tu enlace personal incluye la invitación. No hace falta pegar códigos.</div>
-    <div class="coronas-referral-actions"><button class="secondary-btn" type="button" onclick="shareWalletReferralLink()">Compartir invitación</button><button class="secondary-btn" type="button" onclick="copyWalletReferralLink()">Copiar enlace</button></div>
+   <div class="coronas-referral-copy">
+    <h3 id="coronasReferralTitle">Invita a un amigo</h3>
+    <p>Comparte tu enlace personal. Tu amigo debe abrirlo durante los primeros 7 días de su cuenta y antes de su primera compra. Recibirás el 5 % de esa primera compra cuando el proveedor confirme la entrega.</p>
    </div>
-   <div id="walletReferralStats" class="coronas-referral-stats"><article><small>Amigos invitados</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas ganadas</small><strong>—</strong></article></div>
-   <div id="walletReferralRewardList" class="wallet-referral-reward-list" aria-live="polite"></div>
-   <p id="walletReferralMsg" class="msg coronas-referral-note" role="status" aria-live="polite"></p>
+   <button class="secondary-btn coronas-referral-share" type="button" onclick="shareWalletReferralLink()">Compartir invitación</button>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
    <h3 id="walletInformationTitle">Cómo funciona tu saldo</h3>
@@ -3854,7 +3841,7 @@ function gameTile(item,homePreview=false){
  const homeCopy={"Free Fire":"Diamantes, pases y membresías","Blood Strike":"BC, ofertas y pases · Global","Mobile Legends: Bang Bang":"Diamantes, pases y membresías · Global","Arena Breakout":"Bonds y paquetes · Global","PUBG Mobile":"UC y paquetes · Global"};
  const meta=loading?"Conectando con el catálogo…":(homePreview?(homeCopy[item.name]||"Recargas disponibles"):(matches.length?matches.length+" paquete(s)":isBloodStrike?"Catálogo GLOBAL en preparación":"Planes en preparación"));
  const status=loading?"Cargando ofertas…":(homePreview?"Recargas disponibles":(matches.length?"Ver paquetes":isBloodStrike?"En preparación":"Próximamente"));
- return '<button class="game-tile" type="button" '+(loading?'disabled aria-busy="true"':'')+' onclick="chooseGame(&quot;'+clean(item.name)+'&quot;)"><div class="game-art art-'+item.art+'" role="img" aria-label="Imagen de '+clean(item.name)+'">'+image+'<span class="art-tag">'+item.tag+'</span></div><div class="tile-info"><div class="tile-title">'+clean(item.name)+'</div><div class="tile-meta">'+meta+'</div><span class="tile-status">'+status+'</span></div></button>';
+ return '<button class="game-tile" type="button" '+(loading?'disabled aria-busy="true"':'')+' onclick="chooseGame(&quot;'+clean(item.name)+'&quot;)"><div class="game-art art-'+item.art+'" role="img" aria-label="Imagen de '+clean(item.name)+'">'+image+'<span class="game-art-brand-badge" aria-hidden="true"><img src="./assets/el-castillo-icon.webp" alt="" width="42" height="42" loading="lazy" decoding="async"></span><span class="art-tag">'+item.tag+'</span></div><div class="tile-info"><div class="tile-title">'+clean(item.name)+'</div><div class="tile-meta">'+meta+'</div><span class="tile-status">'+status+'</span></div></button>';
 }
 function giftTile(item){const matches=availableFor({...item,kind:"gift"});return '<button class="gift-tile" type="button" onclick="chooseGift(\''+clean(item.name)+'\')"><div class="gift-art gift-'+item.art+'">'+item.icon+'</div><div class="gift-info">'+clean(item.name)+'<small>'+(matches.length?'Disponible':'Próximamente')+'</small></div></button>'}
 function renderProductCatalogs(){
@@ -5634,7 +5621,7 @@ async function shareWalletReferralLink(){
   if(navigator.share)await navigator.share(data);
   else await copyWalletReferralLink();
   if(msg&&navigator.share)msg.textContent="Invitación lista para compartir. El enlace ya contiene todo lo necesario.";
- }catch(error){if(error?.name!=="AbortError"&&msg)msg.textContent="No se pudo abrir el menú para compartir. Usa «Copiar enlace».";}
+ }catch(error){if(error?.name!=="AbortError"&&msg)msg.textContent="No se pudo abrir el menú para compartir. Inténtalo de nuevo desde este botón.";}
 }
 async function loadWalletReferralAdmin(){
  if(currentProfile?.role!=="admin"||!db)return;

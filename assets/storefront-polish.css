@@ -2041,3 +2041,37 @@ button:active:not(:disabled){
 .wallet-hero{background:radial-gradient(circle at 86% 24%,rgba(132,184,255,.2),transparent 32%),linear-gradient(125deg,#10284f 0%,#174b91 58%,#2868c7 100%)!important}
 .wallet-coin-art{background:transparent!important;border:0!important;box-shadow:none!important;transform:none!important}
 .wallet-coin-art img{display:block;width:100%;height:100%;padding:0;object-fit:contain;filter:drop-shadow(0 9px 14px rgba(3,20,48,.28))}
+
+/* Insignia pequeña de Tienda El Castillo en las miniaturas de juegos. */
+.game-art-brand-badge{
+ position:absolute;top:11px;right:11px;z-index:4;
+ display:grid;place-items:center;width:42px;height:42px;padding:3px;
+ border:1px solid rgba(255,255,255,.82);border-radius:13px;
+ background:linear-gradient(145deg,#38217f 0%,#174fbd 100%);
+ box-shadow:0 5px 14px rgba(4,14,43,.34),inset 0 1px rgba(255,255,255,.22);
+ pointer-events:none;
+}
+.game-art-brand-badge img{
+ display:block;width:100%;height:100%;object-fit:contain;border-radius:9px;
+}
+@media(max-width:420px){
+ .game-art-brand-badge{top:9px;right:9px;width:38px;height:38px;border-radius:11px}
+}
+
+/* Invitación simplificada: un solo mensaje y una sola acción. */
+.coronas-referral-panel{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;
+}
+.coronas-referral-copy{min-width:0}
+.coronas-referral-copy h3{margin:0 0 6px}
+.coronas-referral-copy p{
+ margin:0;color:var(--muted);font-size:12px;line-height:1.6;
+}
+.coronas-referral-share{
+ width:auto;min-width:190px;min-height:48px;margin:0;padding:12px 18px;
+ white-space:normal;
+}
+@media(max-width:680px){
+ .coronas-referral-panel{grid-template-columns:1fr;gap:12px}
+ .coronas-referral-share{width:100%;min-width:0}
+}

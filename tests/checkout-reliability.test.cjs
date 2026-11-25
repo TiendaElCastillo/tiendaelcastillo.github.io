@@ -237,7 +237,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes("shell-v189"));
+  assert.ok(serviceWorker.includes("shell-v190"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=4'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
@@ -766,12 +766,12 @@ test("la cuenta invitada ve su tarea completada sin recibir indebidamente el 5 %
 
 test("la Cartera marca los bonos obtenidos y no oculta la posibilidad de invitar a más amigos", () => {
   assert.match(indexHtml, /id="walletFirstDepositPromoCard"/);
-  assert.match(indexHtml, /id="walletReferralPromoCard"/);
+  assert.doesNotMatch(indexHtml, /id="walletReferralPromoCard"/);
   assert.match(indexHtml, /function renderWalletPromotionStates\(data\)/);
   assert.match(indexHtml, /firstStatus==="obtained"/);
   assert.match(indexHtml, /firstStatus==="pending"/);
   assert.match(indexHtml, /referrals\.filter\(row=>row\.status==="obtained"\)/);
-  assert.match(indexHtml, /id="walletReferralRewardList"/);
+  assert.doesNotMatch(indexHtml, /id="walletReferralRewardList"/);
   assert.match(indexHtml, /Puedes seguir invitando/);
   assert.match(indexHtml, /const firstStatus=String\(walletReferralSummary\?\.first_deposit_status/);
   assert.match(indexHtml, /renderWalletPromotionStates\(data\)/);
@@ -1066,4 +1066,32 @@ test("la compra con Coronas se cobra una vez y dispara el envío automático al 
   assert.match(centralOneOrderEdgeSource, /action==="submit_wallet"/);
   assert.match(indexHtml, /requestWalletAutoOrder\(result\.data\.order_id\)/);
   assert.match(indexHtml, /no necesitas esperar aprobación administrativa/i);
+});
+
+test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola invitación", () => {
+  const gameTileStart = indexHtml.indexOf("function gameTile(");
+  const gameTileEnd = indexHtml.indexOf("function giftTile(", gameTileStart);
+  assert.ok(gameTileStart >= 0 && gameTileEnd > gameTileStart);
+  const gameTileSource = indexHtml.slice(gameTileStart, gameTileEnd);
+  assert.match(gameTileSource, /game-art-brand-badge/);
+  assert.match(gameTileSource, /el-castillo-icon\.webp/);
+  assert.ok(indexHtml.includes('class="brand-logo"'));
+  assert.ok(indexHtml.includes('src="./assets/el-castillo-logo.webp"'));
+  assert.match(storefrontPolishSource, /\.game-art-brand-badge/);
+
+  const inviteStart = indexHtml.indexOf('<section class="wallet-panel coronas-referral-panel"');
+  const inviteEnd = indexHtml.indexOf("</section>", inviteStart);
+  assert.ok(inviteStart >= 0 && inviteEnd > inviteStart);
+  const inviteSection = indexHtml.slice(inviteStart, inviteEnd);
+  assert.match(inviteSection, /id="coronasReferralTitle">Invita a un amigo/);
+  assert.match(inviteSection, /onclick="shareWalletReferralLink\(\)">Compartir invitación/);
+  assert.equal((inviteSection.match(/<button\b/g) || []).length, 1);
+  assert.doesNotMatch(inviteSection, /Copiar enlace|walletReferralCode|walletReferralStats|walletReferralRewardList/);
+  assert.doesNotMatch(indexHtml, /id="walletReferralPromoCard"|id="walletInviteProgress"/);
+  assert.doesNotMatch(indexHtml, />\s*Copiar enlace\s*</);
+  assert.match(storefrontPolishSource, /\.coronas-referral-share/);
+  assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=26"));
+  assert.ok(serviceWorker.includes("shell-v190"));
+  assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=26"));
+  assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
