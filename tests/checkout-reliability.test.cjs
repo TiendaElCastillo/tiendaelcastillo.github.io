@@ -1093,7 +1093,7 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(headerSource, /class="brand-logo" src="\.\/assets\/el-castillo-icon\.webp"/);
   assert.doesNotMatch(headerSource, /el-castillo-logo\.webp/);
   assert.doesNotMatch(headerSource, /header-account-brand-icon|header-action-brand-icon|notification-brand-icon|account-header-btn/);
-  assert.match(headerSource, /<button class="header-btn" type="button" onclick="openNotificationCenter\(\)"/);
+  assert.match(headerSource, /<button class="header-btn notification-header-btn hidden" id="notificationsButton"[^>]*onclick="openNotificationCenter\(\)"/);
   assert.match(headerSource, /<button class="header-btn" type="button" onclick="currentUser\?showView\('profile'\):openAccount\(\)">Mi cuenta<\/button>/);
   assert.match(indexHtml, /RECARGAS DE JUEGOS EN CUBA/);
   assert.doesNotMatch(indexHtml, /Más que una tienda|MÁS QUE UNA TIENDA/);
