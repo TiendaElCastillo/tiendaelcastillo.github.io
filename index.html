@@ -6309,9 +6309,23 @@ async function loadWalletDepositsAdmin(){
  for(const d of data){
   const cup=d.payment_method==="Transferencia CUP",mobile=d.payment_method==="Saldo móvil",usdt=d.payment_method==="USDT",profile=profileMap.get(d.user_id);
   const proofRows=proofsByDeposit.get(d.id)||[];
-  const proofs=await createSignedWalletProofLinks(proofRows,"Ver captura");
-  const visibleProofCount=(proofs.match(/<a /g)||[]).length;
-  const proofsAccessible=proofRows.length>0&&visibleProofCount===proofRows.length;
+  const customer=clean(profile?.full_name||profile?.email||("Cuenta "+String(d.user_id||"").slice(0,8)));
+  const status=d.status==="approved"?"Aprobada":d.status==="rejected"?"Rechazada":d.status==="payment_review"?"En revisión":"Pendiente";
+  const statusClass=d.status==="approved"?"approved":d.status==="rejected"?"rejected":"";
+  const amountLabel=cup?money(d.amount)+" CUP":usdt?moneyUSD(d.amount)+" USDT":money(d.amount)+" unidades de saldo móvil";
+  const expectedAmount=moneyUSD(Number(d.credited_amount||0))+" Coronas";
+  const totalCredited=Number(d.credited_amount||0)+Number(d.welcome_bonus_amount||0);
+  const creditedLabel=moneyUSD(totalCredited)+" Coronas";
+  const dateLabel=d.created_at?new Date(d.created_at).toLocaleString("es-CU"):"Fecha no disponible";
+  const proofButtons=[];
+  for(let i=0;i<proofRows.length;i++){
+   const proof=proofRows[i];
+   const signed=await db.storage.from("payment-proofs").createSignedUrl(proof.proof_path,1800);
+   if(!signed.error&&signed.data?.signedUrl){
+    proofButtons.push('<button class="wallet-proof-open" type="button" data-wallet-proof-preview data-proof-path="'+clean(proof.proof_path)+'" data-deposit-id="'+clean(d.id)+'" data-order-code="'+clean("Recarga de Coronas · "+d.id.slice(0,8).toUpperCase())+'" data-payment-reference="'+clean(d.payment_reference||"")+'" data-txid="'+clean(d.txid||"")+'" data-payment-sender-phone="'+clean(d.sender_phone||"")+'" data-payment-method="'+clean(d.payment_method)+'" data-amount-label="'+clean(amountLabel)+'">Ver comprobante '+(i+1)+'</button>');
+   }
+  }
+  const proofsAccessible=proofRows.length>0&&proofButtons.length===proofRows.length;
   const canReview=d.status==="payment_review"&&proofsAccessible;
   const proofWarning=d.status==="payment_review"&&!proofsAccessible?'<p class="wallet-warning"><strong>Revisión bloqueada:</strong> no se pudieron abrir todos los comprobantes. Actualiza el panel y comprueba el acceso antes de decidir.</p>':"";
   const explorer=d.txid&&/^[a-f0-9]{64}$/i.test(d.txid)?'<p class="wallet-admin-summary">TxID: <code>'+clean(d.txid)+'</code><br><a href="https://bscscan.com/tx/'+encodeURIComponent(d.txid)+'" target="_blank" rel="noopener noreferrer">Abrir transacción en BscScan ↗</a></p>':"";
@@ -6320,11 +6334,41 @@ async function loadWalletDepositsAdmin(){
    :mobile
     ?'Enviado: <strong>'+money(d.amount)+' unidades de saldo móvil</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia del SMS: '+clean(d.payment_reference||"No indicada")+'<br>Conversión guardada: '+money(d.exchange_rate||0)+' unidades por Corona'
     :'Enviado: <strong>'+moneyUSD(d.amount)+' USDT</strong><br>Red: '+clean(d.network||"BNB Smart Chain (BEP20)")+'<br>Dirección receptora: '+clean(d.recipient_address||walletSettings.usdt_address);
-  const amountLabel=moneyUSD(Number(d.credited_amount||0))+" Coronas";
   const actions=canReview?'<div class="wallet-admin-actions"><button class="primary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\',true)">Aprobar y acreditar</button><button class="secondary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\',false)">Rechazar</button></div>':"";
-  cards.push('<article class="wallet-admin-card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><strong>'+clean(profile?.full_name||profile?.email||d.user_id)+'</strong><span class="wallet-status '+(d.status==="approved"?"approved":d.status==="rejected"?"rejected":"")+'">'+clean(d.status==="payment_review"?"En revisión":d.status==="approved"?"Aprobada":d.status==="rejected"?"Rechazada":"Pendiente")+'</span></div><div class="wallet-admin-summary">'+clean(d.payment_method)+' · '+new Date(d.created_at).toLocaleString("es-CU")+'<br>'+methodDetails+'<br>Crédito calculado: <strong>'+amountLabel+'</strong>'+(Number(d.welcome_bonus_amount||0)>0?'<br>Bono primera recarga 3 %: +'+moneyUSD(d.welcome_bonus_amount)+' Coronas':'')+'<br>Comprobantes: '+proofRows.length+'</div>'+explorer+proofs+proofWarning+(d.admin_notes?'<p class="wallet-warning">Observación: '+clean(d.admin_notes)+'</p>':"")+actions+'</article>');
+  const proofPanel=proofButtons.length
+   ?'<div class="wallet-admin-proof-panel"><strong>Comprobantes recibidos · '+proofButtons.length+'</strong><div class="wallet-admin-proof-actions">'+proofButtons.join("")+'</div></div>'
+   :'<p class="track-note">Esta solicitud no tiene comprobantes disponibles.</p>';
+  const bonusLine=Number(d.welcome_bonus_amount||0)>0?'<br>Bono de primera recarga del 3 %: +'+moneyUSD(d.welcome_bonus_amount)+' Coronas':"";
+  const adminNote=d.admin_notes?'<p class="wallet-warning"><strong>Observación:</strong> '+clean(d.admin_notes)+'</p>':"";
+  const summary='<summary class="wallet-admin-deposit-summary"><span class="wallet-admin-deposit-customer"><strong>'+customer+'</strong><small>'+clean(d.payment_method)+' · '+clean(amountLabel)+'</small></span><span class="wallet-status '+statusClass+'">'+status+'</span><span class="wallet-admin-deposit-summary-meta"><strong>'+expectedAmount+'</strong><small>'+dateLabel+'</small><small>'+proofRows.length+' comprobante(s)</small></span><span class="wallet-admin-expand-hint">Ver solicitud y comprobantes <b aria-hidden="true">⌄</b></span></summary>';
+  cards.push('<details class="wallet-admin-card wallet-admin-collapsible wallet-admin-deposit-card" data-wallet-deposit-id="'+clean(d.id)+'">'+summary+'<div class="wallet-admin-card-detail"><div class="wallet-admin-summary">'+methodDetails+'<br>Coronas calculadas: <strong>'+expectedAmount+'</strong>'+bonusLine+'<br>Crédito total previsto: <strong>'+creditedLabel+'</strong><br>Cliente: '+customer+'<br>Solicitud: '+clean(d.id.slice(0,8).toUpperCase())+'</div>'+explorer+proofPanel+proofWarning+adminNote+actions+'</div></details>');
  }
  list.innerHTML=cards.join("");
+ list.querySelectorAll("[data-wallet-proof-preview]").forEach(button=>{
+  button.addEventListener("click",()=>openWalletDepositProof(button));
+ });
+}
+async function openWalletDepositProof(button){
+ if(currentProfile?.role!=="admin"||!button)return;
+ const path=String(button.dataset.proofPath||"");
+ if(!path)return;
+ const oldLabel=button.textContent;
+ button.disabled=true;button.textContent="Abriendo comprobante…";
+ try{
+  const {data,error}=await db.storage.from("payment-proofs").createSignedUrl(path,1800);
+  if(error||!data?.signedUrl)throw error||new Error("No se pudo generar el enlace seguro.");
+  showOrderProofPreview(data.signedUrl,{
+   orderCode:button.dataset.orderCode||"Recarga de Coronas",
+   reference:button.dataset.paymentReference||button.dataset.txid||"",
+   senderPhone:button.dataset.paymentSenderPhone||"",
+   paymentMethod:button.dataset.paymentMethod||"",
+   amountLabel:button.dataset.amountLabel||""
+  });
+ }catch(error){
+  window.alert("No se pudo abrir el comprobante. Comprueba la conexión y vuelve a intentarlo."+(error?.message?" "+error.message:""));
+ }finally{
+  button.disabled=false;button.textContent=oldLabel;
+ }
 }
 function applyWalletPurchasesAdminSearch(){
  const list=$("walletPurchasesAdmin");
