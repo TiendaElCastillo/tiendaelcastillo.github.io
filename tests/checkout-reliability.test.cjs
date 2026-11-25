@@ -766,12 +766,12 @@ test("la cuenta invitada ve su tarea completada sin recibir indebidamente el 5 %
 
 test("la Cartera marca los bonos obtenidos y no oculta la posibilidad de invitar a más amigos", () => {
   assert.match(indexHtml, /id="walletFirstDepositPromoCard"/);
-  assert.match(indexHtml, /id="walletReferralPromoCard"/);
+  assert.doesNotMatch(indexHtml, /id="walletReferralPromoCard"/);
   assert.match(indexHtml, /function renderWalletPromotionStates\(data\)/);
   assert.match(indexHtml, /firstStatus==="obtained"/);
   assert.match(indexHtml, /firstStatus==="pending"/);
   assert.match(indexHtml, /referrals\.filter\(row=>row\.status==="obtained"\)/);
-  assert.match(indexHtml, /id="walletReferralRewardList"/);
+  assert.doesNotMatch(indexHtml, /id="walletReferralRewardList"/);
   assert.match(indexHtml, /Puedes seguir invitando/);
   assert.match(indexHtml, /const firstStatus=String\(walletReferralSummary\?\.first_deposit_status/);
   assert.match(indexHtml, /renderWalletPromotionStates\(data\)/);
