@@ -2093,3 +2093,26 @@ button:active:not(:disabled){
 #walletView .coronas-referral-copy small{display:block;color:#7a879b;font-size:9px;line-height:1.45}
 #walletView .coronas-referral-share{width:100%;min-height:46px;margin:0;padding:12px 16px;border:1px solid #d7e4f8;background:linear-gradient(135deg,#edf4ff,#e8efff);color:#285fc1;font-weight:850;border-radius:14px}
 @media(max-width:420px){#walletView .coronas-referral-panel{padding:15px!important;gap:12px}#walletView .coronas-referral-offer{grid-template-columns:82px minmax(0,1fr);gap:11px}#walletView .coronas-referral-art{width:82px;height:88px;border-radius:15px}#walletView .coronas-referral-kicker{font-size:8px;padding:4px 7px}#walletView .coronas-referral-copy h3{font-size:15px}#walletView .coronas-referral-reward strong{font-size:27px}#walletView .coronas-referral-reward span{font-size:10px}#walletView .coronas-referral-copy p{font-size:10px}#walletView .coronas-referral-copy small{font-size:8px}}
+
+/* Flujo de recarga de Coronas alineado con el proceso de compra de juegos. */
+.wallet-deposit-stepper{grid-template-columns:repeat(3,minmax(0,1fr))}
+.wallet-deposit-complete{max-width:560px;margin:4px auto 2px;padding:22px 16px;text-align:center}
+.wallet-deposit-complete h3{margin:12px 0 7px;color:#1c3151;font-size:21px}
+.wallet-deposit-complete>p{color:#64758c;font-size:13px;line-height:1.6}
+.wallet-deposit-confirmation-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:18px 0}
+.wallet-deposit-confirmation-summary>div{display:grid;gap:6px;min-width:0;padding:11px 8px;border:1px solid #dce7f5;border-radius:13px;background:#f5f8fd}
+.wallet-deposit-confirmation-summary small{color:#74849a;font-size:9px;line-height:1.3}
+.wallet-deposit-confirmation-summary strong{color:#285caa;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.wallet-deposit-complete .checkout-done-note{padding:12px;border:1px solid #dce8f6;border-radius:13px;background:#f4f8fe;color:#526984;font-size:11px}
+.wallet-deposit-safety-note{margin:12px 0 15px;font-size:11px;line-height:1.55}
+#walletDepositProofPreview{display:block;max-width:180px;max-height:150px;object-fit:contain;border-radius:10px}
+.wallet-proof-field .proof-dropzone{align-items:center}
+.wallet-proof-field .proof-preview{margin:0}
+@media(max-width:420px){
+ .wallet-deposit-complete{padding:17px 9px}
+ .wallet-deposit-confirmation-summary{gap:5px}
+ .wallet-deposit-confirmation-summary>div{padding:9px 5px}
+ .wallet-deposit-confirmation-summary small{font-size:8px}
+ .wallet-deposit-confirmation-summary strong{font-size:10px}
+ .wallet-deposit-complete h3{font-size:19px}
+}
