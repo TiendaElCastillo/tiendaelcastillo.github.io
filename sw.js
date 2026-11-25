@@ -2,7 +2,7 @@ const APP_ROOT = self.registration.scope;
 const scopePath = new URL(APP_ROOT).pathname.replace(/\/+$/, "") || "/";
 const scopeName = scopePath === "/" ? "root" : scopePath.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
 const CACHE_PREFIX = "el-castillo-" + scopeName + "-";
-const CACHE_NAME = CACHE_PREFIX + "shell-v186";
+const CACHE_NAME = CACHE_PREFIX + "shell-v187";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -40,7 +40,7 @@ const APP_SHELL = [
   "./assets/admin-panel.css?v=33",
   "./assets/checkout-reliability.css?v=1",
   "./assets/storefront-polish.css?v=25",
-  "./assets/coronas-promotions.css?v=3",
+  "./assets/coronas-promotions.css?v=4",
   "./assets/posthog.js?v=1",
   "./assets/offline-guard.js?v=3",
   "./assets/admin-panel.js?v=24",
