@@ -1333,7 +1333,8 @@ test("la reactivación EVO revierte la pausa permanente y solo publica productos
   assert.ok(freeFireEvoReenableMigrationSource.includes("v_active_original"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("v_return_paused"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("v_return_original"));
-  assert.ok(freeFireEvoReenableMigrationSource.includes("active = true, storefront_visible = true"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("SET active = true,"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("storefront_visible = true"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("provider_status = 'active'"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("provider_in_stock is true"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("provider_validation_supported is true"));
