@@ -740,7 +740,9 @@ test("Supabase devuelve el estado personalizado del bono de primera recarga del 
   assert.match(walletPromotionCompletionMigrationSource, /v_first_deposit_status := 'available'/);
   assert.match(walletPromotionCompletionMigrationSource, /'first_deposit_status',v_first_deposit_status/);
   assert.match(walletPromotionCompletionMigrationSource, /'first_deposit_bonus_amount',v_first_deposit_bonus_amount/);
-  assert.match(walletPromotionCompletionMigrationSource, /kind = 'deposit'[\\s\\S]*?currency = 'USD'/);
+  assert.match(walletPromotionCompletionMigrationSource, /from public\.wallet_transactions/);
+  assert.match(walletPromotionCompletionMigrationSource, /kind = 'deposit'/);
+  assert.match(walletPromotionCompletionMigrationSource, /currency = 'USD'/);
 });
 
 test("el invitador ve cada recompensa del 5 % como pendiente, obtenida o revertida", () => {
