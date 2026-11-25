@@ -6300,10 +6300,10 @@ function walletAdminSectionIsVisible(section){
  const walletSubsection=document.querySelector('#admin [data-wallet-admin-section="'+section+'"]');
  return currentProfile?.role==="admin"&&Boolean(walletMain&&walletSubsection&&!walletMain.classList.contains("hidden")&&!walletSubsection.classList.contains("hidden"));
 }
-async function loadWalletDepositsAdmin(options={}){
+async function loadWalletDepositsAdmin(){
+ const settings=arguments[0]&&typeof arguments[0]==="object"?arguments[0]:{};
  if(currentProfile?.role!=="admin")return;
  const list=$("walletDepositsAdmin");if(!list)return;
- const settings=options&&typeof options==="object"?options:{};
  const force=settings.force===true,silent=settings.silent===true;
  if(walletDepositsAdminLoadPromise)return walletDepositsAdminLoadPromise;
  if(!force&&list.dataset.loaded==="1"&&Date.now()-walletDepositsAdminLastLoadedAt<15000)return;
@@ -6426,11 +6426,11 @@ function applyWalletPurchasesAdminSearch(){
 }
 let walletPurchasesAdminLoadPromise=null;
 let walletPurchasesAdminLastLoadedAt=0;
-async function loadWalletPurchasesAdmin(options={}){
+async function loadWalletPurchasesAdmin(){
+ const settings=arguments[0]&&typeof arguments[0]==="object"?arguments[0]:{};
  if(currentProfile?.role!=="admin")return;
  const list=$("walletPurchasesAdmin");
  if(!list)return;
- const settings=options&&typeof options==="object"?options:{};
  const force=settings.force===true,silent=settings.silent===true;
  if(walletPurchasesAdminLoadPromise)return walletPurchasesAdminLoadPromise;
  if(!force&&list.dataset.loaded==="1"&&Date.now()-walletPurchasesAdminLastLoadedAt<15000)return;
