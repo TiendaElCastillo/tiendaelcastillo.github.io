@@ -24,6 +24,8 @@ const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabas
 const centralOrderAutoSyncMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125133000_central_one_auto_order_status_sync.sql"), "utf8");
 const walletPromotionCompletionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125130148_wallet_promotion_completion_states.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
+const evoPublicationMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125150000_publish_free_fire_evo_products.sql"), "utf8");
+const coronasPromotionsJsSource = fs.readFileSync(path.join(root, "assets/coronas-promotions.js"), "utf8");
 
 
 function makeNode(id = "") {
@@ -960,6 +962,49 @@ test("las tres promociones usan arte propio de la tienda y el carrusel evita fon
   assert.match(coronasPromoCssSource, /#10284f/);
   assert.match(coronasPromoCssSource, /#2868c7/);
   assert.doesNotMatch(coronasPromoCssSource, /#4c1b83|#762ca5|#a34bce/);
+});
+
+test("la portada publica las ofertas Evo LATAM con stock y validación, sin exponer las agotadas", () => {
+  const allowedIds = [
+    "11251c9b-4966-4210-969e-3d4ffdfb70aa",
+    "b1b110f9-45dc-4226-a2b2-f5c8041095af",
+    "5552cdf0-92e1-4358-9a5b-9f0e21e056a3",
+    "a7d58f19-3ace-49a8-be09-0e5edde9d448",
+    "51825a7b-68b0-4d1d-84e8-36367d316844",
+    "f6133c86-37cd-48af-8868-dc44cce482a8",
+    "64e90b95-ccf8-40da-9c4b-37e5e25e32d5"
+  ];
+  for (const id of allowedIds) assert.ok(evoPublicationMigrationSource.includes(id), "falta el paquete Evo " + id);
+  assert.match(evoPublicationMigrationSource, /provider_region = 'LATAM'/);
+  assert.match(evoPublicationMigrationSource, /provider_status = 'active'/);
+  assert.match(evoPublicationMigrationSource, /provider_in_stock is true/);
+  assert.match(evoPublicationMigrationSource, /provider_validation_supported is true/);
+  assert.match(evoPublicationMigrationSource, /provider_requires_target is true/);
+  assert.match(evoPublicationMigrationSource, /provider_target_fields = '\\["player_id"\\]'::jsonb/);
+  assert.match(evoPublicationMigrationSource, /provider_synced_at >= now\(\) - interval '30 minutes'/);
+  assert.doesNotMatch(evoPublicationMigrationSource, /a9cfa9a9-2310-4167-bdb9-6740413660dc/);
+  assert.match(indexHtml, /function freeFirePackageGroup[\s\S]*?fragmentos\.\*evo\|evo\.\*fragmentos[\s\S]*?return "evo"/);
+  assert.match(indexHtml, /freeFirePlanIcon[\s\S]*?ff-evo-crate\.webp/);
+  assert.match(indexHtml, /freeFirePlanIcon[\s\S]*?ff-evo-token\.webp/);
+  assert.match(playerValidationEdgeSource, /providerValidationFlag/);
+  assert.match(playerValidationEdgeSource, /This is a read\/validation request only/);
+});
+
+test("la portada conserva promociones, controles del carrusel y presentación adaptable", () => {
+  assert.match(indexHtml, /id="homeView"/);
+  assert.match(indexHtml, /class="home-intro"/);
+  assert.match(indexHtml, /id="coronasPromoCarousel"/);
+  assert.match(indexHtml, /data-coronas-slide="0"/);
+  assert.match(indexHtml, /data-coronas-prev/);
+  assert.match(indexHtml, /data-coronas-next/);
+  assert.match(indexHtml, /data-coronas-dot="2"/);
+  assert.match(storefrontPolishSource, /#homeView \.home-intro\s*\{/);
+  assert.match(storefrontPolishSource, /#homeGames\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(coronasPromoCssSource, /\.coronas-promo-slide\.is-active/);
+  assert.match(coronasPromotionsJsSource, /data-coronas-prev/);
+  assert.match(coronasPromotionsJsSource, /data-coronas-next/);
+  assert.match(coronasPromotionsJsSource, /data-coronas-dot/);
+  assert.match(coronasPromotionsJsSource, /document\.addEventListener\("visibilitychange"/);
 });
 
 test("la guía de pagos explica Coronas y ya no muestra el nombre anterior del saldo", () => {
