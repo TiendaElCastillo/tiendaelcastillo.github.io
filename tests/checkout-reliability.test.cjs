@@ -1341,4 +1341,5 @@ test("la reactivación EVO revierte la pausa permanente y solo publica productos
   assert.ok(freeFireEvoReenableMigrationSource.includes("provider_synced_at >= now() - interval '30 minutes'"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("'11251c9b-4966-4210-969e-3d4ffdfb70aa'"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("'64e90b95-ccf8-40da-9c4b-37e5e25e32d5'"));
+  assert.ok(freeFireEvoReenableMigrationSource.includes("'a9cfa9a9-2310-4167-bdb9-6740413660dc'"));
 });
