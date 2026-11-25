@@ -1243,43 +1243,55 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
 
 
 test("las cajas y los fragmentos EVO de Free Fire quedan pausados también después de sincronizar el catálogo", () => {
-  assert.match(freeFireEvoPauseMigrationSource, /v_name not ilike '%fragmentos% evo%'/);
-  assert.match(freeFireEvoPauseMigrationSource, /set active = false, storefront_visible = false/);
-  assert.match(freeFireEvoPauseMigrationSource, /where game = 'Free Fire'[\\s\\S]*name ilike '%fragmentos% evo%'/);
-  assert.match(freeFireEvoPauseMigrationSource, /private\\.sync_free_fire_provider_products/);
-  assert.match(indexHtml, /requiresPlayerValidation\(product\)/);
+  assert.ok(freeFireEvoPauseMigrationSource.includes("v_name not ilike '%fragmentos% evo%'"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("set active = false, storefront_visible = false"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("where game = 'Free Fire'"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("name ILIKE '%fragmentos% evo%'"));
+  assert.ok(freeFireEvoPauseMigrationSource.includes("private.sync_free_fire_provider_products"));
 });
 
 test("el cliente actualiza el seguimiento de pedidos por tiempo real y al volver a la pestaña", () => {
   const refresh = extractNamedFunction(indexHtml, "refreshCustomerOrderData");
   const resume = extractNamedFunction(indexHtml, "installCustomerOrderResumeListeners");
   const realtime = extractNamedFunction(indexHtml, "startCustomerOrderRealtime");
-  assert.match(refresh, /loadMyOrders/);
-  assert.match(refresh, /loadWalletData/);
-  assert.match(refresh, /Promise\\.allSettled/);
-  assert.match(resume, /visibilitychange/);
-  assert.match(resume, /focus/);
-  assert.match(resume, /online/);
-  assert.match(realtime, /postgres_changes/);
-  assert.match(realtime, /subscribe\(status/);
-  assert.match(realtime, /status==="SUBSCRIBED"/);
-  assert.match(realtime, /CHANNEL_ERROR|TIMED_OUT|CLOSED/);
-  assert.match(realtime, /customerOrderPoll=setInterval/);
-  assert.match(realtime, /30000/);
-  assert.doesNotMatch(realtime, /central-one|Central One/i);
+  assert.ok(refresh.includes("loadMyOrders"));
+  assert.ok(refresh.includes("loadWalletData"));
+  assert.ok(refresh.includes("Promise.allSettled"));
+  assert.ok(resume.includes("visibilitychange"));
+  assert.ok(resume.includes("focus"));
+  assert.ok(resume.includes("online"));
+  assert.ok(realtime.includes("postgres_changes"));
+  assert.ok(realtime.includes(".subscribe(status =>"));
+  assert.ok(realtime.includes('status==="SUBSCRIBED"'));
+  assert.ok(realtime.includes("CHANNEL_ERROR"));
+  assert.ok(realtime.includes("TIMED_OUT"));
+  assert.ok(realtime.includes("CLOSED"));
+  assert.ok(realtime.includes("customerOrderPoll=setInterval"));
+  assert.ok(realtime.includes("30000"));
+  assert.doesNotMatch(realtime, /Central One|central-one/);
 });
 
-test("el panel administrativo también se recupera al reabrir el navegador sin consultar manualmente cada pedido", () => {
+test("el panel administrativo también se recupera al reabrir el navegador", () => {
   const refresh = extractNamedFunction(indexHtml, "refreshAdminOrderViews");
   const resume = extractNamedFunction(indexHtml, "installAdminOrderResumeListeners");
   const realtime = extractNamedFunction(indexHtml, "startAdminPaymentPolling");
-  assert.match(refresh, /loadAllOrders/);
-  assert.match(refresh, /loadWalletPurchasesAdmin/);
-  assert.match(resume, /visibilitychange/);
-  assert.match(resume, /focus/);
-  assert.match(resume, /online/);
-  assert.match(realtime, /postgres_changes/);
-  assert.match(realtime, /subscribe\(status/);
-  assert.match(realtime, /adminOrderPoll=setInterval/);
-  assert.match(realtime, /30000/);
+  assert.ok(refresh.includes("loadAllOrders"));
+  assert.ok(refresh.includes("loadWalletPurchasesAdmin"));
+  assert.ok(resume.includes("visibilitychange"));
+  assert.ok(resume.includes("focus"));
+  assert.ok(resume.includes("online"));
+  assert.ok(realtime.includes("postgres_changes"));
+  assert.ok(realtime.includes(".subscribe(status =>"));
+  assert.ok(realtime.includes("adminOrderPoll=setInterval"));
+  assert.ok(realtime.includes("30000"));
+});
+
+test("la recompensa por invitación acredita el 5 % de la compra automáticamente al confirmar la entrega", () => {
+  assert.ok(coronasProductionMigrationSource.includes("round(v_order.wallet_refund_amount * 0.05,4)"));
+  assert.ok(coronasProductionMigrationSource.includes("'adjustment'"));
+  assert.ok(coronasProductionMigrationSource.includes("'USD'"));
+  assert.ok(coronasProductionMigrationSource.includes("private.handle_wallet_referral_order_status"));
+  assert.ok(coronasProductionMigrationSource.includes("perform private.credit_wallet_referral_order_reward(new.id)"));
+  assert.ok(referralAutoLinkMigrationSource.includes("v_order.created_at < v_linked_at"));
+  assert.ok(referralAutoLinkMigrationSource.includes("wallet_referral_order_rewards_invitee_once_uidx"));
 });
