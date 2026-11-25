@@ -2981,7 +2981,7 @@ async function register(){
  clearAuthFieldErrors();
  if(!name){markAuthFieldErrors(["fullname"],"Escribe tu nombre para identificar tu cuenta.");return}
  if(!email){markAuthFieldErrors(["email"],"Escribe el correo electrónico que quieres usar para tu cuenta.");return}
- if(!/^\\S+@\\S+\\.\\S+$/.test(email)){markAuthFieldErrors(["email"],"Revisa el correo. Debe tener un formato parecido a nombre@correo.com.");return}
+ if(!/^\S+@\S+\.\S+$/.test(email)){markAuthFieldErrors(["email"],"Revisa el correo. Debe tener un formato parecido a nombre@correo.com.");return}
  if(!password){markAuthFieldErrors(["password"],"Crea una contraseña para proteger tu cuenta.");return}
  if(password.length<8){markAuthFieldErrors(["password"],"La contraseña debe tener al menos 8 caracteres. Añade más caracteres e inténtalo de nuevo.");return}
  setAuthMessage("Comprobando los datos y la verificación de seguridad…","info");
@@ -3153,7 +3153,7 @@ async function login(){
  const email=$("email").value.trim().toLowerCase(),password=$("password").value;
  clearAuthFieldErrors();
  if(!email){markAuthFieldErrors(["email"],"Escribe el correo electrónico de tu cuenta para poder iniciar sesión.");return}
- if(!/^\\S+@\\S+\\.\\S+$/.test(email)){markAuthFieldErrors(["email"],"Revisa el correo. Debe tener un formato parecido a nombre@correo.com.");return}
+ if(!/^\S+@\S+\.\S+$/.test(email)){markAuthFieldErrors(["email"],"Revisa el correo. Debe tener un formato parecido a nombre@correo.com.");return}
  if(!password){markAuthFieldErrors(["password"],"Escribe tu contraseña para continuar.");return}
  $("resendConfirmationWrap")?.classList.add("hidden");
  setAuthMessage("Comprobando tus datos…","info");
