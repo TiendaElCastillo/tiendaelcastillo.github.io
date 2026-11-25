@@ -1139,18 +1139,15 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
 });
 
 
-test("la Cartera muestra amigos vinculados, ventas generadas y recompensas reales por invitación", () => {
+test("la Cartera muestra solo cuentas vinculadas, compras premiadas y ganancias por invitación", () => {
   assert.match(indexHtml, /id="walletReferralStats"/);
   assert.match(indexHtml, /Amigos vinculados/);
-  assert.match(indexHtml, /Ventas generadas/);
-  assert.match(indexHtml, /Ganancia obtenida \(5 %\)/);
+  assert.match(indexHtml, /Compras premiadas/);
+  assert.match(indexHtml, /Ganancia obtenida \\(5 %\\)/);
+  assert.doesNotMatch(indexHtml, /Ventas generadas/);
   const source = extractNamedFunction(indexHtml, "loadWalletPromotions");
-  assert.match(source, /get_wallet_referral_purchase_volume/);
-  assert.match(source, /purchase_volume_usd/);
-  assert.match(referralPurchaseVolumeMigrationSource, /auth\.uid\(\)/);
-  assert.match(referralPurchaseVolumeMigrationSource, /sum\(r\.package_amount_usd\)/);
-  assert.match(referralPurchaseVolumeMigrationSource, /r\.reversed_at is null/);
-  assert.match(referralPurchaseVolumeMigrationSource, /grant execute on function public\.get_wallet_referral_purchase_volume\(\) to authenticated/);
+  assert.doesNotMatch(source, /get_wallet_referral_purchase_volume|purchase_volume_usd/);
+  assert.match(indexHtml, /Tu ganancia del 5 % se acredita automáticamente en Coronas/);
 });
 
 test("Gestión de Coronas se separa en apartados y solo carga la pestaña abierta", () => {
