@@ -2400,9 +2400,22 @@ body{min-width:0}
    <h3 id="coronasPromotionsTitle">Promociones de Coronas</h3>
    <p>Consigue Coronas extra al recargar por primera vez o al invitar amigos.</p>
    <div class="coronas-promo-grid">
-    <article class="coronas-promo-card"><span class="coronas-promo-tag">Primera recarga</span><strong>3 % extra</strong><p>Al aprobar tu primera recarga de Coronas, recibes automáticamente un 3 % adicional, sin límite de importe.</p></article>
-    <article class="coronas-promo-card"><span class="coronas-promo-tag">Invita y gana</span><strong>5 % de recompensa</strong><p>Gana el 5 % del valor de la primera compra de cada amigo, cuando su pedido se complete correctamente.</p></article>
+    <article id="walletFirstDepositPromoCard" class="coronas-promo-card" data-promo-state="available">
+     <span id="walletFirstDepositPromoTag" class="coronas-promo-tag">Primera recarga</span>
+     <strong id="walletFirstDepositPromoTitle">3 % extra</strong>
+     <p id="walletFirstDepositPromoDescription">Al aprobar tu primera recarga de Coronas, recibes automáticamente un 3 % adicional, sin límite de importe.</p>
+    </article>
+    <article id="walletReferralPromoCard" class="coronas-promo-card" data-promo-state="available">
+     <span id="walletReferralPromoTag" class="coronas-promo-tag">Invita y gana</span>
+     <strong id="walletReferralPromoTitle">5 % por cada amigo</strong>
+     <p id="walletReferralPromoDescription">Gana el 5 % del valor de la primera compra posterior a la invitación, cuando el proveedor confirme su entrega.</p>
+    </article>
    </div>
+   <section id="walletInviteProgress" class="wallet-promotion-progress hidden" aria-live="polite">
+    <span id="walletInviteProgressTag" class="wallet-promotion-state">INVITACIÓN VINCULADA</span>
+    <strong id="walletInviteProgressTitle">Tu invitación está activa</strong>
+    <p id="walletInviteProgressDescription">Cuando se entregue tu primera compra posterior al vínculo, quien te invitó recibirá el 5 % de recompensa.</p>
+   </section>
   </section>
   <section class="wallet-panel coronas-referral-panel" aria-labelledby="coronasReferralTitle">
    <h3 id="coronasReferralTitle">Invita a tus amigos</h3>
@@ -2411,6 +2424,7 @@ body{min-width:0}
     <div class="coronas-referral-actions"><button class="secondary-btn" type="button" onclick="shareWalletReferralLink()">Compartir invitación</button><button class="secondary-btn" type="button" onclick="copyWalletReferralLink()">Copiar enlace</button></div>
    </div>
    <div id="walletReferralStats" class="coronas-referral-stats"><article><small>Amigos invitados</small><strong>—</strong></article><article><small>Compras premiadas</small><strong>—</strong></article><article><small>Coronas ganadas</small><strong>—</strong></article></div>
+   <div id="walletReferralRewardList" class="wallet-referral-reward-list" aria-live="polite"></div>
    <p id="walletReferralMsg" class="msg coronas-referral-note" role="status" aria-live="polite"></p>
   </section>
   <section class="wallet-information wallet-panel wallet-simple-info" aria-labelledby="walletInformationTitle">
@@ -5473,6 +5487,84 @@ async function tryAutoLinkWalletReferral(summary){
  try{return await walletReferralAutoLinkPromise;}
  finally{walletReferralAutoLinkPromise=null;}
 }
+function renderWalletPromotionStates(data){
+ const firstStatus=String(data?.first_deposit_status||"available");
+ const firstCard=$("walletFirstDepositPromoCard"),firstTag=$("walletFirstDepositPromoTag"),firstTitle=$("walletFirstDepositPromoTitle"),firstText=$("walletFirstDepositPromoDescription");
+ if(firstCard){
+  firstCard.dataset.promoState=firstStatus;
+  if(firstStatus==="obtained"){
+   if(firstTag)firstTag.textContent="OBTENIDO";
+   if(firstTitle)firstTitle.textContent="3 % acreditado";
+   if(firstText)firstText.textContent="Ya recibiste "+moneyUSD(data.first_deposit_bonus_amount||0)+" Coronas de bono en tu primera recarga aprobada. Esta promoción ya está completada para tu cuenta.";
+  }else if(firstStatus==="used"){
+   if(firstTag)firstTag.textContent="YA UTILIZADA";
+   if(firstTitle)firstTitle.textContent="Primera recarga completada";
+   if(firstText)firstText.textContent="Tu primera recarga ya fue aprobada. La promoción del 3 % no se repite en recargas posteriores.";
+  }else if(firstStatus==="pending"){
+   if(firstTag)firstTag.textContent="EN REVISIÓN";
+   if(firstTitle)firstTitle.textContent="Bono del 3 % pendiente";
+   if(firstText)firstText.textContent="Tu primera solicitud de recarga está pendiente. Si se aprueba y corresponde, el bono se acreditará una sola vez.";
+  }else{
+   if(firstTag)firstTag.textContent="PRIMERA RECARGA";
+   if(firstTitle)firstTitle.textContent="3 % extra";
+   if(firstText)firstText.textContent="Al aprobar tu primera recarga de Coronas, recibes automáticamente un 3 % adicional, sin límite de importe.";
+  }
+ }
+ const referrals=Array.isArray(data?.referrals)?data.referrals:[];
+ const activeRewards=referrals.filter(row=>row.status==="obtained");
+ const reversedRewards=referrals.filter(row=>row.status==="reversed");
+ const referralCard=$("walletReferralPromoCard"),referralTag=$("walletReferralPromoTag"),referralTitle=$("walletReferralPromoTitle"),referralText=$("walletReferralPromoDescription");
+ if(referralCard){
+  referralCard.dataset.promoState=activeRewards.length?"obtained":referrals.length?"in_progress":"available";
+  if(activeRewards.length){
+   if(referralTag)referralTag.textContent="RECOMPENSA OBTENIDA";
+   if(referralTitle)referralTitle.textContent="5 % acreditado por "+activeRewards.length+" amigo"+(activeRewards.length===1?"":"s");
+   if(referralText)referralText.textContent="Ya recibiste "+moneyUSD(data.earned_usd||0)+" Coronas en recompensas activas. Puedes seguir invitando: cada nuevo amigo puede generar su propia recompensa cuando entregue su primera compra.";
+  }else if(referrals.length){
+   if(referralTag)referralTag.textContent="INVITACIONES ACTIVAS";
+   if(referralTitle)referralTitle.textContent="Tu 5 % está en camino";
+   if(referralText)referralText.textContent="Tienes "+referrals.length+" amigo"+(referrals.length===1?"":"s")+" vinculado"+(referrals.length===1?"":"s")+". La recompensa se obtiene cuando cada uno entregue su primera compra posterior a la invitación.";
+  }else{
+   if(referralTag)referralTag.textContent="INVITA Y GANA";
+   if(referralTitle)referralTitle.textContent="5 % por cada amigo";
+   if(referralText)referralText.textContent="Gana el 5 % del valor de la primera compra posterior a la invitación, cuando el proveedor confirme su entrega.";
+  }
+ }
+ const progress=$("walletInviteProgress"),progressTag=$("walletInviteProgressTag"),progressTitle=$("walletInviteProgressTitle"),progressText=$("walletInviteProgressDescription");
+ const invitedStatus=String(data?.invited_reward_status||"");
+ if(progress){
+  const linked=Boolean(data?.invite_linked);
+  progress.classList.toggle("hidden",!linked);
+  progress.dataset.promoState=invitedStatus||"linked";
+  if(linked&&invitedStatus==="obtained"){
+   if(progressTag)progressTag.textContent="TAREA COMPLETADA";
+   if(progressTitle)progressTitle.textContent="Tu primera compra fue entregada";
+   if(progressText)progressText.textContent="La persona que te invitó ya recibió "+moneyUSD(data.invited_reward_amount_usd||0)+" Coronas de recompensa. Tú también puedes invitar a otros amigos y ganar el 5 % por cada uno.";
+  }else if(linked&&invitedStatus==="reversed"){
+   if(progressTag)progressTag.textContent="RECOMPENSA AJUSTADA";
+   if(progressTitle)progressTitle.textContent="La recompensa fue revertida";
+   if(progressText)progressText.textContent="La entrega tuvo un cambio posterior y la recompensa se ajustó. Esta invitación ya consumió su única oportunidad; no se generará un segundo pago por la misma persona.";
+  }else if(linked){
+   if(progressTag)progressTag.textContent="INVITACIÓN VINCULADA";
+   if(progressTitle)progressTitle.textContent="Tu invitación está activa";
+   if(progressText)progressText.textContent="Cuando se entregue tu primera compra creada después de vincularte, quien te invitó recibirá el 5 % de recompensa. Aún puedes invitar a otras personas desde tu propio enlace.";
+  }
+ }
+ const rewardList=$("walletReferralRewardList");
+ if(rewardList){
+  if(!referrals.length){
+   rewardList.innerHTML="";
+  }else{
+   rewardList.innerHTML='<div class="wallet-referral-reward-heading">Estado de tus invitaciones</div>'+referrals.map((row,index)=>{
+    const status=String(row.status||"pending");
+    const label=status==="obtained"?"Obtenido":status==="reversed"?"Revertido":"Pendiente de primera compra";
+    const amount=status==="obtained"?'<strong>'+moneyUSD(row.reward_amount_usd||0)+' Coronas obtenidas</strong>':status==="reversed"?'<strong>Recompensa ajustada</strong>':'<strong>El 5 % se acreditará al completarse la entrega</strong>';
+    const date=row.linked_at?new Date(row.linked_at).toLocaleDateString("es-CU"):"";
+    return '<article class="wallet-referral-reward-row" data-reward-state="'+status+'"><div class="wallet-referral-reward-main"><strong>Amigo '+(index+1)+'</strong><span>'+label+'</span></div><p>'+(date?"Vinculado el "+date+". ":"")+amount+'</p></article>';
+   }).join("");
+  }
+ }
+}
 async function loadWalletPromotions(){
  if(!currentUser||!db)return;
  const codeBox=$("walletReferralCode"),stats=$("walletReferralStats"),msg=$("walletReferralMsg");
@@ -5494,6 +5586,7 @@ async function loadWalletPromotions(){
  walletReferralSummary=data;
  if(codeBox)codeBox.textContent="La invitación viaja dentro de tu enlace personal. No hace falta pegar códigos.";
  if(stats)stats.innerHTML='<article><small>Amigos invitados</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Coronas ganadas</small><strong>'+moneyUSD(data.earned_usd||0)+'</strong></article>';
+ renderWalletPromotionStates(data);
  if(msg){
   if(autoLink?.linked)msg.textContent="Invitación vinculada automáticamente. La recompensa del 5 % se acreditará a quien te invitó solo cuando tu primera compra posterior a la vinculación figure como entregada.";
   else if(autoLink?.error)msg.textContent=autoLink.permanent?"No se pudo vincular la invitación: "+autoLink.error:"La invitación quedó guardada, pero no pudimos vincularla por la conexión. Al volver a entrar lo intentaremos de nuevo.";
@@ -5673,7 +5766,15 @@ function previewWalletDeposit(){
  else if(method==="USDT"){credited=Math.floor(amount*10000)/10000;unit="USDT";}
  else if(method==="Saldo móvil"){credited=Math.floor((amount/Math.max(walletMobileUnitsPerCorona(),0.000001))*100)/100;unit="unidades de saldo móvil";}
  const valid=Number.isFinite(credited)&&credited>=1&&amount>=minimum;
- box.innerHTML='<small>Coronas base estimadas '+(valid?"si se aprueba tu pago":"si cumples el mínimo")+'</small><strong>'+moneyUSD(Math.max(0,credited))+' Coronas</strong><small>Importe: '+money(amount)+' '+unit+'. Mínimo: '+money(minimum)+' '+unit+'. 1 Corona = 1 USD. Si es tu primera recarga aprobada, recibirás además un 3 % de bonificación sin límite de importe. El saldo solo se acredita después de la revisión y aprobación del administrador.</small>';
+ const firstStatus=String(walletReferralSummary?.first_deposit_status||"available");
+ const bonusCopy=firstStatus==="obtained"
+  ?"El bono del 3 % ya fue obtenido en tu primera recarga aprobada; esta y las siguientes recargas no lo repiten."
+  :firstStatus==="used"
+   ?"Tu primera recarga aprobada ya utilizó esta promoción. El bono no se vuelve a entregar en recargas posteriores."
+   :firstStatus==="pending"
+    ?"Tu primera solicitud está pendiente de revisión. Si se aprueba y corresponde, el bono del 3 % se acreditará una sola vez."
+    :"Si esta es tu primera recarga aprobada, recibirás además un 3 % de bonificación sin límite de importe.";
+ box.innerHTML='<small>Coronas base estimadas '+(valid?"si se aprueba tu pago":"si cumples el mínimo")+'</small><strong>'+moneyUSD(Math.max(0,credited))+' Coronas</strong><small>Importe: '+money(amount)+' '+unit+'. Mínimo: '+money(minimum)+' '+unit+'. 1 Corona = 1 USD. '+bonusCopy+' El saldo solo se acredita después de la revisión y aprobación del administrador.</small>';
  updateWalletDepositInstructions();
 }
 function updateWalletDepositMethod(resetFields=false){
