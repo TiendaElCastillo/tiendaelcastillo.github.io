@@ -237,7 +237,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes("shell-v194"));
+  assert.ok(serviceWorker.includes("shell-v195"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=5'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
@@ -669,20 +669,29 @@ test("la base de datos exige el archivo almacenado y los datos completos al entr
   assert.match(checkoutGuardMigrationSource, /NEW\.status IN \('payment_review','processing','completed'\)/);
 });
 
-test("la recarga de billetera se completa en dos pasos y el formulario queda junto a las instrucciones", () => {
+test("la recarga de Coronas usa el flujo guiado de juegos y termina con una confirmación", () => {
   assert.match(indexHtml, /id="walletDepositStep1"/);
   assert.match(indexHtml, /id="walletDepositStep2"/);
-  assert.doesNotMatch(indexHtml, /id="walletDepositStep3"/);
-  assert.doesNotMatch(indexHtml, /goWalletDepositStep\(3\)/);
-  assert.match(indexHtml, /data-step="1"[\s\S]*?data-step="2"/);
+  assert.match(indexHtml, /id="walletDepositStep3"/);
+  assert.match(indexHtml, /data-step="1"[\s\S]*?data-step="2"[\s\S]*?data-step="3"/);
   assert.match(indexHtml, /id="walletDepositInstructions"/);
   assert.match(indexHtml, /id="walletDepositSenderPhone"/);
   assert.match(indexHtml, /id="walletDepositReference"/);
-  assert.match(indexHtml, /id="walletDepositProof"/);
+  assert.match(indexHtml, /id="walletDepositProofPreview"/);
+  assert.match(indexHtml, /id="walletDepositProofUploadCircuit"/);
   assert.match(indexHtml, /id="walletDepositSubmit"[^>]*onclick="requestWalletDeposit\(\)"/);
-  assert.match(indexHtml, /const target=Math\.max\(1,Math\.min\(2/);
+  assert.match(indexHtml, /const target=Math\.max\(1,Math\.min\(3/);
   assert.match(indexHtml, /uploadWalletDepositProofs\(createdDepositId/);
+  assert.match(indexHtml, /goWalletDepositStep\(3\)/);
+  assert.match(indexHtml, /walletDepositDoneCoronas/);
+  assert.match(indexHtml, /setWalletDepositProofUploadProgress\("upload"/);
+  assert.match(indexHtml, /files.length!==1/);
   assert.match(indexHtml, /No repitas el pago/);
+});
+test("el historial de Coronas no vuelve a pedir comprobantes cuando el pago está en revisión", () => {
+  assert.match(indexHtml, /const canUpload=d\.status==="pending"&&proofRows\.length===0&&!d\.proof_path/);
+  assert.doesNotMatch(indexHtml, /const canUpload=\["pending","payment_review"\]/);
+  assert.match(indexHtml, /Adjuntar comprobante pendiente \(1 imagen\)/);
 });
 
 
@@ -1116,10 +1125,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v194"));
+  assert.ok(serviceWorker.includes("shell-v195"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
-  assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=27"));
-  assert.ok(serviceWorker.includes("shell-v194"));
-  assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=27"));
+  assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=28"));
+  assert.ok(serviceWorker.includes("shell-v195"));
+  assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=28"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
