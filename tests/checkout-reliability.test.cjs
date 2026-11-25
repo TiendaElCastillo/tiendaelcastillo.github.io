@@ -795,7 +795,7 @@ test("Central One consulta automáticamente pedidos enviados que siguen abiertos
   assert.match(centralOneOrderEdgeSource, /refreshOrder\(orderId\)/);
   assert.match(centralOneOrderEdgeSource, /Math\.min\(3,orderIds\.length\)/);
   assert.match(centralOneOrderEdgeSource, /x-sync-token/);
-  assert.match(centralOneOrderEdgeSource, /unsupported_action,[\s\S]*sync_open_orders/);
+  assert.match(centralOneOrderEdgeSource, /allowed_actions:\[\"submit\",\"submit_wallet\",\"refresh\",\"sync_open_orders\"\]/);
 });
 
 test("la sincronización de pedidos de Central One se programa cada minuto con el secreto existente", () => {
