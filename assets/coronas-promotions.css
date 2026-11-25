@@ -154,3 +154,18 @@
 }
 .wallet-referral-reward-row p{margin:6px 0 0;color:#687990;font-size:11px;line-height:1.45}
 .wallet-referral-reward-row p strong{color:#267247}
+
+/* Marco de sección para que las promociones se distingan del resto de la portada. */
+.coronas-promo-carousel{border:2px solid #c7d9f1;border-radius:24px;background:#fff;box-shadow:0 12px 30px rgba(20,48,88,.105),0 0 0 4px rgba(225,237,252,.58)}
+.coronas-promo-heading{display:flex;align-items:center;gap:11px;min-height:62px;padding:12px 18px;border-bottom:1px solid #dce7f5;background:linear-gradient(105deg,#f5f8ff 0%,#edf4ff 58%,#f7f4ff 100%)}
+.coronas-promo-heading>img{display:block;flex:0 0 30px;width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 3px 5px rgba(19,53,99,.16))}
+.coronas-promo-heading>div{display:grid;gap:2px;min-width:0}
+.coronas-promo-heading strong{color:#1d3d6b;font-size:14px;font-weight:950;line-height:1.25;letter-spacing:-.015em}
+.coronas-promo-heading span{color:#75859d;font-size:10px;font-weight:650;line-height:1.35}
+@media(max-width:520px){
+ .coronas-promo-carousel{border-width:1.5px;border-radius:21px;box-shadow:0 10px 24px rgba(20,48,88,.095),0 0 0 3px rgba(225,237,252,.58)}
+ .coronas-promo-heading{min-height:56px;padding:10px 13px;gap:9px}
+ .coronas-promo-heading>img{width:27px;height:27px;flex-basis:27px}
+ .coronas-promo-heading strong{font-size:13px}
+ .coronas-promo-heading span{font-size:9px}
+}
