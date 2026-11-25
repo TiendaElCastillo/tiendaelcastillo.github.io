@@ -2075,3 +2075,26 @@ button:active:not(:disabled){
  .coronas-referral-panel{grid-template-columns:1fr;gap:12px}
  .coronas-referral-share{width:100%;min-width:0}
 }
+
+/* Cabecera: el emblema de la tienda acompaña los accesos de mensajes y cuenta. */
+.account-header-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.header-account-brand-icon{display:block;width:16px;height:16px;flex:0 0 16px;object-fit:contain;border-radius:5px}
+#siteHeader .notification-header-btn>span:first-child{position:relative;overflow:visible}
+.notification-brand-icon{position:absolute;right:-8px;bottom:-7px;z-index:2;width:15px;height:15px;object-fit:contain;border-radius:5px;background:#fff;border:1px solid #fff;box-shadow:0 1px 4px rgba(8,24,54,.2)}
+@media(max-width:420px){.header-account-brand-icon{width:14px;height:14px;flex-basis:14px}.account-header-btn{gap:4px}.notification-brand-icon{right:-7px;bottom:-6px;width:13px;height:13px}}
+
+/* Cartera: recompensa de invitación integrada en una sola tarjeta. */
+#walletView .coronas-referral-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:15px;padding:19px!important;overflow:hidden;position:relative;border:1px solid #d8e3f4!important;background:linear-gradient(135deg,#fff 0%,#f4f8ff 58%,#f2efff 100%)!important;box-shadow:0 12px 30px rgba(32,67,125,.075)!important}
+#walletView .coronas-referral-offer{display:grid;grid-template-columns:106px minmax(0,1fr);align-items:center;gap:15px;min-width:0}
+#walletView .coronas-referral-art{display:grid;place-items:center;width:106px;height:106px;overflow:hidden;border:1px solid #e1e9f6;border-radius:19px;background:linear-gradient(145deg,#edf5ff,#f5f0ff)}
+#walletView .coronas-referral-art img{display:block;width:100%;height:100%;object-fit:contain}
+#walletView .coronas-referral-copy{min-width:0}
+#walletView .coronas-referral-kicker{display:inline-flex;align-items:center;margin:0 0 6px;padding:5px 9px;border:1px solid #dce8f8;border-radius:999px;background:#eaf2ff;color:#285b9a;font-size:9px;font-weight:900;letter-spacing:.1em}
+#walletView .coronas-referral-copy h3{margin:0 0 2px;color:#1c3151;font-size:17px;line-height:1.25}
+#walletView .coronas-referral-reward{display:flex;align-items:baseline;gap:7px;margin:0 0 5px;flex-wrap:wrap}
+#walletView .coronas-referral-reward strong{color:#285fc1;font-size:30px;line-height:1;font-weight:950;letter-spacing:-.045em}
+#walletView .coronas-referral-reward span{color:#304d77;font-size:12px;font-weight:800}
+#walletView .coronas-referral-copy p{margin:0 0 5px;color:#536984;font-size:11px;line-height:1.5}
+#walletView .coronas-referral-copy small{display:block;color:#7a879b;font-size:9px;line-height:1.45}
+#walletView .coronas-referral-share{width:100%;min-height:46px;margin:0;padding:12px 16px;border:1px solid #d7e4f8;background:linear-gradient(135deg,#edf4ff,#e8efff);color:#285fc1;font-weight:850;border-radius:14px}
+@media(max-width:420px){#walletView .coronas-referral-panel{padding:15px!important;gap:12px}#walletView .coronas-referral-offer{grid-template-columns:82px minmax(0,1fr);gap:11px}#walletView .coronas-referral-art{width:82px;height:88px;border-radius:15px}#walletView .coronas-referral-kicker{font-size:8px;padding:4px 7px}#walletView .coronas-referral-copy h3{font-size:15px}#walletView .coronas-referral-reward strong{font-size:27px}#walletView .coronas-referral-reward span{font-size:10px}#walletView .coronas-referral-copy p{font-size:10px}#walletView .coronas-referral-copy small{font-size:8px}}
