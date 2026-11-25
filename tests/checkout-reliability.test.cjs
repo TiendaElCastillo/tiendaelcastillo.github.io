@@ -238,8 +238,8 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v197"));
-  assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=5'));
+  assert.ok(serviceWorker.includes("shell-v198"));
+  assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
   assert.match(serviceWorker, /keys\.filter\(key =>[\s\S]*key !== CACHE_NAME[\s\S]*key.startsWith\(CACHE_PREFIX\)/);
@@ -1009,8 +1009,8 @@ test("la portada conserva promociones, controles del carrusel y presentación ad
   assert.match(indexHtml, /Ofertas y beneficios para nuestra comunidad/);
   assert.match(coronasPromoCssSource, /\.coronas-promo-carousel\s*\{[\s\S]*border:2px solid #c7d9f1/);
   assert.match(coronasPromoCssSource, /\.coronas-promo-heading\s*\{/);
-  assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=5"));
-  assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=5"));
+  assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
+  assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
   assert.match(indexHtml, /data-coronas-slide="0"/);
   assert.match(indexHtml, /data-coronas-prev/);
   assert.match(indexHtml, /data-coronas-next/);
@@ -1130,10 +1130,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v197"));
+  assert.ok(serviceWorker.includes("shell-v198"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=28"));
-  assert.ok(serviceWorker.includes("shell-v197"));
+  assert.ok(serviceWorker.includes("shell-v198"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=28"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1163,7 +1163,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v197"));
+  assert.ok(serviceWorker.includes("shell-v198"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1205,4 +1205,39 @@ test("Wallet conserva las solicitudes visibles y limita las consultas de adminis
   assert.ok(polling.includes('walletAdminSectionIsVisible("purchases")'));
   const openStore = extractNamedFunction(indexHtml, "openStore");
   assert.ok(!openStore.includes("depósitos de administración"));
+});
+
+
+test("el historial de recargas del cliente no expone enlaces ni datos internos del comprobante", () => {
+  const history = extractNamedFunction(indexHtml, "loadMyWalletDeposits");
+  assert.ok(history.includes('select("id,status,amount,currency,payment_method,credited_amount,welcome_bonus_amount,created_at,proof_path")'));
+  assert.ok(history.includes('select("deposit_id")'));
+  assert.ok(history.includes('createElement("details")'));
+  assert.ok(history.includes("wallet-customer-deposit-card"));
+  assert.doesNotMatch(history, /createSignedUrl|signedUrl|wallet-proof-links|createSignedWalletProofLinks/);
+  assert.doesNotMatch(history, /admin_notes|payment_reference|sender_phone|recipient_address|txid|exchange_rate/);
+  assert.match(history, /No pudimos verificar el estado de los comprobantes/);
+  assert.match(history, /data-wallet-deposit-history-id/);
+});
+
+test("el paso de confirmación de una recarga es temporal y el asistente vuelve al primer paso", () => {
+  const reset = extractNamedFunction(indexHtml, "resetWalletDepositWizard");
+  const schedule = extractNamedFunction(indexHtml, "scheduleWalletDepositConfirmationReset");
+  const submit = extractNamedFunction(indexHtml, "requestWalletDeposit");
+  const scrollHistory = extractNamedFunction(indexHtml, "scrollWalletDepositHistory");
+  assert.match(reset, /walletDepositDoneTimer/);
+  assert.match(reset, /goWalletDepositStep\(1\)/);
+  assert.match(schedule, /setTimeout/);
+  assert.match(schedule, /15000/);
+  assert.match(schedule, /resetWalletDepositWizard/);
+  assert.ok(submit.indexOf("goWalletDepositStep(3)") < submit.indexOf("scheduleWalletDepositConfirmationReset()"));
+  assert.match(scrollHistory, /resetWalletDepositWizard/);
+});
+
+test("el historial de recargas del cliente usa tarjetas desplegables ligeras", () => {
+  assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
+  assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
+  assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
+  assert.ok(serviceWorker.includes("shell-v198"));
+  assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
 });
