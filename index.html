@@ -6361,7 +6361,7 @@ async function loadWalletDepositsAdmin(options={}){
      :mobile
       ?'Enviado: <strong>'+money(d.amount)+' unidades de saldo móvil</strong><br>Teléfono de origen: '+clean(d.sender_phone||"No indicado")+'<br>Referencia del SMS: '+clean(d.payment_reference||"No indicada")+'<br>Conversión guardada: '+money(d.exchange_rate||0)+' unidades por Corona'
       :'Enviado: <strong>'+moneyUSD(d.amount)+' USDT</strong><br>Red: '+clean(d.network||"BNB Smart Chain (BEP20)")+'<br>Dirección receptora: '+clean(d.recipient_address||walletSettings.usdt_address);
-    const actions=canReview?'<div class="wallet-admin-actions"><button class="primary-btn" type="button" onclick="reviewWalletDeposit(\\''+clean(d.id)+'\\',true)">Aprobar y acreditar</button><button class="secondary-btn" type="button" onclick="reviewWalletDeposit(\\''+clean(d.id)+'\\',false)">Rechazar</button></div>':"";
+    const actions=canReview?'<div class="wallet-admin-actions"><button class="primary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\\',true)">Aprobar y acreditar</button><button class="secondary-btn" type="button" onclick="reviewWalletDeposit(\''+clean(d.id)+'\\',false)">Rechazar</button></div>':"";
     const proofPanel=proofButtons.length
      ?'<div class="wallet-admin-proof-panel"><strong>Comprobantes recibidos · '+proofButtons.length+'</strong><div class="wallet-admin-proof-actions">'+proofButtons.join("")+'</div></div>'
      :'<p class="track-note">Esta solicitud no tiene comprobantes disponibles.</p>';
