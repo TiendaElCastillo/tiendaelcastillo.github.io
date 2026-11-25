@@ -5512,18 +5512,23 @@ function renderWalletPromotionStates(data){
  }
  const referrals=Array.isArray(data?.referrals)?data.referrals:[];
  const activeRewards=referrals.filter(row=>row.status==="obtained");
+ const pendingReferrals=referrals.filter(row=>row.status==="pending");
  const reversedRewards=referrals.filter(row=>row.status==="reversed");
  const referralCard=$("walletReferralPromoCard"),referralTag=$("walletReferralPromoTag"),referralTitle=$("walletReferralPromoTitle"),referralText=$("walletReferralPromoDescription");
  if(referralCard){
-  referralCard.dataset.promoState=activeRewards.length?"obtained":referrals.length?"in_progress":"available";
+  referralCard.dataset.promoState=activeRewards.length?"obtained":pendingReferrals.length?"in_progress":reversedRewards.length?"reversed":"available";
   if(activeRewards.length){
    if(referralTag)referralTag.textContent="RECOMPENSA OBTENIDA";
    if(referralTitle)referralTitle.textContent="5 % acreditado por "+activeRewards.length+" amigo"+(activeRewards.length===1?"":"s");
    if(referralText)referralText.textContent="Ya recibiste "+moneyUSD(data.earned_usd||0)+" Coronas en recompensas activas. Puedes seguir invitando: cada nuevo amigo puede generar su propia recompensa cuando entregue su primera compra.";
-  }else if(referrals.length){
+  }else if(pendingReferrals.length){
    if(referralTag)referralTag.textContent="INVITACIONES ACTIVAS";
    if(referralTitle)referralTitle.textContent="Tu 5 % está en camino";
-   if(referralText)referralText.textContent="Tienes "+referrals.length+" amigo"+(referrals.length===1?"":"s")+" vinculado"+(referrals.length===1?"":"s")+". La recompensa se obtiene cuando cada uno entregue su primera compra posterior a la invitación.";
+   if(referralText)referralText.textContent="Tienes "+pendingReferrals.length+" amigo"+(pendingReferrals.length===1?"":"s")+" esperando su primera compra entregada. Puedes seguir invitando a más personas.";
+  }else if(reversedRewards.length){
+   if(referralTag)referralTag.textContent="RECOMPENSA AJUSTADA";
+   if(referralTitle)referralTitle.textContent="Una recompensa fue revertida";
+   if(referralText)referralText.textContent="Esta invitación ya consumió su única recompensa y no se repetirá para la misma persona. Puedes seguir invitando a otros amigos.";
   }else{
    if(referralTag)referralTag.textContent="INVITA Y GANA";
    if(referralTitle)referralTitle.textContent="5 % por cada amigo";
@@ -5587,6 +5592,7 @@ async function loadWalletPromotions(){
  if(codeBox)codeBox.textContent="La invitación viaja dentro de tu enlace personal. No hace falta pegar códigos.";
  if(stats)stats.innerHTML='<article><small>Amigos invitados</small><strong>'+Number(data.referrals_count||0)+'</strong></article><article><small>Compras premiadas</small><strong>'+Number(data.rewarded_count||0)+'</strong></article><article><small>Coronas ganadas</small><strong>'+moneyUSD(data.earned_usd||0)+'</strong></article>';
  renderWalletPromotionStates(data);
+ previewWalletDeposit();
  if(msg){
   if(autoLink?.linked)msg.textContent="Invitación vinculada automáticamente. La recompensa del 5 % se acreditará a quien te invitó solo cuando tu primera compra posterior a la vinculación figure como entregada.";
   else if(autoLink?.error)msg.textContent=autoLink.permanent?"No se pudo vincular la invitación: "+autoLink.error:"La invitación quedó guardada, pero no pudimos vincularla por la conexión. Al volver a entrar lo intentaremos de nuevo.";
