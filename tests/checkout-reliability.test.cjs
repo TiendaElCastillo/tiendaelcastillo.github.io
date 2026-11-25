@@ -237,7 +237,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=24"));
-  assert.ok(serviceWorker.includes("shell-v190"));
+  assert.ok(serviceWorker.includes("shell-v191"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=4'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=24"));
@@ -1073,10 +1073,16 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   const gameTileEnd = indexHtml.indexOf("function giftTile(", gameTileStart);
   assert.ok(gameTileStart >= 0 && gameTileEnd > gameTileStart);
   const gameTileSource = indexHtml.slice(gameTileStart, gameTileEnd);
-  assert.match(gameTileSource, /game-art-brand-badge/);
+  assert.ok(gameTileSource.includes('const brandBadge=homePreview?"":'));
+  assert.ok(gameTileSource.includes('class="game-art-brand-badge"'));
+  assert.ok(gameTileSource.includes("'+image+brandBadge+"));
   assert.match(gameTileSource, /el-castillo-icon\.webp/);
   assert.ok(indexHtml.includes('class="brand-logo"'));
   assert.ok(indexHtml.includes('src="./assets/el-castillo-logo.webp"'));
+  assert.match(indexHtml, /header-account-brand-icon/);
+  assert.match(indexHtml, /notification-brand-icon/);
+  assert.match(indexHtml, /RECARGAS DE JUEGOS EN CUBA/);
+  assert.doesNotMatch(indexHtml, /Más que una tienda|MÁS QUE UNA TIENDA/);
   assert.match(storefrontPolishSource, /\.game-art-brand-badge/);
 
   const inviteStart = indexHtml.indexOf('<section class="wallet-panel coronas-referral-panel"');
@@ -1084,14 +1090,18 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.ok(inviteStart >= 0 && inviteEnd > inviteStart);
   const inviteSection = indexHtml.slice(inviteStart, inviteEnd);
   assert.match(inviteSection, /id="coronasReferralTitle">Invita a un amigo/);
+  assert.ok(inviteSection.includes('class="coronas-referral-art"'));
+  assert.ok(inviteSection.includes("promo-invite-coronas.svg"));
+  assert.ok(inviteSection.includes('class="coronas-referral-reward"><strong>5 %</strong><span>de su primera compra</span>'));
+  assert.match(inviteSection, /Recibes esta recompensa cuando el proveedor confirme/);
   assert.match(inviteSection, /onclick="shareWalletReferralLink\(\)">Compartir invitación/);
   assert.equal((inviteSection.match(/<button\b/g) || []).length, 1);
   assert.doesNotMatch(inviteSection, /Copiar enlace|walletReferralCode|walletReferralStats|walletReferralRewardList/);
   assert.doesNotMatch(indexHtml, /id="walletReferralPromoCard"|id="walletInviteProgress"/);
   assert.doesNotMatch(indexHtml, />\s*Copiar enlace\s*</);
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
-  assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=26"));
-  assert.ok(serviceWorker.includes("shell-v190"));
-  assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=26"));
+  assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=27"));
+  assert.ok(serviceWorker.includes("shell-v191"));
+  assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=27"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
