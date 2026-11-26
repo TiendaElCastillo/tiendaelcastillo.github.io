@@ -1517,3 +1517,36 @@ test("la nueva versión de caché incluye el diagnóstico actualizado de Turnsti
   assert.ok(indexHtml.includes("store_turnstile_error"));
   assert.ok(indexHtml.includes("Turnstile error:"));
 });
+
+
+test("Turnstile espera más entre reintentos automáticos en conexiones móviles inestables", () => {
+  const renderStart = indexHtml.indexOf("function renderCastleTurnstile()");
+  const renderEnd = indexHtml.indexOf("function resetCastleCaptcha()", renderStart);
+  const renderSource = indexHtml.slice(renderStart, renderEnd);
+  assert.ok(renderSource.includes('retry:"auto"'));
+  assert.ok(renderSource.includes('"retry-interval":15000'));
+});
+
+test("Turnstile da hasta 60 segundos para descargar su módulo en redes lentas", () => {
+  const loaderStart = indexHtml.indexOf("function loadCastleTurnstile()");
+  const loaderEnd = indexHtml.indexOf("// Rama de pruebas", loaderStart);
+  const loaderSource = indexHtml.slice(loaderStart, loaderEnd);
+  assert.ok(loaderSource.includes("60000"));
+});
+
+test("un fallo al preparar el widget se muestra y registra como render, no como caída de descarga", () => {
+  const renderStart = indexHtml.indexOf("function renderCastleTurnstile()");
+  const renderEnd = indexHtml.indexOf("function resetCastleCaptcha()", renderStart);
+  const renderSource = indexHtml.slice(renderStart, renderEnd);
+  const loaderStart = indexHtml.indexOf("function loadCastleTurnstile()");
+  const loaderEnd = indexHtml.indexOf("// Rama de pruebas", loaderStart);
+  const loaderSource = indexHtml.slice(loaderStart, loaderEnd);
+  const failureStart = indexHtml.indexOf("function reportCastleTurnstileRenderFailure(");
+  const failureEnd = indexHtml.indexOf("function renderCastleTurnstile()", failureStart);
+  const failureSource = indexHtml.slice(failureStart, failureEnd);
+  assert.ok(failureSource.includes("setCastleCaptchaRetryVisible(true)"));
+  assert.ok(failureSource.includes('error_code:"render_failed"'));
+  assert.ok(failureSource.includes('help.dataset.errorCode="render_failed"'));
+  assert.ok(renderSource.includes("reportCastleTurnstileRenderFailure"));
+  assert.ok(loaderSource.includes("reportCastleTurnstileRenderFailure"));
+});
