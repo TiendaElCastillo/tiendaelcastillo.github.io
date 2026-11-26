@@ -2946,24 +2946,47 @@ window.onCastleCaptchaError=function(errorCode){
  return permanentError;
 };
 let castleTurnstileWidgetId=null;
-function renderCastleTurnstile(){
- if(!window.turnstile||!window.turnstile.render)return false;
- if(castleTurnstileWidgetId)return true;
- castleTurnstileWidgetId=window.turnstile.render("#castleTurnstile",{
-  sitekey:"0x4AAAAAAFzpg8oL2eQCGBYr",
-  callback:token=>window.onCastleCaptchaSuccess(token),
-  "expired-callback":()=>window.onCastleCaptchaExpired(),
-  "error-callback":errorCode=>window.onCastleCaptchaError(errorCode),
-  "timeout-callback":()=>window.onCastleCaptchaTimeout(),
-  theme:"light",
-  language:"es",
-  appearance:"always",
-  retry:"auto",
-  "retry-interval":10000,
-  "refresh-expired":"auto",
-  "refresh-timeout":"auto"
+function reportCastleTurnstileRenderFailure(error){
+ window.castleCaptchaToken=null;
+ const help=$("castleCaptchaHelp");
+ if(help){
+  help.textContent="Cloudflare descargó su módulo, pero no pudo preparar la comprobación. Comprueba tu conexión y pulsa «Volver a comprobar».";
+  help.dataset.errorCode="render_failed";
+ }
+ setCastleCaptchaRetryVisible(true);
+ window.castleAnalytics?.capture?.("store_turnstile_error",{
+  provider:"cloudflare_turnstile",
+  error_code:"render_failed",
+  error_category:"render",
+  hostname:String(location.hostname||"")
  });
- return Boolean(castleTurnstileWidgetId);
+ console.warn("Turnstile render failed:",String(error?.message||"sin detalle"));
+ return false;
+}
+function renderCastleTurnstile(){
+ if(!window.turnstile||!window.turnstile.render)return reportCastleTurnstileRenderFailure();
+ if(castleTurnstileWidgetId)return true;
+ try{
+  const widgetId=window.turnstile.render("#castleTurnstile",{
+   sitekey:"0x4AAAAAAFzpg8oL2eQCGBYr",
+   callback:token=>window.onCastleCaptchaSuccess(token),
+   "expired-callback":()=>window.onCastleCaptchaExpired(),
+   "error-callback":errorCode=>window.onCastleCaptchaError(errorCode),
+   "timeout-callback":()=>window.onCastleCaptchaTimeout(),
+   theme:"light",
+   language:"es",
+   appearance:"always",
+   retry:"auto",
+   "retry-interval":15000,
+   "refresh-expired":"auto",
+   "refresh-timeout":"auto"
+  });
+  if(!widgetId)return reportCastleTurnstileRenderFailure();
+  castleTurnstileWidgetId=widgetId;
+  return true;
+ }catch(error){
+  return reportCastleTurnstileRenderFailure(error);
+ }
 }
 function resetCastleCaptcha(){
  window.castleCaptchaToken=null;
@@ -3009,7 +3032,8 @@ async function retryCastleCaptcha(){
 let castleTurnstilePromise=null;
 function loadCastleTurnstile(){
  if(window.turnstile&&window.turnstile.render){
-  try{return Promise.resolve(renderCastleTurnstile())}catch(e){return Promise.resolve(false)}
+  try{return Promise.resolve(renderCastleTurnstile())}
+  catch(error){return Promise.resolve(reportCastleTurnstileRenderFailure(error))}
  }
  if(castleTurnstilePromise)return castleTurnstilePromise;
  castleTurnstilePromise=new Promise(resolve=>{
@@ -3019,7 +3043,7 @@ function loadCastleTurnstile(){
    setCastleCaptchaRetryVisible(true);
    const help=$("castleCaptchaHelp");
    if(help){
-    help.textContent="No se pudo descargar el módulo de seguridad de Cloudflare. Comprueba tu conexión y que la red permita challenges.cloudflare.com; después pulsa «Volver a comprobar».";
+    help.textContent="No se pudo descargar el módulo de seguridad de Cloudflare. Comprueba tu conexión y que la red permita challenges.cloudflare.com; al recuperar internet volveremos a intentarlo. También puedes pulsar «Volver a comprobar».";
     help.dataset.errorCode="script_load_failed";
    }
    window.castleAnalytics?.capture?.("store_turnstile_error",{
@@ -3029,23 +3053,40 @@ function loadCastleTurnstile(){
     hostname:String(location.hostname||"")
    });
   };
-  const finish=ok=>{
+  const finish=(ok,failureType="load")=>{
    if(finished)return;
    finished=true;clearTimeout(timeout);
-   if(!ok){script.remove();castleTurnstilePromise=null;showLoadFailure();}
+   if(!ok){
+    castleTurnstilePromise=null;
+    if(failureType==="load"){
+     script.remove();
+     showLoadFailure();
+    }
+   }
    resolve(Boolean(ok&&castleTurnstileWidgetId));
   };
-  const timeout=setTimeout(()=>finish(false),45000);
+  const timeout=setTimeout(()=>finish(false,"load"),60000);
   script.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
   script.async=true;
   script.onload=()=>{
-   try{finish(renderCastleTurnstile())}catch(e){finish(false)}
+   let rendered=false;
+   try{rendered=renderCastleTurnstile()}
+   catch(error){reportCastleTurnstileRenderFailure(error)}
+   finish(rendered,"render");
   };
-  script.onerror=()=>finish(false);
+  script.onerror=()=>finish(false,"load");
   document.head.appendChild(script);
  });
  return castleTurnstilePromise;
 }
+function recoverCastleTurnstileOnConnectionRestore(){
+ window.addEventListener("online",()=>{
+  if(!window.castleCaptchaToken&&!castleTurnstileWidgetId&&!castleTurnstilePromise){
+  loadCastleTurnstile().catch(error=>console.warn("Turnstile retry after connection restored failed:",error));
+  }
+ });
+}
+recoverCastleTurnstileOnConnectionRestore();
 // Rama de pruebas: nunca debe apuntar a la base de datos de producción.
 const STORE_SUPABASE_URL="https://kfllglkfncebpknnugnx.supabase.co";
 const STORE_SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtmbGxnbGtmbmNlYnBrbm51Z254Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3Mjg5MTMsImV4cCI6MjEwOTMwNDkxM30.9lyiZC57tJuSRN6ReLkZZVsedJzl0kVxlhxUX90cE6g";
