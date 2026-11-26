@@ -152,3 +152,25 @@ test("las direcciones antiguas con clics registrados redirigen inmediatamente a 
     assert.ok(html.includes('<a href="' + destination + '"'));
   }
 });
+
+test("las cinco guías identifican a Tienda El Castillo como tienda cubana y explican la recarga por ID", () => {
+  for (const page of guidePages) {
+    assert.match(page.html, /<title>Recargar .+ desde Cuba por ID \| Tienda El Castillo<\/title>/i, page.file + " necesita un título orientado a recargas por ID desde Cuba");
+    assert.match(page.html, /Tienda El Castillo es una tienda cubana de recargas de videojuegos para jugadores en Cuba/i, page.file + " debe identificar claramente el país de la tienda");
+    assert.match(page.html, /recarga por ID desde Cuba/i, page.file + " debe explicar que el pedido se realiza por ID");
+  }
+});
+
+test("las guías separan la compra automática con Coronas de la recarga manual de la cartera", () => {
+  for (const page of guidePages) {
+    assert.match(page.html, /Las recargas compradas con Coronas de tu Cartera se procesan automáticamente/i, page.file + " debe explicar la compra automática con Coronas");
+    assert.match(page.html, /La recarga de Coronas a la Cartera es diferente: el saldo queda pendiente hasta que la tienda revise y apruebe el pago/i, page.file + " debe explicar la aprobación manual de los depósitos");
+    assert.match(page.html, /Los pagos por transferencia CUP, saldo móvil o USDT se revisan antes de autorizar la recarga/i, page.file + " debe distinguir los otros métodos de pago");
+    const faq = jsonLd(page.html).flatMap((node) => node["@graph"] || [node]).find((node) => node["@type"] === "FAQPage");
+    assert.ok(faq, page.file + " debe conservar FAQPage");
+    const question = "¿Las recargas pagadas con Coronas son automáticas?";
+    assert.ok(questions(page.html).includes(question), page.file + " debe mostrar la pregunta de Coronas");
+    assert.ok(faq.mainEntity.some((item) => item.name === question), page.file + " debe incluir la pregunta de Coronas en los datos estructurados");
+  }
+});
+
