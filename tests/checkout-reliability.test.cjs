@@ -243,7 +243,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v205"));
+  assert.ok(serviceWorker.includes("shell-v206"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -1140,10 +1140,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v205"));
+  assert.ok(serviceWorker.includes("shell-v206"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=29"));
-  assert.ok(serviceWorker.includes("shell-v205"));
+  assert.ok(serviceWorker.includes("shell-v206"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=29"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1170,7 +1170,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v205"));
+  assert.ok(serviceWorker.includes("shell-v206"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1245,7 +1245,7 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
   assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
-  assert.ok(serviceWorker.includes("shell-v205"));
+  assert.ok(serviceWorker.includes("shell-v206"));
   assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
 });
 
@@ -1390,8 +1390,8 @@ test("los avisos de pedidos se entregan por Realtime y se recuperan al volver a 
   assert.ok(indexHtml.includes('table:"user_notifications",filter:"user_id=eq."+userId'));
   assert.ok(indexHtml.includes('event:"INSERT"'));
   assert.ok(indexHtml.includes('Promise.resolve(loadNotifications())'));
-  assert.ok(indexHtml.includes("shell-v205") || serviceWorker.includes("shell-v205"));
-  assert.ok(serviceWorker.includes("shell-v205"));
+  assert.ok(indexHtml.includes("shell-v206") || serviceWorker.includes("shell-v206"));
+  assert.ok(serviceWorker.includes("shell-v206"));
 });
 
 
@@ -1433,8 +1433,14 @@ test("Turnstile en español permite reintento manual y bloquea envíos duplicado
   assert.ok(indexHtml.includes('theme:"light"'));
   assert.ok(indexHtml.includes('language:"es"'));
   assert.ok(indexHtml.includes('"retry-interval":10000'));
-  assert.ok(indexHtml.includes('const configurationError=/^110(100|110|200)/.test(code)'));
-  assert.ok(indexHtml.includes('setCastleCaptchaRetryVisible(!configurationError)'));
+  assert.ok(indexHtml.includes('const permanentCodes=new Set(["110100","110110","110200","200100","400020","400021","400070"])'));
+  assert.ok(indexHtml.includes('setCastleCaptchaRetryVisible(!permanentError)'));
+  assert.ok(indexHtml.includes('window.castleAnalytics?.capture?.("store_turnstile_error"'));
+  assert.ok(indexHtml.includes('help.dataset.errorCode=code||"unknown"'));
+  assert.ok(indexHtml.includes('script_load_failed'));
+  assert.ok(indexHtml.includes('location.hostname'));
+  assert.ok(indexHtml.includes('challenges.cloudflare.com'));
+  assert.ok(indexHtml.includes('return permanentError;'));
   const registerStart = indexHtml.indexOf("async function register(){");
   const registerEnd = indexHtml.indexOf("async function getCastleAuthCaptchaToken", registerStart);
   const loginStart = indexHtml.indexOf("async function login(){");
@@ -1458,7 +1464,7 @@ test("Turnstile en español permite reintento manual y bloquea envíos duplicado
 });
 
 test("el nuevo aspecto de acceso actualiza la caché sin tocar pagos ni pedidos", () => {
-  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v205"'));
+  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v206"'));
   assert.ok(indexHtml.includes("auth-mobile-conversion-refresh-v1"));
   assert.ok(indexHtml.includes("function login()"));
   assert.ok(indexHtml.includes("function register()"));
@@ -1478,5 +1484,35 @@ test("la portada de acceso se oculta por completo al iniciar sesión en móviles
   assert.ok(openSource.includes('$("store").classList.remove("hidden")'));
   assert.ok(logoutSource.includes('$("store").classList.add("hidden")'));
   assert.ok(logoutSource.includes('$("auth").classList.remove("hidden")'));
-  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v205"'));
+  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v206"'));
+});
+
+
+test("Turnstile identifica errores de clave, dominio, widget desactivado y conexión antes de reintentar", () => {
+  const callbackStart = indexHtml.indexOf("window.onCastleCaptchaError=function(errorCode){");
+  const callbackEnd = indexHtml.indexOf("let castleTurnstileWidgetId=null;", callbackStart);
+  const callback = indexHtml.slice(callbackStart, callbackEnd);
+  assert.ok(callback.includes('"110100"'));
+  assert.ok(callback.includes('"110110"'));
+  assert.ok(callback.includes('"110200"'));
+  assert.ok(callback.includes('"400020"'));
+  assert.ok(callback.includes('"400021"'));
+  assert.ok(callback.includes('"400070"'));
+  assert.ok(callback.includes('"200100"'));
+  assert.ok(callback.includes('"200500"'));
+  assert.match(callback, /El dominio \"\+host\+\" no está autorizado/);
+  assert.ok(callback.includes("return permanentError;"));
+  assert.ok(callback.includes('error_category:category'));
+  const loaderStart = indexHtml.indexOf("function loadCastleTurnstile()");
+  const loaderEnd = indexHtml.indexOf("// Rama de pruebas", loaderStart);
+  const loader = indexHtml.slice(loaderStart, loaderEnd);
+  assert.ok(loader.includes('error_code:"script_load_failed"'));
+  assert.ok(loader.includes("No se pudo descargar el módulo de seguridad de Cloudflare"));
+  assert.ok(loader.includes("challenges.cloudflare.com"));
+});
+
+test("la nueva versión de caché incluye el diagnóstico actualizado de Turnstile", () => {
+  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v206"'));
+  assert.ok(indexHtml.includes("store_turnstile_error"));
+  assert.ok(indexHtml.includes("Turnstile error:"));
 });
