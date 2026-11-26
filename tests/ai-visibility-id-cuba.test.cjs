@@ -157,12 +157,15 @@ test("las direcciones antiguas con clics registrados redirigen inmediatamente a 
 
 test("las cinco guías identifican a Tienda El Castillo como tienda cubana y explican la recarga por ID", () => {
   for (const page of guidePages) {
-    assert.match(page.html, /<title>Recargar .+ desde Cuba por ID \| Tienda El Castillo<\/title>/i, page.file + " necesita un título orientado a recargas por ID desde Cuba");
+
     assert.match(page.html, /<meta name="description" content="[^"]+">/i, page.file + " necesita una meta descripción útil y completa");
     const titleStart = page.html.indexOf("<title>") + "<title>".length;
     const titleEnd = page.html.indexOf("</title>", titleStart);
     const title = page.html.slice(titleStart, titleEnd);
+    assert.ok(title.startsWith("Recargar ") && title.includes(" por ID ") && (title.includes(" desde Cuba") || title.includes(" en Cuba")) && title.endsWith("| Tienda El Castillo"), page.file + " necesita un título orientado a recargas por ID desde Cuba");
     const description = page.html.match(/<meta name="description" content="([^"]+)">/i)?.[1];
+    assert.ok(title.length <= 60, page.file + " debe mantener un título breve para los resultados de búsqueda");
+    assert.ok(description.length <= 160, page.file + " debe mantener una descripción breve para los resultados de búsqueda");
     const webPage = jsonLd(page.html).flatMap((node) => node["@graph"] || [node]).find((node) => node["@type"] === "WebPage");
     assert.equal(webPage?.name, title, page.file + " debe alinear el nombre de WebPage con el título");
     assert.equal(webPage?.description, description, page.file + " debe alinear WebPage con la meta descripción");
@@ -187,6 +190,7 @@ test("las guías separan la compra automática con Coronas de la recarga manual 
 
 test("la guía central explica que la tienda es cubana y separa compras automáticas de depósitos", () => {
   assert.match(hub, /Tienda El Castillo es una tienda cubana de recargas de videojuegos/i);
+  assert.ok(hub.match(/<meta name="description" content="([^"]*)">/i)?.[1].length <= 160);
   const hubWebPage = jsonLd(hub).flatMap((node) => node["@graph"] || [node]).find((node) => node["@type"] === "WebPage");
   assert.equal(hubWebPage?.description, hub.match(/<meta name="description" content="([^"]*)">/i)?.[1]);
   assert.equal(hubWebPage?.dateModified, "2026-11-26");
@@ -204,6 +208,7 @@ test("la guía de pagos diferencia el depósito de Coronas de las compras con sa
 
 test("la página institucional y llms.txt describen correctamente el negocio y su proceso de pago", () => {
   assert.match(about, /Tienda El Castillo es una tienda cubana de recargas de videojuegos/i);
+  assert.ok(about.match(/<meta name="description" content="([^"]*)">/i)?.[1].length <= 160);
   assert.match(about, /Las compras pagadas con Coronas ya acreditadas en la Cartera se procesan automáticamente/i);
   assert.match(about, /Añadir Coronas a la Cartera es un depósito distinto/i);
   assert.match(llms, /Tienda cubana de recargas de videojuegos por ID/i);
