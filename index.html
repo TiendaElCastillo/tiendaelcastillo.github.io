@@ -2953,7 +2953,7 @@ async function retryCastleCaptcha(){
     window.turnstile.reset(castleTurnstileWidgetId);
     const help=$("castleCaptchaHelp");
     if(help)help.textContent="Completa la comprobación cuando aparezca.";
-    setCastleCaptchaRetryVisible(false);
+    setCastleCaptchaRetryVisible(true);
     return;
    }catch(resetError){
     try{window.turnstile.remove(castleTurnstileWidgetId)}catch(removeError){}
