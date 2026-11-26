@@ -2116,3 +2116,93 @@ button:active:not(:disabled){
  .wallet-deposit-confirmation-summary strong{font-size:10px}
  .wallet-deposit-complete h3{font-size:19px}
 }
+
+ 
+/* Pantalla de entrega: solo se muestra después de una confirmación real del proveedor. */
+body.order-delivery-open{overflow:hidden}
+.order-delivery-overlay{
+  position:fixed;inset:0;z-index:10020;display:grid;place-items:center;
+  overflow-y:auto;overscroll-behavior:contain;
+  padding:max(18px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom));
+  background:rgba(247,249,253,.94);backdrop-filter:blur(17px);-webkit-backdrop-filter:blur(17px);
+}
+.order-delivery-overlay.hidden{display:none!important}
+.order-delivery-panel{
+  position:relative;width:min(100%,460px);max-height:calc(100dvh - 36px);overflow-y:auto;
+  border:1px solid rgba(221,230,242,.9);border-radius:27px;background:#fff;
+  box-shadow:0 20px 60px rgba(22,43,76,.13);
+}
+.order-delivery-close{
+  position:absolute;z-index:2;right:13px;top:13px;display:grid;place-items:center;
+  width:38px;height:38px;border:1px solid #e4eaf2;border-radius:50%;
+  background:#f7f9fc;color:#53647c;font-size:23px;line-height:1;cursor:pointer;
+}
+.order-delivery-success-content{
+  display:grid;justify-items:center;gap:0;padding:35px 25px 25px;text-align:center;
+}
+.order-delivery-success-kicker{
+  margin:0 0 17px;color:#7a6490;font-size:9px;font-weight:950;letter-spacing:.17em;
+}
+.order-delivery-success-check{
+  display:grid;place-items:center;width:104px;height:104px;margin:0 0 19px;
+  border-radius:50%;background:linear-gradient(145deg,#18b878,#079e68);
+  box-shadow:0 12px 27px rgba(12,164,107,.2);
+}
+.order-delivery-success-check svg{width:52px;height:52px;fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.order-delivery-success-eyebrow{margin:0 0 5px;color:#159b68;font-size:10px;font-weight:900;letter-spacing:.12em}
+.order-delivery-success-content h2{margin:0;color:#182943;font-size:clamp(23px,6vw,29px);font-weight:950;letter-spacing:-.04em;line-height:1.18}
+.order-delivery-success-art{
+  display:grid;place-items:center;width:108px;height:108px;margin:19px 0 10px;
+  overflow:hidden;border:1px solid #e6ebf3;border-radius:23px;background:linear-gradient(145deg,#fbfcff,#f2f6fc);
+}
+.order-delivery-success-art>img,.order-delivery-success-art .plan-icon-image{
+  display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;
+}
+.order-delivery-success-art .plan-icon-official,
+.order-delivery-success-art .plan-icon-emoji,
+.order-delivery-success-art .plan-icon-official.game-offer-sprite{
+  display:block;width:100%;height:100%;font-size:43px;
+}
+.order-delivery-success-art .game-currency-icon{border-radius:0}
+.order-delivery-art-fallback{display:grid;place-items:center;width:100%;height:100%;font-size:44px}
+.order-delivery-success-item{max-width:100%;margin:0;color:#245eb8;font-size:19px;font-weight:950;line-height:1.35;overflow-wrap:anywhere}
+.order-delivery-success-content>p#orderDeliveryDescription{max-width:310px;margin:8px 0 12px;color:#68778d;font-size:13px;line-height:1.55}
+.order-delivery-success-game{display:inline-flex;align-items:center;padding:6px 11px;border:1px solid #e0e9f6;border-radius:999px;background:#f4f8fe;color:#536984;font-size:11px;font-weight:800}
+.order-delivery-success-code{margin:13px 0 0;color:#8894a5;font-size:10px}
+.order-delivery-success-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;margin:21px 0 0}
+.order-delivery-success-actions button{width:100%;min-height:45px;margin:0;padding:11px 12px;font-size:12px}
+.order-delivery-success-note{margin:15px 0 0;color:#8a7a98;font-size:10px}
+.order-delivery-confirmation{
+  display:grid;grid-template-columns:37px 58px minmax(0,1fr);gap:10px;align-items:center;
+  margin:12px 0;padding:12px;border:1px solid #cfeede;border-radius:17px;
+  background:linear-gradient(115deg,#f1fbf6,#fff);
+}
+.order-delivery-confirmation-check{
+  display:grid;place-items:center;width:34px;height:34px;border-radius:50%;
+  background:#13a76f;color:#fff;font-size:21px;font-weight:900;
+}
+.order-delivery-confirmation-art{
+  display:grid;place-items:center;width:56px;height:56px;overflow:hidden;
+  border:1px solid #e5ebf2;border-radius:13px;background:#fff;
+}
+.order-delivery-confirmation-art>img,
+.order-delivery-confirmation-art .plan-icon-image{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain}
+.order-delivery-confirmation-art .plan-icon-official{display:block;width:100%;height:100%}
+.order-delivery-confirmation-art .plan-icon-emoji{font-size:27px}
+.order-delivery-confirmation-copy{display:grid;gap:3px;min-width:0;text-align:left}
+.order-delivery-confirmation-copy small{color:#19865e;font-size:8px;font-weight:950;letter-spacing:.1em}
+.order-delivery-confirmation-copy strong{color:#1d3856;font-size:12px;line-height:1.35;overflow-wrap:anywhere}
+.order-delivery-confirmation-copy>span{color:#62748b;font-size:10px;line-height:1.4}
+@media(max-width:390px){
+  .order-delivery-success-content{padding:32px 17px 21px}
+  .order-delivery-success-check{width:92px;height:92px}
+  .order-delivery-success-art{width:96px;height:96px}
+  .order-delivery-success-actions{grid-template-columns:1fr}
+  .order-delivery-confirmation{grid-template-columns:32px 50px minmax(0,1fr);gap:8px;padding:10px}
+  .order-delivery-confirmation-check{width:30px;height:30px}
+  .order-delivery-confirmation-art{width:48px;height:48px}
+}
+@media(prefers-reduced-motion:no-preference){
+  .order-delivery-success-check{animation:order-delivery-pop .42s cubic-bezier(.2,.85,.25,1.2) both}
+  @keyframes order-delivery-pop{from{opacity:0;transform:scale(.72)}to{opacity:1;transform:scale(1)}}
+}

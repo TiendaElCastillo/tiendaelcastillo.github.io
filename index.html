@@ -1840,7 +1840,7 @@ body{min-width:0}
 
 
 
-  <link rel="stylesheet" href="./assets/storefront-polish.css?v=28">
+  <link rel="stylesheet" href="./assets/storefront-polish.css?v=29">
 <link rel="stylesheet" href="./assets/coronas-promotions.css?v=6">
 <script src="./assets/posthog.js?v=3" defer></script>
 
@@ -2797,7 +2797,13 @@ body{min-width:0}
 </section>
 </main>
 <nav id="bottomNav" class="bottom-nav hidden" aria-label="Navegación inferior"><div class="bottom-nav-inner"><button class="nav-item active" data-view="home" onclick="showView('home')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>Inicio</button><button class="nav-item" data-view="games" onclick="showView('games')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg></span>Juegos</button><button class="nav-item" data-view="wallet" onclick="showView('wallet')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9h18M16 14h2"/></svg></span>Cartera</button><button class="nav-item" data-view="orders" onclick="showView('orders')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8l4 4V21H7z"/><path d="M15 3.5V8h4M10 12h6M10 16h6"/></svg></span>Pedidos</button><button class="nav-item" data-view="profile" onclick="showView('profile')"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-4 3.3-6 7.5-6s6.7 2 7.5 6"/></svg></span>Perfil</button></div></nav>
-<script src="./assets/customer-orders-view.js?v=1"></script>
+<div id="orderDeliverySuccessModal" class="order-delivery-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="orderDeliveryTitle" aria-describedby="orderDeliveryDescription">
+ <div class="order-delivery-panel">
+  <button id="orderDeliverySuccessClose" class="order-delivery-close" type="button" aria-label="Cerrar aviso de recarga completada">×</button>
+  <div id="orderDeliverySuccessContent"></div>
+ </div>
+</div>
+<script src="./assets/customer-orders-view.js?v=2"></script>
 <script>
 window.onCastleCaptchaSuccess=function(token){window.castleCaptchaToken=token;const m=document.getElementById("authmsg");if(m&&m.textContent.includes("CAPTCHA"))m.textContent="";};
 window.onCastleCaptchaExpired=function(){window.castleCaptchaToken=null;};
@@ -5339,10 +5345,93 @@ function startOrderReviewClock(container){
 let selectedCustomerOrderId = null;
 let customerOrdersCache = [];
 let customerOrderEventsCache = new Map();
+const customerOrderDeliverySeen = new Set();
+let customerOrderDeliveryPreviousFocus = null;
 
 function orderPaymentDisplayName(order){
  return order?.payment_source==="wallet"||order?.payment_method==="Saldo de Tienda El Castillo"?"Coronas":String(order?.payment_method||"");
 }
+function customerOrderDeliveryPresentation(order){
+ const packageName=String(order?.package_name||"Tu recarga");
+ const diamondMatch=packageName.match(/(\d[\d.,]*)\s*diamantes?/i);
+ const catalogProduct=products.find(product=>String(product.id)===String(order?.product_id));
+ let itemLabel=packageName;
+ const gameName=String(order?.game||"");
+ if(fold(itemLabel).startsWith(fold(gameName))){
+  itemLabel=itemLabel.slice(gameName.length).replace(/^[\s·|:-]+/,"");
+ }
+ itemLabel=itemLabel.replace(/\s*[·|:-]\s*PIN\s*$/i,"").trim()||packageName;
+ if(diamondMatch)itemLabel=diamondMatch[1].replace(/,/g,"")+" Diamantes";
+ const product=catalogProduct||{
+  id:order?.product_id,game:order?.game,name:packageName,
+  description:"",amount:diamondMatch?Number(diamondMatch[1].replace(/,/g,"")):0
+ };
+ const game=gameCatalog.find(item=>fold(item.name)===fold(order?.game))||
+  gameCatalog.find(item=>fold(order?.game).includes(fold(item.name)));
+ let artworkHtml='<span class="order-delivery-art-fallback" aria-hidden="true">🎮</span>';
+ try{if(game)artworkHtml=freeFirePlanIcon(product,game)||artworkHtml;}catch(error){console.warn("No se pudo preparar el icono del artículo entregado:",error);}
+ return {artworkHtml,itemLabel};
+}
+function closeCustomerOrderDeliverySuccess(){
+ const modal=$("orderDeliverySuccessModal");
+ if(!modal)return;
+ modal.classList.add("hidden");
+ modal.setAttribute("aria-hidden","true");
+ document.body.classList.remove("order-delivery-open");
+ const previous=customerOrderDeliveryPreviousFocus;
+ customerOrderDeliveryPreviousFocus=null;
+ if(previous&&typeof previous.focus==="function"&&previous.isConnected)previous.focus();
+}
+function showCustomerOrderDeliverySuccess(order){
+ const view=window.CustomerOrdersView;
+ if(!view?.isVerifiedDelivery(order)||currentProfile?.role==="admin")return false;
+ const modal=$("orderDeliverySuccessModal"),content=$("orderDeliverySuccessContent");
+ if(!modal||!content||!modal.classList.contains("hidden"))return false;
+ const storageKey="tec_order_delivery_seen_v1:"+String(currentUser?.id||"")+":"+String(order.id);
+ if(customerOrderDeliverySeen.has(storageKey))return false;
+ try{if(localStorage.getItem(storageKey)==="1"){customerOrderDeliverySeen.add(storageKey);return false;}}catch(storageError){}
+ const presentation=customerOrderDeliveryPresentation(order);
+ const html=view.renderDeliverySuccess(order,presentation);
+ if(!html)return false;
+ content.innerHTML=html;
+ modal.classList.remove("hidden");
+ modal.setAttribute("aria-hidden","false");
+ document.body.classList.add("order-delivery-open");
+ customerOrderDeliveryPreviousFocus=document.activeElement;
+ customerOrderDeliverySeen.add(storageKey);
+ try{localStorage.setItem(storageKey,"1");}catch(storageError){}
+ content.querySelectorAll("[data-order-delivery-close]").forEach(button=>
+  button.addEventListener("click",closeCustomerOrderDeliverySuccess)
+ );
+ content.querySelectorAll("[data-order-delivery-view]").forEach(button=>
+  button.addEventListener("click",()=>{
+   const orderId=button.dataset.orderId;
+   closeCustomerOrderDeliverySuccess();
+   showView("orders");
+   openCustomerOrderDetail(orderId,false);
+  })
+ );
+ $("orderDeliverySuccessClose")?.focus();
+ return true;
+}
+function hasRecentDeliveryNotification(events){
+ const cutoff=Date.now()-7*24*60*60*1000;
+ return (events||[]).some(event=>{
+  const createdAt=Date.parse(event.created_at||"");
+  if(!Number.isFinite(createdAt)||createdAt<cutoff)return false;
+  const title=fold(event.title||""),message=fold(event.message||"");
+  return /recarga.*(entregada|lista)/.test(title)||
+   /recarga completada|confirmo la entrega de la recarga/.test(message);
+ });
+}
+$("orderDeliverySuccessClose")?.addEventListener("click",closeCustomerOrderDeliverySuccess);
+$("orderDeliverySuccessModal")?.addEventListener("click",event=>{
+ if(event.target===$("orderDeliverySuccessModal"))closeCustomerOrderDeliverySuccess();
+});
+document.addEventListener("keydown",event=>{
+ if(event.key==="Escape"&&!$("orderDeliverySuccessModal")?.classList.contains("hidden"))closeCustomerOrderDeliverySuccess();
+});
+
 function renderCustomerOrderDetailHtml(o, statusEvents) {
  const canRetryDirectProof=o.payment_source==="direct"&&o.status==="pending"&&!o.proof_path&&!o.payment_confirmed_at&&!o.central_one_order_id&&["Transferencia CUP","Saldo móvil","USDT"].includes(o.payment_method);
  const proofNote=o.payment_source==="wallet"
@@ -5393,7 +5482,10 @@ function renderCustomerOrderDetailHtml(o, statusEvents) {
  const cancelBlock=canCancelWithoutProof
   ?'<div class="order-actions"><button type="button" class="secondary-btn" data-cancel-unsubmitted data-order-id="'+clean(o.id)+'" data-order-code="'+clean(o.order_code)+'">Cancelar pedido incompleto</button></div><p class="track-note">Úsalo solo si no has pagado ni enviado dinero. No cancela transferencias ni devuelve pagos.</p>'
   :"";
+ const deliveryPresentation=window.CustomerOrdersView?.isVerifiedDelivery(o)?customerOrderDeliveryPresentation(o):null;
+ const deliveryConfirmation=deliveryPresentation?window.CustomerOrdersView.renderDeliveryConfirmation(o,deliveryPresentation):"";
  return '<article class="order-card" data-order-card-id="'+clean(o.id)+'"><div class="order-code">Pedido '+clean(o.order_code)+'</div>'+
+  deliveryConfirmation+
   '<strong>'+clean(o.game)+' · '+clean(o.package_name)+'</strong>'+
   (o.provider_region?'<span class="order-region-pill">🌐 Región de recarga · '+clean(o.provider_region)+'</span>':"")+
   '<div class="order-player-box"><span>Cuenta destinataria</span><strong>'+clean(o.player_name||"Nombre no disponible")+'</strong><small>ID de jugador: '+clean(o.player_id||"No disponible")+'</small></div>'+
@@ -5450,6 +5542,7 @@ function closeCustomerOrderDetail() {
 
 async function loadMyOrders(){
  if(!currentUser)return;
+ const previousCustomerOrders=new Map(customerOrdersCache.map(order=>[String(order.id),order]));
  const {data,error}=await db.from("orders").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false});
  const profileOrderStats=data||[];
  const setProfileStat=(id,value)=>{const node=$(id);if(node)node.textContent=String(value);};
@@ -5493,6 +5586,13 @@ async function loadMyOrders(){
    return view.renderSummary(order,{statusLabel:view.shortStatusLabel(order.status),amountLabel:money(order.price)+" "+amountCurrency});
   }).join("")+'</div></section>'
  ).join(""):'<div class="customer-empty-state"><span class="customer-empty-crown"><img src="./assets/el-castillo-logo.webp" alt="" width="46" height="46"></span><strong>Tu próxima recarga puede empezar aquí</strong><p>Aún no tienes pedidos. Explora los juegos y encuentra tu próximo paquete favorito.</p><button type="button" class="primary-btn" onclick="showView(&quot;home&quot;)">Explorar juegos</button></div>';
+ const deliveredOrder=(customerOrdersCache||[]).filter(order=>{
+  if(!view.isVerifiedDelivery(order))return false;
+  const previous=previousCustomerOrders.get(String(order.id));
+  return (previous&&!view.isVerifiedDelivery(previous))||
+   hasRecentDeliveryNotification(customerOrderEventsCache.get(String(order.id)));
+ }).sort((a,b)=>Date.parse(b.central_one_checked_at||b.created_at||0)-Date.parse(a.central_one_checked_at||a.created_at||0))[0];
+ if(deliveredOrder)showCustomerOrderDeliverySuccess(deliveredOrder);
  if(selectedCustomerOrderId&&customerOrdersCache.some(order=>String(order.id)===selectedCustomerOrderId)){
   openCustomerOrderDetail(selectedCustomerOrderId,false);
  }else{
@@ -7735,6 +7835,7 @@ async function loadAllOrders(options={}){
  });
 }
 async function logout(){
+ closeCustomerOrderDeliverySuccess();
  stopCustomerOrderRealtime();
  stopAdminPaymentPolling();
  stopNotificationPolling();
