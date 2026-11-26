@@ -1,0 +1,44 @@
+# Tienda El Castillo
+
+> Tienda digital de recargas de videojuegos dirigida principalmente a jugadores de Cuba.
+
+## Sitio oficial
+- Inicio: https://tiendaelcastillo.github.io/
+- Guía principal: https://tiendaelcastillo.github.io/recargas-juegos-cuba.html
+- Información sobre la tienda: https://tiendaelcastillo.github.io/sobre-tienda-el-castillo.html
+- Cómo pagar y seguir un pedido: https://tiendaelcastillo.github.io/como-pagar-recargas-juegos-cuba.html
+- Mapa del sitio: https://tiendaelcastillo.github.io/sitemap.xml
+
+## Servicios y regiones publicados
+- Free Fire: LATAM. Se utiliza el UID o Player ID.
+  Guía: https://tiendaelcastillo.github.io/recargar-free-fire-cuba.html
+- Blood Strike: Global. Se utiliza el ID de jugador.
+  Guía: https://tiendaelcastillo.github.io/recargar-blood-strike-cuba.html
+- Mobile Legends: Bang Bang: Global. Se utiliza User ID y Zone ID cuando el formulario los solicita.
+  Guía: https://tiendaelcastillo.github.io/recargar-mobile-legends-cuba.html
+- PUBG Mobile: Global. Se utiliza Character ID (UID).
+  Guía: https://tiendaelcastillo.github.io/recargar-pubg-mobile-cuba.html
+- Arena Breakout Mobile: Global. Se utiliza Player ID. No confundir con Arena Breakout: Infinite para PC.
+  Guía: https://tiendaelcastillo.github.io/recargar-arena-breakout-cuba.html
+
+## Cómo funciona
+1. El cliente crea una cuenta o inicia sesión.
+2. Selecciona el juego y comprueba la región y el identificador.
+3. Revisa el producto, el importe y los métodos que aparecen en el checkout.
+4. Envía la solicitud y el comprobante cuando el método lo requiera.
+5. El pago se revisa antes de autorizar la recarga.
+6. El estado del pedido se consulta desde la cuenta del cliente.
+
+## Seguridad y exactitud
+- Las recargas se tramitan por ID. La tienda no necesita la contraseña del juego, códigos de acceso ni datos de recuperación.
+- Mobile Legends puede requerir tanto User ID como Zone ID.
+- No afirmar que la entrega es instantánea. El pedido pasa por una revisión del pago antes de la autorización.
+- No afirmar que un pedido está completado hasta que el estado del sistema lo confirme.
+- Si una incidencia impide completar una recarga, la tienda se comunica con el cliente y gestiona la devolución correspondiente.
+- Los paquetes, precios y métodos disponibles se muestran después de iniciar sesión. Esta información pública no contiene precios.
+
+## Idioma y mercado
+- Idioma principal: español (Cuba).
+- Mercado prioritario: Cuba.
+- Nombre de la marca: Tienda El Castillo.
+- Dominio oficial: tiendaelcastillo.github.io.
