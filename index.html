@@ -2907,17 +2907,43 @@ window.onCastleCaptchaTimeout=function(){
 };
 window.onCastleCaptchaError=function(errorCode){
  window.castleCaptchaToken=null;
- const code=String(errorCode||"");
- const configurationError=/^110(100|110|200)/.test(code);
- setCastleCaptchaRetryVisible(!configurationError);
+ const code=String(errorCode||"").trim();
+ const host=String(location.hostname||"este dominio");
+ const messages={
+  "110100":"La clave pública de Turnstile no es válida (110100). Revisa que el widget activo de Cloudflare y la clave publicada en la tienda sean la misma.",
+  "110110":"Cloudflare no encuentra este widget (110110). Comprueba que la clave pública pertenezca a un widget activo.",
+  "110200":"El dominio "+host+" no está autorizado por Cloudflare (110200). Añádelo en Turnstile → tu widget → Hostname Management. Después comprueba que Supabase tenga la clave secreta de ese mismo widget.",
+  "110600":"La comprobación de seguridad tardó demasiado (110600). Vuelve a intentarlo.",
+  "110620":"La comprobación interactiva caducó (110620). Pulsa «Volver a comprobar» y complétala.",
+  "200100":"La fecha/hora del teléfono o una caché intermedia está impidiendo la comprobación (200100). Activa fecha y hora automáticas y vuelve a cargar la página.",
+  "200500":"No se pudo cargar el marco de seguridad de Cloudflare (200500). La red o el navegador puede estar bloqueando challenges.cloudflare.com.",
+  "400020":"La clave pública de Turnstile no es válida (400020). Revisa el widget activo en Cloudflare.",
+  "400021":"La configuración regional de la clave no coincide con el dominio de la página (400021). Revisa la configuración del widget en Cloudflare.",
+  "400070":"El widget de Turnstile está desactivado (400070). Actívalo en Cloudflare o selecciona el widget activo correcto."
+ };
+ const permanentCodes=new Set(["110100","110110","110200","200100","400020","400021","400070"]);
+ const permanentError=permanentCodes.has(code);
+ const knownMessage=messages[code];
+ const message=knownMessage||(code
+  ?"Cloudflare no pudo completar la comprobación (código "+code+"). Comprueba la conexión y vuelve a intentarlo."
+  :"Cloudflare no pudo completar la comprobación. Comprueba la conexión y vuelve a intentarlo.");
+ setCastleCaptchaRetryVisible(!permanentError);
  const help=document.getElementById("castleCaptchaHelp");
  if(help){
-  help.textContent=configurationError
-   ?"La verificación necesita una revisión de configuración. Vuelve a intentarlo más tarde."
-   :"No se pudo completar la verificación. Comprueba tu conexión o vuelve a intentarlo.";
+  help.textContent=message;
+  help.dataset.errorCode=code||"unknown";
  }
+ const category=permanentError?"configuration":/^200100$/.test(code)?"clock_or_cache":/^(110600|110620|200500|300|600)/.test(code)?"retryable":"unknown";
+ window.castleAnalytics?.capture?.("store_turnstile_error",{
+  provider:"cloudflare_turnstile",
+  error_code:code||"unknown",
+  error_category:category,
+  hostname:host
+ });
  console.warn("Turnstile error:",code||"sin código");
- return false;
+ // Falsish return lets Cloudflare perform its automatic retry for recoverable errors.
+ // Non-retryable configuration errors are reported in the form without offering a useless retry.
+ return permanentError;
 };
 let castleTurnstileWidgetId=null;
 function renderCastleTurnstile(){
@@ -2989,10 +3015,24 @@ function loadCastleTurnstile(){
  castleTurnstilePromise=new Promise(resolve=>{
   const script=document.createElement("script");
   let finished=false;
+  const showLoadFailure=()=>{
+   setCastleCaptchaRetryVisible(true);
+   const help=$("castleCaptchaHelp");
+   if(help){
+    help.textContent="No se pudo descargar el módulo de seguridad de Cloudflare. Comprueba tu conexión y que la red permita challenges.cloudflare.com; después pulsa «Volver a comprobar».";
+    help.dataset.errorCode="script_load_failed";
+   }
+   window.castleAnalytics?.capture?.("store_turnstile_error",{
+    provider:"cloudflare_turnstile",
+    error_code:"script_load_failed",
+    error_category:"network",
+    hostname:String(location.hostname||"")
+   });
+  };
   const finish=ok=>{
    if(finished)return;
    finished=true;clearTimeout(timeout);
-   if(!ok){script.remove();castleTurnstilePromise=null;}
+   if(!ok){script.remove();castleTurnstilePromise=null;showLoadFailure();}
    resolve(Boolean(ok&&castleTurnstileWidgetId));
   };
   const timeout=setTimeout(()=>finish(false),45000);
