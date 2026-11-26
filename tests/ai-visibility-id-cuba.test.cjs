@@ -158,6 +158,7 @@ test("las direcciones antiguas con clics registrados redirigen inmediatamente a 
 test("las cinco guías identifican a Tienda El Castillo como tienda cubana y explican la recarga por ID", () => {
   for (const page of guidePages) {
     assert.match(page.html, /<title>Recargar .+ desde Cuba por ID \| Tienda El Castillo<\/title>/i, page.file + " necesita un título orientado a recargas por ID desde Cuba");
+    assert.match(page.html, /<meta name="description" content="[^"]+">/i, page.file + " necesita una meta descripción útil y completa");
     assert.match(page.html, /Tienda El Castillo es una tienda cubana de recargas de videojuegos para jugadores en Cuba/i, page.file + " debe identificar claramente el país de la tienda");
     assert.match(page.html, /recarga por ID desde Cuba/i, page.file + " debe explicar que el pedido se realiza por ID");
   }
