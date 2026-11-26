@@ -815,7 +815,8 @@ async function syncOpenOrders(req: Request, body: any) {
 
   const requestedLimit = Math.floor(Number(body?.limit) || 6);
   const limit = Math.max(1,Math.min(6,requestedLimit));
-  const cutoff = new Date(Date.now() - 45000).toISOString();
+  // Cron runs every 20 seconds; this guard avoids checking the same order twice per tick.
+  const cutoff = new Date(Date.now() - 12000).toISOString();
   const lookup = new URL(SUPABASE_URL + "/rest/v1/orders");
   lookup.searchParams.set("select","id");
   lookup.searchParams.set("central_one_order_id","not.is.null");
