@@ -8,7 +8,16 @@ on:
       - "sw.js"
       - "como-pagar-recargas-juegos-cuba.html"
       - "recargas-juegos-cuba.html"
+      - "recargar-free-fire-cuba.html"
+      - "recargar-blood-strike-cuba.html"
+      - "recargar-mobile-legends-cuba.html"
+      - "recargar-pubg-mobile-cuba.html"
+      - "recargar-arena-breakout-cuba.html"
       - "sobre-tienda-el-castillo.html"
+      - "sitemap.xml"
+      - "robots.txt"
+      - "llms.txt"
+      - "tienda-el-castillo/**"
       - "tests/**"
       - "assets/checkout-reliability.js"
       - "assets/coronas-promotions.js"
@@ -24,6 +33,18 @@ on:
       - ".github/workflows/**"
       - "index.html"
       - "sw.js"
+      - "recargas-juegos-cuba.html"
+      - "recargar-free-fire-cuba.html"
+      - "recargar-blood-strike-cuba.html"
+      - "recargar-mobile-legends-cuba.html"
+      - "recargar-pubg-mobile-cuba.html"
+      - "recargar-arena-breakout-cuba.html"
+      - "sobre-tienda-el-castillo.html"
+      - "como-pagar-recargas-juegos-cuba.html"
+      - "sitemap.xml"
+      - "robots.txt"
+      - "llms.txt"
+      - "tienda-el-castillo/**"
       - "tests/**"
       - "assets/checkout-reliability.js"
       - "assets/coronas-promotions.js"
@@ -47,6 +68,6 @@ jobs:
         with:
           node-version: 22
       - name: Ejecutar pruebas automatizadas
-        run: node --test tests/checkout-reliability.test.cjs
+        run: node --test tests/checkout-reliability.test.cjs tests/ai-visibility-id-cuba.test.cjs
       - name: Comprobar sintaxis de scripts incrustados
         run: node tests/check-inline-scripts.cjs
