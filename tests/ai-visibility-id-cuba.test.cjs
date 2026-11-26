@@ -6,6 +6,8 @@ const path = require("node:path");
 const root = path.join(__dirname, "..");
 const hub = fs.readFileSync(path.join(root, "recargas-juegos-cuba.html"), "utf8");
 const about = fs.readFileSync(path.join(root, "sobre-tienda-el-castillo.html"), "utf8");
+const paymentGuide = fs.readFileSync(path.join(root, "como-pagar-recargas-juegos-cuba.html"), "utf8");
+const llms = fs.readFileSync(path.join(root, "llms.txt"), "utf8");
 const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
 const organizationId = "https://tiendaelcastillo.github.io/#organization";
 
@@ -81,7 +83,7 @@ test("la página central y la institucional comparten la misma identidad de orga
 
 test("el sitemap refleja las fechas reales de modificación de ambas páginas", () => {
   assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/recargas-juegos-cuba\.html<\/loc><lastmod>2026-11-26<\/lastmod>/);
-  assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/sobre-tienda-el-castillo\.html<\/loc><lastmod>2026-11-23<\/lastmod>/);
+  assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/sobre-tienda-el-castillo\.html<\/loc><lastmod>2026-11-26<\/lastmod>/);
 });
 
 
@@ -172,5 +174,37 @@ test("las guías separan la compra automática con Coronas de la recarga manual 
     assert.ok(questions(page.html).includes(question), page.file + " debe mostrar la pregunta de Coronas");
     assert.ok(faq.mainEntity.some((item) => item.name === question), page.file + " debe incluir la pregunta de Coronas en los datos estructurados");
   }
+});
+
+test("la guía central explica que la tienda es cubana y separa compras automáticas de depósitos", () => {
+  assert.match(hub, /Tienda El Castillo es una tienda cubana de recargas de videojuegos/i);
+  assert.match(hub, /recargas por ID desde Cuba/i);
+  assert.match(hub, /las recargas compradas con Coronas ya acreditadas en tu Cartera se procesan automáticamente/i);
+  assert.match(hub, /Añadir Coronas a la Cartera es un depósito distinto/i);
+  assert.match(hub, /pagos por transferencia CUP, saldo móvil o USDT se revisan antes de autorizar la recarga/i);
+});
+
+test("la guía de pagos diferencia el depósito de Coronas de las compras con saldo acreditado", () => {
+  assert.match(paymentGuide, /la compra se procesa automáticamente/i);
+  assert.match(paymentGuide, /ese depósito queda pendiente hasta que la tienda revise el pago y lo apruebe/i);
+  assert.match(paymentGuide, /el pago debe revisarse antes de autorizar la recarga/i);
+});
+
+test("la página institucional y llms.txt describen correctamente el negocio y su proceso de pago", () => {
+  assert.match(about, /Tienda El Castillo es una tienda cubana de recargas de videojuegos/i);
+  assert.match(about, /Las compras pagadas con Coronas ya acreditadas en la Cartera se procesan automáticamente/i);
+  assert.match(about, /Añadir Coronas a la Cartera es un depósito distinto/i);
+  assert.match(llms, /Tienda cubana de recargas de videojuegos por ID/i);
+  assert.match(llms, /la compra de la recarga con ese saldo interno se procesa automáticamente/i);
+  assert.match(llms, /Añadir Coronas a la Cartera es un depósito separado/i);
+});
+
+test("los metadatos de portada identifican la tienda cubana y las recargas por ID", () => {
+  assert.match(homepage, /Tienda cubana de recargas de juegos por ID/i);
+  assert.match(homepage, /recargar Free Fire desde Cuba/i);
+  const graph = jsonLd(homepage).flatMap((node) => node["@graph"] || [node]);
+  const org = graph.find((node) => node["@type"] === "Organization");
+  assert.match(org.description, /Tienda cubana de recargas de videojuegos por ID/i);
+  assert.ok(org.knowsAbout.includes("Compras automáticas con Coronas de saldo interno"));
 });
 
