@@ -1927,13 +1927,28 @@ body{min-width:0}
  #ordersView .order-detail-heading h3{font-size:16px}
 }
 </style>
-<style id="castle-home-social-links-v1">
-.castle-home-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:10px}
-.castle-share-button{min-height:38px;padding:8px 12px;border:1px solid rgba(255,255,255,.45);border-radius:11px;background:#fff;color:#452263;font-size:12px;font-weight:850}
-.castle-share-button:focus-visible,.castle-channel-link:focus-visible{outline:3px solid #e6b7ff;outline-offset:3px}
-.castle-channel-link{color:#6d3c91;font-size:12px;font-weight:750;text-decoration:underline;text-underline-offset:3px}
-.castle-share-status{min-height:0!important}
-.castle-share-status:empty{display:none}
+<style id="castle-home-social-links-v2">
+#auth .castle-home-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:17px}
+#auth .castle-channel-link.castle-whatsapp-cta{
+ display:inline-flex;align-items:center;justify-content:center;gap:10px;
+ min-height:48px;max-width:100%;padding:12px 18px;
+ border:1px solid #15964d;border-radius:13px;
+ background:linear-gradient(135deg,#25d366 0%,#19b45a 58%,#159c4d 100%);
+ color:#fff;text-decoration:none;font-size:13px;font-weight:900;line-height:1.25;
+ box-shadow:0 8px 18px rgba(17,153,75,.23),inset 0 1px rgba(255,255,255,.24);
+ transition:filter .16s ease,transform .16s ease,box-shadow .16s ease;
+}
+#auth .castle-channel-link.castle-whatsapp-cta .whatsapp-brand-glyph{display:block;flex:0 0 22px;width:22px;height:22px;fill:currentColor}
+#auth .castle-channel-link.castle-whatsapp-cta:hover{filter:brightness(1.04);transform:translateY(-1px);box-shadow:0 10px 22px rgba(17,153,75,.28)}
+#auth .castle-channel-link.castle-whatsapp-cta:focus-visible{outline:3px solid rgba(37,211,102,.42);outline-offset:3px}
+@media(max-width:520px){
+ #auth .castle-home-actions{margin-top:15px}
+ #auth .castle-channel-link.castle-whatsapp-cta{width:100%;min-height:48px;padding:12px 14px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ #auth .castle-channel-link.castle-whatsapp-cta{transition:none}
+ #auth .castle-channel-link.castle-whatsapp-cta:hover{transform:none}
+}
 </style>
 <style id="public-seo-guides-v1">
 .public-seo-guides{width:100%;margin:16px 0 4px;padding:14px 16px;border:1px solid #dce8f7;border-radius:15px;background:#fff}
@@ -2107,10 +2122,11 @@ body{min-width:0}
    <h1>Recargas de juegos desde Cuba</h1>
    <p>Conoce los juegos que ofrecemos. Inicia sesión o crea tu cuenta para entrar en la tienda y acceder a todos los paquetes y servicios.</p>
    <div class="castle-home-actions">
-    <button class="castle-share-button" type="button" onclick="shareStore()">Compartir tienda</button>
-    <a class="castle-channel-link" href="https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X" target="_blank" rel="noopener noreferrer">Seguir novedades en WhatsApp</a>
+    <a class="castle-channel-link castle-whatsapp-cta" href="https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X" target="_blank" rel="noopener noreferrer" aria-label="Abrir el canal oficial de Tienda El Castillo en WhatsApp">
+     <svg class="whatsapp-brand-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12.03 2C6.52 2 2.04 6.48 2.04 11.99c0 1.76.46 3.48 1.33 4.99L2 22l5.16-1.35c1.49.81 3.16 1.24 4.87 1.24h.01c5.51 0 9.99-4.48 9.99-9.99 0-2.67-1.04-5.18-2.93-7.06A9.93 9.93 0 0012.03 2zm0 18.2h-.01a8.2 8.2 0 01-4.18-1.14l-.3-.18-3.06.8.82-2.99-.2-.31a8.18 8.18 0 01-1.26-4.39c0-4.52 3.68-8.2 8.2-8.2 2.19 0 4.25.85 5.8 2.4a8.15 8.15 0 012.4 5.8c0 4.52-3.68 8.2-8.21 8.2zm4.5-6.14c-.25-.13-1.47-.72-1.7-.8-.23-.08-.4-.13-.57.13-.17.25-.65.8-.8.96-.15.17-.3.19-.55.06-.25-.13-1.06-.39-2.02-1.23-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.52.12-.12.25-.3.38-.44.12-.15.16-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.88-.2-.49-.41-.42-.57-.43-.15-.01-.32-.01-.49-.01-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.44 1.03 2.61c.13.17 1.77 2.7 4.29 3.79.6.26 1.07.42 1.44.54.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.29z"/></svg>
+     <span>Seguir novedades en WhatsApp</span>
+    </a>
    </div>
-   <p class="castle-share-status" id="shareStoreMsg" role="status" aria-live="polite"></p>
   </div>
   <div class="auth-showcase-games" aria-label="Juegos con servicios disponibles">
    <article class="auth-game-card">

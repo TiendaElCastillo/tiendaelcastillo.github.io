@@ -18,6 +18,7 @@ const checkoutReliabilitySource = fs.readFileSync(path.join(root, "assets/checko
 const checkoutGuardMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123170000_harden_checkout_proof_transition.sql"), "utf8");
 const playerValidationEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-player-validate/index.ts"), "utf8");
 const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-order/index.ts"), "utf8");
+const providerRejectionStatusMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261126031514_map_provider_rejection_to_terminal_order_status.sql"), "utf8");
 const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
 const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
 const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
@@ -240,7 +241,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v201"));
+  assert.ok(serviceWorker.includes("shell-v202"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -807,7 +808,9 @@ test("Central One consulta automáticamente pedidos enviados que siguen abiertos
   assert.match(centralOneOrderEdgeSource, /async function syncOpenOrders/);
   assert.match(centralOneOrderEdgeSource, /action==="sync_open_orders"/);
   assert.match(centralOneOrderEdgeSource, /central_one_order_id.*not\.is\.null/);
-  assert.match(centralOneOrderEdgeSource, /central_one_status.*in\.\(created,confirmed,processing,partially_completed,unknown,retryable\)/);
+  assert.match(centralOneOrderEdgeSource, /central_one_status.*in\.\(created,confirmed,processing,partially_completed,unknown,retryable,rejected\)/);
+  assert.match(centralOneOrderEdgeSource, /lookup\.searchParams\.set\("status","eq\.processing"\)/);
+  assert.match(centralOneOrderEdgeSource, /else if \(data\.provider_status === "rejected"\) rejected\+\+/);
   assert.match(centralOneOrderEdgeSource, /refreshOrder\(orderId\)/);
   assert.match(centralOneOrderEdgeSource, /Math\.min\(3,orderIds\.length\)/);
   assert.match(centralOneOrderEdgeSource, /x-sync-token/);
@@ -1135,10 +1138,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v201"));
+  assert.ok(serviceWorker.includes("shell-v202"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=29"));
-  assert.ok(serviceWorker.includes("shell-v201"));
+  assert.ok(serviceWorker.includes("shell-v202"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=29"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1165,7 +1168,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v201"));
+  assert.ok(serviceWorker.includes("shell-v202"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1240,7 +1243,7 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
   assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
-  assert.ok(serviceWorker.includes("shell-v201"));
+  assert.ok(serviceWorker.includes("shell-v202"));
   assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
 });
 
@@ -1344,4 +1347,27 @@ test("la reactivación EVO revierte la pausa permanente y solo publica productos
   assert.ok(freeFireEvoReenableMigrationSource.includes("'11251c9b-4966-4210-969e-3d4ffdfb70aa'"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("'64e90b95-ccf8-40da-9c4b-37e5e25e32d5'"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("'a9cfa9a9-2310-4167-bdb9-6740413660dc'"));
+});
+
+
+test("una respuesta rejected de Central One cierra el pedido como rechazado", () => {
+  assert.ok(providerRejectionStatusMigrationSource.includes("elsif p_provider_status = 'rejected' then"));
+  assert.ok(providerRejectionStatusMigrationSource.includes("v_local_status := 'rejected'"));
+  assert.ok(centralOneOrderEdgeSource.includes('central_one_status","in.(created,confirmed,processing,partially_completed,unknown,retryable,rejected)'));
+  assert.ok(centralOneOrderEdgeSource.includes('lookup.searchParams.set("status","eq.processing")'));
+  assert.ok(centralOneOrderEdgeSource.includes('else if (data.provider_status === "rejected") rejected++;'));
+});
+
+test("la portada previa al inicio de sesión muestra solo el canal oficial de WhatsApp", () => {
+  const authStart = indexHtml.indexOf('<section id="auth"');
+  const gamesStart = indexHtml.indexOf('<div class="auth-showcase-games"', authStart);
+  assert.ok(authStart >= 0 && gamesStart > authStart);
+  const intro = indexHtml.slice(authStart, gamesStart);
+  assert.equal(intro.includes('castle-share-button'), false);
+  assert.equal(intro.includes('onclick="shareStore()'), false);
+  assert.ok(intro.includes('class="castle-channel-link castle-whatsapp-cta"'));
+  assert.ok(intro.includes('href="https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X"'));
+  assert.ok(intro.includes('class="whatsapp-brand-glyph"'));
+  assert.ok(indexHtml.includes("#auth .castle-channel-link.castle-whatsapp-cta"));
+  assert.ok(indexHtml.includes("background:linear-gradient(135deg,#25d366"));
 });

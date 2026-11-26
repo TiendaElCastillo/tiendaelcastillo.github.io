@@ -819,7 +819,8 @@ async function syncOpenOrders(req: Request, body: any) {
   const lookup = new URL(SUPABASE_URL + "/rest/v1/orders");
   lookup.searchParams.set("select","id");
   lookup.searchParams.set("central_one_order_id","not.is.null");
-  lookup.searchParams.set("central_one_status","in.(created,confirmed,processing,partially_completed,unknown,retryable)");
+  lookup.searchParams.set("status","eq.processing");
+  lookup.searchParams.set("central_one_status","in.(created,confirmed,processing,partially_completed,unknown,retryable,rejected)");
   lookup.searchParams.set("or","(central_one_checked_at.is.null,central_one_checked_at.lt." + cutoff + ")");
   lookup.searchParams.set("order","central_one_checked_at.asc.nullsfirst,created_at.asc");
   lookup.searchParams.set("limit",String(limit));
@@ -841,6 +842,7 @@ async function syncOpenOrders(req: Request, body: any) {
 
   let cursor = 0;
   let completed = 0;
+  let rejected = 0;
   let stillOpen = 0;
   let errors = 0;
   const worker = async () => {
@@ -855,6 +857,7 @@ async function syncOpenOrders(req: Request, body: any) {
           continue;
         }
         if (data.provider_status === "completed") completed++;
+        else if (data.provider_status === "rejected") rejected++;
         else if (["created","confirmed","processing","partially_completed","unknown","retryable"].includes(String(data.provider_status))) stillOpen++;
         else errors++;
       } catch (_) {
@@ -868,6 +871,7 @@ async function syncOpenOrders(req: Request, body: any) {
     ok:true,
     checked:orderIds.length,
     delivered:completed,
+    rejected,
     still_open:stillOpen,
     errors,
     checked_at:new Date().toISOString(),
