@@ -18,6 +18,7 @@ const checkoutReliabilitySource = fs.readFileSync(path.join(root, "assets/checko
 const checkoutGuardMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123170000_harden_checkout_proof_transition.sql"), "utf8");
 const playerValidationEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-player-validate/index.ts"), "utf8");
 const centralOneOrderEdgeSource = fs.readFileSync(path.join(root, "supabase/functions/central-one-order/index.ts"), "utf8");
+const providerRejectionStatusMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261126031514_map_provider_rejection_to_terminal_order_status.sql"), "utf8");
 const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222142_coronas_production_wallet_and_first_purchase_rewards.sql"), "utf8");
 const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
 const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
@@ -807,7 +808,9 @@ test("Central One consulta automáticamente pedidos enviados que siguen abiertos
   assert.match(centralOneOrderEdgeSource, /async function syncOpenOrders/);
   assert.match(centralOneOrderEdgeSource, /action==="sync_open_orders"/);
   assert.match(centralOneOrderEdgeSource, /central_one_order_id.*not\.is\.null/);
-  assert.match(centralOneOrderEdgeSource, /central_one_status.*in\.\(created,confirmed,processing,partially_completed,unknown,retryable\)/);
+  assert.match(centralOneOrderEdgeSource, /central_one_status.*in\.\(created,confirmed,processing,partially_completed,unknown,retryable,rejected\)/);
+  assert.match(centralOneOrderEdgeSource, /lookup\.searchParams\.set\("status","eq\.processing"\)/);
+  assert.match(centralOneOrderEdgeSource, /else if \(data\.provider_status === "rejected"\) rejected\+\+/);
   assert.match(centralOneOrderEdgeSource, /refreshOrder\(orderId\)/);
   assert.match(centralOneOrderEdgeSource, /Math\.min\(3,orderIds\.length\)/);
   assert.match(centralOneOrderEdgeSource, /x-sync-token/);
@@ -1344,4 +1347,23 @@ test("la reactivación EVO revierte la pausa permanente y solo publica productos
   assert.ok(freeFireEvoReenableMigrationSource.includes("'11251c9b-4966-4210-969e-3d4ffdfb70aa'"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("'64e90b95-ccf8-40da-9c4b-37e5e25e32d5'"));
   assert.ok(freeFireEvoReenableMigrationSource.includes("'a9cfa9a9-2310-4167-bdb9-6740413660dc'"));
+});
+
+
+test("una respuesta rejected de Central One cierra el pedido como rechazado", () => {
+  assert.match(providerRejectionStatusMigrationSource, /p_provider_status = 'rejected'[\\s\\S]*?v_local_status := 'rejected'/);
+  assert.match(centralOneOrderEdgeSource, /central_one_status.*rejected/);
+  assert.match(centralOneOrderEdgeSource, /status.*eq\\.processing/);
+});
+
+test("la portada previa al inicio de sesión muestra solo el canal oficial de WhatsApp", () => {
+  const authStart = indexHtml.indexOf('<section id="auth"');
+  const gamesStart = indexHtml.indexOf('<div class="auth-showcase-games"', authStart);
+  assert.ok(authStart >= 0 && gamesStart > authStart);
+  const intro = indexHtml.slice(authStart, gamesStart);
+  assert.doesNotMatch(intro, /castle-share-button|onclick="shareStore\(\)"/);
+  assert.match(intro, /castle-whatsapp-cta/);
+  assert.match(intro, /https:\/\/whatsapp\\.com\/channel\/0029Vb8tq5vGufJ4yLhEcS0X/);
+  assert.match(intro, /whatsapp-brand-glyph/);
+  assert.match(indexHtml, /#auth \.castle-channel-link\.castle-whatsapp-cta[\\s\\S]*?background:linear-gradient\(135deg,#25d366/);
 });
