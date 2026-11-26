@@ -61,6 +61,56 @@
     return labels[String(status || "")] || "En actualización";
   }
 
+  function isVerifiedDelivery(order) {
+    const data = order || {};
+    return data.status === "completed" &&
+      data.central_one_status === "completed" &&
+      typeof data.central_one_order_id === "string" &&
+      data.central_one_order_id.trim().length > 0;
+  }
+
+  function renderDeliveryConfirmation(order, options) {
+    if (!isVerifiedDelivery(order)) return "";
+    const data = order || {};
+    const settings = options || {};
+    const artwork = settings.artworkHtml || '<span class="order-delivery-art-fallback" aria-hidden="true">🎮</span>';
+    const itemLabel = settings.itemLabel || data.package_name || "Tu recarga";
+    return '<section class="order-delivery-confirmation" aria-label="Recarga entregada">' +
+      '<span class="order-delivery-confirmation-check" aria-hidden="true">✓</span>' +
+      '<span class="order-delivery-confirmation-art">' + artwork + '</span>' +
+      '<span class="order-delivery-confirmation-copy"><small>ENTREGA CONFIRMADA</small>' +
+      '<strong>' + escapeHtml(itemLabel) + '</strong>' +
+      '<span>Ya está en tu cuenta. Revisa el juego.</span></span>' +
+      '</section>';
+  }
+
+  function renderDeliverySuccess(order, options) {
+    if (!isVerifiedDelivery(order)) return "";
+    const data = order || {};
+    const settings = options || {};
+    const artwork = settings.artworkHtml || '<span class="order-delivery-art-fallback" aria-hidden="true">🎮</span>';
+    const itemLabel = settings.itemLabel || data.package_name || "Tu recarga";
+    const game = data.game || "Tu juego";
+    const code = data.order_code || "";
+    const orderId = data.id || "";
+    return '<section class="order-delivery-success-content">' +
+      '<span class="order-delivery-success-kicker">TIENDA EL CASTILLO</span>' +
+      '<span class="order-delivery-success-check" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="m10 25 9 9L38 14"/></svg></span>' +
+      '<span class="order-delivery-success-eyebrow">ENTREGA CONFIRMADA</span>' +
+      '<h2 id="orderDeliveryTitle">¡Recarga entregada!</h2>' +
+      '<span class="order-delivery-success-art">' + artwork + '</span>' +
+      '<strong class="order-delivery-success-item">' + escapeHtml(itemLabel) + '</strong>' +
+      '<p id="orderDeliveryDescription">Ya está en tu cuenta. Revisa el juego.</p>' +
+      '<span class="order-delivery-success-game">' + escapeHtml(game) + '</span>' +
+      (code ? '<small class="order-delivery-success-code">Pedido ' + escapeHtml(code) + '</small>' : "") +
+      '<div class="order-delivery-success-actions">' +
+      '<button class="primary-btn" type="button" data-order-delivery-view data-order-id="' + escapeHtml(orderId) + '">Ver mi pedido</button>' +
+      '<button class="secondary-btn" type="button" data-order-delivery-close>Continuar</button>' +
+      '</div>' +
+      '<p class="order-delivery-success-note">Gracias por comprar en Tienda El Castillo 💜</p>' +
+      '</section>';
+  }
+
   function renderSummary(order, options) {
     const data = order || {};
     const settings = options || {};
@@ -92,6 +142,9 @@
     groupByDay: groupByDay,
     renderSummary: renderSummary,
     statusClass: statusClass,
-    shortStatusLabel: shortStatusLabel
+    shortStatusLabel: shortStatusLabel,
+    isVerifiedDelivery: isVerifiedDelivery,
+    renderDeliveryConfirmation: renderDeliveryConfirmation,
+    renderDeliverySuccess: renderDeliverySuccess
   };
 })(window);
