@@ -1037,7 +1037,7 @@ test("la guía de pagos explica Coronas y ya no muestra el nombre anterior del s
   assert.match(paymentGuideHtml, /<h3>Coronas<\/h3>/);
   assert.match(paymentGuideHtml, /Cartera tenga saldo suficiente/);
   assert.doesNotMatch(paymentGuideHtml, /Saldo de Tienda El Castillo|saldo interno de Tienda El Castillo/);
-  assert.match(paymentGuideHtml, /\"dateModified\":\"2026-11-24\"/);
+  assert.match(paymentGuideHtml, /\"dateModified\":\"2026-11-26\"/);
 });
 
 
