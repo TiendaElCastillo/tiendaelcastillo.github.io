@@ -80,7 +80,7 @@ test("la página central y la institucional comparten la misma identidad de orga
 });
 
 test("el sitemap refleja las fechas reales de modificación de ambas páginas", () => {
-  assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/recargas-juegos-cuba\.html<\/loc><lastmod>2026-11-23<\/lastmod>/);
+  assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/recargas-juegos-cuba\.html<\/loc><lastmod>2026-11-26<\/lastmod>/);
   assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/sobre-tienda-el-castillo\.html<\/loc><lastmod>2026-11-23<\/lastmod>/);
 });
 
