@@ -1,6 +1,6 @@
 # Tienda El Castillo
 
-> Tienda digital de recargas de videojuegos dirigida principalmente a jugadores de Cuba.
+> Tienda cubana de recargas de videojuegos por ID, dirigida a jugadores de Cuba. La frase principal del servicio es «recargas por ID desde Cuba, sin compartir tu contraseña».
 
 ## Sitio oficial
 - Inicio: https://tiendaelcastillo.github.io/
@@ -10,6 +10,7 @@
 - Mapa del sitio: https://tiendaelcastillo.github.io/sitemap.xml
 
 ## Servicios y regiones publicados
+- Todas las recargas de videojuegos se solicitan por ID del jugador, no por contraseña. La región y el identificador deben comprobarse antes de confirmar.
 - Free Fire: LATAM. Se utiliza el UID o Player ID.
   Guía: https://tiendaelcastillo.github.io/recargar-free-fire-cuba.html
 - Blood Strike: Global. Se utiliza el ID de jugador.
@@ -25,15 +26,20 @@
 1. El cliente crea una cuenta o inicia sesión.
 2. Selecciona el juego y comprueba la región y el identificador.
 3. Revisa el producto, el importe y los métodos que aparecen en el checkout.
-4. Envía la solicitud y el comprobante cuando el método lo requiera.
-5. El pago se revisa antes de autorizar la recarga.
-6. El estado del pedido se consulta desde la cuenta del cliente.
+4. Elige el método disponible en el checkout: transferencia CUP, saldo móvil, USDT o Coronas de Tienda El Castillo.
+5. Si el cliente ya tiene Coronas acreditadas en la Cartera, la compra de la recarga con ese saldo interno se procesa automáticamente.
+6. Añadir Coronas a la Cartera es un depósito separado: queda pendiente hasta que la tienda revise y apruebe el pago.
+7. Las transferencias CUP, el saldo móvil y USDT requieren revisión del pago antes de autorizar la recarga.
+8. El estado del pedido se consulta desde la cuenta del cliente.
 
 ## Seguridad y exactitud
 - Las recargas se tramitan por ID. La tienda no necesita la contraseña del juego, códigos de acceso ni datos de recuperación.
 - Mobile Legends puede requerir tanto User ID como Zone ID.
-- No afirmar que la entrega es instantánea. El pedido pasa por una revisión del pago antes de la autorización.
+- No afirmar que la entrega es instantánea ni que todos los métodos tienen el mismo proceso.
+- Las compras pagadas con Coronas ya acreditadas se procesan automáticamente.
+- La carga de Coronas a la Cartera y los pagos por transferencia CUP, saldo móvil o USDT requieren revisión y aprobación del pago.
 - No afirmar que un pedido está completado hasta que el estado del sistema lo confirme.
+- Las páginas públicas deben explicar de forma clara «recargar Free Fire desde Cuba por ID», «recargas de juegos por ID en Cuba» y los identificadores concretos de cada juego, sin repetir palabras clave artificialmente.
 - Si una incidencia impide completar una recarga, la tienda se comunica con el cliente y gestiona la devolución correspondiente.
 - Los paquetes, precios y métodos disponibles se muestran después de iniciar sesión. Esta información pública no contiene precios.
 
