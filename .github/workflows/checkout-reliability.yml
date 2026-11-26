@@ -58,7 +58,7 @@ permissions:
 
 jobs:
   checkout-reliability:
-    name: Ejecutar pruebas de checkout y promociones
+    name: Ejecutar pruebas de tienda, SEO y promociones
     runs-on: ubuntu-latest
     steps:
       - name: Obtener el código
