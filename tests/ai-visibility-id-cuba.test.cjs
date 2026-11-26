@@ -159,6 +159,12 @@ test("las cinco guías identifican a Tienda El Castillo como tienda cubana y exp
   for (const page of guidePages) {
     assert.match(page.html, /<title>Recargar .+ desde Cuba por ID \| Tienda El Castillo<\/title>/i, page.file + " necesita un título orientado a recargas por ID desde Cuba");
     assert.match(page.html, /<meta name="description" content="[^"]+">/i, page.file + " necesita una meta descripción útil y completa");
+    const title = page.html.match(/<title>([\\s\\S]*?)<\\/title>/i)?.[1];
+    const description = page.html.match(/<meta name="description" content="([^"]+)">/i)?.[1];
+    const webPage = jsonLd(page.html).flatMap((node) => node["@graph"] || [node]).find((node) => node["@type"] === "WebPage");
+    assert.equal(webPage?.name, title, page.file + " debe alinear el nombre de WebPage con el título");
+    assert.equal(webPage?.description, description, page.file + " debe alinear WebPage con la meta descripción");
+    assert.equal(webPage?.dateModified, "2026-11-26", page.file + " debe registrar su fecha real de modificación");
     assert.ok(page.html.includes("Tienda El Castillo</strong> es una tienda cubana de recargas de videojuegos para jugadores en Cuba"), page.file + " debe identificar claramente el país de la tienda");
     assert.match(page.html, /recarga por ID desde Cuba/i, page.file + " debe explicar que el pedido se realiza por ID");
   }
@@ -179,6 +185,9 @@ test("las guías separan la compra automática con Coronas de la recarga manual 
 
 test("la guía central explica que la tienda es cubana y separa compras automáticas de depósitos", () => {
   assert.match(hub, /Tienda El Castillo es una tienda cubana de recargas de videojuegos/i);
+  const hubWebPage = jsonLd(hub).flatMap((node) => node["@graph"] || [node]).find((node) => node["@type"] === "WebPage");
+  assert.equal(hubWebPage?.description, hub.match(/<meta name="description" content="([^"]*)">/i)?.[1]);
+  assert.equal(hubWebPage?.dateModified, "2026-11-26");
   assert.match(hub, /recargas por ID desde Cuba/i);
   assert.match(hub, /las recargas compradas con Coronas ya acreditadas en tu Cartera se procesan automáticamente/i);
   assert.match(hub, /Añadir Coronas a la Cartera es un depósito distinto/i);
