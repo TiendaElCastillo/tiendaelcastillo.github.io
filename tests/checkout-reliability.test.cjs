@@ -1396,11 +1396,11 @@ test("los avisos de pedidos se entregan por Realtime y se recuperan al volver a 
 
 
 test("el historial de Coronas muestra las devoluciones con texto propio de la tienda", () => {
-  assert.ok(walletRefundDescriptionMigrationSource.includes("CREATE OR REPLACE FUNCTION private.customer_friendly_wallet_refund_description()"));
-  assert.ok(walletRefundDescriptionMigrationSource.includes("BEFORE INSERT OR UPDATE OF kind, description"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("create or replace function private.customer_friendly_wallet_refund_description()"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("before insert or update of kind, description"));
   assert.ok(walletRefundDescriptionMigrationSource.includes("'Devolución acreditada en tu Cartera de Tienda El Castillo.'"));
-  assert.ok(walletRefundDescriptionMigrationSource.includes("UPDATE public.wallet_transactions"));
-  assert.ok(walletRefundDescriptionMigrationSource.includes("WHERE kind = 'refund'"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("update public.wallet_transactions"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("where kind = 'refund'"));
   assert.doesNotMatch(walletRefundDescriptionMigrationSource, /Central One|order_code|central_one_order_id/i);
 });
 
