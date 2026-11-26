@@ -1500,7 +1500,8 @@ test("Turnstile identifica errores de clave, dominio, widget desactivado y conex
   assert.ok(callback.includes('"400070"'));
   assert.ok(callback.includes('"200100"'));
   assert.ok(callback.includes('"200500"'));
-  assert.match(callback, /El dominio \"\+host\+\" no está autorizado/);
+  const domainMessage = "El dominio " + String.fromCharCode(34) + "+host+" + String.fromCharCode(34) + " no está autorizado";
+  assert.ok(callback.includes(domainMessage));
   assert.ok(callback.includes("return permanentError;"));
   assert.ok(callback.includes('error_category:category'));
   const loaderStart = indexHtml.indexOf("function loadCastleTurnstile()");
