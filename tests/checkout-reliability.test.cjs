@@ -1436,9 +1436,9 @@ test("Turnstile en español permite reintento manual y bloquea envíos duplicado
   assert.ok(indexHtml.includes('const configurationError=/^110(100|110|200)/.test(code)'));
   assert.ok(indexHtml.includes('setCastleCaptchaRetryVisible(!configurationError)'));
   const registerStart = indexHtml.indexOf("async function register(){");
-  const registerEnd = indexHtml.indexOf("\\nasync function getCastleAuthCaptchaToken", registerStart);
+  const registerEnd = indexHtml.indexOf("async function getCastleAuthCaptchaToken", registerStart);
   const loginStart = indexHtml.indexOf("async function login(){");
-  const loginEnd = indexHtml.indexOf("\\nasync function openStore", loginStart);
+  const loginEnd = indexHtml.indexOf("async function openStore", loginStart);
   const registerSource = indexHtml.slice(registerStart, registerEnd);
   const loginSource = indexHtml.slice(loginStart, loginEnd);
   assert.ok(registerSource.includes("if(!submit||submit.disabled)return;"));
