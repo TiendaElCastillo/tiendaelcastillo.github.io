@@ -216,12 +216,21 @@ test("la página institucional y llms.txt describen correctamente el negocio y s
   assert.match(llms, /Añadir Coronas a la Cartera es un depósito separado/i);
 });
 
-test("los metadatos de portada identifican la tienda cubana y las recargas por ID", () => {
+test("los metadatos de portada apuntan a recargas de juegos en Cuba por ID", () => {
+  const title = homepage.match(/<title>([^<]+)<\/title>/i)?.[1] || "";
+  assert.equal(title, "Recargas de juegos en Cuba por ID | Tienda El Castillo");
+  assert.equal(title.length, 54);
+  assert.ok(homepage.includes('<meta property="og:title" content="' + title + '">'));
+  assert.ok(homepage.includes('<meta name="twitter:title" content="' + title + '">'));
   assert.match(homepage, /Tienda cubana de recargas de juegos por ID/i);
   assert.match(homepage, /recargar Free Fire desde Cuba/i);
   const graph = jsonLd(homepage).flatMap((node) => node["@graph"] || [node]);
   const org = graph.find((node) => node["@type"] === "Organization");
+  const page = graph.find((node) => node["@type"] === "WebPage");
   assert.match(org.description, /Tienda cubana de recargas de videojuegos por ID/i);
   assert.ok(org.knowsAbout.includes("Compras automáticas con Coronas de saldo interno"));
+  assert.equal(page.name, title);
+  assert.equal(page.inLanguage, "es-CU");
+  assert.equal(page.publisher["@id"], org["@id"]);
 });
 
