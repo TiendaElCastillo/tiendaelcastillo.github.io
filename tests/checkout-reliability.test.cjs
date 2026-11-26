@@ -24,6 +24,7 @@ const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/mig
 const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
 const centralOrderAutoSyncMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125133000_central_one_auto_order_status_sync.sql"), "utf8");
 const fasterOrderPollingMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261126032200_faster_central_one_order_updates.sql"), "utf8");
+const walletRefundDescriptionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261126041000_customer_friendly_wallet_refund_history.sql"), "utf8");
 const walletPromotionCompletionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125130148_wallet_promotion_completion_states.sql"), "utf8");
 const referralPurchaseVolumeMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125184000_wallet_referral_purchase_volume.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
@@ -1391,4 +1392,14 @@ test("los avisos de pedidos se entregan por Realtime y se recuperan al volver a 
   assert.ok(indexHtml.includes('Promise.resolve(loadNotifications())'));
   assert.ok(indexHtml.includes("shell-v203") || serviceWorker.includes("shell-v203"));
   assert.ok(serviceWorker.includes("shell-v203"));
+});
+
+
+test("el historial de Coronas muestra las devoluciones con texto propio de la tienda", () => {
+  assert.ok(walletRefundDescriptionMigrationSource.includes("CREATE OR REPLACE FUNCTION private.customer_friendly_wallet_refund_description()"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("BEFORE INSERT OR UPDATE OF kind, description"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("'Devolución acreditada en tu Cartera de Tienda El Castillo.'"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("UPDATE public.wallet_transactions"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("WHERE kind = 'refund'"));
+  assert.doesNotMatch(walletRefundDescriptionMigrationSource, /Central One|order_code|central_one_order_id/i);
 });
