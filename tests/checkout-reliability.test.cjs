@@ -23,6 +23,7 @@ const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supaba
 const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
 const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
 const centralOrderAutoSyncMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125133000_central_one_auto_order_status_sync.sql"), "utf8");
+const fasterOrderPollingMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261126032200_faster_central_one_order_updates.sql"), "utf8");
 const walletPromotionCompletionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125130148_wallet_promotion_completion_states.sql"), "utf8");
 const referralPurchaseVolumeMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125184000_wallet_referral_purchase_volume.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
@@ -1370,4 +1371,24 @@ test("la portada previa al inicio de sesión muestra solo el canal oficial de Wh
   assert.ok(intro.includes('class="whatsapp-brand-glyph"'));
   assert.ok(indexHtml.includes("#auth .castle-channel-link.castle-whatsapp-cta"));
   assert.ok(indexHtml.includes("background:linear-gradient(135deg,#25d366"));
+});
+
+
+test("el seguimiento de Central One consulta pedidos abiertos cada 20 segundos y evita duplicar trabajos", () => {
+  assert.ok(fasterOrderPollingMigrationSource.includes("schedule := '20 seconds'"));
+  assert.ok(fasterOrderPollingMigrationSource.includes("cron.alter_job"));
+  assert.ok(fasterOrderPollingMigrationSource.includes("sync_open_orders"));
+  assert.ok(fasterOrderPollingMigrationSource.includes("Se encontró más de un trabajo de seguimiento activo"));
+  assert.ok(centralOneOrderEdgeSource.includes("const cutoff = new Date(Date.now() - 12000).toISOString();"));
+  assert.ok(centralOneOrderEdgeSource.includes('lookup.searchParams.set("status","eq.processing")'));
+  assert.ok(centralOneOrderEdgeSource.includes("Math.min(6,requestedLimit)"));
+});
+
+test("los avisos de pedidos se entregan por Realtime y se recuperan al volver a abrir la tienda", () => {
+  assert.ok(fasterOrderPollingMigrationSource.includes("ALTER PUBLICATION supabase_realtime ADD TABLE public.user_notifications"));
+  assert.ok(indexHtml.includes('table:"user_notifications",filter:"user_id=eq."+userId'));
+  assert.ok(indexHtml.includes('event:"INSERT"'));
+  assert.ok(indexHtml.includes('Promise.resolve(loadNotifications())'));
+  assert.ok(indexHtml.includes("shell-v203") || serviceWorker.includes("shell-v203"));
+  assert.ok(serviceWorker.includes("shell-v203"));
 });
