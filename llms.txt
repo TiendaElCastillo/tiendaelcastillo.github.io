@@ -6,6 +6,7 @@
 - Inicio: https://tiendaelcastillo.github.io/
 - Guía principal: https://tiendaelcastillo.github.io/recargas-juegos-cuba.html
 - Información sobre la tienda: https://tiendaelcastillo.github.io/sobre-tienda-el-castillo.html
+- Seguimiento de pedidos: https://tiendaelcastillo.github.io/consultar-estado-recarga-cuba.html
 - Cómo pagar y seguir un pedido: https://tiendaelcastillo.github.io/como-pagar-recargas-juegos-cuba.html
 - Mapa del sitio: https://tiendaelcastillo.github.io/sitemap.xml
 
@@ -31,6 +32,14 @@
 6. Añadir Coronas a la Cartera es un depósito separado: queda pendiente hasta que la tienda revise y apruebe el pago.
 7. Las transferencias CUP, el saldo móvil y USDT requieren revisión del pago antes de autorizar la recarga.
 8. El estado del pedido se consulta desde la cuenta del cliente.
+
+## Seguimiento de pedidos y soporte
+- Los clientes consultan las compras desde «Mis pedidos» después de iniciar sesión y pueden revisar novedades en «Mensajes y avisos».
+- Estados explicados en la guía pública: Pendiente; Verificando pago; Pago confirmado · pendiente de recarga; Recarga en curso; Entregado; Rechazado, fallido o cancelado.
+- Las compras con Coronas ya acreditadas en la Cartera se procesan automáticamente; añadir Coronas a la Cartera es un depósito separado que espera revisión y aprobación.
+- Las transferencias CUP, el saldo móvil y USDT se revisan antes de autorizar la recarga.
+- Para incidencias, el cliente usa el «Centro de soporte» de su perfil y consulta el folio y las respuestas en «Mis solicitudes». El canal comunitario de WhatsApp publica novedades y no sustituye el soporte.
+- Guía pública: https://tiendaelcastillo.github.io/consultar-estado-recarga-cuba.html
 
 ## Seguridad y exactitud
 - Las recargas se tramitan por ID. La tienda no necesita la contraseña del juego, códigos de acceso ni datos de recuperación.
