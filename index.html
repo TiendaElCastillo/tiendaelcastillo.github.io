@@ -2880,6 +2880,7 @@ body{min-width:0}
 </div>
 <script src="./assets/customer-orders-view.js?v=2"></script>
 <script>
+let castleTurnstileNeedsRecovery=false;
 window.castleCaptchaToken=null;
 function setCastleCaptchaRetryVisible(visible){
  const button=document.getElementById("castleCaptchaRetry");
@@ -2887,6 +2888,7 @@ function setCastleCaptchaRetryVisible(visible){
 }
 window.onCastleCaptchaSuccess=function(token){
  window.castleCaptchaToken=token;
+ castleTurnstileNeedsRecovery=false;
  setCastleCaptchaRetryVisible(false);
  const help=document.getElementById("castleCaptchaHelp");
  if(help)help.textContent="Verificación completada. Ya puedes continuar.";
@@ -2895,12 +2897,14 @@ window.onCastleCaptchaSuccess=function(token){
 };
 window.onCastleCaptchaExpired=function(){
  window.castleCaptchaToken=null;
+ castleTurnstileNeedsRecovery=true;
  setCastleCaptchaRetryVisible(true);
  const help=document.getElementById("castleCaptchaHelp");
  if(help)help.textContent="La comprobación caducó. Vuelve a completarla.";
 };
 window.onCastleCaptchaTimeout=function(){
  window.castleCaptchaToken=null;
+ castleTurnstileNeedsRecovery=true;
  setCastleCaptchaRetryVisible(true);
  const help=document.getElementById("castleCaptchaHelp");
  if(help)help.textContent="La comprobación tardó demasiado. Puedes volver a intentarlo.";
@@ -2923,10 +2927,14 @@ window.onCastleCaptchaError=function(errorCode){
  };
  const permanentCodes=new Set(["110100","110110","110200","200100","400020","400021","400070"]);
  const permanentError=permanentCodes.has(code);
+ const retryableChallenge=/^(300|600)/.test(code);
+ castleTurnstileNeedsRecovery=!permanentError;
  const knownMessage=messages[code];
- const message=knownMessage||(code
-  ?"Cloudflare no pudo completar la comprobación (código "+code+"). Comprueba la conexión y vuelve a intentarlo."
-  :"Cloudflare no pudo completar la comprobación. Comprueba la conexión y vuelve a intentarlo.");
+ const message=knownMessage||(retryableChallenge
+  ?"Cloudflare no pudo terminar el reto de seguridad ("+code+"). No es un error de tu cuenta ni de tu contraseña. Es un fallo genérico de la comprobación: puede ocurrir por una conexión inestable o por restricciones del navegador o de la red. Espera a que internet esté estable y pulsa «Volver a comprobar» una sola vez. Si se repite, prueba Chrome actualizado y sin VPN ni bloqueadores."
+  :code
+   ?"Cloudflare no pudo completar la comprobación (código "+code+"). Comprueba la conexión y vuelve a intentarlo."
+   :"Cloudflare no pudo completar la comprobación. Comprueba la conexión y vuelve a intentarlo.");
  setCastleCaptchaRetryVisible(!permanentError);
  const help=document.getElementById("castleCaptchaHelp");
  if(help){
@@ -2977,7 +2985,7 @@ function renderCastleTurnstile(){
    language:"es",
    appearance:"always",
    retry:"auto",
-   "retry-interval":15000,
+   "retry-interval":30000,
    "refresh-expired":"auto",
    "refresh-timeout":"auto"
   });
@@ -2995,6 +3003,7 @@ function resetCastleCaptcha(){
  }
 }
 async function retryCastleCaptcha(){
+ castleTurnstileNeedsRecovery=false;
  const button=$("castleCaptchaRetry");
  if(button){button.disabled=true;button.textContent="Comprobando…";}
  window.castleCaptchaToken=null;
@@ -3081,8 +3090,24 @@ function loadCastleTurnstile(){
 }
 function recoverCastleTurnstileOnConnectionRestore(){
  window.addEventListener("online",()=>{
-  if(!window.castleCaptchaToken&&!castleTurnstileWidgetId&&!castleTurnstilePromise){
-  loadCastleTurnstile().catch(error=>console.warn("Turnstile retry after connection restored failed:",error));
+  if(window.castleCaptchaToken)return;
+  // Si el widget ya existía pero el reto falló durante un corte de red, reiniciarlo.
+  if(window.turnstile&&castleTurnstileWidgetId&&castleTurnstileNeedsRecovery){
+   try{
+    window.turnstile.reset(castleTurnstileWidgetId);
+    castleTurnstileNeedsRecovery=false;
+    const help=$("castleCaptchaHelp");
+    if(help)help.textContent="La conexión volvió. Estamos repitiendo la comprobación; espera a que termine.";
+    setCastleCaptchaRetryVisible(true);
+    return;
+   }catch(error){
+    try{window.turnstile.remove(castleTurnstileWidgetId)}catch(removeError){}
+    castleTurnstileWidgetId=null;
+    castleTurnstilePromise=null;
+   }
+  }
+  if(!castleTurnstileWidgetId&&!castleTurnstilePromise){
+   loadCastleTurnstile().catch(error=>console.warn("Turnstile retry after connection restored failed:",error));
   }
  });
 }
