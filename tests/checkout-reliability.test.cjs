@@ -1351,9 +1351,11 @@ test("la reactivación EVO revierte la pausa permanente y solo publica productos
 
 
 test("una respuesta rejected de Central One cierra el pedido como rechazado", () => {
-  assert.match(providerRejectionStatusMigrationSource, /p_provider_status = 'rejected'[\\s\\S]*?v_local_status := 'rejected'/);
-  assert.match(centralOneOrderEdgeSource, /central_one_status.*rejected/);
-  assert.match(centralOneOrderEdgeSource, /status.*eq\\.processing/);
+  assert.ok(providerRejectionStatusMigrationSource.includes("elsif p_provider_status = 'rejected' then"));
+  assert.ok(providerRejectionStatusMigrationSource.includes("v_local_status := 'rejected'"));
+  assert.ok(centralOneOrderEdgeSource.includes('central_one_status","in.(created,confirmed,processing,partially_completed,unknown,retryable,rejected)'));
+  assert.ok(centralOneOrderEdgeSource.includes('lookup.searchParams.set("status","eq.processing")'));
+  assert.ok(centralOneOrderEdgeSource.includes('else if (data.provider_status === "rejected") rejected++;'));
 });
 
 test("la portada previa al inicio de sesión muestra solo el canal oficial de WhatsApp", () => {
@@ -1361,9 +1363,11 @@ test("la portada previa al inicio de sesión muestra solo el canal oficial de Wh
   const gamesStart = indexHtml.indexOf('<div class="auth-showcase-games"', authStart);
   assert.ok(authStart >= 0 && gamesStart > authStart);
   const intro = indexHtml.slice(authStart, gamesStart);
-  assert.doesNotMatch(intro, /castle-share-button|onclick="shareStore\(\)"/);
-  assert.match(intro, /castle-whatsapp-cta/);
-  assert.match(intro, /https:\/\/whatsapp\\.com\/channel\/0029Vb8tq5vGufJ4yLhEcS0X/);
-  assert.match(intro, /whatsapp-brand-glyph/);
-  assert.match(indexHtml, /#auth \.castle-channel-link\.castle-whatsapp-cta[\\s\\S]*?background:linear-gradient\(135deg,#25d366/);
+  assert.equal(intro.includes('castle-share-button'), false);
+  assert.equal(intro.includes('onclick="shareStore()'), false);
+  assert.ok(intro.includes('class="castle-channel-link castle-whatsapp-cta"'));
+  assert.ok(intro.includes('href="https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X"'));
+  assert.ok(intro.includes('class="whatsapp-brand-glyph"'));
+  assert.ok(indexHtml.includes("#auth .castle-channel-link.castle-whatsapp-cta"));
+  assert.ok(indexHtml.includes("background:linear-gradient(135deg,#25d366"));
 });
