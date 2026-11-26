@@ -1432,7 +1432,7 @@ test("Turnstile en español permite reintento manual y bloquea envíos duplicado
   assert.ok(indexHtml.includes('function retryCastleCaptcha()'));
   assert.ok(indexHtml.includes('theme:"light"'));
   assert.ok(indexHtml.includes('language:"es"'));
-  assert.ok(indexHtml.includes('"retry-interval":10000'));
+  assert.ok(indexHtml.includes('"retry-interval":15000'));
   assert.ok(indexHtml.includes('const permanentCodes=new Set(["110100","110110","110200","200100","400020","400021","400070"])'));
   assert.ok(indexHtml.includes('setCastleCaptchaRetryVisible(!permanentError)'));
   assert.ok(indexHtml.includes('window.castleAnalytics?.capture?.("store_turnstile_error"'));
