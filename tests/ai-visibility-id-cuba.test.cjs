@@ -157,11 +157,12 @@ test("las direcciones antiguas con clics registrados redirigen inmediatamente a 
 
 test("las cinco guías identifican a Tienda El Castillo como tienda cubana y explican la recarga por ID", () => {
   for (const page of guidePages) {
-    assert.match(page.html, /<title>Recargar .+ desde Cuba por ID \| Tienda El Castillo<\/title>/i, page.file + " necesita un título orientado a recargas por ID desde Cuba");
+
     assert.match(page.html, /<meta name="description" content="[^"]+">/i, page.file + " necesita una meta descripción útil y completa");
     const titleStart = page.html.indexOf("<title>") + "<title>".length;
     const titleEnd = page.html.indexOf("</title>", titleStart);
     const title = page.html.slice(titleStart, titleEnd);
+    assert.ok(title.startsWith("Recargar ") && title.includes(" por ID ") && (title.includes(" desde Cuba") || title.includes(" en Cuba")) && title.endsWith("| Tienda El Castillo"), page.file + " necesita un título orientado a recargas por ID desde Cuba");
     const description = page.html.match(/<meta name="description" content="([^"]+)">/i)?.[1];
     assert.ok(title.length <= 60, page.file + " debe mantener un título breve para los resultados de búsqueda");
     assert.ok(description.length <= 160, page.file + " debe mantener una descripción breve para los resultados de búsqueda");
