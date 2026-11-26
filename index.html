@@ -2108,6 +2108,57 @@ body{min-width:0}
 }
 </style>
 
+<style id="auth-mobile-conversion-refresh-v1">
+#auth .auth-login-panel .auth-tabs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px;margin:15px 0 18px!important}
+#auth .auth-login-panel .auth-tabs button{min-height:42px;font-size:12px;font-weight:850}
+#auth .auth-login-panel .auth-register-link{display:none!important}
+#auth .auth-login-panel{background:#fff;border:1px solid #e1e8f2;box-shadow:0 12px 32px rgba(20,45,90,.08)}
+#auth .auth-field-hint{margin:6px 2px 0;color:#73819a;font-size:11px;line-height:1.45}
+#auth .auth-captcha-field{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+#auth #castleTurnstile{display:flex;justify-content:center;width:100%;min-height:65px}
+#auth .auth-captcha-help{margin:0;color:#71809a;font-size:11px;line-height:1.4;text-align:center}
+#auth .auth-captcha-retry{min-height:38px;margin:0;padding:8px 14px;border:1px solid #d7e3f5;border-radius:11px;font-size:12px}
+#auth .auth-showcase-games-heading{grid-column:1/-1;margin:0 0 2px;color:#fff;font-size:17px;font-weight:900;letter-spacing:-.02em}
+@media(max-width:760px){
+ #auth.auth-showcase-layout{display:flex!important;flex-direction:column!important;max-width:560px!important;gap:12px!important;margin:10px auto 18px!important}
+ #auth .auth-showcase{display:contents!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important}
+ #auth .auth-showcase-copy{order:1;position:relative;isolation:isolate;overflow:hidden;padding:18px 17px 17px!important;border:1px solid rgba(255,255,255,.18);border-radius:21px;background:radial-gradient(circle at 90% 10%,rgba(116,145,255,.22),transparent 34%),linear-gradient(145deg,#0b1b35 0%,#143565 58%,#34428c 100%);box-shadow:0 13px 30px rgba(17,39,84,.14)}
+ #auth .castle-brand-lockup-auth{display:block;width:148px!important;height:auto!important;max-width:55%;margin:0 auto 9px!important;object-fit:contain}
+ #auth .auth-showcase .eyebrow{display:flex;justify-content:center;max-width:100%;padding:6px 9px;font-size:9px;line-height:1.35;letter-spacing:.08em}
+ #auth .auth-showcase .eyebrow .castle-inline-icon{width:16px;height:16px;flex:0 0 16px}
+ #auth .auth-showcase h1{max-width:100%;margin:13px 0 7px!important;font-size:clamp(25px,6.5vw,32px)!important;line-height:1.06!important;text-align:center}
+ #auth .auth-showcase-copy p{max-width:430px!important;margin:0 auto!important;color:#d9e4f7;font-size:12px!important;line-height:1.5!important;text-align:center}
+ #auth .castle-home-actions{margin-top:12px!important}
+ #auth .castle-channel-link.castle-whatsapp-cta{min-height:43px;padding:10px 12px;font-size:12px}
+ #auth .auth-login-panel{order:2;align-self:stretch;width:100%;padding:20px 18px!important;border-radius:20px!important}
+ #auth .auth-login-heading{margin-bottom:10px!important}
+ #auth .auth-login-kicker{margin-bottom:6px;font-size:9px}
+ #auth .auth-login-panel h2{font-size:23px!important}
+ #auth .auth-login-panel .subtle{font-size:12px;line-height:1.5}
+ #auth .auth-login-panel .field{margin:12px 0}
+ #auth .auth-login-panel .field input{min-height:48px;font-size:16px}
+ #auth .auth-captcha-field{margin:10px 0}
+ #auth .auth-submit-btn{min-height:49px;margin-top:7px}
+ #auth .auth-login-panel .secondary-btn{min-height:42px}
+ #auth .auth-showcase-games{order:3;width:100%;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;margin:1px 0 0!important}
+ #auth .auth-showcase-games-heading{grid-column:1/-1;margin:2px 0 1px;color:#203858;font-size:16px}
+ #auth .auth-game-card{min-width:0;border:1px solid #d8e3f2!important;border-radius:14px!important;background:#fff!important;box-shadow:0 5px 15px rgba(20,45,90,.06)!important;backdrop-filter:none!important}
+ #auth .auth-game-art{height:clamp(90px,25vw,116px)!important}
+ #auth .auth-game-info{display:block!important;min-height:0!important;padding:9px!important;background:#fff!important}
+ #auth .auth-game-info strong{font-size:12px!important;line-height:1.3;color:#203858}
+ #auth .auth-game-info div>span{margin-top:3px;font-size:9px!important;line-height:1.35;color:#708098!important}
+ #auth .auth-game-info .auth-available{display:inline-block!important;margin-top:7px!important;padding:5px 7px;border:1px solid #cce9d9;background:#eff9f3;color:#26764e;font-size:9px}
+ #auth .auth-security-note{margin-top:13px;font-size:11px;line-height:1.5}
+}
+@media(max-width:360px){
+ #auth .auth-showcase-copy{padding:16px 14px!important}
+ #auth .castle-brand-lockup-auth{width:132px!important}
+ #auth .auth-login-panel{padding:17px 14px!important}
+ #auth .auth-game-art{height:88px!important}
+ #auth .auth-game-info{padding:8px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="brand-loader" id="brandLoader" role="status" aria-live="polite"><div class="loader-mark"><img src="./assets/el-castillo-logo.webp" alt="" width="62" height="62"></div><strong>Tienda El Castillo</strong><span>Preparando tu tienda digital…</span><i></i></div>
@@ -2129,12 +2180,13 @@ body{min-width:0}
    </div>
   </div>
   <div class="auth-showcase-games" aria-label="Juegos con servicios disponibles">
+   <h2 class="auth-showcase-games-heading">Juegos disponibles</h2>
    <article class="auth-game-card">
-    <div class="auth-game-art"><img src="./assets/games/free-fire-tienda.webp?v=2" alt="Arte de Free Fire" width="640" height="360" loading="eager" fetchpriority="high" decoding="async" onerror="this.remove();this.parentElement.classList.add('image-unavailable')"></div>
+    <div class="auth-game-art"><img src="./assets/games/free-fire-tienda.webp?v=2" alt="Arte de Free Fire" width="640" height="360" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove();this.parentElement.classList.add('image-unavailable')"></div>
     <div class="auth-game-info"><div><strong>Free Fire</strong><span>Diamantes, pases y membresías</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
    <article class="auth-game-card">
-    <div class="auth-game-art"><img src="./assets/games/mobile-legends-bang-bang.webp?v=2" alt="Arte de Mobile Legends: Bang Bang" width="640" height="360" loading="eager" fetchpriority="low" decoding="async" onerror="this.remove();this.parentElement.classList.add('image-unavailable')"></div>
+    <div class="auth-game-art"><img src="./assets/games/mobile-legends-bang-bang.webp?v=2" alt="Arte de Mobile Legends: Bang Bang" width="640" height="360" loading="lazy" fetchpriority="low" decoding="async" onerror="this.remove();this.parentElement.classList.add('image-unavailable')"></div>
     <div class="auth-game-info"><div><strong>Mobile Legends: Bang Bang</strong><span>Diamantes, pases y membresías · Global</span></div><span class="auth-available">Recargas activas</span></div>
    </article>
    <article class="auth-game-card">
@@ -2154,11 +2206,15 @@ body{min-width:0}
  <div class="auth-panel auth-login-panel">
   <div id="walletReferralAuthNotice" class="notice hidden" role="status" aria-live="polite"></div>
   <div class="auth-login-heading"><span class="auth-login-kicker">TU CUENTA, TU TIENDA</span><h2 id="authTitle">Accede a tu cuenta</h2><p class="subtle" id="authSubtitle">Inicia sesión para acceder a todos los servicios, consultar tus pedidos y gestionar tu cuenta.</p></div>
-  <div class="auth-tabs" id="authTabs"><button id="registerTab" type="button" onclick="setAuthMode('register')">Crear cuenta</button><button id="loginTab" type="button" class="active" onclick="setAuthMode('login')">Iniciar sesión</button></div>
+  <div class="auth-tabs" id="authTabs"><button id="registerTab" type="button" onclick="setAuthMode('register')">Crear cuenta gratis</button><button id="loginTab" type="button" class="active" onclick="setAuthMode('login')">Iniciar sesión</button></div>
   <div class="field hidden" id="fullnameWrap"><label for="fullname">Tu nombre</label><input id="fullname" autocomplete="name" placeholder="Cómo te llamas" oninput="clearAuthValidationFeedback()"></div>
   <div class="field"><label for="email">Correo electrónico</label><input id="email" type="email" autocomplete="username" placeholder="nombre@correo.com" required aria-describedby="authmsg" oninput="clearAuthValidationFeedback()"></div>
-  <div class="field"><label for="password">Contraseña</label><input id="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" required aria-describedby="authmsg" oninput="clearAuthValidationFeedback()"></div>
-  <div class="field auth-captcha-field"><div id="castleTurnstile" aria-label="Verificación de seguridad"></div></div>
+  <div class="field"><label for="password">Contraseña</label><input id="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" required aria-describedby="authmsg authPasswordHint" oninput="clearAuthValidationFeedback()"><p class="auth-field-hint" id="authPasswordHint">Introduce la contraseña de tu cuenta.</p></div>
+  <div class="field auth-captcha-field">
+   <div id="castleTurnstile" aria-label="Verificación de seguridad"></div>
+   <p class="auth-captcha-help" id="castleCaptchaHelp">Completa la comprobación para proteger tu cuenta.</p>
+   <button class="secondary-btn auth-captcha-retry hidden" id="castleCaptchaRetry" type="button" onclick="retryCastleCaptcha()">Volver a comprobar</button>
+  </div>
   <button class="primary-btn block-btn auth-submit-btn" id="authSubmit" type="button" onclick="login()">Iniciar sesión</button>
   <button class="auth-register-link" id="authRegisterLink" type="button" onclick="setAuthMode('register')">¿No tienes cuenta? <strong>Regístrate</strong></button>
   <button class="secondary-btn block-btn" id="forgotPasswordBtn" type="button" onclick="sendPasswordRecovery()">¿Olvidaste tu contraseña?</button>
@@ -2821,9 +2877,45 @@ body{min-width:0}
 </div>
 <script src="./assets/customer-orders-view.js?v=2"></script>
 <script>
-window.onCastleCaptchaSuccess=function(token){window.castleCaptchaToken=token;const m=document.getElementById("authmsg");if(m&&m.textContent.includes("CAPTCHA"))m.textContent="";};
-window.onCastleCaptchaExpired=function(){window.castleCaptchaToken=null;};
-window.onCastleCaptchaError=function(errorCode){window.castleCaptchaToken=null;const m=document.getElementById("authmsg");if(m)m.textContent="La verificación está teniendo problemas de conexión. Cloudflare volverá a intentarlo automáticamente; espera unos segundos.";console.warn("Turnstile error:",errorCode);return false;};
+window.castleCaptchaToken=null;
+function setCastleCaptchaRetryVisible(visible){
+ const button=document.getElementById("castleCaptchaRetry");
+ if(button)button.classList.toggle("hidden",!visible);
+}
+window.onCastleCaptchaSuccess=function(token){
+ window.castleCaptchaToken=token;
+ setCastleCaptchaRetryVisible(false);
+ const help=document.getElementById("castleCaptchaHelp");
+ if(help)help.textContent="Verificación completada. Ya puedes continuar.";
+ const message=document.getElementById("authmsg");
+ if(message&&/verific|captcha|cloudflare/i.test(message.textContent||""))setAuthMessage("","info");
+};
+window.onCastleCaptchaExpired=function(){
+ window.castleCaptchaToken=null;
+ setCastleCaptchaRetryVisible(true);
+ const help=document.getElementById("castleCaptchaHelp");
+ if(help)help.textContent="La comprobación caducó. Vuelve a completarla.";
+};
+window.onCastleCaptchaTimeout=function(){
+ window.castleCaptchaToken=null;
+ setCastleCaptchaRetryVisible(true);
+ const help=document.getElementById("castleCaptchaHelp");
+ if(help)help.textContent="La comprobación tardó demasiado. Puedes volver a intentarlo.";
+};
+window.onCastleCaptchaError=function(errorCode){
+ window.castleCaptchaToken=null;
+ const code=String(errorCode||"");
+ const configurationError=/^110(100|110|200)/.test(code);
+ setCastleCaptchaRetryVisible(!configurationError);
+ const help=document.getElementById("castleCaptchaHelp");
+ if(help){
+  help.textContent=configurationError
+   ?"La verificación necesita una revisión de configuración. Vuelve a intentarlo más tarde."
+   :"No se pudo completar la verificación. Comprueba tu conexión o vuelve a intentarlo.";
+ }
+ console.warn("Turnstile error:",code||"sin código");
+ return false;
+};
 let castleTurnstileWidgetId=null;
 function renderCastleTurnstile(){
  if(!window.turnstile||!window.turnstile.render)return false;
@@ -2833,11 +2925,14 @@ function renderCastleTurnstile(){
   callback:token=>window.onCastleCaptchaSuccess(token),
   "expired-callback":()=>window.onCastleCaptchaExpired(),
   "error-callback":errorCode=>window.onCastleCaptchaError(errorCode),
-   "timeout-callback":()=>{window.castleCaptchaToken=null;const m=document.getElementById("authmsg");if(m)m.textContent="La verificación tardó demasiado por la conexión. Cloudflare está renovando el intento; espera un momento."},
-   retry:"auto",
-   "retry-interval":12000,
-   "refresh-expired":"auto",
-   "refresh-timeout":"auto"
+  "timeout-callback":()=>window.onCastleCaptchaTimeout(),
+  theme:"light",
+  language:"es",
+  appearance:"always",
+  retry:"auto",
+  "retry-interval":10000,
+  "refresh-expired":"auto",
+  "refresh-timeout":"auto"
  });
  return Boolean(castleTurnstileWidgetId);
 }
@@ -2845,6 +2940,41 @@ function resetCastleCaptcha(){
  window.castleCaptchaToken=null;
  if(window.turnstile&&castleTurnstileWidgetId){
   try{window.turnstile.reset(castleTurnstileWidgetId)}catch(e){}
+ }
+}
+async function retryCastleCaptcha(){
+ const button=$("castleCaptchaRetry");
+ if(button){button.disabled=true;button.textContent="Comprobando…";}
+ window.castleCaptchaToken=null;
+ setAuthMessage("Reiniciando la comprobación de seguridad…","info");
+ try{
+  if(window.turnstile&&castleTurnstileWidgetId){
+   try{
+    window.turnstile.reset(castleTurnstileWidgetId);
+    const help=$("castleCaptchaHelp");
+    if(help)help.textContent="Completa la comprobación cuando aparezca.";
+    setCastleCaptchaRetryVisible(false);
+    return;
+   }catch(resetError){
+    try{window.turnstile.remove(castleTurnstileWidgetId)}catch(removeError){}
+    castleTurnstileWidgetId=null;
+   }
+  }
+  const container=$("castleTurnstile");
+  if(container)container.innerHTML="";
+  castleTurnstilePromise=null;
+  const loaded=await loadCastleTurnstile();
+  if(!loaded){
+   setCastleCaptchaRetryVisible(true);
+   setAuthMessage("No se pudo cargar la verificación. Comprueba tu conexión y vuelve a intentarlo.","error");
+  }else{
+   setAuthMessage("La verificación se ha reiniciado. Completa la comprobación para continuar.","info");
+  }
+ }catch(error){
+  setCastleCaptchaRetryVisible(true);
+  setAuthMessage("No se pudo reiniciar la verificación. Comprueba tu conexión e inténtalo de nuevo.","error");
+ }finally{
+  if(button){button.disabled=false;button.textContent="Volver a comprobar";}
  }
 }
 let castleTurnstilePromise=null;
@@ -3053,8 +3183,13 @@ async function register(){
 async function getCastleAuthCaptchaToken(){
  if(window.castleCaptchaToken)return window.castleCaptchaToken;
  const loaded=await loadCastleTurnstile();
- if(!loaded)throw new Error("No se pudo cargar la verificación de Cloudflare. Comprueba tu conexión e inténtalo de nuevo.");
- if(!window.castleCaptchaToken)throw new Error("Completa la verificación de seguridad que aparece debajo de la contraseña y vuelve a pulsar el botón.");
+ if(!loaded){
+  setCastleCaptchaRetryVisible(true);
+  throw new Error("No se pudo cargar la verificación de seguridad. Comprueba tu conexión o pulsa «Volver a comprobar».");
+ }
+ if(!window.castleCaptchaToken){
+  throw new Error("Completa la comprobación de seguridad que aparece debajo del formulario y vuelve a pulsar el botón.");
+ }
  return window.castleCaptchaToken;
 }
 function showEmailConfirmationHelp(message){
