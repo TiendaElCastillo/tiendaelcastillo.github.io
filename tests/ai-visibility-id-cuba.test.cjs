@@ -80,6 +80,75 @@ test("la página central y la institucional comparten la misma identidad de orga
 });
 
 test("el sitemap refleja las fechas reales de modificación de ambas páginas", () => {
-  assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/recargas-juegos-cuba\.html<\/loc><lastmod>2026-11-23<\/lastmod>/);
+  assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/recargas-juegos-cuba\.html<\/loc><lastmod>2026-11-26<\/lastmod>/);
   assert.match(sitemap, /<loc>https:\/\/tiendaelcastillo\.github\.io\/sobre-tienda-el-castillo\.html<\/loc><lastmod>2026-11-23<\/lastmod>/);
+});
+
+
+const homepage = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const guidePages = [
+  ["recargar-free-fire-cuba.html", "Free Fire LATAM", "UID"],
+  ["recargar-blood-strike-cuba.html", "Blood Strike Global", "ID de jugador"],
+  ["recargar-mobile-legends-cuba.html", "Mobile Legends: Bang Bang Global", "User ID y Zone ID"],
+  ["recargar-pubg-mobile-cuba.html", "PUBG Mobile Global", "Character ID"],
+  ["recargar-arena-breakout-cuba.html", "Arena Breakout Mobile Global", "Player ID"]
+].map(([file, name, identifier]) => ({
+  file,
+  name,
+  identifier,
+  html: fs.readFileSync(path.join(root, file), "utf8")
+}));
+const legacyRedirects = [
+  ["tienda-el-castillo/index.html", "https://tiendaelcastillo.github.io/"],
+  ["tienda-el-castillo/recargas-juegos-cuba.html", "https://tiendaelcastillo.github.io/recargas-juegos-cuba.html"],
+  ["tienda-el-castillo/recargar-mobile-legends-cuba.html", "https://tiendaelcastillo.github.io/recargar-mobile-legends-cuba.html"]
+];
+
+test("la portada expone un solo H1 principal para los rastreadores", () => {
+  const headings = [...homepage.matchAll(/<h1\b/gi)];
+  assert.equal(headings.length, 1, "La portada no debe exponer los H1 de vistas internas ocultas");
+  assert.match(homepage, /<h1>Recargas de juegos desde Cuba<\/h1>/);
+});
+
+test("la identidad de la organización de portada coincide con las páginas institucionales", () => {
+  const graph = jsonLd(homepage).flatMap((node) => node["@graph"] || [node]);
+  const org = graph.find((node) => node["@type"] === "Organization");
+  const site = graph.find((node) => node["@type"] === "WebSite");
+  assert.equal(org?.["@id"], organizationId);
+  assert.ok(org?.sameAs?.includes("https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X"));
+  assert.equal(site?.publisher?.["@id"], organizationId);
+});
+
+test("cada guía de juego ofrece una respuesta breve con región e identificador", () => {
+  for (const page of guidePages) {
+    assert.match(page.html, /<h2[^>]*>Respuesta rápida<\/h2>/i, page.file + " necesita una respuesta rápida");
+    assert.ok(page.html.includes(page.name), page.file + " debe identificar el servicio y la región");
+    assert.ok(page.html.includes(page.identifier), page.file + " debe identificar el dato de jugador");
+    assert.match(page.html, /No necesitas compartir la contraseña/i, page.file + " debe explicar la seguridad");
+    assert.match(page.html, /el pago se revisa antes de autorizar la recarga/i, page.file + " debe explicar el proceso");
+  }
+});
+
+test("cada guía de juego incluye migas de navegación estructuradas y su URL canónica", () => {
+  for (const page of guidePages) {
+    const graph = jsonLd(page.html).flatMap((node) => node["@graph"] || [node]);
+    const breadcrumb = graph.find((node) => node["@type"] === "BreadcrumbList");
+    assert.ok(breadcrumb, page.file + " necesita BreadcrumbList");
+    assert.equal(breadcrumb.itemListElement.length, 3);
+    assert.ok(
+      breadcrumb.itemListElement.some((item) => item.item?.["@id"]?.endsWith("/" + page.file)),
+      page.file + " debe ser el último destino de las migas"
+    );
+  }
+});
+
+test("las direcciones antiguas con clics registrados redirigen inmediatamente a las URL actuales", () => {
+  for (const [file, destination] of legacyRedirects) {
+    const fullPath = path.join(root, file);
+    assert.ok(fs.existsSync(fullPath), "Falta la redirección histórica: " + file);
+    const html = fs.readFileSync(fullPath, "utf8");
+    assert.ok(html.includes('<meta http-equiv="refresh" content="0; url=' + destination + '"'));
+    assert.ok(html.includes('<link rel="canonical" href="' + destination + '"'));
+    assert.ok(html.includes('<a href="' + destination + '"'));
+  }
 });
