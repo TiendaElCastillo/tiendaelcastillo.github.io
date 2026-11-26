@@ -243,7 +243,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v206"));
+  assert.ok(serviceWorker.includes("shell-v207"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -1140,10 +1140,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v206"));
+  assert.ok(serviceWorker.includes("shell-v207"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=29"));
-  assert.ok(serviceWorker.includes("shell-v206"));
+  assert.ok(serviceWorker.includes("shell-v207"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=29"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1170,7 +1170,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v206"));
+  assert.ok(serviceWorker.includes("shell-v207"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1245,7 +1245,7 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
   assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
-  assert.ok(serviceWorker.includes("shell-v206"));
+  assert.ok(serviceWorker.includes("shell-v207"));
   assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
 });
 
@@ -1390,8 +1390,8 @@ test("los avisos de pedidos se entregan por Realtime y se recuperan al volver a 
   assert.ok(indexHtml.includes('table:"user_notifications",filter:"user_id=eq."+userId'));
   assert.ok(indexHtml.includes('event:"INSERT"'));
   assert.ok(indexHtml.includes('Promise.resolve(loadNotifications())'));
-  assert.ok(indexHtml.includes("shell-v206") || serviceWorker.includes("shell-v206"));
-  assert.ok(serviceWorker.includes("shell-v206"));
+  assert.ok(indexHtml.includes("shell-v207") || serviceWorker.includes("shell-v207"));
+  assert.ok(serviceWorker.includes("shell-v207"));
 });
 
 
@@ -1464,7 +1464,7 @@ test("Turnstile en español permite reintento manual y bloquea envíos duplicado
 });
 
 test("el nuevo aspecto de acceso actualiza la caché sin tocar pagos ni pedidos", () => {
-  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v206"'));
+  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v207"'));
   assert.ok(indexHtml.includes("auth-mobile-conversion-refresh-v1"));
   assert.ok(indexHtml.includes("function login()"));
   assert.ok(indexHtml.includes("function register()"));
@@ -1484,7 +1484,7 @@ test("la portada de acceso se oculta por completo al iniciar sesión en móviles
   assert.ok(openSource.includes('$("store").classList.remove("hidden")'));
   assert.ok(logoutSource.includes('$("store").classList.add("hidden")'));
   assert.ok(logoutSource.includes('$("auth").classList.remove("hidden")'));
-  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v206"'));
+  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v207"'));
 });
 
 
@@ -1513,7 +1513,7 @@ test("Turnstile identifica errores de clave, dominio, widget desactivado y conex
 });
 
 test("la nueva versión de caché incluye el diagnóstico actualizado de Turnstile", () => {
-  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v206"'));
+  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v207"'));
   assert.ok(indexHtml.includes("store_turnstile_error"));
   assert.ok(indexHtml.includes("Turnstile error:"));
 });
@@ -1549,4 +1549,15 @@ test("un fallo al preparar el widget se muestra y registra como render, no como 
   assert.ok(failureSource.includes('help.dataset.errorCode="render_failed"'));
   assert.ok(renderSource.includes("reportCastleTurnstileRenderFailure"));
   assert.ok(loaderSource.includes("reportCastleTurnstileRenderFailure"));
+});
+
+
+test("Turnstile vuelve a cargar automáticamente cuando se recupera la conexión", () => {
+  const recoveryStart = indexHtml.indexOf("function recoverCastleTurnstileOnConnectionRestore()");
+  const recoveryEnd = indexHtml.indexOf("function bootstrapCastleStore()", recoveryStart);
+  const recoverySource = indexHtml.slice(recoveryStart, recoveryEnd);
+  assert.ok(recoverySource.includes('window.addEventListener("online"'));
+  assert.ok(recoverySource.includes("!castleTurnstileWidgetId"));
+  assert.ok(recoverySource.includes("!castleTurnstilePromise"));
+  assert.ok(recoverySource.includes("loadCastleTurnstile()"));
 });
