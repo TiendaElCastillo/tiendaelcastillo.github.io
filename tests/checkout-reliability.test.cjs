@@ -1441,8 +1441,9 @@ test("Turnstile en español permite reintento manual y bloquea envíos duplicado
   const loginEnd = indexHtml.indexOf("async function openStore", loginStart);
   const registerSource = indexHtml.slice(registerStart, registerEnd);
   const loginSource = indexHtml.slice(loginStart, loginEnd);
-  assert.ok(registerSource.includes(String.raw`if(!/^\\S+@\\S+\\.\\S+$/.test(email))`));
-  assert.ok(loginSource.includes(String.raw`if(!/^\\S+@\\S+\\.\\S+$/.test(email))`));
+  const emailValidationPattern = "if(!/^" + String.fromCharCode(92) + "S+@" + String.fromCharCode(92) + "S+" + String.fromCharCode(92) + "." + String.fromCharCode(92) + "S+$/.test(email))";
+  assert.ok(registerSource.includes(emailValidationPattern));
+  assert.ok(loginSource.includes(emailValidationPattern));
   assert.ok(registerSource.includes("if(!submit||submit.disabled)return;"));
   assert.ok(registerSource.includes("captchaToken=await getCastleAuthCaptchaToken();"));
   assert.ok(registerSource.includes("submit.disabled=true;"));
