@@ -159,7 +159,9 @@ test("las cinco guías identifican a Tienda El Castillo como tienda cubana y exp
   for (const page of guidePages) {
     assert.match(page.html, /<title>Recargar .+ desde Cuba por ID \| Tienda El Castillo<\/title>/i, page.file + " necesita un título orientado a recargas por ID desde Cuba");
     assert.match(page.html, /<meta name="description" content="[^"]+">/i, page.file + " necesita una meta descripción útil y completa");
-    const title = page.html.match(/<title>([\\s\\S]*?)<\\/title>/i)?.[1];
+    const titleStart = page.html.indexOf("<title>") + "<title>".length;
+    const titleEnd = page.html.indexOf("</title>", titleStart);
+    const title = page.html.slice(titleStart, titleEnd);
     const description = page.html.match(/<meta name="description" content="([^"]+)">/i)?.[1];
     const webPage = jsonLd(page.html).flatMap((node) => node["@graph"] || [node]).find((node) => node["@type"] === "WebPage");
     assert.equal(webPage?.name, title, page.file + " debe alinear el nombre de WebPage con el título");
