@@ -7413,7 +7413,10 @@ function installCustomerOrderResumeListeners(){
  customerOrderResumeListenersInstalled=true;
  const refreshIfVisible=()=>{
   const userId=currentUser?.id;
-  if(userId&&document.visibilityState!=="hidden")refreshCustomerOrderData(userId);
+  if(userId&&document.visibilityState!=="hidden"){
+   refreshCustomerOrderData(userId);
+   Promise.resolve(loadNotifications()).catch(error=>console.warn("No se pudieron recuperar tus notificaciones:",error));
+  }
  };
  document.addEventListener("visibilitychange",()=>{
   if(document.visibilityState!=="hidden")refreshIfVisible();
@@ -7458,9 +7461,17 @@ function startCustomerOrderRealtime(){
   .on("postgres_changes",{event:"*",schema:"public",table:"orders",filter:"user_id=eq."+userId},payload=>{
    if(currentUser?.id===userId)refreshCustomerOrderData(userId);
   })
+  .on("postgres_changes",{event:"INSERT",schema:"public",table:"user_notifications",filter:"user_id=eq."+userId},payload=>{
+   if(currentUser?.id===userId){
+    Promise.resolve(loadNotifications()).catch(error=>console.warn("No se pudo actualizar el aviso de tu pedido:",error));
+   }
+  })
   .subscribe(status=>{
    if(currentUser?.id!==userId)return;
-   if(status==="SUBSCRIBED")refreshCustomerOrderData(userId);
+   if(status==="SUBSCRIBED"){
+    refreshCustomerOrderData(userId);
+    Promise.resolve(loadNotifications()).catch(error=>console.warn("No se pudieron recuperar tus notificaciones:",error));
+   }
    else if(["CHANNEL_ERROR","TIMED_OUT","CLOSED"].includes(status))console.warn("La actualización en tiempo real de tus pedidos se reconectará; sigue activo el refresco automático.");
   });
  refreshCustomerOrderData(userId);

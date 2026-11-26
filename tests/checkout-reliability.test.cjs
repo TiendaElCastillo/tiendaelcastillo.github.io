@@ -23,6 +23,7 @@ const coronasProductionMigrationSource = fs.readFileSync(path.join(root, "supaba
 const coronasPolicyCleanupSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124222200_coronas_wallet_policy_index_cleanup.sql"), "utf8");
 const referralAutoLinkMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261124235603_referral_auto_link_and_one_first_completion_reward.sql"), "utf8");
 const centralOrderAutoSyncMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125133000_central_one_auto_order_status_sync.sql"), "utf8");
+const fasterOrderPollingMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261126032200_faster_central_one_order_updates.sql"), "utf8");
 const walletPromotionCompletionMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125130148_wallet_promotion_completion_states.sql"), "utf8");
 const referralPurchaseVolumeMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261125184000_wallet_referral_purchase_volume.sql"), "utf8");
 const walletAutoSubmitMigrationSource = fs.readFileSync(path.join(root, "supabase/migrations/20261123222640_wallet_auto_submit.sql"), "utf8");
@@ -241,7 +242,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -1138,10 +1139,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=29"));
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=29"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1168,7 +1169,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1243,7 +1244,7 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
   assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
 });
 
@@ -1370,4 +1371,24 @@ test("la portada previa al inicio de sesión muestra solo el canal oficial de Wh
   assert.ok(intro.includes('class="whatsapp-brand-glyph"'));
   assert.ok(indexHtml.includes("#auth .castle-channel-link.castle-whatsapp-cta"));
   assert.ok(indexHtml.includes("background:linear-gradient(135deg,#25d366"));
+});
+
+
+test("el seguimiento de Central One consulta pedidos abiertos cada 20 segundos y evita duplicar trabajos", () => {
+  assert.ok(fasterOrderPollingMigrationSource.includes("schedule := '20 seconds'"));
+  assert.ok(fasterOrderPollingMigrationSource.includes("cron.alter_job"));
+  assert.ok(fasterOrderPollingMigrationSource.includes("sync_open_orders"));
+  assert.ok(fasterOrderPollingMigrationSource.includes("Se encontró más de un trabajo de seguimiento activo"));
+  assert.ok(centralOneOrderEdgeSource.includes("const cutoff = new Date(Date.now() - 12000).toISOString();"));
+  assert.ok(centralOneOrderEdgeSource.includes('lookup.searchParams.set("status","eq.processing")'));
+  assert.ok(centralOneOrderEdgeSource.includes("Math.min(6,requestedLimit)"));
+});
+
+test("los avisos de pedidos se entregan por Realtime y se recuperan al volver a abrir la tienda", () => {
+  assert.ok(fasterOrderPollingMigrationSource.includes("ALTER PUBLICATION supabase_realtime ADD TABLE public.user_notifications"));
+  assert.ok(indexHtml.includes('table:"user_notifications",filter:"user_id=eq."+userId'));
+  assert.ok(indexHtml.includes('event:"INSERT"'));
+  assert.ok(indexHtml.includes('Promise.resolve(loadNotifications())'));
+  assert.ok(indexHtml.includes("shell-v203") || serviceWorker.includes("shell-v203"));
+  assert.ok(serviceWorker.includes("shell-v203"));
 });
