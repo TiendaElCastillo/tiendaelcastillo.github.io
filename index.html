@@ -3133,20 +3133,24 @@ async function register(){
  clearAuthFieldErrors();
  if(!name){markAuthFieldErrors(["fullname"],"Escribe tu nombre para identificar tu cuenta.");return}
  if(!email){markAuthFieldErrors(["email"],"Escribe el correo electrónico que quieres usar para tu cuenta.");return}
- if(!/^\S+@\S+\.\S+$/.test(email)){markAuthFieldErrors(["email"],"Revisa el correo. Debe tener un formato parecido a nombre@correo.com.");return}
+ if(!/^\\S+@\\S+\\.\\S+$/.test(email)){markAuthFieldErrors(["email"],"Revisa el correo. Debe tener un formato parecido a nombre@correo.com.");return}
  if(!password){markAuthFieldErrors(["password"],"Crea una contraseña para proteger tu cuenta.");return}
  if(password.length<8){markAuthFieldErrors(["password"],"La contraseña debe tener al menos 8 caracteres. Añade más caracteres e inténtalo de nuevo.");return}
- setAuthMessage("Comprobando los datos y la verificación de seguridad…","info");
- let captchaToken=window.castleCaptchaToken;
- if(!captchaToken){
-  const loaded=await loadCastleTurnstile();
-  captchaToken=window.castleCaptchaToken;
-  if(!loaded||!captchaToken){
-   setAuthMessage(loaded?"Completa la verificación de seguridad que aparece debajo y vuelve a pulsar «Crear cuenta».":"No se pudo cargar la verificación de seguridad. Comprueba tu conexión e inténtalo de nuevo.","error");
-   return;
-  }
+ const submit=$("authSubmit");
+ if(!submit||submit.disabled)return;
+ submit.disabled=true;
+ submit.textContent="Comprobando seguridad…";
+ setAuthMessage("Comprobando tus datos y la verificación de seguridad…","info");
+ let captchaToken;
+ try{
+  captchaToken=await getCastleAuthCaptchaToken();
+ }catch(error){
+  setAuthMessage(error?.message||"Completa la verificación de seguridad y vuelve a intentarlo.","error");
+  submit.disabled=false;
+  submit.textContent="Crear cuenta gratis";
+  return;
  }
- const submit=$("authSubmit");submit.disabled=true;submit.textContent="Creando cuenta…";
+ submit.textContent="Creando cuenta…";
  try{
   const signupMetadata={full_name:name};
   const referralCode=pendingWalletReferralCode(null);
@@ -3161,7 +3165,8 @@ async function register(){
    }else if(/password.*(weak|short)|weak password/i.test(detail)){
     markAuthFieldErrors(["password"],"La contraseña no cumple los requisitos. Utiliza al menos 8 caracteres y vuelve a intentarlo.");
    }else if(/captcha|challenge|verification/i.test(detail)){
-    setAuthMessage("La verificación de seguridad no se completó. Vuelve a completarla e inténtalo de nuevo.","error");
+    setCastleCaptchaRetryVisible(true);
+    setAuthMessage("La verificación de seguridad no se completó. Vuelve a comprobarla e inténtalo otra vez.","error");
    }else{
     setAuthMessage("No se pudo crear la cuenta. Revisa los datos e inténtalo de nuevo. Si el problema continúa, vuelve a intentarlo cuando tengas mejor conexión.","error");
    }
@@ -3177,8 +3182,13 @@ async function register(){
   }
  }catch(e){
   setAuthMessage("No pudimos crear tu cuenta por un problema de conexión. Tus datos siguen escritos; comprueba tu internet e inténtalo de nuevo.","error");
- }finally{submit.disabled=false;submit.textContent="Crear cuenta";resetCastleCaptcha()}
+ }finally{
+  submit.disabled=false;
+  submit.textContent="Crear cuenta gratis";
+  resetCastleCaptcha();
+ }
 }
+
 
 async function getCastleAuthCaptchaToken(){
  if(window.castleCaptchaToken)return window.castleCaptchaToken;
@@ -3310,18 +3320,24 @@ async function login(){
  const email=$("email").value.trim().toLowerCase(),password=$("password").value;
  clearAuthFieldErrors();
  if(!email){markAuthFieldErrors(["email"],"Escribe el correo electrónico de tu cuenta para poder iniciar sesión.");return}
- if(!/^\S+@\S+\.\S+$/.test(email)){markAuthFieldErrors(["email"],"Revisa el correo. Debe tener un formato parecido a nombre@correo.com.");return}
+ if(!/^\\S+@\\S+\\.\\S+$/.test(email)){markAuthFieldErrors(["email"],"Revisa el correo. Debe tener un formato parecido a nombre@correo.com.");return}
  if(!password){markAuthFieldErrors(["password"],"Escribe tu contraseña para continuar.");return}
  $("resendConfirmationWrap")?.classList.add("hidden");
- setAuthMessage("Comprobando tus datos…","info");
+ const submit=$("authSubmit");
+ if(!submit||submit.disabled)return;
+ submit.disabled=true;
+ submit.textContent="Comprobando seguridad…";
+ setAuthMessage("Comprobando tus datos y la verificación de seguridad…","info");
  let captchaToken;
  try{
   captchaToken=await getCastleAuthCaptchaToken();
  }catch(error){
   setAuthMessage(error?.message||"Completa la verificación de seguridad y vuelve a intentarlo.","error");
+  submit.disabled=false;
+  submit.textContent="Iniciar sesión";
   return;
  }
- const submit=$("authSubmit");submit.disabled=true;submit.textContent="Entrando…";
+ submit.textContent="Entrando…";
  try{
   const {data,error}=await db.auth.signInWithPassword({email,password,options:{captchaToken}});
   if(error){
@@ -3332,7 +3348,8 @@ async function login(){
    }else if(code==="invalid_credentials"||/invalid login credentials/i.test(detail)){
     markAuthFieldErrors(["email","password"],"El correo o la contraseña no coinciden. Comprueba que el correo esté bien escrito y que la contraseña sea la correcta. Si no la recuerdas, pulsa «¿Olvidaste tu contraseña?».");
    }else if(code==="captcha_failed"||/captcha|challenge/i.test(detail)){
-    setAuthMessage("La verificación de seguridad caducó o no se completó. Completa Cloudflare y vuelve a pulsar «Iniciar sesión».","error");
+    setCastleCaptchaRetryVisible(true);
+    setAuthMessage("La verificación de seguridad caducó o no se completó. Vuelve a comprobarla e inténtalo otra vez.","error");
    }else if(code==="invalid_email"||/email.*invalid/i.test(detail)){
     markAuthFieldErrors(["email"],"El correo electrónico no tiene un formato válido. Corrígelo e inténtalo de nuevo.");
    }else{
@@ -3352,6 +3369,7 @@ async function login(){
   resetCastleCaptcha();
  }
 }
+
 
 async function openStore(user){
  currentUser=user;
@@ -4368,7 +4386,9 @@ function setAuthMode(mode){
  $("password").parentElement.classList.remove("hidden");
  $("castleTurnstile").parentElement.classList.remove("hidden");
  $("authSubmit").classList.remove("hidden");
- $("authSubmit").textContent=registering?"Crear cuenta":"Iniciar sesión";
+ $("authSubmit").textContent=registering?"Crear cuenta gratis":"Iniciar sesión";
+ const passwordHint=$("authPasswordHint");
+ if(passwordHint)passwordHint.textContent=registering?"Utiliza al menos 8 caracteres y una contraseña que no uses en otros sitios.":"Introduce la contraseña de tu cuenta.";
  $("authSubmit").onclick=registering?register:login;
  $("forgotPasswordBtn")?.classList.toggle("hidden",registering);
  $("passwordRecoveryWrap")?.classList.add("hidden");
