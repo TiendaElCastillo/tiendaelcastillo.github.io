@@ -3043,7 +3043,7 @@ function loadCastleTurnstile(){
    setCastleCaptchaRetryVisible(true);
    const help=$("castleCaptchaHelp");
    if(help){
-    help.textContent="No se pudo descargar el verificador de Cloudflare. Comprueba tu conexión y que la red permita challenges.cloudflare.com; al recuperar internet volveremos a intentarlo. También puedes pulsar «Volver a comprobar».";
+    help.textContent="No se pudo descargar el módulo de seguridad de Cloudflare. Comprueba tu conexión y que la red permita challenges.cloudflare.com; al recuperar internet volveremos a intentarlo. También puedes pulsar «Volver a comprobar».";
     help.dataset.errorCode="script_load_failed";
    }
    window.castleAnalytics?.capture?.("store_turnstile_error",{
@@ -3081,8 +3081,9 @@ function loadCastleTurnstile(){
 }
 function recoverCastleTurnstileOnConnectionRestore(){
  window.addEventListener("online",()=>{
-  if(window.castleCaptchaToken||castleTurnstileWidgetId||castleTurnstilePromise)return;
+  if(!window.castleCaptchaToken&&!castleTurnstileWidgetId&&!castleTurnstilePromise){
   loadCastleTurnstile().catch(error=>console.warn("Turnstile retry after connection restored failed:",error));
+  }
  });
 }
 recoverCastleTurnstileOnConnectionRestore();
