@@ -242,7 +242,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -1139,10 +1139,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=29"));
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=29"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1169,7 +1169,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1244,7 +1244,7 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
   assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
-  assert.ok(serviceWorker.includes("shell-v202"));
+  assert.ok(serviceWorker.includes("shell-v203"));
   assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
 });
 
