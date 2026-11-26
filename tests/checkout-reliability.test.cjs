@@ -243,7 +243,7 @@ test("los juegos que usan un solo ID conservan la validación sin Zone ID", () =
 test("la actualización de los bloqueos se descarga también en teléfonos con caché anterior", () => {
   assert.ok(indexHtml.includes("./assets/offline-guard.js?v=3"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
-  assert.ok(serviceWorker.includes("shell-v203"));
+  assert.ok(serviceWorker.includes("shell-v204"));
   assert.ok(serviceWorker.includes('./assets/coronas-promotions.css?v=6'));
   assert.ok(serviceWorker.includes("./assets/offline-guard.js?v=3"));
   assert.ok(serviceWorker.includes("./assets/admin-panel.js?v=25"));
@@ -1140,10 +1140,10 @@ test("las miniaturas conservan el escudo pequeño y la cartera muestra una sola 
   assert.match(indexHtml, /Tu solicitud quedará pendiente mientras la tienda verifica que el pago se haya recibido correctamente/);
   assert.match(indexHtml, /Cuando confirmemos la recepción del dinero, acreditaremos las Coronas en tu cartera/);
   assert.doesNotMatch(indexHtml, /cuando tú lo apruebes|hasta que revises y apruebes la recepción real del pago/i);
-  assert.ok(serviceWorker.includes("shell-v203"));
+  assert.ok(serviceWorker.includes("shell-v204"));
   assert.match(storefrontPolishSource, /\.coronas-referral-share/);
   assert.ok(indexHtml.includes("./assets/storefront-polish.css?v=29"));
-  assert.ok(serviceWorker.includes("shell-v203"));
+  assert.ok(serviceWorker.includes("shell-v204"));
   assert.ok(serviceWorker.includes("./assets/storefront-polish.css?v=29"));
   assert.ok(serviceWorker.includes("./assets/el-castillo-icon.webp"));
 });
@@ -1170,7 +1170,7 @@ test("Gestión de Coronas se separa en apartados y solo carga la pestaña abiert
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="deposits"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="referrals"/);
   assert.match(adminPanelSource, /if\(loadData&&activeWalletAdminSection==="purchases"/);
-  assert.ok(serviceWorker.includes("shell-v203"));
+  assert.ok(serviceWorker.includes("shell-v204"));
   assert.ok(indexHtml.includes("./assets/admin-panel.css?v=34"));
   assert.ok(indexHtml.includes("./assets/admin-panel.js?v=25"));
 });
@@ -1245,7 +1245,7 @@ test("el historial de recargas del cliente usa tarjetas desplegables ligeras", (
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-list/);
   assert.match(coronasPromoCssSource, /\.wallet-customer-deposit-card\[open\]/);
   assert.ok(indexHtml.includes("./assets/coronas-promotions.css?v=6"));
-  assert.ok(serviceWorker.includes("shell-v203"));
+  assert.ok(serviceWorker.includes("shell-v204"));
   assert.ok(serviceWorker.includes("./assets/coronas-promotions.css?v=6"));
 });
 
@@ -1390,16 +1390,77 @@ test("los avisos de pedidos se entregan por Realtime y se recuperan al volver a 
   assert.ok(indexHtml.includes('table:"user_notifications",filter:"user_id=eq."+userId'));
   assert.ok(indexHtml.includes('event:"INSERT"'));
   assert.ok(indexHtml.includes('Promise.resolve(loadNotifications())'));
-  assert.ok(indexHtml.includes("shell-v203") || serviceWorker.includes("shell-v203"));
-  assert.ok(serviceWorker.includes("shell-v203"));
+  assert.ok(indexHtml.includes("shell-v204") || serviceWorker.includes("shell-v204"));
+  assert.ok(serviceWorker.includes("shell-v204"));
 });
 
 
 test("el historial de Coronas muestra las devoluciones con texto propio de la tienda", () => {
-  assert.ok(walletRefundDescriptionMigrationSource.includes("CREATE OR REPLACE FUNCTION private.customer_friendly_wallet_refund_description()"));
-  assert.ok(walletRefundDescriptionMigrationSource.includes("BEFORE INSERT OR UPDATE OF kind, description"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("create or replace function private.customer_friendly_wallet_refund_description()"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("before insert or update of kind, description"));
   assert.ok(walletRefundDescriptionMigrationSource.includes("'Devolución acreditada en tu Cartera de Tienda El Castillo.'"));
-  assert.ok(walletRefundDescriptionMigrationSource.includes("UPDATE public.wallet_transactions"));
-  assert.ok(walletRefundDescriptionMigrationSource.includes("WHERE kind = 'refund'"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("update public.wallet_transactions"));
+  assert.ok(walletRefundDescriptionMigrationSource.includes("where kind = 'refund'"));
   assert.doesNotMatch(walletRefundDescriptionMigrationSource, /Central One|order_code|central_one_order_id/i);
+});
+
+
+test("la nueva pantalla de acceso prioriza el formulario en móviles y conserva las imágenes originales", () => {
+  assert.ok(indexHtml.includes('<style id="auth-mobile-conversion-refresh-v1">'));
+  assert.match(indexHtml, /#auth\.auth-showcase-layout\{display:flex!important/);
+  assert.match(indexHtml, /#auth \.auth-showcase\{display:contents!important/);
+  assert.match(indexHtml, /#auth \.auth-login-panel\{order:2/);
+  assert.match(indexHtml, /#auth \.auth-showcase-games\{order:3/);
+  assert.match(indexHtml, /#auth \.auth-login-panel \.auth-tabs\{display:grid!important/);
+  assert.ok(indexHtml.includes("Crear cuenta gratis"));
+  assert.ok(indexHtml.includes("Juegos disponibles"));
+  const authStart = indexHtml.indexOf('<section id="auth"');
+  const gamesStart = indexHtml.indexOf('<div class="auth-showcase-games"', authStart);
+  const storeStart = indexHtml.indexOf('<section id="store"', authStart);
+  const authImages = indexHtml.slice(gamesStart, storeStart);
+  assert.ok(authImages.includes('./assets/games/free-fire-tienda.webp?v=2'));
+  assert.ok(authImages.includes('./assets/games/mobile-legends-bang-bang.webp?v=2'));
+  assert.ok(authImages.includes('r.res.easebar.com'));
+  assert.ok(authImages.includes('./assets/games/pubg-mobile.webp?v=1'));
+  assert.ok(authImages.includes('./assets/games/arena-breakout.webp?v=1'));
+  assert.equal((authImages.match(/loading="lazy"/g) || []).length, 5);
+});
+
+test("Turnstile en español permite reintento manual y bloquea envíos duplicados de acceso y registro", () => {
+  assert.ok(indexHtml.includes('id="castleCaptchaRetry"'));
+  assert.ok(indexHtml.includes('onclick="retryCastleCaptcha()"'));
+  assert.ok(indexHtml.includes('function retryCastleCaptcha()'));
+  assert.ok(indexHtml.includes('theme:"light"'));
+  assert.ok(indexHtml.includes('language:"es"'));
+  assert.ok(indexHtml.includes('"retry-interval":10000'));
+  assert.ok(indexHtml.includes('const configurationError=/^110(100|110|200)/.test(code)'));
+  assert.ok(indexHtml.includes('setCastleCaptchaRetryVisible(!configurationError)'));
+  const registerStart = indexHtml.indexOf("async function register(){");
+  const registerEnd = indexHtml.indexOf("async function getCastleAuthCaptchaToken", registerStart);
+  const loginStart = indexHtml.indexOf("async function login(){");
+  const loginEnd = indexHtml.indexOf("async function openStore", loginStart);
+  const registerSource = indexHtml.slice(registerStart, registerEnd);
+  const loginSource = indexHtml.slice(loginStart, loginEnd);
+  const emailValidationPattern = "if(!/^" + String.fromCharCode(92) + "S+@" + String.fromCharCode(92) + "S+" + String.fromCharCode(92) + "." + String.fromCharCode(92) + "S+$/.test(email))";
+  assert.ok(registerSource.includes(emailValidationPattern));
+  assert.ok(loginSource.includes(emailValidationPattern));
+  assert.ok(registerSource.includes("if(!submit||submit.disabled)return;"));
+  assert.ok(registerSource.includes("captchaToken=await getCastleAuthCaptchaToken();"));
+  assert.ok(registerSource.includes("submit.disabled=true;"));
+  assert.ok(registerSource.includes("resetCastleCaptcha();"));
+  assert.ok(loginSource.includes("if(!submit||submit.disabled)return;"));
+  assert.ok(loginSource.includes("captchaToken=await getCastleAuthCaptchaToken();"));
+  assert.ok(loginSource.includes("submit.disabled=true;"));
+  assert.ok(loginSource.includes("Tus datos siguen escritos"));
+  assert.ok(loginSource.includes("resetCastleCaptcha();"));
+  assert.ok(indexHtml.includes("options:{captchaToken,data:signupMetadata"));
+  assert.ok(indexHtml.includes("options:{captchaToken}"));
+});
+
+test("el nuevo aspecto de acceso actualiza la caché sin tocar pagos ni pedidos", () => {
+  assert.ok(serviceWorker.includes('const CACHE_NAME = CACHE_PREFIX + "shell-v204"'));
+  assert.ok(indexHtml.includes("auth-mobile-conversion-refresh-v1"));
+  assert.ok(indexHtml.includes("function login()"));
+  assert.ok(indexHtml.includes("function register()"));
+  assert.ok(indexHtml.includes("store_order_submitted"));
 });
