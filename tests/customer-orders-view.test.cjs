@@ -92,3 +92,54 @@ test("statusClass maps each customer-visible lifecycle state to a stable style",
   assert.equal(view.statusClass("cancelled"), "cancelled");
   assert.equal(view.statusClass("pending"), "pending");
 });
+
+
+test("solo una entrega confirmada por el proveedor puede mostrar el anuncio de éxito", () => {
+  const valid = makeOrder({
+    central_one_status: "completed",
+    central_one_order_id: "provider-order-123"
+  });
+  assert.equal(view.isVerifiedDelivery(valid), true);
+  assert.equal(view.isVerifiedDelivery({ ...valid, status: "processing" }), false);
+  assert.equal(view.isVerifiedDelivery({ ...valid, status: "failed" }), false);
+  assert.equal(view.isVerifiedDelivery({ ...valid, status: "cancelled" }), false);
+  assert.equal(view.isVerifiedDelivery({ ...valid, central_one_status: "processing" }), false);
+  assert.equal(view.isVerifiedDelivery({ ...valid, central_one_status: "failed" }), false);
+  assert.equal(view.isVerifiedDelivery({ ...valid, central_one_order_id: null }), false);
+});
+
+test("el anuncio de entrega presenta el artículo, el juego y el folio del pedido", () => {
+  const order = makeOrder({
+    central_one_status: "completed",
+    central_one_order_id: "provider-order-123",
+    game: "Free Fire",
+    package_name: "110 Diamantes",
+    order_code: "EC-110DIAM"
+  });
+  const artwork = '<img src="./assets/ff-diamonds-110.svg" alt="110 diamantes">';
+  const html = view.renderDeliverySuccess(order, { itemLabel: "110 Diamantes", artworkHtml: artwork });
+
+  assert.match(html, /¡Recarga entregada!/);
+  assert.match(html, /110 Diamantes/);
+  assert.match(html, /Free Fire/);
+  assert.match(html, /EC-110DIAM/);
+  assert.match(html, /Ya está en tu cuenta/);
+  assert.match(html, /data-order-delivery-view/);
+  assert.match(html, /ff-diamonds-110\.svg/);
+});
+
+test("la confirmación dentro del detalle también exige entrega verificada y escapa el nombre del artículo", () => {
+  const valid = makeOrder({
+    central_one_status: "completed",
+    central_one_order_id: "provider-order-123",
+    package_name: "<script>alert(1)</script>"
+  });
+  const html = view.renderDeliveryConfirmation(valid, { itemLabel: valid.package_name });
+  assert.match(html, /ENTREGA CONFIRMADA/);
+  assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
+  assert.doesNotMatch(html, /<script>alert/);
+
+  const failed = view.renderDeliveryConfirmation({ ...valid, status: "failed" });
+  assert.equal(failed, "");
+  assert.equal(view.renderDeliverySuccess({ ...valid, central_one_status: "processing" }), "");
+});
