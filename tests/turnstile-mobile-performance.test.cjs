@@ -134,3 +134,9 @@ test("PostHog elimina caracteres de control y acepta métricas numéricas y bool
   assert.ok(posthogAnalytics.includes("Number.isFinite(value)"));
   assert.ok(posthogAnalytics.includes('typeof value === "boolean"'));
 });
+
+test("La analítica se publica con la misma versión en portada y caché precargada", () => {
+  assert.ok(html.includes("./assets/posthog.js?v=4"));
+  assert.ok(serviceWorker.includes("./assets/posthog.js?v=4"));
+  assert.ok(serviceWorker.includes("shell-v211"));
+});
