@@ -61,8 +61,8 @@ test("El acceso, el registro y la recuperación siguen enviando el token a Supab
 });
 
 test("El service worker renueva su caché para distribuir el flujo de acceso actualizado", () => {
-  assert.match(serviceWorker, /shell-v210/);
-  assert.doesNotMatch(serviceWorker, /shell-v209/);
+  assert.match(serviceWorker, /shell-v211/);
+  assert.doesNotMatch(serviceWorker, /shell-v210/);
 });
 
 test("Supabase JS usa una versión estable fijada y mantiene el CDN alternativo", () => {
