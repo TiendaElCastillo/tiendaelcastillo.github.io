@@ -61,8 +61,8 @@ test("El acceso, el registro y la recuperación siguen enviando el token a Supab
 });
 
 test("El service worker renueva su caché para distribuir el flujo de acceso actualizado", () => {
-  assert.match(serviceWorker, /shell-v210/);
-  assert.doesNotMatch(serviceWorker, /shell-v209/);
+  assert.match(serviceWorker, /shell-v211/);
+  assert.doesNotMatch(serviceWorker, /shell-v210/);
 });
 
 test("Supabase JS usa una versión estable fijada y mantiene el CDN alternativo", () => {
@@ -133,4 +133,10 @@ test("PostHog elimina caracteres de control y acepta métricas numéricas y bool
   assert.ok(posthogAnalytics.includes(sanitizer));
   assert.ok(posthogAnalytics.includes("Number.isFinite(value)"));
   assert.ok(posthogAnalytics.includes('typeof value === "boolean"'));
+});
+
+test("La analítica se publica con la misma versión en portada y caché precargada", () => {
+  assert.ok(html.includes("./assets/posthog.js?v=4"));
+  assert.ok(serviceWorker.includes("./assets/posthog.js?v=4"));
+  assert.ok(serviceWorker.includes("shell-v211"));
 });
