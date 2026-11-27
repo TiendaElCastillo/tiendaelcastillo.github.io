@@ -12,7 +12,7 @@
 <meta property="og:description" content="Tienda cubana de recargas de juegos por ID: recargar Free Fire desde Cuba y otros juegos. Las compras con Coronas acreditadas se procesan automáticamente.">
 <meta property="og:url" content="https://tiendaelcastillo.github.io/"><meta property="og:site_name" content="Tienda El Castillo"><meta property="og:locale" content="es_CU"><meta property="og:image" content="https://static.metricool.com/planner/202611/8287635-file-35235419449701817.png"><meta property="og:image:secure_url" content="https://static.metricool.com/planner/202611/8287635-file-35235419449701817.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1536"><meta property="og:image:height" content="1536"><meta property="og:image:alt" content="Recargas de juegos en Cuba en Tienda El Castillo; captura real de la tienda sin acceso administrativo"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Recargas de juegos en Cuba por ID | Tienda El Castillo"><meta name="twitter:description" content="Tienda cubana de recargas de juegos por ID: recargar Free Fire desde Cuba y otros juegos. Las compras con Coronas acreditadas se procesan automáticamente."><meta name="twitter:image" content="https://static.metricool.com/planner/202611/8287635-file-35235419449701817.png"><title>Recargas de juegos en Cuba por ID | Tienda El Castillo</title>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"Tienda El Castillo","url":"https://tiendaelcastillo.github.io/","logo":"https://tiendaelcastillo.github.io/assets/el-castillo-logo.webp","description":"Tienda cubana de recargas de videojuegos por ID para jugadores en Cuba. Las compras pagadas con Coronas acreditadas en la Cartera se procesan automáticamente; otros métodos de pago pueden requerir revisión.","@id":"https://tiendaelcastillo.github.io/#organization","sameAs":["https://whatsapp.com/channel/0029Vb8tq5vGufJ4yLhEcS0X"],"areaServed":{"@type":"Country","name":"Cuba"},"knowsAbout":["Tienda cubana de recargas de videojuegos","Recargar Free Fire desde Cuba por UID","Recargas de juegos por ID en Cuba","Compras automáticas con Coronas de saldo interno","Blood Strike Global","Mobile Legends: Bang Bang Global","PUBG Mobile Global","Arena Breakout Mobile Global"]},{"@type":"WebSite","name":"Tienda El Castillo","url":"https://tiendaelcastillo.github.io/","inLanguage":"es-CU","@id":"https://tiendaelcastillo.github.io/#website","publisher":{"@id":"https://tiendaelcastillo.github.io/#organization"}},{"@type":"WebPage","@id":"https://tiendaelcastillo.github.io/#webpage","url":"https://tiendaelcastillo.github.io/","name":"Recargas de juegos en Cuba por ID | Tienda El Castillo","description":"Tienda cubana de recargas de juegos por ID: recargar Free Fire desde Cuba y otros juegos. Las compras con Coronas acreditadas se procesan automáticamente.","inLanguage":"es-CU","isPartOf":{"@id":"https://tiendaelcastillo.github.io/#website"},"about":{"@id":"https://tiendaelcastillo.github.io/#organization"},"publisher":{"@id":"https://tiendaelcastillo.github.io/#organization"},"dateModified":"2026-11-26"}]}</script>
-<link rel="dns-prefetch" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="dns-prefetch" href="//challenges.cloudflare.com"><link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="dns-prefetch" href="//unpkg.com"><link rel="preconnect" href="https://unpkg.com" crossorigin><link rel="dns-prefetch" href="//challenges.cloudflare.com"><link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
 <style>
 :root{--bg:#f4f7fc;--surface:#fff;--ink:#17233c;--muted:#71809a;--line:#e5eaf3;--blue:#2468f2;--blue2:#1455d8;--gold:#e6b957;--shadow:0 10px 30px rgba(20,45,90,.08);--radius:20px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -3180,22 +3180,65 @@ const money=v=>Number(v||0).toLocaleString("es-ES");
 const moneyUSD=v=>Number(v||0).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:6});
 
 let castleSupabaseSdkPromise=null;
+const CASTLE_SUPABASE_JS_VERSION="2.119.2";
+function castleSupabaseSdkAttemptTimeout(){
+ const networkType=String(navigator.connection?.effectiveType||"");
+ if(networkType==="slow-2g"||networkType==="2g")return 18000;
+ if(networkType==="3g")return 15000;
+ return 12000;
+}
 function loadCastleSupabaseSdk(){
  if(window.supabase&&window.supabase.createClient)return Promise.resolve(true);
  if(castleSupabaseSdkPromise)return castleSupabaseSdkPromise;
  castleSupabaseSdkPromise=new Promise(resolve=>{
-  const sources=["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2","https://unpkg.com/@supabase/supabase-js@2"];
+  const startedAt=Date.now();
+  const sources=[
+   {name:"jsdelivr",url:"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@"+CASTLE_SUPABASE_JS_VERSION},
+   {name:"unpkg",url:"https://unpkg.com/@supabase/supabase-js@"+CASTLE_SUPABASE_JS_VERSION}
+  ];
   let index=0;
   const trySource=()=>{
-   if(index>=sources.length){castleSupabaseSdkPromise=null;resolve(false);return;}
+   if(index>=sources.length){
+    window.castleAnalytics?.capture?.("store_supabase_sdk_load_failed",{
+     version:CASTLE_SUPABASE_JS_VERSION,
+     attempts:sources.length,
+     elapsed_ms:Math.max(0,Date.now()-startedAt),
+     network_type:String(navigator.connection?.effectiveType||"unknown")
+    });
+    castleSupabaseSdkPromise=null;resolve(false);return;
+   }
+   const source=sources[index++];
+   const attempt=index;
+   const attemptStartedAt=Date.now();
    const script=document.createElement("script");let finished=false;
    const finish=ok=>{
-    if(finished)return;finished=true;clearTimeout(timeout);
-    if(ok&&window.supabase&&window.supabase.createClient){resolve(true);return;}
+    if(finished)return;
+    finished=true;clearTimeout(timeout);
+    if(ok&&window.supabase&&window.supabase.createClient){
+     window.castleAnalytics?.capture?.("store_supabase_sdk_loaded",{
+      version:CASTLE_SUPABASE_JS_VERSION,
+      source:source.name,
+      attempt,
+      fallback_used:attempt>1,
+      elapsed_ms:Math.max(0,Date.now()-startedAt),
+      attempt_elapsed_ms:Math.max(0,Date.now()-attemptStartedAt),
+      service_worker_controlled:Boolean(navigator.serviceWorker?.controller),
+      network_type:String(navigator.connection?.effectiveType||"unknown")
+     });
+     resolve(true);return;
+    }
+    const reason=ok?"global_missing":"network_or_timeout";
+    window.castleAnalytics?.capture?.("store_supabase_sdk_attempt_failed",{
+     version:CASTLE_SUPABASE_JS_VERSION,
+     source:source.name,
+     attempt,
+     reason,
+     elapsed_ms:Math.max(0,Date.now()-attemptStartedAt)
+    });
     script.remove();trySource();
    };
-   const timeout=setTimeout(()=>finish(false),15000);
-   script.src=sources[index++];script.async=true;script.crossOrigin="anonymous";
+   const timeout=setTimeout(()=>finish(false),castleSupabaseSdkAttemptTimeout());
+   script.src=source.url;script.async=true;script.crossOrigin="anonymous";
    script.onload=()=>finish(true);script.onerror=()=>finish(false);
    document.head.appendChild(script);
   };
