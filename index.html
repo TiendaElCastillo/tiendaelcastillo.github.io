@@ -2911,6 +2911,8 @@ window.onCastleCaptchaSuccess=function(token){
 window.onCastleCaptchaExpired=function(){
  window.castleCaptchaToken=null;
  window.castleCaptchaTokenCreatedAt=0;
+ window.castleTurnstileStartedAt=Date.now();
+ window.castleTurnstileInteractionRequired=false;
  castleTurnstileNeedsRecovery=true;
  setCastleCaptchaRetryVisible(true);
  const help=document.getElementById("castleCaptchaHelp");
@@ -2919,6 +2921,8 @@ window.onCastleCaptchaExpired=function(){
 window.onCastleCaptchaTimeout=function(){
  window.castleCaptchaToken=null;
  window.castleCaptchaTokenCreatedAt=0;
+ window.castleTurnstileStartedAt=Date.now();
+ window.castleTurnstileInteractionRequired=false;
  castleTurnstileNeedsRecovery=true;
  setCastleCaptchaRetryVisible(true);
  const help=document.getElementById("castleCaptchaHelp");
@@ -2977,6 +2981,11 @@ function resolveCastleCaptchaTokenWaiter(token){
  if(!waiter)return;
  castleCaptchaTokenWaiter=null;
  clearTimeout(waiter.timer);
+ const waitStartedAt=Number(waiter.startedAt||0);
+ if(waitStartedAt)window.castleAnalytics?.capture?.("store_turnstile_wait_completed",{
+  elapsed_ms:Math.max(0,Date.now()-waitStartedAt),
+  hostname:String(location.hostname||"")
+ });
  waiter.resolve(token);
 }
 function rejectCastleCaptchaTokenWaiter(message){
@@ -3356,16 +3365,20 @@ async function getCastleAuthCaptchaToken(){
  if(!castleTurnstileWidgetId)throw new Error("La comprobación todavía no está preparada. Pulsa «Volver a comprobar» cuando tengas conexión.");
  setAuthMessage("Cloudflare está comprobando la solicitud. Si necesita una interacción, aparecerá aquí; continuaremos automáticamente al terminar.","info");
  window.castleAnalytics?.capture?.("store_turnstile_wait_started",{
-  hostname:String(location.hostname||""),
-  device_type:window.castleAnalytics?.deviceType||"unknown"
+  hostname:String(location.hostname||"")
  });
  return await new Promise((resolve,reject)=>{
+  const startedAt=Date.now();
   const timer=setTimeout(()=>{
    if(castleCaptchaTokenWaiter?.resolve===resolve)castleCaptchaTokenWaiter=null;
+   window.castleAnalytics?.capture?.("store_turnstile_wait_timeout",{
+    elapsed_ms:Math.max(0,Date.now()-startedAt),
+    hostname:String(location.hostname||"")
+   });
    setCastleCaptchaRetryVisible(true);
    reject(new Error("La comprobación de seguridad está tardando más de lo habitual. Pulsa «Volver a comprobar»; no necesitas recargar la página ni volver a escribir tus datos."));
   },30000);
-  castleCaptchaTokenWaiter={resolve,reject,timer};
+  castleCaptchaTokenWaiter={resolve,reject,timer,startedAt};
   if(isCastleCaptchaTokenFresh())resolveCastleCaptchaTokenWaiter(window.castleCaptchaToken);
  });
 }
