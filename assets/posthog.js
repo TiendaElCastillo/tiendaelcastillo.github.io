@@ -56,16 +56,31 @@
     return event;
   };
 
-  const allowedProperties = new Set(["game", "package", "payment_method", "view", "account_role", "source"]);
+  const allowedProperties = new Set([
+    "game", "package", "payment_method", "view", "account_role", "source",
+    "provider", "version", "hostname", "network_type", "reason",
+    "error_code", "error_category"
+  ]);
+  const numericProperties = new Set(["elapsed_ms", "attempt_elapsed_ms", "attempt", "attempts"]);
+  const booleanProperties = new Set(["fallback_used", "service_worker_controlled", "interaction_required"]);
   const cleanProperties = (input) => {
     const output = {};
     if (!input || typeof input !== "object") return output;
     Object.keys(input).forEach((key) => {
-      if (!allowedProperties.has(key)) return;
+      if (!allowedProperties.has(key) && !numericProperties.has(key) && !booleanProperties.has(key)) return;
       const value = input[key];
-      if (typeof value !== "string") return;
-      const clean = value.replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 80);
-      if (clean) output[key] = clean;
+      if (typeof value === "string") {
+        const clean = value.replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 80);
+        if (clean) output[key] = clean;
+        return;
+      }
+      if (numericProperties.has(key) && typeof value === "number" && Number.isFinite(value)) {
+        output[key] = Math.max(0, Math.min(value, 86400000));
+        return;
+      }
+      if (booleanProperties.has(key) && typeof value === "boolean") {
+        output[key] = value;
+      }
     });
     return output;
   };
