@@ -122,3 +122,15 @@ test("La analítica conserva una lista cerrada y no admite datos personales ni c
   assert.ok(allowedStart !== -1 && allowedEnd !== -1);
   assert.doesNotMatch(whitelist, /email|phone|player_id|order_id|proof|password|token/i);
 });
+
+test("La portada anticipa la conexión HTTPS al proyecto Supabase", () => {
+  assert.ok(html.includes('<link rel="dns-prefetch" href="//kfllglkfncebpknnugnx.supabase.co">'));
+  assert.ok(html.includes('<link rel="preconnect" href="https://kfllglkfncebpknnugnx.supabase.co" crossorigin>'));
+});
+test("PostHog elimina caracteres de control y acepta métricas numéricas y booleanas", () => {
+  const slash = String.fromCharCode(92);
+  const sanitizer = "value.replace(/[" + slash + "u0000-" + slash + "u001f<>]/g";
+  assert.ok(posthogAnalytics.includes(sanitizer));
+  assert.ok(posthogAnalytics.includes("Number.isFinite(value)"));
+  assert.ok(posthogAnalytics.includes('typeof value === "boolean"'));
+});
