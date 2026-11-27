@@ -60,6 +60,39 @@ test("El acceso, el registro y la recuperación siguen enviando el token a Supab
 });
 
 test("El service worker renueva su caché para distribuir el flujo de acceso actualizado", () => {
-  assert.match(serviceWorker, /shell-v209/);
-  assert.doesNotMatch(serviceWorker, /shell-v208/);
+  assert.match(serviceWorker, /shell-v210/);
+  assert.doesNotMatch(serviceWorker, /shell-v209/);
+});
+
+test("Supabase JS usa una versión estable fijada y mantiene el CDN alternativo", () => {
+  const loader = section("const CASTLE_SUPABASE_JS_VERSION=", "async function bootstrapCastleStore(){");
+  assert.ok(loader.includes('CASTLE_SUPABASE_JS_VERSION="2.119.2"'));
+  assert.ok(loader.includes('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@"+CASTLE_SUPABASE_JS_VERSION'));
+  assert.ok(loader.includes('https://unpkg.com/@supabase/supabase-js@"+CASTLE_SUPABASE_JS_VERSION'));
+  assert.ok(loader.includes('script.crossOrigin="anonymous"'));
+  assert.doesNotMatch(loader, /supabase-js@2(?:["/])/);
+});
+
+test("La descarga de Supabase adapta el tiempo límite a conexiones lentas", () => {
+  const timeout = section("function castleSupabaseSdkAttemptTimeout(){", "function loadCastleSupabaseSdk(){");
+  assert.ok(timeout.includes('networkType==="slow-2g"||networkType==="2g")return 18000'));
+  assert.ok(timeout.includes('networkType==="3g")return 15000'));
+  assert.ok(timeout.includes('return 12000'));
+});
+
+test("La conexión anticipa los dos CDN y mide el resultado de Supabase", () => {
+  assert.ok(html.includes('<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>'));
+  assert.ok(html.includes('<link rel="preconnect" href="https://unpkg.com" crossorigin>'));
+  const loader = section("function loadCastleSupabaseSdk(){", "async function bootstrapCastleStore(){");
+  assert.ok(loader.includes('store_supabase_sdk_loaded'));
+  assert.ok(loader.includes('store_supabase_sdk_attempt_failed'));
+  assert.ok(loader.includes('store_supabase_sdk_load_failed'));
+  assert.ok(loader.includes('fallback_used:attempt>1'));
+  assert.ok(loader.includes('service_worker_controlled'));
+});
+
+test("El service worker puede guardar en caché los dos CDN de Supabase", () => {
+  assert.ok(serviceWorker.includes('url.hostname === "cdn.jsdelivr.net"'));
+  assert.ok(serviceWorker.includes('url.hostname === "unpkg.com"'));
+  assert.ok(serviceWorker.includes('isSupabaseLibrary'));
 });
