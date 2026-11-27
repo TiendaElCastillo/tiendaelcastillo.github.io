@@ -70,7 +70,7 @@
       if (!allowedProperties.has(key) && !numericProperties.has(key) && !booleanProperties.has(key)) return;
       const value = input[key];
       if (typeof value === "string") {
-        const clean = value.replace(/[\\u0000-\\u001f<>]/g, "").trim().slice(0, 80);
+        const clean = value.replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 80);
         if (clean) output[key] = clean;
         return;
       }
