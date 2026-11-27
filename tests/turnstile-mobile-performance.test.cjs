@@ -5,6 +5,7 @@ const path = require("node:path");
 
 const html = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
 const serviceWorker = fs.readFileSync(path.join(__dirname, "../sw.js"), "utf8");
+const posthogAnalytics = fs.readFileSync(path.join(__dirname, "../assets/posthog.js"), "utf8");
 
 function section(start, end) {
   const startAt = html.indexOf(start);
@@ -95,4 +96,29 @@ test("El service worker puede guardar en caché los dos CDN de Supabase", () => 
   assert.ok(serviceWorker.includes('url.hostname === "cdn.jsdelivr.net"'));
   assert.ok(serviceWorker.includes('url.hostname === "unpkg.com"'));
   assert.ok(serviceWorker.includes('isSupabaseLibrary'));
+});
+
+test("PostHog permite medir rendimiento y errores sin abrir propiedades privadas", () => {
+  const allowed = [
+    "provider", "version", "hostname", "network_type", "reason",
+    "error_code", "error_category"
+  ];
+  const numeric = ["elapsed_ms", "attempt_elapsed_ms", "attempt", "attempts"];
+  const boolean = ["fallback_used", "service_worker_controlled", "interaction_required"];
+  for (const key of allowed) assert.ok(posthogAnalytics.includes('"'+key+'"'), "Falta la propiedad segura: "+key);
+  for (const key of numeric) assert.ok(posthogAnalytics.includes('"'+key+'"'), "Falta la propiedad numérica: "+key);
+  for (const key of boolean) assert.ok(posthogAnalytics.includes('"'+key+'"'), "Falta la propiedad booleana: "+key);
+  assert.ok(posthogAnalytics.includes("Number.isFinite(value)"));
+  assert.ok(posthogAnalytics.includes('typeof value === "boolean"'));
+  assert.ok(posthogAnalytics.includes("Math.min(value, 86400000)"));
+  assert.ok(posthogAnalytics.includes("const cleanProperties = (input) =>"));
+  assert.ok(posthogAnalytics.includes("if (!allowedProperties.has(key) && !numericProperties.has(key) && !booleanProperties.has(key)) return;"));
+});
+
+test("La analítica conserva una lista cerrada y no admite datos personales ni campos de pedido", () => {
+  const allowedStart = posthogAnalytics.indexOf("const allowedProperties = new Set([");
+  const allowedEnd = posthogAnalytics.indexOf("]);", allowedStart);
+  const whitelist = posthogAnalytics.slice(allowedStart, allowedEnd);
+  assert.ok(allowedStart !== -1 && allowedEnd !== -1);
+  assert.doesNotMatch(whitelist, /email|phone|player_id|order_id|proof|password|token/i);
 });
