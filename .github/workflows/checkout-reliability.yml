@@ -68,6 +68,6 @@ jobs:
         with:
           node-version: 22
       - name: Ejecutar pruebas automatizadas
-        run: node --test tests/checkout-reliability.test.cjs tests/ai-visibility-id-cuba.test.cjs
+        run: node --test tests/checkout-reliability.test.cjs tests/ai-visibility-id-cuba.test.cjs tests/turnstile-mobile-performance.test.cjs
       - name: Comprobar sintaxis de scripts incrustados
         run: node tests/check-inline-scripts.cjs
